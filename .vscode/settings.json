@@ -1,5 +1,6 @@
 {
     "conventionalCommits.scopes": [
-        "builder.io"
+        "builder.io",
+        "theming"
     ]
 }
