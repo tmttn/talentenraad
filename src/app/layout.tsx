@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Forms from "@/components/Forms/Forms";
 
 export const metadata: Metadata = {
   title: "Talentenraad",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-white">{children}</body>
+      <body className="bg-white">
+        {children}
+        <Forms/>
+      </body>
     </html>
   );
 }
