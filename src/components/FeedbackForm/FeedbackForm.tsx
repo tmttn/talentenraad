@@ -36,7 +36,7 @@ export default function FeedbackForm() {
     <>
       <h1>Contact</h1>
       <form
-        name="contact"
+        name="feedback"
         method="post"
         action="/thanks/"
         data-netlify="true"
