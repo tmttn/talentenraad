@@ -34,6 +34,7 @@ function FeedbackForm() {
     return (
         <form name="feedback" method="POST" data-netlify="true" onSubmit={handleSubmit}>
             <input type="hidden" name="form-name" value="feedback"/>
+            <input className="hidden" name="bot-field" />
             <div>
                 <label htmlFor="feedback">Vul je vraag of idee in:</label>
                 <textarea id="feedback" name="feedback" required onChange={handleTextAreaChange}/>
