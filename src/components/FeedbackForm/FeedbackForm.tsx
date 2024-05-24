@@ -1,8 +1,8 @@
 import React from 'react'
 
-function encode(data: { [key: string]: string }) {
+function encode(data: { [key: string]: string | null }) {
   return Object.keys(data)
-    .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+    .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key] ?? ''))
     .join('&')
 }
 
@@ -17,9 +17,9 @@ export default function FeedbackForm() {
     setState({ ...state, [e.target.name]: e.target.value })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const form = e.target
+    const form = e.currentTarget
     fetch('/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
