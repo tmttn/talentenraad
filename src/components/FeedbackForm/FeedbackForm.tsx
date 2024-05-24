@@ -1,51 +1,73 @@
-import React, { useState } from 'react';
+import React from 'react'
 
-function FeedbackForm() {
+function encode(data: { [key: string]: string }) {
+  return Object.keys(data)
+    .map((key) => encodeURIComponent(key) + '=' + encodeURIComponent(data[key]))
+    .join('&')
+}
 
-    const[state, setState] = useState({ feedback: "", email: ""})
+export default function FeedbackForm() {
+  const [state, setState] = React.useState({})
 
-    const encode = (data: {[key: string]: string}) => {
-        return Object.keys(data)
-            .map(key => encodeURIComponent(key) + "=" + encodeURIComponent(data[key]))
-            .join("&");
-    }
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setState({ ...state, [e.target.name]: e.target.value })
+  }
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        fetch("/", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: encode({ "form-name": "feedback", ...state })
-          })
-            .then(() => alert("Success!"))
-            .catch(error => alert(error));
-    
-    };
+  const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setState({ ...state, [e.target.name]: e.target.value })
+  }
 
-    const handleTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setState({ ...state, [e.target.name]: e.target.value });
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    const form = e.target
+    fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: encode({
+        'form-name': form.getAttribute('name'),
+        ...state,
+      }),
+    })
+      .then(() => alert("Thanks for your feedback!"))
+      .catch((error) => alert(error))
+  }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setState({ ...state, [e.target.name]: e.target.value });
-    }
-
-
-    return (
-        <form name="feedback" method="POST" data-netlify="true" onSubmit={handleSubmit}>
-            <input type="hidden" name="form-name" value="feedback"/>
-            <input className="hidden" name="bot-field" />
-            <div>
-                <label htmlFor="feedback">Vul je vraag of idee in:</label>
-                <textarea id="feedback" name="feedback" required onChange={handleTextAreaChange}/>
-            </div>
-            <div>
-                <label htmlFor="email">Vul je e-mailadres in:</label>
-                <input type="email" id="email" name="email" required onChange={handleChange}/>
-            </div>
-            <button type="submit">Verzenden</button>
-        </form>
-    );
-};
-
-export default FeedbackForm;
+  return (
+    <>
+      <h1>Contact</h1>
+      <form
+        name="contact"
+        method="post"
+        action="/thanks/"
+        data-netlify="true"
+        data-netlify-honeypot="bot-field"
+        onSubmit={handleSubmit}
+      >
+        {/* The `form-name` hidden field is required to support form submissions without JavaScript */}
+        <input type="hidden" name="form-name" value="feedback" />
+        <p hidden>
+          <label>
+            Don’t fill this out: <input name="bot-field" onChange={handleInputChange} />
+          </label>
+        </p>
+        <p>
+          <label>
+            Your email:
+            <br />
+            <input type="email" name="email" onChange={handleInputChange} />
+          </label>
+        </p>
+        <p>
+          <label>
+            Message:
+            <br />
+            <textarea name="message" onChange={handleTextAreaChange} />
+          </label>
+        </p>
+        <p>
+          <button type="submit">Send</button>
+        </p>
+      </form>
+    </>
+  )
+}
