@@ -2,6 +2,7 @@
     "conventionalCommits.scopes": [
         "builder.io",
         "theming",
-        "netlify"
+        "netlify",
+        "vercel"
     ]
 }
