@@ -14,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="nl">
-      <body className="antialiased bg-white">
+    <html lang="nl" className="overflow-auto">
+      <body className="w-screen overflow-hidden antialiased">
         {children}
         <SpeedInsights />
         <Analytics />

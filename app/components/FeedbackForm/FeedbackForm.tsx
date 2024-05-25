@@ -11,7 +11,7 @@ export default function FeedbackForm() {
       </div>);
   }
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="md:min-w-[500px] sm:min-w-full flex flex-col gap-5">
       <label className='form-control'>
         <div className='label'>
           <span className="label-text">Vul je e-mailadres in:</span>
@@ -20,7 +20,7 @@ export default function FeedbackForm() {
           id="email"
           type="email"
           name="email"
-          className="w-full max-w-xs input input-bordered"
+          className="w-full bg-slate-50 input input-bordered"
         />
         <ValidationError
           prefix="Email"
@@ -36,7 +36,7 @@ export default function FeedbackForm() {
         <textarea
           id="message"
           name="message"
-          className="h-24 textarea textarea-bordered"
+          className="h-24 textarea textarea-bordered bg-slate-50"
         />
         <ValidationError
           prefix="Message"
@@ -45,7 +45,7 @@ export default function FeedbackForm() {
         />
       </label>
 
-      <div className="flex justify-end mt-2">
+      <div className="flex justify-end">
         <button type="submit" disabled={state.submitting} className="btn btn-primary">
           Verzenden
         </button>
