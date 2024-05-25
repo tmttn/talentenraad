@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="nl" className="overflow-auto">
-      <body className="w-screen overflow-hidden antialiased">
+      <body className="w-screen overflow-hidden antialiased bg-gradient-to-b from-white to-base-100">
         {children}
         <SpeedInsights />
         <Analytics />
