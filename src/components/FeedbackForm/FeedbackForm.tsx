@@ -1,31 +1,41 @@
-import { useForm } from '@formspree/react';
-import React from 'react'
+import React from 'react';
+import { useForm, ValidationError } from '@formspree/react';
 
 export default function FeedbackForm() {
-  const [state, handleSubmit, reset] = useForm('feedback');
+  const [state, handleSubmit] = useForm("xgegbngw");
   if (state.succeeded) {
-    return <div>Thank you for signing up!</div>;
+      return <p>Thanks for joining!</p>;
   }
-
   return (
     <form onSubmit={handleSubmit}>
-      <p>
-        <label>
-          Je e-mailadres:
-          <br />
-          <input type="email" name="email" />
-        </label>
-      </p>
-      <p>
-        <label>
-          Je bericht:
-          <br />
-          <textarea name="message" />
-        </label>
-      </p>
-      <p>
-        <button type="submit" disabled={state.submitting}>Versturen</button>
-      </p>
+      <label htmlFor="email">
+        Vul je e-mailadres in:
+      </label>
+      <input
+        id="email"
+        type="email" 
+        name="email"
+      />
+      <ValidationError 
+        prefix="Email" 
+        field="email"
+        errors={state.errors}
+      />
+      <label htmlFor="message">
+        Vul je bericht in:
+      </label>
+      <textarea
+        id="message"
+        name="message"
+      />
+      <ValidationError 
+        prefix="Message" 
+        field="message"
+        errors={state.errors}
+      />
+      <button type="submit" disabled={state.submitting}>
+        Verzenden
+      </button>
     </form>
-  )
+  );
 }
