@@ -1,8 +1,9 @@
 import React from 'react';
 import { useForm, ValidationError } from '@formspree/react';
 
-export default function FeedbackForm() {
+const FeedbackForm: React.FC = () => {
   const [state, handleSubmit] = useForm("xgegbngw");
+
   if (state.succeeded) {
     return (
       <div role="alert" className="alert alert-success">
@@ -10,6 +11,7 @@ export default function FeedbackForm() {
         <p>Bedankt! We hebben je bericht goed ontvangen.</p>
       </div>);
   }
+
   return (
     <form onSubmit={handleSubmit} className="md:min-w-[500px] sm:min-w-full flex flex-col gap-5">
       <label className='form-control'>
@@ -53,3 +55,5 @@ export default function FeedbackForm() {
     </form>
   );
 }
+
+export default FeedbackForm;
