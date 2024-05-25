@@ -1,7 +1,7 @@
 "use client";
 import { builder, Builder } from "@builder.io/react";
-import FeedbackForm from "@components/FeedbackForm/FeedbackForm";
-import Footer from "@components/Footer/Footer";
+import FeedbackForm from "@/components/FeedbackForm";
+import Footer from "@/components/Footer";
 
 builder.init(process.env.NEXT_PUBLIC_BUILDER_API_KEY!);
 
