@@ -4,7 +4,7 @@ import { useForm, ValidationError } from '@formspree/react';
 export default function FeedbackForm() {
   const [state, handleSubmit] = useForm("xgegbngw");
   if (state.succeeded) {
-      return <p>Thanks for joining!</p>;
+      return <p>Bedankt! We hebben je bericht goed ontvangen.</p>;
   }
   return (
     <form onSubmit={handleSubmit}>
