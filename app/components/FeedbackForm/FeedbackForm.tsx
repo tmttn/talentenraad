@@ -4,38 +4,52 @@ import { useForm, ValidationError } from '@formspree/react';
 export default function FeedbackForm() {
   const [state, handleSubmit] = useForm("xgegbngw");
   if (state.succeeded) {
-      return <p>Bedankt! We hebben je bericht goed ontvangen.</p>;
+    return (
+      <div role="alert" className="alert alert-success">
+        <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 stroke-current shrink-0" fill="none" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+        <p>Bedankt! We hebben je bericht goed ontvangen.</p>
+      </div>);
   }
   return (
     <form onSubmit={handleSubmit}>
-      <label htmlFor="email">
-        Vul je e-mailadres in:
+      <label className='form-control'>
+        <div className='label'>
+          <span className="label-text">Vul je e-mailadres in:</span>
+        </div>
+        <input
+          id="email"
+          type="email"
+          name="email"
+          className="w-full max-w-xs input input-bordered"
+        />
+        <ValidationError
+          prefix="Email"
+          field="email"
+          errors={state.errors}
+        />
       </label>
-      <input
-        id="email"
-        type="email" 
-        name="email"
-      />
-      <ValidationError 
-        prefix="Email" 
-        field="email"
-        errors={state.errors}
-      />
-      <label htmlFor="message">
-        Vul je bericht in:
+
+      <label className='form-control'>
+        <div className='label'>
+          <span className="label-text">Vul je bericht in:</span>
+        </div>
+        <textarea
+          id="message"
+          name="message"
+          className="h-24 textarea textarea-bordered"
+        />
+        <ValidationError
+          prefix="Message"
+          field="message"
+          errors={state.errors}
+        />
       </label>
-      <textarea
-        id="message"
-        name="message"
-      />
-      <ValidationError 
-        prefix="Message" 
-        field="message"
-        errors={state.errors}
-      />
-      <button type="submit" disabled={state.submitting}>
-        Verzenden
-      </button>
+
+      <div className="flex justify-end mt-2">
+        <button type="submit" disabled={state.submitting} className="btn btn-primary">
+          Verzenden
+        </button>
+      </div>
     </form>
   );
 }

@@ -7,24 +7,28 @@ const config: Config = {
       fontFamily: {
         sans: ['system-ui'],
       },
-      colors: {
-        pink: {
-          DEFAULT: '#ea247b',
-        },
-        white: {
-          DEFAULT: '#fefefe',
-        },
-        black: {
-          DEFAULT: '#020101',
-        },
-        green: {
-          DEFAULT: '#afbd43',
-        },
-      },
     },
   },
   plugins: [
     require('daisyui'),
   ],
+  daisyui: {
+    themes: [
+      {
+        light: {
+          ...require("daisyui/src/theming/themes")["light"],
+          "primary": "#ea247b",
+          "secondary": "#afbd43",
+          "accent": "#f1b357",
+          "neutral": "#57534e",
+          "base-100": "#F7F5DD",
+          "info": "#0ea5e9",
+          "success": "#4ade80",
+          "warning": "#fdba74",
+          "error": "#f87171",
+        },
+      }
+    ]
+  }
 };
 export default config;
