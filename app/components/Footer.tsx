@@ -2,7 +2,7 @@ import React from 'react';
 
 const Footer: React.FC = () => {
     return (
-        <div className="flex justify-center align-middle bg-gray-300 min-h-72">
+        <div className="flex justify-center align-middle bg-base-300 min-h-72">
             <footer className="py-10 footer text-base-content max-w-[1280px]">
                 <nav>
                     <h6 className="footer-title">Services</h6>
