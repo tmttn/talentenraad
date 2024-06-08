@@ -6,7 +6,11 @@
     "dev": "NODE_OPTIONS=--no-node-snapshot next dev",
     "build": "NODE_OPTIONS=--no-node-snapshot next build",
     "start": "NODE_OPTIONS=--no-node-snapshot next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "xo"
+  },
+  "engines": {
+    "node": ">=20.10.0"
   },
   "dependencies": {
     "@builder.io/dev-tools": "^1.0.12",
@@ -20,14 +24,19 @@
     "react-dom": "^18"
   },
   "devDependencies": {
+    "@eslint/js": "^9.4.0",
+    "@types/eslint__js": "^8.42.3",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "daisyui": "^4.11.1",
-    "eslint": "^8",
+    "eslint": "^8.57.0",
     "eslint-config-next": "14.2.3",
+    "eslint-plugin-unicorn": "^53.0.0",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.12.0",
+    "xo": "^0.58.0"
   }
 }
