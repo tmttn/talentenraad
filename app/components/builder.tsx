@@ -4,8 +4,8 @@ import {type ComponentProps} from 'react';
 import {BuilderComponent, useIsPreviewing} from '@builder.io/react';
 import {builder} from '@builder.io/sdk';
 import DefaultErrorPage from 'next/error';
-// eslint-disable-next-line import/no-unassigned-import
-import '../../builder-registry.ts';
+// eslint-disable-next-line import/no-unassigned-import, import/extensions
+import '../../builder-registry';
 
 type BuilderPageProperties = ComponentProps<typeof BuilderComponent>;
 

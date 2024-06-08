@@ -10,7 +10,7 @@
     "test": "xo"
   },
   "engines": {
-    "node": ">=20.10.0"
+    "node": "20.10.0"
   },
   "dependencies": {
     "@builder.io/dev-tools": "^1.0.12",
