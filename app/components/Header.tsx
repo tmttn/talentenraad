@@ -4,7 +4,7 @@ type HeaderProps = {
     navigation: { value: { data: { links?: { url: string, text: string }[] } } };
 };
 
-const Header: React.FC<Readonly<HeaderProps>> = ({navigation}) => {
+const Header: React.FC<Readonly<HeaderProps>> = ({ navigation }) => {
 
     const links = navigation.value.data.links;
 
