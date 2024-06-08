@@ -9,9 +9,6 @@
     "lint": "next lint",
     "test": "xo"
   },
-  "engines": {
-    "node": "20.10.0"
-  },
   "dependencies": {
     "@builder.io/dev-tools": "^1.0.12",
     "@builder.io/react": "^3.2.6",
