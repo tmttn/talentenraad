@@ -6,6 +6,14 @@ builder.init(process.env.NEXT_PUBLIC_BUILDER_API_KEY!);
 
 Builder.registerComponent(Footer, {
   name: "Footer",
+  inputs: [
+    {
+      name: "navigation",
+      type: "reference",
+      model: "grouped-navigation-links",
+      required: true,
+    },
+  ],
 });
 
 Builder.registerComponent(FeedbackForm, {
