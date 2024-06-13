@@ -1,49 +1,38 @@
 import {env} from 'node:process';
-import {builder, type BuilderContent} from '@builder.io/sdk';
-import Head from 'next/head';
-import {RenderBuilderContent} from '@components/builder';
+import {
+	fetchOneEntry, isPreviewing, isEditing, Content,
+} from '@builder.io/sdk-react-nextjs';
+import {HeaderInfo, FooterInfo} from '@components/index';
 
-builder.init(env.NEXT_PUBLIC_BUILDER_API_KEY!);
+// Builder Public API Key set in .env file
+const builderPublicApiKey = env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 type PageProperties = {
-	params: {
-		page: string[];
-	};
+	params: {slug: string[]};
+	searchParams: Record<string, string>;
 };
 
-const NewsArticle: React.FC<Readonly<PageProperties>> = async properties => {
-	const model = 'news-article';
-	const content = await builder
-		.get('news-article', {
-			prerender: false,
-			// Include references, like the `author` ref
-			options: {includeRefs: true},
-			query: {
-				data: {
-					handle: properties?.params?.page?.join('/'),
-				},
-			},
-		})
-		.toPromise() as BuilderContent;
+export default async function Page(properties: Readonly<PageProperties>) {
+	const urlPath = '/nieuws/' + (properties.params?.slug?.join('/') || '');
 
-	return (
-		<>
-			<Head>
-				{/* Render meta tags from custom field */}
-				<title>{content?.data?.title}</title>
-				<title>test</title>
-				<meta name='description' content={content?.data?.blurb as string} />
-				<meta name='og:image' content={content?.data?.image as string} />
-			</Head>
-			<div>
-				{/* Render the Builder drag/dropped content */}
-				<RenderBuilderContent
-					content={content}
-					model={model}
-				/>
-			</div>
-		</>
-	);
-};
+	const content = await fetchOneEntry({
+		options: properties.searchParams,
+		apiKey: builderPublicApiKey,
+		model: 'news-article',
+		userAttributes: {urlPath},
+	});
 
-export default NewsArticle;
+	const canShowContent
+    = content ?? isPreviewing(properties.searchParams) ?? isEditing(properties.searchParams);
+
+	if (!canShowContent) {
+		return (
+			<>
+				<h1>404</h1>
+				<p>Make sure you have your content published at builder.io.</p>
+			</>
+		);
+	}
+
+	return <Content content={content} apiKey={builderPublicApiKey} model={'page'} customComponents={[HeaderInfo, FooterInfo]} />;
+}

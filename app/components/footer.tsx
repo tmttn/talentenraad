@@ -5,14 +5,14 @@ type FooterProperties = {
 	navigation: {value: {data: {groups: Array<{title: string; navigationlinks: {links: Array<{url: string; text: string}>}}>}}};
 };
 
-const Footer: React.FC<Readonly<FooterProperties>> = ({navigation}) => {
+async function Footer({navigation}: Readonly<FooterProperties>) {
 	const footerNavigation = navigation.value.data.groups;
 
 	return (
 		<div className='flex justify-center align-middle bg-gray-100 min-h-72'>
-			<footer className='py-10 footer text-base-content max-w-[1280px]'>
+			<footer role='contentinfo' className='py-10 footer text-base-content max-w-[1280px]'>
 				{footerNavigation.map(group => (
-					<nav key={group.title}>
+					<nav role='navigation' key={group.title}>
 						<span className='footer-title'>{group.title}</span>
 						{group.navigationlinks.links.map(link => (
 							<Link key={link.url} href={link.url} className='link link-hover'>{link.text}</Link>
@@ -30,6 +30,21 @@ const Footer: React.FC<Readonly<FooterProperties>> = ({navigation}) => {
 			</footer>
 		</div>
 	);
+}
+
+export const FooterInfo = {
+	name: 'Footer',
+	component: Footer,
+	inputs: [
+		{
+			name: 'navigation',
+			type: 'reference',
+			model: 'grouped-navigation-list',
+			required: true,
+		},
+	],
+	// You must add the below option or the SDK will fail to render.
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	isRSC: true,
 };
 
-export default Footer;

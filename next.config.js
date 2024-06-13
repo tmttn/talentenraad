@@ -1,8 +1,9 @@
-// eslint-disable-next-line unicorn/prefer-module
-const withBuilderDevelopmentTools = require('@builder.io/dev-tools/next')();
-
 /** @type {import('next').NextConfig} */
-const nextConfig = withBuilderDevelopmentTools({});
+const nextConfig = {
+	experimental: {
+		serverComponentsExternalPackages: ['isolated-vm'],
+	},
+};
 
 nextConfig.webpack = (webpackConfig, {webpack}) => {
 	webpackConfig.plugins.push(

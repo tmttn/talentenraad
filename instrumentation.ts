@@ -1,9 +1,12 @@
-export async function register() {
-  if (process.env.NEXT_RUNTIME === 'nodejs') {
-    await import('./sentry.server.config');
-  }
+/* eslint-disable import/extensions */
+import {env} from 'node:process';
 
-  if (process.env.NEXT_RUNTIME === 'edge') {
-    await import('./sentry.edge.config');
-  }
+export async function register() {
+	if (env.NEXT_RUNTIME === 'nodejs') {
+		await import('./sentry.server.config');
+	}
+
+	if (env.NEXT_RUNTIME === 'edge') {
+		await import('./sentry.edge.config');
+	}
 }

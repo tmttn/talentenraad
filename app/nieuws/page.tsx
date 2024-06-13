@@ -1,35 +1,38 @@
 import {env} from 'node:process';
-import {builder, type BuilderContent} from '@builder.io/sdk';
-import {RenderBuilderContent} from '@components/builder';
+import {
+	fetchOneEntry, isPreviewing, isEditing, Content,
+} from '@builder.io/sdk-react-nextjs';
+import {HeaderInfo, FooterInfo, NewsArticleListInfo} from '@components/index';
 
 // Builder Public API Key set in .env file
-builder.init(env.NEXT_PUBLIC_BUILDER_API_KEY!);
+const builderPublicApiKey = env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 type PageProperties = {
-	params: {
-		page: string[];
-	};
+	params: {slug: string[]};
+	searchParams: Record<string, string>;
 };
 
-const Page: React.FC<Readonly<PageProperties>> = async properties => {
-	const builderModelName = 'page';
+export default async function Page(properties: Readonly<PageProperties>) {
+	const urlPath = '/nieuws';
 
-	const content = await builder
-	// Get the page content from Builder with the specified options
-		.get(builderModelName, {
-			userAttributes: {
-				urlPath: '/nieuws',
-			},
-		})
-	// Convert the result to a promise
-		.toPromise() as BuilderContent;
+	const content = await fetchOneEntry({
+		options: properties.searchParams,
+		apiKey: builderPublicApiKey,
+		model: 'page',
+		userAttributes: {urlPath},
+	});
 
-	return (
-		<>
-			{/* Render the Builder page */}
-			<RenderBuilderContent content={content} model={builderModelName} />
-		</>
-	);
-};
+	const canShowContent
+    = content ?? isPreviewing(properties.searchParams) ?? isEditing(properties.searchParams);
 
-export default Page;
+	if (!canShowContent) {
+		return (
+			<>
+				<h1>404</h1>
+				<p>Make sure you have your content published at builder.io.</p>
+			</>
+		);
+	}
+
+	return <Content content={content} apiKey={builderPublicApiKey} model={'page'} customComponents={[HeaderInfo, FooterInfo, NewsArticleListInfo]} />;
+}
