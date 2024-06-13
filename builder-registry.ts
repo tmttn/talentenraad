@@ -1,27 +1,11 @@
 'use client';
-import {env} from 'node:process';
+import {env} from "node:process";
 import {builder, Builder} from '@builder.io/react';
 import {
-	Header, Footer, FeedbackForm, NewsArticleList,
+	FeedbackForm, Footer, Header, NewsArticleList,
 } from '@components/index';
 
 builder.init(env.NEXT_PUBLIC_BUILDER_API_KEY!);
-
-Builder.registerComponent(Footer, {
-	name: 'Footer',
-	inputs: [
-		{
-			name: 'navigation',
-			type: 'reference',
-			model: 'grouped-navigation-links',
-			required: true,
-		},
-	],
-});
-
-Builder.registerComponent(FeedbackForm, {
-	name: 'FeedbackForm',
-});
 
 Builder.registerComponent(Header, {
 	name: 'Header',
@@ -29,10 +13,26 @@ Builder.registerComponent(Header, {
 		{
 			name: 'navigation',
 			type: 'reference',
-			model: 'navigation-links',
+			model: 'navigation-list',
 			required: true,
 		},
 	],
+});
+
+Builder.registerComponent(Footer, {
+	name: 'Footer',
+	inputs: [
+		{
+			name: 'navigation',
+			type: 'reference',
+			model: 'grouped-navigation-list',
+			required: true,
+		},
+	],
+});
+
+Builder.registerComponent(FeedbackForm, {
+	name: 'FeedbackForm',
 });
 
 Builder.registerComponent(NewsArticleList, {
