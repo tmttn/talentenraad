@@ -1,6 +1,6 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended", "default:automergeMinor"
+    "config:recommended", "default:automergeMinor", "default:enableVulnerabilityAlerts", "npm:unpublishSafe","replacements:all","helpers:followTypescriptNext", "security:openssf-scorecard"
   ],
 }
