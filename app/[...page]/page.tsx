@@ -2,7 +2,10 @@ import {env} from 'node:process';
 import {
 	fetchOneEntry, isPreviewing, isEditing, Content,
 } from '@builder.io/sdk-react-nextjs';
-import {HeaderInfo, FooterInfo} from '@components/index';
+import {HeaderInfo, FooterInfo} from '@/components';
+
+// Add this line to make the page dynamic
+export const dynamic = 'force-dynamic';
 
 // Builder Public API Key set in .env file
 const builderPublicApiKey = env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -23,7 +26,7 @@ export default async function Page(properties: Readonly<PageProperties>) {
 	});
 
 	const canShowContent
-    = content ?? isPreviewing(properties.searchParams) ?? isEditing(properties.searchParams);
+		= content ?? isPreviewing(properties.searchParams) ?? isEditing(properties.searchParams);
 
 	if (!canShowContent) {
 		return (
