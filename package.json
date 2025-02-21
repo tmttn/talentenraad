@@ -10,7 +10,7 @@
     "test": "xo"
   },
   "dependencies": {
-    "@builder.io/sdk-react-nextjs": "^0.14.21",
+    "@builder.io/sdk-react-nextjs": "^0.18.0",
     "@sentry/nextjs": "^8.9.2",
     "@vercel/analytics": "^1.3.0",
     "@vercel/speed-insights": "^1.0.10",
