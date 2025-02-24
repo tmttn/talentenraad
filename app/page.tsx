@@ -17,14 +17,14 @@ export default async function Page(properties: Readonly<PageProperties>) {
 	const urlPath = '/';
 
 	const content = await fetchOneEntry({
-		options: properties.searchParams,
+		options: (await properties.searchParams),
 		apiKey: builderPublicApiKey,
 		model: 'page',
 		userAttributes: {urlPath},
 	});
 
 	const canShowContent
-    = content ?? isPreviewing(properties.searchParams) ?? isEditing(properties.searchParams);
+    = content ?? isPreviewing((await properties.searchParams)) ?? isEditing((await properties.searchParams));
 
 	if (!canShowContent) {
 		return (
