@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	experimental: {
-		serverComponentsExternalPackages: ['isolated-vm'],
-	},
+	serverExternalPackages: ['isolated-vm'],
 };
 
 nextConfig.webpack = (webpackConfig, {webpack}) => {
