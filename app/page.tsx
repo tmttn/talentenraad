@@ -16,7 +16,7 @@ export default async function Page(properties: Readonly<PageProperties>) {
 	const urlPath = '/';
 
 	const content = await fetchOneEntry({
-		options: properties.searchParams,
+		options: await properties.searchParams,
 		apiKey: builderPublicApiKey,
 		model: 'page',
 		userAttributes: {urlPath},
