@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "NODE_OPTIONS=--no-node-snapshot next dev",
-    "build": "NODE_OPTIONS=--no-node-snapshot next build",
-    "start": "NODE_OPTIONS=--no-node-snapshot next start",
+    "dev": "cross-env NODE_OPTIONS='--no-node-snapshot' next dev",
+    "build": "cross-env NODE_OPTIONS='--no-node-snapshot' next build",
+    "start": "cross-env NODE_OPTIONS='--no-node-snapshot' next start",
     "lint": "next lint",
     "test": "xo"
   },
@@ -24,6 +24,7 @@
     "@types/node": "^22.0.0",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cross-env": "^7.0.3",
     "daisyui": "^4.11.1",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.24",
