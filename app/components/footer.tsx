@@ -5,7 +5,7 @@ type FooterProperties = {
 	navigation: {value: {data: {groups: Array<{title: string; navigationlinks: {links: Array<{url: string; text: string}>}}>}}};
 };
 
-async function Footer({navigation}: Readonly<FooterProperties>) {
+function Footer({navigation}: Readonly<FooterProperties>) {
 	const footerNavigation = navigation?.value?.data?.groups ?? [];
 
 	return (

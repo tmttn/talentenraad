@@ -5,7 +5,7 @@ type HeaderProperties = {
 	navigation: {value: {data: {links: Array<{url: string; text: string}>}}};
 };
 
-async function Header({navigation}: Readonly<HeaderProperties>) {
+function Header({navigation}: Readonly<HeaderProperties>) {
 	const links = navigation?.value?.data?.links ?? [];
 
 	return (
