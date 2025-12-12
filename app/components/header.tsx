@@ -6,7 +6,7 @@ type HeaderProperties = {
 };
 
 async function Header({navigation}: Readonly<HeaderProperties>) {
-	const {links} = navigation.value.data;
+	const links = navigation?.value?.data?.links ?? [];
 
 	return (
 		<header role='banner' className='flex justify-center min-h-72'>

@@ -6,7 +6,7 @@ type FooterProperties = {
 };
 
 async function Footer({navigation}: Readonly<FooterProperties>) {
-	const footerNavigation = navigation.value.data.groups;
+	const footerNavigation = navigation?.value?.data?.groups ?? [];
 
 	return (
 		<div className='flex justify-center align-middle bg-gray-100 min-h-72'>
@@ -14,7 +14,7 @@ async function Footer({navigation}: Readonly<FooterProperties>) {
 				{footerNavigation.map(group => (
 					<nav role='navigation' key={group.title}>
 						<span className='footer-title'>{group.title}</span>
-						{group.navigationlinks.links.map(link => (
+						{(group.navigationlinks?.links ?? []).map(link => (
 							<Link key={link.url} href={link.url} className='link link-hover'>{link.text}</Link>
 						))}
 					</nav>
