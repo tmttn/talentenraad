@@ -1,11 +1,11 @@
 'use client';
 
-import {Content} from '@builder.io/sdk-react-nextjs';
+import {Content, type BuilderContent as BuilderContentType} from '@builder.io/sdk-react-nextjs';
 import {HeaderInfo} from './header';
 import {FooterInfo} from './footer';
 
 type BuilderContentProperties = {
-	content: unknown;
+	content: BuilderContentType | null;
 	apiKey: string;
 	model: string;
 };
