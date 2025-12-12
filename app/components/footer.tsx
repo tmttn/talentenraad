@@ -43,8 +43,5 @@ export const FooterInfo = {
 			required: true,
 		},
 	],
-	// You must add the below option or the SDK will fail to render.
-	// eslint-disable-next-line @typescript-eslint/naming-convention
-	isRSC: true,
 };
 
