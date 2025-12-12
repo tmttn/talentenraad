@@ -1,4 +1,3 @@
-import {env} from 'node:process';
 import {
 	fetchOneEntry, isPreviewing, isEditing, Content,
 } from '@builder.io/sdk-react-nextjs';
@@ -8,7 +7,7 @@ import {HeaderInfo, FooterInfo} from '@/components';
 export const dynamic = 'force-dynamic';
 
 // Builder Public API Key set in .env file
-const builderPublicApiKey = env.NEXT_PUBLIC_BUILDER_API_KEY!;
+const builderPublicApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 type PageProperties = {
 	params: Promise<{slug: string[]}>;
