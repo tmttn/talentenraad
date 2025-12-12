@@ -3,14 +3,13 @@ import {
 	fetchOneEntry, isPreviewing, isEditing, Content,
 } from '@builder.io/sdk-react-nextjs';
 import {HeaderInfo, FooterInfo} from '@components/index';
-import { PageProps } from '../.next/types/app/page';
 
 // Builder Public API Key set in .env file
 const builderPublicApiKey = env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
-type PageProperties = PageProps & {
-	params: {slug: string[]};
-	searchParams: Record<string, string>;
+type PageProperties = {
+	params: Promise<{slug: string[]}>;
+	searchParams: Promise<Record<string, string>>;
 };
 
 export default async function Page(properties: Readonly<PageProperties>) {
