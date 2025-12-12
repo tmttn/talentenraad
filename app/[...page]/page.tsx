@@ -7,7 +7,7 @@ import {HeaderInfo, FooterInfo} from '@/components';
 export const dynamic = 'force-dynamic';
 
 // Builder Public API Key set in .env file
-const builderPublicApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+const builderPublicApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
 
 type PageProperties = {
 	params: Promise<{slug: string[]}>;
@@ -17,12 +17,31 @@ type PageProperties = {
 export default async function Page(properties: Readonly<PageProperties>) {
 	const urlPath = '/' + ((await properties.params)?.slug?.join('/') || '');
 
-	const content = await fetchOneEntry({
-		options: (await properties.searchParams),
-		apiKey: builderPublicApiKey,
-		model: 'page',
-		userAttributes: {urlPath},
-	});
+	if (!builderPublicApiKey) {
+		return (
+			<div>
+				<h1>Configuration Error</h1>
+				<p>NEXT_PUBLIC_BUILDER_API_KEY is not set</p>
+			</div>
+		);
+	}
+
+	let content;
+	try {
+		content = await fetchOneEntry({
+			options: (await properties.searchParams),
+			apiKey: builderPublicApiKey,
+			model: 'page',
+			userAttributes: {urlPath},
+		});
+	} catch (error) {
+		return (
+			<div>
+				<h1>Error fetching content</h1>
+				<p>{error instanceof Error ? error.message : 'Unknown error'}</p>
+			</div>
+		);
+	}
 
 	const canShowContent
 		= content ?? isPreviewing((await properties.searchParams)) ?? isEditing((await properties.searchParams));
