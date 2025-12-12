@@ -1,7 +1,7 @@
 import {
-	fetchOneEntry, isPreviewing, isEditing, Content,
+	fetchOneEntry, isPreviewing, isEditing,
 } from '@builder.io/sdk-react-nextjs';
-import {HeaderInfo, FooterInfo} from '@/components';
+import {BuilderContent} from '@/components/builder-content';
 
 // Add this line to make the page dynamic
 export const dynamic = 'force-dynamic';
@@ -55,5 +55,5 @@ export default async function Page(properties: Readonly<PageProperties>) {
 		);
 	}
 
-	return <Content content={content} apiKey={builderPublicApiKey} model={'page'} customComponents={[HeaderInfo, FooterInfo]} />;
+	return <BuilderContent content={content} apiKey={builderPublicApiKey} model="page" />;
 }

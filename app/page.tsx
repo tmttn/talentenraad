@@ -1,7 +1,7 @@
 import {
-	fetchOneEntry, isPreviewing, isEditing, Content,
+	fetchOneEntry, isPreviewing, isEditing,
 } from '@builder.io/sdk-react-nextjs';
-import {HeaderInfo, FooterInfo} from '@components/index';
+import {BuilderContent} from '@components/builder-content';
 
 // Builder Public API Key set in .env file
 const builderPublicApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
@@ -52,5 +52,5 @@ export default async function Page(properties: Readonly<PageProperties>) {
 		);
 	}
 
-	return <Content content={content} apiKey={builderPublicApiKey} model={'page'} customComponents={[HeaderInfo, FooterInfo]}/>;
+	return <BuilderContent content={content} apiKey={builderPublicApiKey} model="page" />;
 }
