@@ -47,7 +47,8 @@
     "ignores": [
       "__tests__/**",
       "jest.config.ts",
-      "jest.setup.tsx"
+      "jest.setup.tsx",
+      "commitlint.config.js"
     ]
   }
 }
