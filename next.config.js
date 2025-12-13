@@ -29,6 +29,33 @@ nextConfig.images = {
 	],
 };
 
+// Security headers
+nextConfig.headers = async () => {
+	return [
+		{
+			source: '/(.*)',
+			headers: [
+				{
+					key: 'X-Frame-Options',
+					value: 'DENY',
+				},
+				{
+					key: 'X-Content-Type-Options',
+					value: 'nosniff',
+				},
+				{
+					key: 'Referrer-Policy',
+					value: 'strict-origin-when-cross-origin',
+				},
+				{
+					key: 'Permissions-Policy',
+					value: 'camera=(), microphone=(), geolocation=()',
+				},
+			],
+		},
+	];
+};
+
 // eslint-disable-next-line unicorn/prefer-module
 module.exports = nextConfig;
 
