@@ -1,9 +1,9 @@
 'use client';
 
 import {Content, type BuilderContent as BuilderContentType} from '@builder.io/sdk-react-nextjs';
-// eslint-disable-next-line import-x/extensions, n/file-extension-in-import
+// eslint-disable-next-line import-x/extensions
 import {HeaderInfo} from './header';
-// eslint-disable-next-line import-x/extensions, n/file-extension-in-import
+// eslint-disable-next-line import-x/extensions
 import {FooterInfo} from './footer';
 
 type BuilderContentProperties = {

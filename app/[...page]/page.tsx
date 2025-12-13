@@ -1,19 +1,22 @@
 import {
-	fetchOneEntry, isPreviewing, isEditing,
-} from '@builder.io/sdk-react-nextjs';
+	builderPublicApiKey,
+	fetchBuilderContent,
+	canShowBuilderContent,
+	ConfigurationError,
+	FetchError,
+	NotFoundContent,
+	type PageSearchParameters,
+// eslint-disable-next-line import-x/extensions
+} from '../lib/builder-utils';
 // eslint-disable-next-line import-x/extensions
 import {BuilderContent} from '@/components/builder-content';
 
 // Add this line to make the page dynamic
 export const dynamic = 'force-dynamic';
 
-// Builder Public API Key set in .env file
-// eslint-disable-next-line n/prefer-global/process
-const builderPublicApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
-
 type PageProperties = {
 	params: Promise<{slug: string[]}>;
-	searchParams: Promise<Record<string, string>>;
+	searchParams: Promise<PageSearchParameters>;
 };
 
 export default async function Page(properties: Readonly<PageProperties>) {
@@ -21,42 +24,19 @@ export default async function Page(properties: Readonly<PageProperties>) {
 	const urlPath = '/' + (parameters?.slug?.join('/') || '');
 
 	if (!builderPublicApiKey) {
-		return (
-			<div>
-				<h1>Configuration Error</h1>
-				<p>NEXT_PUBLIC_BUILDER_API_KEY is not set</p>
-			</div>
-		);
+		return <ConfigurationError />;
 	}
 
-	let content;
-	try {
-		content = await fetchOneEntry({
-			options: (await properties.searchParams),
-			apiKey: builderPublicApiKey,
-			model: 'page',
-			userAttributes: {urlPath},
-		});
-	} catch (error) {
-		return (
-			<div>
-				<h1>Error fetching content</h1>
-				<p>{error instanceof Error ? error.message : 'Unknown error'}</p>
-			</div>
-		);
+	const searchParameters = await properties.searchParams;
+	const {content, error} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
+
+	if (error) {
+		return <FetchError message={error} />;
 	}
 
-	const canShowContent
-		= content ?? isPreviewing((await properties.searchParams)) ?? isEditing((await properties.searchParams));
-
-	if (!canShowContent) {
-		return (
-			<>
-				<h1>404</h1>
-				<p>Make sure you have your content published at builder.io.</p>
-			</>
-		);
+	if (!canShowBuilderContent(content, searchParameters)) {
+		return <NotFoundContent />;
 	}
 
-	return <BuilderContent content={content} apiKey={builderPublicApiKey} model='page' />;
+	return <BuilderContent content={content ?? null} apiKey={builderPublicApiKey} model='page' />;
 }

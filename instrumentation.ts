@@ -1,4 +1,4 @@
-/* eslint-disable import-x/extensions, n/prefer-global/process */
+/* eslint-disable n/prefer-global/process */
 
 export async function register() {
 	if (process.env.NEXT_RUNTIME === 'nodejs') {
