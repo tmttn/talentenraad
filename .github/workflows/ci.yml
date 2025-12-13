@@ -26,7 +26,7 @@ jobs:
         run: npm ci
 
       - name: Lint (xo)
-        run: npm run test
+        run: npm run test:xo
 
       - name: Build
         run: npm run build
@@ -44,6 +44,18 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '24.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v7
