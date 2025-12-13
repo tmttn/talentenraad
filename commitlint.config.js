@@ -22,7 +22,7 @@ module.exports = {
     ],
     'subject-min-length': [2, 'always', 1],
     'subject-max-length': [2, 'always', 100],
-    'subject-case': [2, 'always', 'sentence-case'],
+    'subject-case': [0],
     'header-max-length': [2, 'always', 120],
     // Custom rule to allow any emoji at the start
     'header-pattern': [
