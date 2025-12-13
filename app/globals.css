@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-@plugin "daisyui/theme" { /* NOSONAR */
+@plugin "daisyui/theme" {
     name: "light";
     default: false;
     prefersdark: false;
