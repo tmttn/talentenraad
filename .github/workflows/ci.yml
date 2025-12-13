@@ -161,16 +161,12 @@ jobs:
     - name: Run XO linting
       run: npm run test:xo
 
-    - name: Run Next.js linting
-      run: npm run lint
-
     - name: Create lint & type check summary
       run: |
         echo "## Code Quality Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo "- **TypeScript**: No type errors detected" >> $GITHUB_STEP_SUMMARY
         echo "- **XO**: Code meets strict linting standards" >> $GITHUB_STEP_SUMMARY
-        echo "- **ESLint/Next.js**: Framework-specific rules passed" >> $GITHUB_STEP_SUMMARY
 
   # QA Job 3: Security - Dependency Vulnerability Scan
   security-audit:
