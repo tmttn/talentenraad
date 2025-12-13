@@ -14,6 +14,7 @@ Sentry.init({
 	debug: false,
 
 	// Uncomment the line below to enable Spotlight (https://spotlightjs.com)
+	// eslint-disable-next-line n/prefer-global/process
 	spotlight: process.env.NODE_ENV === 'development',
 
 });

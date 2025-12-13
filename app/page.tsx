@@ -4,6 +4,7 @@ import {
 import {BuilderContent} from '@components/builder-content';
 
 // Builder Public API Key set in .env file
+// eslint-disable-next-line n/prefer-global/process
 const builderPublicApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
 
 type PageProperties = {
@@ -52,5 +53,5 @@ export default async function Page(properties: Readonly<PageProperties>) {
 		);
 	}
 
-	return <BuilderContent content={content} apiKey={builderPublicApiKey} model="page" />;
+	return <BuilderContent content={content} apiKey={builderPublicApiKey} model='page' />;
 }

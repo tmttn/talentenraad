@@ -16,6 +16,7 @@ export default function RootLayout({
 	return (
 		<html lang='nl' className='overflow-auto'>
 			<head>
+				{/* eslint-disable-next-line n/prefer-global/process */}
 				{(process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') && (
 					<script
 						data-project-id='cXhuDUHiYP0QQFVsZtiEudYQMB95amgg0c9tgiNr'

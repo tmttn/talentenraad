@@ -1,12 +1,14 @@
 import {
 	fetchOneEntry, isPreviewing, isEditing,
 } from '@builder.io/sdk-react-nextjs';
+// eslint-disable-next-line import/extensions
 import {BuilderContent} from '@/components/builder-content';
 
 // Add this line to make the page dynamic
 export const dynamic = 'force-dynamic';
 
 // Builder Public API Key set in .env file
+// eslint-disable-next-line n/prefer-global/process
 const builderPublicApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
 
 type PageProperties = {
@@ -15,7 +17,8 @@ type PageProperties = {
 };
 
 export default async function Page(properties: Readonly<PageProperties>) {
-	const urlPath = '/' + ((await properties.params)?.slug?.join('/') || '');
+	const parameters = await properties.params;
+	const urlPath = '/' + (parameters?.slug?.join('/') || '');
 
 	if (!builderPublicApiKey) {
 		return (
@@ -55,5 +58,5 @@ export default async function Page(properties: Readonly<PageProperties>) {
 		);
 	}
 
-	return <BuilderContent content={content} apiKey={builderPublicApiKey} model="page" />;
+	return <BuilderContent content={content} apiKey={builderPublicApiKey} model='page' />;
 }

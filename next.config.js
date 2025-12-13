@@ -30,40 +30,41 @@ nextConfig.images = {
 };
 
 // Security headers
-nextConfig.headers = async () => {
-	return [
-		{
-			source: '/(.*)',
-			headers: [
-				{
-					key: 'X-Frame-Options',
-					value: 'DENY',
-				},
-				{
-					key: 'X-Content-Type-Options',
-					value: 'nosniff',
-				},
-				{
-					key: 'Referrer-Policy',
-					value: 'strict-origin-when-cross-origin',
-				},
-				{
-					key: 'Permissions-Policy',
-					value: 'camera=(), microphone=(), geolocation=()',
-				},
-			],
-		},
-	];
-};
+nextConfig.headers = async () => [
+	{
+		source: '/(.*)',
+		headers: [
+			{
+				key: 'X-Frame-Options',
+				value: 'DENY',
+			},
+			{
+				key: 'X-Content-Type-Options',
+				value: 'nosniff',
+			},
+			{
+				key: 'Referrer-Policy',
+				value: 'strict-origin-when-cross-origin',
+			},
+			{
+				key: 'Permissions-Policy',
+				value: 'camera=(), microphone=(), geolocation=()',
+			},
+		],
+	},
+];
 
 // eslint-disable-next-line unicorn/prefer-module
 module.exports = nextConfig;
 
 // Injected content via Sentry wizard below
 
+// eslint-disable-next-line unicorn/prefer-module
 const {withSentryConfig} = require('@sentry/nextjs');
 
+// eslint-disable-next-line unicorn/prefer-module
 module.exports = withSentryConfig(
+	// eslint-disable-next-line unicorn/prefer-module
 	module.exports,
 	{
 		// For all available options, see:
@@ -73,6 +74,7 @@ module.exports = withSentryConfig(
 		project: 'talentenraad',
 
 		// Only print logs for uploading source maps in CI
+		// eslint-disable-next-line n/prefer-global/process
 		silent: !process.env.CI,
 
 		// For all available options, see:
