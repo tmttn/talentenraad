@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* NOSONAR - @plugin is valid DaisyUI v5/Tailwind v4 syntax */
 @plugin "daisyui/theme" {
     name: "light";
     default: false;
