@@ -49,7 +49,8 @@
       "__tests__/**",
       "jest.config.ts",
       "jest.setup.tsx",
-      "commitlint.config.js"
+      "commitlint.config.js",
+      "eslint.config.mjs"
     ]
   }
 }
