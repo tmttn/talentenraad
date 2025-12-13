@@ -52,5 +52,8 @@
       "commitlint.config.js",
       "eslint.config.mjs"
     ]
+  },
+  "overrides": {
+    "@eslint/plugin-kit": "^0.3.4"
   }
 }
