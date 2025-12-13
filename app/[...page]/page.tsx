@@ -1,7 +1,7 @@
 import {
 	fetchOneEntry, isPreviewing, isEditing,
 } from '@builder.io/sdk-react-nextjs';
-// eslint-disable-next-line import/extensions
+// eslint-disable-next-line import-x/extensions
 import {BuilderContent} from '@/components/builder-content';
 
 // Add this line to make the page dynamic

@@ -2,13 +2,12 @@
 
 import * as Sentry from '@sentry/nextjs';
 import {useEffect} from 'react';
-import PropTypes from 'prop-types';
 
-GlobalError.propTypes = {
-	error: PropTypes.string.isRequired,
+type GlobalErrorProperties = {
+	error: Error & {digest?: string};
 };
 
-export default function GlobalError({error}) {
+export default function GlobalError({error}: Readonly<GlobalErrorProperties>) {
 	useEffect(() => {
 		Sentry.captureException(error);
 	}, [error]);
@@ -16,7 +15,7 @@ export default function GlobalError({error}) {
 	return (
 		<html lang='nl'>
 			<body>
-				<Error />
+				<h1>Something went wrong</h1>
 			</body>
 		</html>
 	);

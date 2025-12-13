@@ -4,6 +4,7 @@ const nextConfig = {
 };
 
 nextConfig.webpack = (webpackConfig, {webpack}) => {
+	// eslint-disable-next-line @stylistic/function-paren-newline
 	webpackConfig.plugins.push(
 		// Remove node: from import specifiers, because Next.js does not yet support node: scheme
 		// https://github.com/vercel/next.js/issues/28774
@@ -13,6 +14,7 @@ nextConfig.webpack = (webpackConfig, {webpack}) => {
 				resource.request = resource.request.replace(/^node:/, '');
 			},
 		),
+	// eslint-disable-next-line @stylistic/function-paren-newline
 	);
 
 	return webpackConfig;

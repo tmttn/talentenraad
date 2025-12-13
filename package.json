@@ -33,6 +33,6 @@
     "tailwindcss": "^4.0.8",
     "typescript": "^5.4.5",
     "typescript-eslint": "^8.0.0",
-    "xo": "^1.0.0"
+    "xo": "^1.2.3"
   }
 }
