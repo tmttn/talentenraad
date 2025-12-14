@@ -67,7 +67,7 @@ describe('builder-utils', () => {
 				model: 'page',
 				userAttributes: {urlPath: '/'},
 				cacheSeconds: 60,
-				fetchOptions: {next: {revalidate: 60}},
+				fetchOptions: {next: {revalidate: 5}},
 			});
 		});
 
@@ -85,7 +85,7 @@ describe('builder-utils', () => {
 				model: 'page',
 				userAttributes: {urlPath: '/about'},
 				cacheSeconds: 60,
-				fetchOptions: {next: {revalidate: 60}},
+				fetchOptions: {next: {revalidate: 5}},
 			});
 		});
 

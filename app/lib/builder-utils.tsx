@@ -77,7 +77,7 @@ export async function fetchBuilderContent(
 			},
 			cacheSeconds: 60,
 			fetchOptions: {
-				next: {revalidate: 60},
+				next: {revalidate: 5},
 			},
 		});
 		return {content};
@@ -107,7 +107,7 @@ export async function fetchBuilderSection(
 			},
 			cacheSeconds: 60,
 			fetchOptions: {
-				next: {revalidate: 60},
+				next: {revalidate: 5},
 			},
 		});
 		return content ?? undefined;

@@ -150,6 +150,6 @@ describe('[...page] without API key', () => {
 describe('[...page] revalidate export', () => {
 	it('exports ISR revalidate setting', async () => {
 		const {revalidate} = await import('../../../app/(main)/[...page]/page');
-		expect(revalidate).toBe(60);
+		expect(revalidate).toBe(5);
 	});
 });

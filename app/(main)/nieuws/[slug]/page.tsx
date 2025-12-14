@@ -30,7 +30,7 @@ async function getNieuwsItem(slug: string): Promise<NieuwsItem | undefined> {
 		url.searchParams.set('apiKey', builderApiKey);
 		url.searchParams.set('limit', '100');
 
-		const response = await fetch(url.toString(), {next: {revalidate: 60}});
+		const response = await fetch(url.toString(), {next: {revalidate: 5}});
 		const data = await response.json() as BuilderResponse;
 
 		if (!data.results) {

@@ -10,9 +10,8 @@ import {
 // eslint-disable-next-line import-x/extensions
 } from '../lib/builder-utils';
 
-// Enable ISR with revalidation every 60 seconds for better performance
-// While still keeping content relatively fresh
-export const revalidate = 60;
+// Enable ISR with fast revalidation for quick content updates
+export const revalidate = 5;
 
 type PageProperties = {
 	params: Promise<{slug: string[]}>;
