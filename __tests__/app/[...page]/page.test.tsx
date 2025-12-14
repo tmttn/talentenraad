@@ -18,7 +18,7 @@ jest.mock('../../../app/components/builder-content', () => ({
 	),
 }));
 
-import Page from '../../../app/[...page]/page';
+import Page from '../../../app/(main)/[...page]/page';
 
 describe('[...page] Dynamic Route', () => {
 	beforeEach(() => {
@@ -136,7 +136,7 @@ describe('[...page] without API key', () => {
 			NotFoundContent: () => <div>404 Not Found</div>,
 		}));
 
-		const {default: PageWithoutKey} = await import('../../../app/[...page]/page');
+		const {default: PageWithoutKey} = await import('../../../app/(main)/[...page]/page');
 		const Component = await PageWithoutKey({
 			params: Promise.resolve({page: ['test']}),
 			searchParams: Promise.resolve({}),
@@ -149,7 +149,7 @@ describe('[...page] without API key', () => {
 
 describe('[...page] revalidate export', () => {
 	it('exports ISR revalidate setting', async () => {
-		const {revalidate} = await import('../../../app/[...page]/page');
+		const {revalidate} = await import('../../../app/(main)/[...page]/page');
 		expect(revalidate).toBe(60);
 	});
 });

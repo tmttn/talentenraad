@@ -22,25 +22,27 @@ describe('RootLayout', () => {
 		expect(screen.getByText('Test Content')).toBeInTheDocument();
 	});
 
-	it('renders main element with role', () => {
+	it('renders body with correct classes', () => {
 		render(
 			<RootLayout>
 				<div>Content</div>
 			</RootLayout>,
 		);
 
-		expect(screen.getByRole('main')).toBeInTheDocument();
+		// The root layout now just provides the html/body structure
+		// The main element is in the (main) route group layout
+		expect(document.body).toHaveClass('min-h-screen', 'flex', 'flex-col', 'antialiased', 'bg-white');
 	});
 
-	it('wraps children in main element', () => {
+	it('wraps children in body element', () => {
 		render(
 			<RootLayout>
-				<span>Child content</span>
+				<span data-testid='child-span'>Child content</span>
 			</RootLayout>,
 		);
 
-		const main = screen.getByRole('main');
-		expect(main).toContainHTML('<span>Child content</span>');
+		expect(screen.getByTestId('child-span')).toBeInTheDocument();
+		expect(screen.getByText('Child content')).toBeInTheDocument();
 	});
 });
 

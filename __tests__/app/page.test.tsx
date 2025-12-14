@@ -18,7 +18,7 @@ jest.mock('../../app/components/builder-content', () => ({
 	),
 }));
 
-import Page from '../../app/page';
+import Page from '../../app/(main)/page';
 
 describe('Home Page', () => {
 	beforeEach(() => {
@@ -97,7 +97,7 @@ describe('Home Page without API key', () => {
 			NotFoundContent: () => <div>404 Not Found</div>,
 		}));
 
-		const {default: PageWithoutKey} = await import('../../app/page');
+		const {default: PageWithoutKey} = await import('../../app/(main)/page');
 		const searchParams = Promise.resolve({});
 		const Component = await PageWithoutKey({
 			params: Promise.resolve({slug: []}),
