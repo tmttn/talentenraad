@@ -6,7 +6,7 @@ type InfoCardProperties = {
 	icon?: 'heart' | 'users' | 'calendar' | 'star' | 'gift' | 'school' | 'money' | 'chat' | 'team' | 'email' | 'location' | 'phone';
 	link?: string;
 	linkText?: string;
-	variant?: 'default' | 'pink' | 'green' | 'orange' | 'gradient';
+	variant?: 'default' | 'pink' | 'green' | 'orange' | 'gradient' | 'accent';
 };
 
 const icons = {
@@ -110,6 +110,14 @@ const variantStyles = {
 		description: 'text-white/90',
 		link: 'text-white hover:text-white/80',
 	},
+	// Alias for pink variant
+	accent: {
+		card: 'bg-gradient-to-br from-[#ea247b] to-[#d91a6d]',
+		iconBg: 'bg-white/20 text-white',
+		title: 'text-white',
+		description: 'text-white/90',
+		link: 'text-white hover:text-white/80',
+	},
 };
 
 function InfoCard({
@@ -120,7 +128,8 @@ function InfoCard({
 	linkText = 'Meer info',
 	variant = 'default',
 }: Readonly<InfoCardProperties>) {
-	const styles = variantStyles[variant];
+	// Fallback to 'default' if variant is not recognized
+	const styles = variantStyles[variant] ?? variantStyles.default;
 
 	return (
 		<div className={`p-8 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 text-center group relative overflow-hidden ${styles.card}`}>
@@ -179,9 +188,9 @@ export const InfoCardInfo = {
 		{
 			name: 'variant',
 			type: 'string',
-			enum: ['default', 'pink', 'green', 'orange', 'gradient'],
+			enum: ['default', 'pink', 'green', 'orange', 'gradient', 'accent'],
 			defaultValue: 'default',
-			helperText: 'Kleurvariant van de kaart',
+			helperText: 'Kleurvariant van de kaart (accent = pink)',
 		},
 		{
 			name: 'link',

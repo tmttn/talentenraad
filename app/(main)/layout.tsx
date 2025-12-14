@@ -4,14 +4,13 @@ import {SiteHeaderServer} from '../components/site-header-server';
 import {SiteFooterServer} from '../components/site-footer-server';
 // eslint-disable-next-line import-x/extensions
 import {AnnouncementBanner} from '../components/announcement-banner';
-// eslint-disable-next-line import-x/extensions
-import {FooterCTASection} from '../components/builder-section';
 
 /**
  * Main Site Layout
  *
- * Includes header, footer, announcement banner, and CTA section.
+ * Includes header, footer, and announcement banner.
  * Header and footer content is managed via Builder.io.
+ * CTA sections should be added per-page via Builder.io content.
  */
 export default function MainSiteLayout({
 	children,
@@ -25,7 +24,6 @@ export default function MainSiteLayout({
 			<main id='main-content' role='main' className='flex-grow' tabIndex={-1}>
 				{children}
 			</main>
-			<FooterCTASection />
 			<SiteFooterServer />
 		</>
 	);
