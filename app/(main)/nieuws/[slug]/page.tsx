@@ -6,6 +6,13 @@ import {AnimatedLink} from '@components/ui';
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
+const proseClassName = [
+	'prose prose-lg max-w-none prose-headings:text-gray-800 prose-headings:font-bold',
+	'prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4 prose-p:text-gray-600 prose-p:mb-4',
+	'prose-ul:list-disc prose-ul:pl-6 prose-ul:my-4 prose-li:mb-1',
+	'prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-800',
+].join(' ');
+
 type NewsItem = {
 	id: string;
 	data: {
@@ -150,7 +157,7 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
 				{/* Content */}
 				{item.data.inhoud && (
 					<div
-						className='prose prose-lg max-w-none prose-headings:text-gray-800 prose-headings:font-bold prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4 prose-p:text-gray-600 prose-p:mb-4 prose-ul:list-disc prose-ul:pl-6 prose-ul:my-4 prose-li:mb-1 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-800'
+						className={proseClassName}
 						dangerouslySetInnerHTML={{__html: item.data.inhoud}}
 					/>
 				)}

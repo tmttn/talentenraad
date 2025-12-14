@@ -176,7 +176,11 @@ function TeamGrid({
 								>
 									{/* Avatar */}
 									<div className='relative mb-5 inline-block'>
-										<div className={`w-32 h-32 rounded-full bg-gradient-to-br ${avatarColors[index % avatarColors.length]} flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}>
+										<div className={[
+											'w-32 h-32 rounded-full bg-gradient-to-br flex items-center justify-center',
+											'shadow-lg group-hover:shadow-xl transition-shadow',
+											avatarColors[index % avatarColors.length],
+										].join(' ')}>
 											<span className='text-white font-bold text-3xl'>
 												{getInitials(member.name)}
 											</span>

@@ -3,6 +3,20 @@
 import {
 	useEffect, useState, useRef, useCallback, type KeyboardEvent,
 } from 'react';
+import {
+	QuestionIcon, ArrowRightIcon, questionPath, arrowRightPath,
+} from '@components/icons/icons';
+
+const faqButtonClassName = [
+	'faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4',
+	'hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2',
+	'focus-visible:ring-focus focus-visible:ring-offset-2',
+].join(' ');
+
+const contactButtonClassName = [
+	'inline-flex items-center gap-2 bg-primary text-white font-semibold py-3 px-6 rounded-lg',
+	'hover:bg-primary-hover transition-colors focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2',
+].join(' ');
 
 // CSS for smooth height animation using CSS Grid trick
 const faqStyles = `
@@ -265,7 +279,7 @@ function Faq({
 										onKeyDown={event => {
 											handleKeyDown(event, index);
 										}}
-										className='faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2'
+										className={faqButtonClassName}
 										aria-expanded={openIndex === index}
 										aria-controls={`faq-answer-${index}`}
 										id={`faq-button-${index}`}
@@ -302,8 +316,15 @@ function Faq({
 					: (
 						<div className='text-center py-16 px-8 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-dashed border-gray-200'>
 							<div className='w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center'>
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-10 w-10 text-primary' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
+								<svg
+									xmlns='http://www.w3.org/2000/svg'
+									className='h-10 w-10 text-primary'
+									fill='none'
+									viewBox='0 0 24 24'
+									stroke='currentColor'
+									aria-hidden='true'
+								>
+									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d={questionPath} />
 								</svg>
 							</div>
 							<h3 className='text-xl font-bold text-gray-800 mb-2'>Nog geen vragen</h3>
@@ -321,13 +342,17 @@ function Faq({
 						<p className='text-gray-600 mb-6'>
 							Neem gerust contact met ons op. We helpen je graag verder!
 						</p>
-						<a
-							href='/contact'
-							className='inline-flex items-center gap-2 bg-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-primary-hover transition-colors focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2'
-						>
+						<a href='/contact' className={contactButtonClassName}>
 							Stel je vraag
-							<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
+							<svg
+								xmlns='http://www.w3.org/2000/svg'
+								className='h-5 w-5'
+								fill='none'
+								viewBox='0 0 24 24'
+								stroke='currentColor'
+								aria-hidden='true'
+							>
+								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={arrowRightPath} />
 							</svg>
 						</a>
 					</div>

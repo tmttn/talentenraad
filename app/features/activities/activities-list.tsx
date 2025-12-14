@@ -3,6 +3,14 @@
 import {useEffect, useState} from 'react';
 import {AnimatedLink} from '@components/ui';
 
+const locationIconPath = 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z';
+const locationDotPath = 'M15 11a3 3 0 11-6 0 3 3 0 016 0z';
+
+const articleClassName = [
+	'flex items-start gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow',
+	'focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 group',
+].join(' ');
+
 type Activity = {
 	id: string;
 	data: {
@@ -172,7 +180,7 @@ function ActivitiesList({
 									>
 										<article
 											role='listitem'
-											className='flex items-start gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 group'
+											className={articleClassName}
 										>
 											<div className='flex-shrink-0 w-16 h-16 bg-primary rounded-xl flex flex-col items-center justify-center text-white'>
 												<span className='text-2xl font-bold leading-none'>{day}</span>
@@ -198,9 +206,16 @@ function ActivitiesList({
 												)}
 												{showLocation && activity.data.locatie && (
 													<p className='text-sm text-gray-500 flex items-center gap-1 mt-1'>
-														<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-															<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' />
-															<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 11a3 3 0 11-6 0 3 3 0 016 0z' />
+														<svg
+															xmlns='http://www.w3.org/2000/svg'
+															className='h-4 w-4'
+															fill='none'
+															viewBox='0 0 24 24'
+															stroke='currentColor'
+															aria-hidden='true'
+														>
+															<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={locationIconPath} />
+															<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={locationDotPath} />
 														</svg>
 														{activity.data.locatie}
 													</p>

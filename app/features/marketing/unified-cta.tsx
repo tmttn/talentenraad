@@ -38,6 +38,103 @@ type UnifiedCtaProperties = {
 	variant?: 'compact' | 'full' | 'minimal';
 };
 
+const ArrowIcon = () => (
+	<svg
+		className='cta-arrow w-4 h-4 flex-shrink-0'
+		fill='none'
+		viewBox='0 0 24 24'
+		stroke='currentColor'
+		aria-hidden='true'
+	>
+		<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
+	</svg>
+);
+
+const minimalButtonBase = [
+	'cta-button inline-flex items-center justify-center gap-2',
+	'font-semibold py-2.5 px-5 rounded-lg whitespace-nowrap',
+	'focus:outline-none focus:ring-2 focus:ring-offset-2',
+].join(' ');
+
+function MinimalVariant({title, actions}: {title: string; actions: CtaAction[]}) {
+	return (
+		<section className='bg-gray-900 py-8 px-6' aria-labelledby='cta-title-minimal'>
+			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
+			<div className='max-w-4xl mx-auto text-center'>
+				<h2 id='cta-title-minimal' className='text-xl md:text-2xl font-bold text-white mb-4'>
+					{title}
+				</h2>
+				<div className='flex flex-wrap justify-center gap-4'>
+					{actions.map(action => {
+						const variantClass = action.variant === 'primary'
+							? 'bg-primary text-white hover:bg-primary-hover focus:ring-primary'
+							: 'bg-white/10 text-white hover:bg-white/20 focus:ring-white';
+						const widthClass = actions.length > 1 ? 'w-[180px]' : '';
+						return (
+							<a
+								key={action.link}
+								href={action.link}
+								className={`${minimalButtonBase} ${widthClass} ${variantClass}`}
+							>
+								{action.text}
+								<ArrowIcon />
+							</a>
+						);
+					})}
+				</div>
+			</div>
+		</section>
+	);
+}
+
+const compactButtonBase = [
+	'cta-button inline-flex items-center justify-between gap-4',
+	'font-semibold py-3 px-6 rounded-lg whitespace-nowrap',
+	'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary',
+].join(' ');
+
+function CompactVariant({title, subtitle, actions}: {title: string; subtitle?: string; actions: CtaAction[]}) {
+	return (
+		<section
+			className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 py-10 px-6'
+			aria-labelledby='cta-title-compact'
+		>
+			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
+			<div className='max-w-4xl mx-auto'>
+				<div className='flex flex-col md:flex-row items-center justify-between gap-6'>
+					<div className='text-center md:text-left'>
+						<h2 id='cta-title-compact' className='text-xl md:text-2xl font-bold text-white mb-1'>
+							{title}
+						</h2>
+						{subtitle && (
+							<p className='text-white/90 text-sm md:text-base'>
+								{subtitle}
+							</p>
+						)}
+					</div>
+					<div className='flex flex-col gap-3 min-w-[200px]'>
+						{actions.map(action => {
+							const variantClass = action.variant === 'primary'
+								? 'bg-white text-primary hover:bg-gray-100 focus:ring-white'
+								: 'bg-white/10 text-white hover:bg-white/20 border border-white/30 focus:ring-white';
+							return (
+								<a
+									key={action.link}
+									href={action.link}
+									className={`${compactButtonBase} ${variantClass}`}
+								>
+									{action.text}
+									<ArrowIcon />
+								</a>
+							);
+						})}
+					</div>
+				</div>
+			</div>
+		</section>
+	);
+}
+
 function UnifiedCta({
 	title = 'Doe mee met de Talentenraad',
 	subtitle = 'Heb je vragen, ideeën, of wil je meehelpen? We horen graag van je!',
@@ -62,77 +159,80 @@ function UnifiedCta({
 	}
 
 	if (variant === 'minimal') {
-		return (
-			<section className='bg-gray-900 py-8 px-6' aria-labelledby='cta-title-minimal'>
-				<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
-				<div className='max-w-4xl mx-auto text-center'>
-					<h2 id='cta-title-minimal' className='text-xl md:text-2xl font-bold text-white mb-4'>
-						{title}
-					</h2>
-					<div className='flex flex-wrap justify-center gap-4'>
-						{actions.map(action => (
-							<a
-								key={action.link}
-								href={action.link}
-								className={`cta-button inline-flex items-center justify-center gap-2 font-semibold py-2.5 px-5 rounded-lg whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 ${actions.length > 1 ? 'w-[180px]' : ''} ${
-									action.variant === 'primary'
-										? 'bg-primary text-white hover:bg-primary-hover focus:ring-primary'
-										: 'bg-white/10 text-white hover:bg-white/20 focus:ring-white'
-								}`}
-							>
-								{action.text}
-								<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-								</svg>
-							</a>
-						))}
-					</div>
-				</div>
-			</section>
-		);
+		return <MinimalVariant title={title} actions={actions} />;
 	}
 
 	if (variant === 'compact') {
-		return (
-			<section className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 py-10 px-6' aria-labelledby='cta-title-compact'>
-				<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
-				<div className='max-w-4xl mx-auto'>
-					<div className='flex flex-col md:flex-row items-center justify-between gap-6'>
-						<div className='text-center md:text-left'>
-							<h2 id='cta-title-compact' className='text-xl md:text-2xl font-bold text-white mb-1'>
-								{title}
-							</h2>
-							{subtitle && (
-								<p className='text-white/90 text-sm md:text-base'>
-									{subtitle}
-								</p>
-							)}
-						</div>
-						<div className='flex flex-col gap-3 min-w-[200px]'>
-							{actions.map(action => (
-								<a
-									key={action.link}
-									href={action.link}
-									className={`cta-button inline-flex items-center justify-between gap-4 font-semibold py-3 px-6 rounded-lg whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary ${
-										action.variant === 'primary'
-											? 'bg-white text-primary hover:bg-gray-100 focus:ring-white'
-											: 'bg-white/10 text-white hover:bg-white/20 border border-white/30 focus:ring-white'
-									}`}
-								>
-									{action.text}
-									<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-										<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-									</svg>
-								</a>
-							))}
-						</div>
-					</div>
-				</div>
-			</section>
-		);
+		return <CompactVariant title={title} subtitle={subtitle} actions={actions} />;
 	}
 
 	// Full variant with feature cards
+	return (
+		<FullVariant
+			title={title}
+			subtitle={subtitle}
+			actions={actions}
+			showVolunteerCTA={showVolunteerCTA}
+			showContactCTA={showContactCTA}
+			showNewsletterCTA={showNewsletterCTA}
+		/>
+	);
+}
+
+const ChevronIcon = ({className}: {className?: string}) => (
+	<svg
+		xmlns='http://www.w3.org/2000/svg'
+		className={`cta-arrow h-4 w-4 ${className ?? ''}`}
+		fill='none'
+		viewBox='0 0 24 24'
+		stroke='currentColor'
+		aria-hidden='true'
+	>
+		<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
+	</svg>
+);
+
+const cardClassName = [
+	'bg-white/5 backdrop-blur-sm rounded-xl p-6',
+	'border border-white/10 hover:border-primary/50 transition-colors',
+].join(' ');
+
+const ctaLinkBase = [
+	'cta-link inline-flex items-center gap-1 font-medium text-sm',
+	'hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 rounded',
+].join(' ');
+
+const fullButtonBase = [
+	'cta-button inline-flex items-center justify-center gap-2',
+	'font-semibold py-3 px-8 rounded-lg',
+	'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900',
+].join(' ');
+
+/* eslint-disable @stylistic/max-len */
+const volunteerIconPath = 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z';
+const questionIconPath = 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+const emailIconPath = 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z';
+/* eslint-enable @stylistic/max-len */
+
+function FullVariant({
+	title,
+	subtitle,
+	actions,
+	showVolunteerCTA,
+	showContactCTA,
+	showNewsletterCTA,
+}: {
+	title: string;
+	subtitle?: string;
+	actions: CtaAction[];
+	showVolunteerCTA: boolean;
+	showContactCTA: boolean;
+	showNewsletterCTA: boolean;
+}) {
+	const gridClassName = actions.length > 1
+		? 'grid justify-center gap-4 grid-cols-2 max-w-lg mx-auto'
+		: 'grid justify-center gap-4 grid-cols-1';
+
 	return (
 		<section className='bg-gradient-to-br from-gray-900 to-gray-800 py-16 px-6' aria-labelledby='cta-title-full'>
 			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
@@ -151,93 +251,100 @@ function UnifiedCta({
 				{/* Feature cards for different CTAs */}
 				<div className='grid md:grid-cols-3 gap-6 mb-10'>
 					{showVolunteerCTA && (
-						<div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-primary/50 transition-colors'>
+						<div className={cardClassName}>
 							<div className='w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-4'>
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-primary' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' />
+								<svg
+									xmlns='http://www.w3.org/2000/svg'
+									className='h-6 w-6 text-primary'
+									fill='none'
+									viewBox='0 0 24 24'
+									stroke='currentColor'
+									aria-hidden='true'
+								>
+									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={volunteerIconPath} />
 								</svg>
 							</div>
 							<h3 className='text-lg font-bold text-white mb-2'>Word vrijwilliger</h3>
 							<p className='text-gray-400 text-sm mb-4'>
 								Help mee bij activiteiten en maak deel uit van een enthousiast team ouders.
 							</p>
-							<a
-								href='/contact'
-								className='cta-link inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
-							>
+							<a href='/contact' className={`${ctaLinkBase} text-primary focus:ring-primary`}>
 								Meld je aan
-								<svg xmlns='http://www.w3.org/2000/svg' className='cta-arrow h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-								</svg>
+								<ChevronIcon />
 							</a>
 						</div>
 					)}
 
 					{showContactCTA && (
-						<div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-primary/50 transition-colors'>
+						<div className={cardClassName}>
 							<div className='w-12 h-12 bg-info-500/20 rounded-xl flex items-center justify-center mb-4'>
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-info-400' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
+								<svg
+									xmlns='http://www.w3.org/2000/svg'
+									className='h-6 w-6 text-info-400'
+									fill='none'
+									viewBox='0 0 24 24'
+									stroke='currentColor'
+									aria-hidden='true'
+								>
+									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={questionIconPath} />
 								</svg>
 							</div>
 							<h3 className='text-lg font-bold text-white mb-2'>Vragen of ideeën?</h3>
 							<p className='text-gray-400 text-sm mb-4'>
 								We staan open voor feedback, suggesties en nieuwe ideeën voor activiteiten.
 							</p>
-							<a
-								href='/contact'
-								className='cta-link inline-flex items-center gap-1 text-info-400 font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-info-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
-							>
+							<a href='/contact' className={`${ctaLinkBase} text-info-400 focus:ring-info-400`}>
 								Stuur een bericht
-								<svg xmlns='http://www.w3.org/2000/svg' className='cta-arrow h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-								</svg>
+								<ChevronIcon />
 							</a>
 						</div>
 					)}
 
 					{showNewsletterCTA && (
-						<div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-primary/50 transition-colors'>
+						<div className={cardClassName}>
 							<div className='w-12 h-12 bg-warning-500/20 rounded-xl flex items-center justify-center mb-4'>
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-warning-400' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' />
+								<svg
+									xmlns='http://www.w3.org/2000/svg'
+									className='h-6 w-6 text-warning-400'
+									fill='none'
+									viewBox='0 0 24 24'
+									stroke='currentColor'
+									aria-hidden='true'
+								>
+									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={emailIconPath} />
 								</svg>
 							</div>
 							<h3 className='text-lg font-bold text-white mb-2'>Blijf op de hoogte</h3>
 							<p className='text-gray-400 text-sm mb-4'>
 								Ontvang updates over activiteiten en nieuws direct in je inbox.
 							</p>
-							<a
-								href='/contact'
-								className='cta-link inline-flex items-center gap-1 text-warning-400 font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-warning-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
-							>
+							<a href='/contact' className={`${ctaLinkBase} text-warning-400 focus:ring-warning-400`}>
 								Schrijf je in
-								<svg xmlns='http://www.w3.org/2000/svg' className='cta-arrow h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-								</svg>
+								<ChevronIcon />
 							</a>
 						</div>
 					)}
 				</div>
 
 				{/* Main CTA buttons */}
-				<div className={`grid justify-center gap-4 ${actions.length > 1 ? 'grid-cols-2 max-w-lg mx-auto' : 'grid-cols-1'}`}>
-					{actions.map(action => (
-						<a
-							key={action.link}
-							href={action.link}
-							className={`cta-button inline-flex items-center justify-center gap-2 font-semibold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 ${
-								action.variant === 'primary'
-									? 'bg-primary text-white hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/25 focus:ring-primary'
-									: 'bg-white/10 text-white hover:bg-white/20 border border-white/20 focus:ring-white'
-							}`}
-						>
-							{action.text}
-							<svg className='cta-arrow w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-							</svg>
-						</a>
-					))}
+				<div className={gridClassName}>
+					{actions.map(action => {
+						const variantClass = action.variant === 'primary'
+							? 'bg-primary text-white hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/25 focus:ring-primary'
+							: 'bg-white/10 text-white hover:bg-white/20 border border-white/20 focus:ring-white';
+						return (
+							<a
+								key={action.link}
+								href={action.link}
+								className={`${fullButtonBase} ${variantClass}`}
+							>
+								{action.text}
+								<svg className='cta-arrow w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
+								</svg>
+							</a>
+						);
+					})}
 				</div>
 			</div>
 		</section>

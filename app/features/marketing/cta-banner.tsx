@@ -68,7 +68,12 @@ function CtaBanner({
 				{buttonText && buttonLink && (
 					<a
 						href={buttonLink}
-						className={`cta-button inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${styles.button} ${variant === 'accent' ? 'focus:ring-white focus:ring-offset-brand-primary-500' : 'focus:ring-focus'}`}
+						className={[
+							'cta-button inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-lg',
+							'focus:outline-none focus:ring-2 focus:ring-offset-2',
+							styles.button,
+							variant === 'accent' ? 'focus:ring-white focus:ring-offset-brand-primary-500' : 'focus:ring-focus',
+						].join(' ')}
 					>
 						{buttonText}
 						<svg className='cta-arrow w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>

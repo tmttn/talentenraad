@@ -30,6 +30,126 @@ type HeroProperties = {
 	size?: 'compact' | 'small' | 'medium' | 'large';
 };
 
+const ArrowIcon = () => (
+	<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+		<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
+	</svg>
+);
+
+const primaryButtonBase = [
+	'cta-button inline-flex items-center justify-center gap-2',
+	'bg-white text-primary font-semibold py-3 px-6 rounded-lg whitespace-nowrap',
+	'hover:bg-gray-100 hover:shadow-lg',
+	'focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500',
+].join(' ');
+
+const secondaryButtonBase = [
+	'cta-button inline-flex items-center justify-center gap-2',
+	'bg-white/10 text-white font-semibold py-3 px-6 rounded-lg whitespace-nowrap',
+	'hover:bg-white/20 border border-white/30',
+	'focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500',
+].join(' ');
+
+const sizeClasses = {
+	compact: 'py-12 md:py-16',
+	small: 'py-16 md:py-20',
+	medium: 'py-20 md:py-28',
+	large: 'py-28 md:py-36',
+};
+
+const titleClasses = {
+	compact: 'text-2xl md:text-3xl lg:text-4xl',
+	small: 'text-3xl md:text-4xl lg:text-5xl',
+	medium: 'text-4xl md:text-5xl lg:text-6xl',
+	large: 'text-4xl md:text-5xl lg:text-6xl',
+};
+
+const subtitleClasses = {
+	compact: 'text-base md:text-lg',
+	small: 'text-base md:text-lg',
+	medium: 'text-lg md:text-xl',
+	large: 'text-lg md:text-xl',
+};
+
+function SplitVariant({
+	title,
+	subtitle,
+	ctaText,
+	ctaLink,
+	secondaryCtaText,
+	secondaryCtaLink,
+	size,
+	hasMultipleButtons,
+}: {
+	title: string;
+	subtitle?: string;
+	ctaText?: string;
+	ctaLink?: string;
+	secondaryCtaText?: string;
+	secondaryCtaLink?: string;
+	size: 'compact' | 'small' | 'medium' | 'large';
+	hasMultipleButtons: boolean;
+}) {
+	const sectionClassName = [
+		'relative bg-gradient-to-br from-brand-primary-500 to-brand-primary-700 overflow-hidden',
+		sizeClasses[size],
+	].join(' ');
+
+	return (
+		<section className={sectionClassName} aria-labelledby='hero-title-split'>
+			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
+			<div className='absolute inset-0 opacity-10' aria-hidden='true'>
+				<div className='absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl' />
+				<div className='absolute bottom-10 right-20 w-96 h-96 bg-white rounded-full blur-3xl' />
+			</div>
+			<div className='relative max-w-6xl mx-auto px-6'>
+				<div className='max-w-2xl'>
+					<h1 id='hero-title-split' className={`${titleClasses[size]} font-bold text-white leading-tight mb-4 md:mb-6`}>
+						{title}
+					</h1>
+					{subtitle && (
+						<p className={`${subtitleClasses[size]} text-white/90 mb-6 md:mb-8 leading-relaxed`}>
+							{subtitle}
+						</p>
+					)}
+					{(ctaText ?? secondaryCtaText) && (
+						<div className='flex flex-wrap gap-4'>
+							{ctaText && ctaLink && (
+								<a
+									href={ctaLink}
+									className={`${primaryButtonBase} ${hasMultipleButtons ? 'w-[180px]' : ''}`}
+								>
+									{ctaText}
+									<ArrowIcon />
+								</a>
+							)}
+							{secondaryCtaText && secondaryCtaLink && (
+								<a
+									href={secondaryCtaLink}
+									className={`${secondaryButtonBase} ${hasMultipleButtons ? 'w-[180px]' : ''}`}
+								>
+									{secondaryCtaText}
+									<ArrowIcon />
+								</a>
+							)}
+						</div>
+					)}
+				</div>
+			</div>
+		</section>
+	);
+}
+
+function getBackgroundStyle(backgroundImage?: string) {
+	if (backgroundImage) {
+		const gradient1 = `color-mix(in srgb, ${brandColors.primary.shade500} 90%, transparent)`;
+		const gradient2 = `color-mix(in srgb, ${brandColors.primary.shade700} 90%, transparent)`;
+		return `linear-gradient(${gradient1}, ${gradient2}), url(${backgroundImage}) center/cover`;
+	}
+
+	return gradients.primary;
+}
+
 function Hero({
 	title,
 	subtitle,
@@ -41,87 +161,27 @@ function Hero({
 	variant = 'centered',
 	size = 'medium',
 }: Readonly<HeroProperties>) {
-	const sizeClasses = {
-		compact: 'py-12 md:py-16',
-		small: 'py-16 md:py-20',
-		medium: 'py-20 md:py-28',
-		large: 'py-28 md:py-36',
-	};
-
-	const titleClasses = {
-		compact: 'text-2xl md:text-3xl lg:text-4xl',
-		small: 'text-3xl md:text-4xl lg:text-5xl',
-		medium: 'text-4xl md:text-5xl lg:text-6xl',
-		large: 'text-4xl md:text-5xl lg:text-6xl',
-	};
-
-	const subtitleClasses = {
-		compact: 'text-base md:text-lg',
-		small: 'text-base md:text-lg',
-		medium: 'text-lg md:text-xl',
-		large: 'text-lg md:text-xl',
-	};
-
 	const hasMultipleButtons = Boolean(ctaText && ctaLink && secondaryCtaText && secondaryCtaLink);
 
 	if (variant === 'split') {
 		return (
-			<section className={`relative bg-gradient-to-br from-brand-primary-500 to-brand-primary-700 overflow-hidden ${sizeClasses[size]}`} aria-labelledby='hero-title-split'>
-				<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
-				<div className='absolute inset-0 opacity-10' aria-hidden='true'>
-					<div className='absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl' />
-					<div className='absolute bottom-10 right-20 w-96 h-96 bg-white rounded-full blur-3xl' />
-				</div>
-				<div className='relative max-w-6xl mx-auto px-6'>
-					<div className='max-w-2xl'>
-						<h1 id='hero-title-split' className={`${titleClasses[size]} font-bold text-white leading-tight mb-4 md:mb-6`}>
-							{title}
-						</h1>
-						{subtitle && (
-							<p className={`${subtitleClasses[size]} text-white/90 mb-6 md:mb-8 leading-relaxed`}>
-								{subtitle}
-							</p>
-						)}
-						{(ctaText || secondaryCtaText) && (
-							<div className='flex flex-wrap gap-4'>
-								{ctaText && ctaLink && (
-									<a
-										href={ctaLink}
-										className={`cta-button inline-flex items-center justify-center gap-2 bg-white text-primary font-semibold py-3 px-6 rounded-lg whitespace-nowrap hover:bg-gray-100 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500 ${hasMultipleButtons ? 'w-[180px]' : ''}`}
-									>
-										{ctaText}
-										<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-											<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-										</svg>
-									</a>
-								)}
-								{secondaryCtaText && secondaryCtaLink && (
-									<a
-										href={secondaryCtaLink}
-										className={`cta-button inline-flex items-center justify-center gap-2 bg-white/10 text-white font-semibold py-3 px-6 rounded-lg whitespace-nowrap hover:bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500 ${hasMultipleButtons ? 'w-[180px]' : ''}`}
-									>
-										{secondaryCtaText}
-										<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-											<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-										</svg>
-									</a>
-								)}
-							</div>
-						)}
-					</div>
-				</div>
-			</section>
+			<SplitVariant
+				title={title}
+				subtitle={subtitle}
+				ctaText={ctaText}
+				ctaLink={ctaLink}
+				secondaryCtaText={secondaryCtaText}
+				secondaryCtaLink={secondaryCtaLink}
+				size={size}
+				hasMultipleButtons={hasMultipleButtons}
+			/>
 		);
 	}
 
 	return (
 		<section
 			className={`relative overflow-hidden ${sizeClasses[size]}`}
-			style={{
-				background: backgroundImage
-					? `linear-gradient(color-mix(in srgb, ${brandColors.primary.shade500} 90%, transparent), color-mix(in srgb, ${brandColors.primary.shade700} 90%, transparent)), url(${backgroundImage}) center/cover`
-					: gradients.primary,
-			}}
+			style={{background: getBackgroundStyle(backgroundImage)}}
 			aria-labelledby='hero-title'
 		>
 			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
@@ -140,28 +200,24 @@ function Hero({
 						{subtitle}
 					</p>
 				)}
-				{(ctaText || secondaryCtaText) && (
+				{(ctaText ?? secondaryCtaText) && (
 					<div className='flex flex-wrap justify-center gap-4'>
 						{ctaText && ctaLink && (
 							<a
 								href={ctaLink}
-								className={`cta-button inline-flex items-center justify-center gap-2 bg-white text-primary font-semibold py-3 px-6 rounded-lg whitespace-nowrap hover:bg-gray-100 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500 ${hasMultipleButtons ? 'w-[180px]' : ''}`}
+								className={`${primaryButtonBase} ${hasMultipleButtons ? 'w-[180px]' : ''}`}
 							>
 								{ctaText}
-								<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-								</svg>
+								<ArrowIcon />
 							</a>
 						)}
 						{secondaryCtaText && secondaryCtaLink && (
 							<a
 								href={secondaryCtaLink}
-								className={`cta-button inline-flex items-center justify-center gap-2 bg-white/10 text-white font-semibold py-3 px-6 rounded-lg whitespace-nowrap hover:bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500 ${hasMultipleButtons ? 'w-[180px]' : ''}`}
+								className={`${secondaryButtonBase} ${hasMultipleButtons ? 'w-[180px]' : ''}`}
 							>
 								{secondaryCtaText}
-								<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-								</svg>
+								<ArrowIcon />
 							</a>
 						)}
 					</div>
