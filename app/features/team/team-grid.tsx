@@ -35,21 +35,26 @@ type TeamGridProperties = {
 // Use environment variable for API key
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '35b5ea60db844c8ca5412e82289bcdb0'; // eslint-disable-line n/prefer-global/process
 
+// Stable empty array reference to prevent infinite re-renders
+const emptyMembers: TeamMemberData[] = [];
+
 function TeamGrid({
 	title,
 	subtitle,
-	members = [],
+	members,
 	columns = 3,
 	showDescription = true,
 	category = '',
 	fetchFromBuilder = true,
 }: Readonly<TeamGridProperties>) {
+	// Use stable reference for members to prevent infinite useEffect loops
+	const stableMembers = members ?? emptyMembers;
 	const [teamMembers, setTeamMembers] = useState<TeamMemberData[]>([]);
 	const [loading, setLoading] = useState(fetchFromBuilder);
 
 	useEffect(() => {
 		if (!fetchFromBuilder) {
-			setTeamMembers(members);
+			setTeamMembers(stableMembers);
 			return;
 		}
 
@@ -86,21 +91,21 @@ function TeamGrid({
 					setTeamMembers(activeMembers);
 				} else {
 					// Fall back to props if no data from Builder
-					setTeamMembers(members);
+					setTeamMembers(stableMembers);
 				}
 			} catch (error) {
 				console.error('Error fetching team members:', error);
 				// Fall back to props on error
-				setTeamMembers(members);
+				setTeamMembers(stableMembers);
 			} finally {
 				setLoading(false);
 			}
 		}
 
 		void fetchTeamMembers();
-	}, [fetchFromBuilder, category, members]);
+	}, [fetchFromBuilder, category, stableMembers]);
 
-	const displayMembers = fetchFromBuilder ? teamMembers : members;
+	const displayMembers = fetchFromBuilder ? teamMembers : stableMembers;
 
 	const getInitials = (fullName: string) => fullName
 		.split(' ')

@@ -51,8 +51,7 @@ type NewsListProperties = {
 };
 
 // Use environment variable for API key
-// eslint-disable-next-line n/prefer-global/process
-const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '35b5ea60db844c8ca5412e82289bcdb0'; // eslint-disable-line n/prefer-global/process
 
 function generateSlug(title: string): string {
 	return title
