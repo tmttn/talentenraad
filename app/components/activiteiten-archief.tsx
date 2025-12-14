@@ -171,7 +171,7 @@ function ActiviteitenArchief({
 					{years.map(year => (
 						<div key={year} className='mb-8'>
 							<h3 className='text-lg font-bold text-gray-700 mb-4 flex items-center gap-2'>
-								<span className='w-8 h-8 bg-[#ea247b] rounded-full flex items-center justify-center text-white text-sm'>
+								<span className='w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm'>
 									{groupedActiviteiten[year].length}
 								</span>
 								{year}
@@ -185,7 +185,7 @@ function ActiviteitenArchief({
 									>
 										<div className='flex items-center justify-between'>
 											<div>
-												<h4 className='font-semibold text-gray-800 group-hover:text-[#ea247b] transition-colors'>
+												<h4 className='font-semibold text-gray-800 group-hover:text-primary transition-colors'>
 													{activiteit.data.titel}
 												</h4>
 												<p className='text-sm text-gray-500'>

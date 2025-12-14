@@ -130,7 +130,7 @@ export function SiteFooter({
 							<div className="mt-4">
 								<a
 									href={`mailto:${email}`}
-									className="text-sm text-[#ea247b] hover:underline focus:underline focus:outline-none"
+									className="text-sm text-primary hover:underline focus:underline focus:outline-none"
 								>
 									{email}
 								</a>
@@ -147,7 +147,7 @@ export function SiteFooter({
 									<li key={link.url}>
 										<Link
 											href={link.url}
-											className="text-gray-600 hover:text-[#ea247b] focus:text-[#ea247b] focus:outline-none focus:underline transition-colors text-sm"
+											className="text-gray-600 hover:text-primary focus:text-primary focus:outline-none focus:underline transition-colors text-sm"
 											{...(link.url.startsWith('http')
 												? {
 													target: '_blank',
@@ -180,7 +180,7 @@ export function SiteFooter({
 								href={social.url}
 								target="_blank"
 								rel="noopener noreferrer"
-								className="text-gray-400 hover:text-[#ea247b] focus:text-[#ea247b] focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded transition-colors"
+								className="text-gray-400 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded transition-colors"
 								aria-label={`${social.platform} (opent in nieuw venster)`}
 							>
 								{socialIcons[social.platform]}

@@ -175,12 +175,12 @@ function CalendarSection({
 										href={`/activiteiten/${slug}`}
 										className='flex items-center gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow group'
 									>
-										<div className='flex-shrink-0 w-16 h-16 bg-[#ea247b] rounded-xl flex flex-col items-center justify-center text-white'>
+										<div className='flex-shrink-0 w-16 h-16 bg-primary rounded-xl flex flex-col items-center justify-center text-white'>
 											<span className='text-2xl font-bold leading-none'>{day}</span>
 											<span className='text-xs uppercase'>{month}</span>
 										</div>
 										<div className='flex-grow'>
-											<h3 className='font-bold text-gray-800 group-hover:text-[#ea247b] transition-colors'>{event.title}</h3>
+											<h3 className='font-bold text-gray-800 group-hover:text-primary transition-colors'>{event.title}</h3>
 											{event.time && (
 												<p className='text-sm text-gray-500 flex items-center gap-1'>
 													<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
@@ -190,7 +190,7 @@ function CalendarSection({
 												</p>
 											)}
 										</div>
-										<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-gray-400 group-hover:text-[#ea247b] transition-colors' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+										<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-gray-400 group-hover:text-primary transition-colors' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 											<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
 										</svg>
 									</a>
@@ -211,7 +211,7 @@ function CalendarSection({
 					<div className='text-center mt-8'>
 						<a
 							href={viewAllLink}
-							className='inline-flex items-center gap-2 text-[#ea247b] font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded'
+							className='inline-flex items-center gap-2 text-primary font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded'
 						>
 							Bekijk alle activiteiten
 							<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>

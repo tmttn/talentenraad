@@ -117,7 +117,7 @@ function TeamGrid({
 
 	// Color palette for avatar backgrounds
 	const avatarColors = [
-		'from-[#ea247b] to-[#c4105f]',
+		'from-brand-primary-500 to-brand-primary-700',
 		'from-[#7c3aed] to-[#5b21b6]',
 		'from-[#0891b2] to-[#0e7490]',
 		'from-[#059669] to-[#047857]',
@@ -182,7 +182,7 @@ function TeamGrid({
 									</div>
 									{/* Role badge */}
 									<div className='absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md'>
-										<span className='text-xs font-semibold text-[#ea247b]'>
+										<span className='text-xs font-semibold text-primary'>
 											{member.role}
 										</span>
 									</div>

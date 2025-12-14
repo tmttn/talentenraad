@@ -34,7 +34,7 @@ function EventCard({
 				</figure>
 			)}
 			<div className='card-body'>
-				<div className='flex items-center gap-2 text-sm text-[#ea247b] font-semibold mb-2'>
+				<div className='flex items-center gap-2 text-sm text-primary font-semibold mb-2'>
 					<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 						<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
 					</svg>
@@ -61,7 +61,7 @@ function EventCard({
 				)}
 				{link && (
 					<div className='card-actions justify-end mt-4'>
-						<span className='text-[#ea247b] font-semibold hover:underline'>
+						<span className='text-primary font-semibold hover:underline'>
 							Meer info →
 						</span>
 					</div>
@@ -74,7 +74,7 @@ function EventCard({
 		return (
 			<a
 				href={link}
-				className='block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ea247b] focus-visible:ring-offset-2 rounded-2xl'
+				className='block focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 rounded-2xl'
 				aria-label={`${title} - Meer info`}
 			>
 				{content}

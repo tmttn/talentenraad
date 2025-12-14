@@ -34,8 +34,8 @@ const inputBaseStyles = `
 	bg-white text-gray-900
 	placeholder:text-gray-500
 	transition-colors duration-200
-	focus:border-[#c91e68] focus:ring-2 focus:ring-[#ea247b]/30 focus:outline-none
-	focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#c91e68]
+	focus:border-primary-hover focus:ring-2 focus:ring-primary/30 focus:outline-none
+	focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-hover
 	hover:border-gray-500
 `.replaceAll(/\s+/g, ' ').trim();
 
@@ -194,7 +194,7 @@ function ContactForm({
 					<div className='grid md:grid-cols-2 gap-6'>
 						<div>
 							<label className={labelStyles} htmlFor='name'>
-								Naam <span className='text-[#c91e68]' aria-hidden='true'>*</span>
+								Naam <span className='text-primary-hover' aria-hidden='true'>*</span>
 								<span className='sr-only'>(verplicht)</span>
 							</label>
 							<input
@@ -220,7 +220,7 @@ function ContactForm({
 						</div>
 						<div>
 							<label className={labelStyles} htmlFor='email'>
-								E-mail <span className='text-[#c91e68]' aria-hidden='true'>*</span>
+								E-mail <span className='text-primary-hover' aria-hidden='true'>*</span>
 								<span className='sr-only'>(verplicht)</span>
 							</label>
 							<input
@@ -266,7 +266,7 @@ function ContactForm({
 					{showSubject && (
 						<div className='mt-6'>
 							<label className={labelStyles} htmlFor='subject'>
-								Onderwerp <span className='text-[#c91e68]' aria-hidden='true'>*</span>
+								Onderwerp <span className='text-primary-hover' aria-hidden='true'>*</span>
 								<span className='sr-only'>(verplicht)</span>
 							</label>
 							<select
@@ -298,7 +298,7 @@ function ContactForm({
 					)}
 					<div className='mt-6'>
 						<label className={labelStyles} htmlFor='message'>
-							Bericht <span className='text-[#c91e68]' aria-hidden='true'>*</span>
+							Bericht <span className='text-primary-hover' aria-hidden='true'>*</span>
 							<span className='sr-only'>(verplicht)</span>
 						</label>
 						<textarea
@@ -326,7 +326,7 @@ function ContactForm({
 						<button
 							type='submit'
 							disabled={isSubmitting}
-							className='w-full py-4 px-6 bg-[#c91e68] hover:bg-[#a8185a] text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#c91e68] focus-visible:ring-offset-2'
+							className='w-full py-4 px-6 bg-primary-hover hover:bg-brand-primary-700 text-white font-semibold rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2'
 						>
 							{isSubmitting
 								? (

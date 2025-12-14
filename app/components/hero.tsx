@@ -1,5 +1,7 @@
 'use client';
 
+import {brandColors, gradients} from '../styles/tokens';
+
 type HeroProperties = {
 	title: string;
 	subtitle?: string;
@@ -46,7 +48,7 @@ function Hero({
 
 	if (variant === 'split') {
 		return (
-			<section className={`relative bg-gradient-to-br from-[#ea247b] to-[#c4105f] overflow-hidden ${sizeClasses[size]}`} aria-labelledby='hero-title-split'>
+			<section className={`relative bg-gradient-to-br from-brand-primary-500 to-brand-primary-700 overflow-hidden ${sizeClasses[size]}`} aria-labelledby='hero-title-split'>
 				<div className='absolute inset-0 opacity-10' aria-hidden='true'>
 					<div className='absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl' />
 					<div className='absolute bottom-10 right-20 w-96 h-96 bg-white rounded-full blur-3xl' />
@@ -66,7 +68,7 @@ function Hero({
 								{ctaText && ctaLink && (
 									<a
 										href={ctaLink}
-										className='inline-flex items-center gap-2 bg-white text-[#ea247b] font-semibold py-3 px-6 rounded-lg transition-all hover:bg-gray-100 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#ea247b]'
+										className='inline-flex items-center gap-2 bg-white text-primary font-semibold py-3 px-6 rounded-lg transition-all hover:bg-gray-100 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500'
 									>
 										{ctaText}
 										<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
@@ -77,7 +79,7 @@ function Hero({
 								{secondaryCtaText && secondaryCtaLink && (
 									<a
 										href={secondaryCtaLink}
-										className='inline-flex items-center gap-2 bg-white/10 text-white font-semibold py-3 px-6 rounded-lg transition-all hover:bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#ea247b]'
+										className='inline-flex items-center gap-2 bg-white/10 text-white font-semibold py-3 px-6 rounded-lg transition-all hover:bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500'
 									>
 										{secondaryCtaText}
 									</a>
@@ -95,8 +97,8 @@ function Hero({
 			className={`relative overflow-hidden ${sizeClasses[size]}`}
 			style={{
 				background: backgroundImage
-					? `linear-gradient(rgba(234, 36, 123, 0.9), rgba(196, 16, 95, 0.9)), url(${backgroundImage}) center/cover`
-					: 'linear-gradient(135deg, #ea247b 0%, #c4105f 100%)',
+					? `linear-gradient(color-mix(in srgb, ${brandColors.primary.shade500} 90%, transparent), color-mix(in srgb, ${brandColors.primary.shade700} 90%, transparent)), url(${backgroundImage}) center/cover`
+					: gradients.primary,
 			}}
 			aria-labelledby='hero-title'
 		>
@@ -120,7 +122,7 @@ function Hero({
 						{ctaText && ctaLink && (
 							<a
 								href={ctaLink}
-								className='inline-flex items-center gap-2 bg-white text-[#ea247b] font-semibold py-3 px-6 rounded-lg transition-all hover:bg-gray-100 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#ea247b]'
+								className='inline-flex items-center gap-2 bg-white text-primary font-semibold py-3 px-6 rounded-lg transition-all hover:bg-gray-100 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500'
 							>
 								{ctaText}
 								<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
@@ -131,7 +133,7 @@ function Hero({
 						{secondaryCtaText && secondaryCtaLink && (
 							<a
 								href={secondaryCtaLink}
-								className='inline-flex items-center gap-2 bg-white/10 text-white font-semibold py-3 px-6 rounded-lg transition-all hover:bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#ea247b]'
+								className='inline-flex items-center gap-2 bg-white/10 text-white font-semibold py-3 px-6 rounded-lg transition-all hover:bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500'
 							>
 								{secondaryCtaText}
 							</a>

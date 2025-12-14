@@ -20,19 +20,19 @@ function CTABanner({
 			bg: 'bg-gray-900',
 			title: 'text-white',
 			subtitle: 'text-gray-300',
-			button: 'bg-[#ea247b] text-white hover:bg-[#d91a6d]',
+			button: 'bg-primary text-white hover:bg-primary-hover',
 		},
 		accent: {
-			bg: 'bg-gradient-to-r from-[#ea247b] to-[#c4105f]',
+			bg: 'bg-gradient-to-r from-brand-primary-500 to-brand-primary-700',
 			title: 'text-white',
 			subtitle: 'text-white/80',
-			button: 'bg-white text-[#ea247b] hover:bg-gray-100',
+			button: 'bg-white text-primary hover:bg-gray-100',
 		},
 		light: {
 			bg: 'bg-gray-100',
 			title: 'text-gray-900',
 			subtitle: 'text-gray-600',
-			button: 'bg-[#ea247b] text-white hover:bg-[#d91a6d]',
+			button: 'bg-primary text-white hover:bg-primary-hover',
 		},
 	};
 
@@ -52,7 +52,7 @@ function CTABanner({
 				{buttonText && buttonLink && (
 					<a
 						href={buttonLink}
-						className={`inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${styles.button} ${variant === 'accent' ? 'focus:ring-white focus:ring-offset-[#ea247b]' : 'focus:ring-[#ea247b]'}`}
+						className={`inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${styles.button} ${variant === 'accent' ? 'focus:ring-white focus:ring-offset-brand-primary-500' : 'focus:ring-focus'}`}
 					>
 						{buttonText}
 						<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>

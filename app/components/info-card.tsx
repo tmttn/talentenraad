@@ -6,7 +6,7 @@ type InfoCardProperties = {
 	icon?: 'heart' | 'users' | 'calendar' | 'star' | 'gift' | 'school' | 'money' | 'chat' | 'team' | 'email' | 'location' | 'phone';
 	link?: string;
 	linkText?: string;
-	variant?: 'default' | 'pink' | 'green' | 'orange' | 'gradient' | 'accent';
+	variant?: 'default' | 'primary' | 'secondary' | 'accent' | 'gradient';
 };
 
 const icons = {
@@ -77,42 +77,34 @@ const icons = {
 const variantStyles = {
 	default: {
 		card: 'bg-white',
-		iconBg: 'bg-[#ea247b]/10 text-[#ea247b] group-hover:bg-[#ea247b] group-hover:text-white',
+		iconBg: 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white',
 		title: 'text-gray-800',
 		description: 'text-gray-600',
-		link: 'text-[#ea247b]',
+		link: 'text-primary',
 	},
-	pink: {
-		card: 'bg-gradient-to-br from-[#ea247b] to-[#d91a6d]',
+	primary: {
+		card: 'bg-gradient-to-br from-brand-primary-500 to-brand-primary-600',
 		iconBg: 'bg-white/20 text-white',
 		title: 'text-white',
 		description: 'text-white/90',
 		link: 'text-white hover:text-white/80',
 	},
-	green: {
-		card: 'bg-gradient-to-br from-[#afbd43] to-[#9aab2f]',
+	secondary: {
+		card: 'bg-gradient-to-br from-brand-secondary-400 to-brand-secondary-500',
 		iconBg: 'bg-white/20 text-white',
 		title: 'text-white',
 		description: 'text-white/90',
 		link: 'text-white hover:text-white/80',
 	},
-	orange: {
-		card: 'bg-gradient-to-br from-[#fcb142] to-[#e9a33a]',
+	accent: {
+		card: 'bg-gradient-to-br from-brand-accent-400 to-brand-accent-500',
 		iconBg: 'bg-white/20 text-white',
 		title: 'text-white',
 		description: 'text-white/90',
 		link: 'text-white hover:text-white/80',
 	},
 	gradient: {
-		card: 'bg-gradient-to-br from-[#ea247b] via-[#fcb142] to-[#afbd43]',
-		iconBg: 'bg-white/20 text-white',
-		title: 'text-white',
-		description: 'text-white/90',
-		link: 'text-white hover:text-white/80',
-	},
-	// Alias for pink variant
-	accent: {
-		card: 'bg-gradient-to-br from-[#ea247b] to-[#d91a6d]',
+		card: 'bg-gradient-to-br from-brand-primary-500 via-brand-accent-400 to-brand-secondary-400',
 		iconBg: 'bg-white/20 text-white',
 		title: 'text-white',
 		description: 'text-white/90',
@@ -188,9 +180,9 @@ export const InfoCardInfo = {
 		{
 			name: 'variant',
 			type: 'string',
-			enum: ['default', 'pink', 'green', 'orange', 'gradient', 'accent'],
+			enum: ['default', 'primary', 'secondary', 'accent', 'gradient'],
 			defaultValue: 'default',
-			helperText: 'Kleurvariant van de kaart (accent = pink)',
+			helperText: 'Kleurvariant van de kaart',
 		},
 		{
 			name: 'link',

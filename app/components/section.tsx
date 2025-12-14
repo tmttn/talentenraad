@@ -27,10 +27,10 @@ function Section({
 		white: 'bg-white',
 		light: 'bg-gray-50',
 		dark: 'bg-gray-900 text-white',
-		accent: 'bg-[#ea247b] text-white',
-		secondary: 'bg-[#afbd43] text-white',
-		tertiary: 'bg-[#fcb142] text-white',
-		gradient: 'bg-gradient-to-br from-[#ea247b]/5 via-white to-[#afbd43]/5',
+		accent: 'bg-primary text-white',
+		secondary: 'bg-secondary text-white',
+		tertiary: 'bg-accent text-white',
+		gradient: 'bg-gradient-to-br from-primary/5 via-white to-secondary/5',
 	};
 
 	const sizeClasses = {
@@ -68,7 +68,7 @@ function Section({
 				return (
 					<div className='absolute inset-0 overflow-hidden pointer-events-none' aria-hidden='true'>
 						<div className='absolute top-0 left-0 w-64 h-64 opacity-5'>
-							<svg viewBox='0 0 200 200' fill='currentColor' className='text-[#ea247b]'>
+							<svg viewBox='0 0 200 200' fill='currentColor' className='text-primary'>
 								<pattern id='dots' x='0' y='0' width='20' height='20' patternUnits='userSpaceOnUse'>
 									<circle cx='2' cy='2' r='2' />
 								</pattern>
@@ -76,7 +76,7 @@ function Section({
 							</svg>
 						</div>
 						<div className='absolute bottom-0 right-0 w-64 h-64 opacity-5 rotate-180'>
-							<svg viewBox='0 0 200 200' fill='currentColor' className='text-[#ea247b]'>
+							<svg viewBox='0 0 200 200' fill='currentColor' className='text-primary'>
 								<pattern id='dots2' x='0' y='0' width='20' height='20' patternUnits='userSpaceOnUse'>
 									<circle cx='2' cy='2' r='2' />
 								</pattern>
@@ -100,7 +100,7 @@ function Section({
 			case 'circles': {
 				return (
 					<div className='absolute inset-0 overflow-hidden pointer-events-none' aria-hidden='true'>
-						<div className='absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#ea247b]/5' />
+						<div className='absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary/5' />
 						<div className='absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-blue-500/5' />
 					</div>
 				);

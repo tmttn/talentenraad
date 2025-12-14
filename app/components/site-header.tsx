@@ -38,7 +38,7 @@ export function SiteHeader({
 			{/* Skip to main content link for accessibility */}
 			<a
 				href="#main-content"
-				className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-[#ea247b] focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#ea247b]"
+				className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:bg-primary focus:text-white focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500"
 			>
 				Ga naar hoofdinhoud
 			</a>
@@ -59,9 +59,9 @@ export function SiteHeader({
 							<Link
 								key={item.url}
 								href={item.url}
-								className={`font-medium transition-colors hover:text-[#ea247b] focus:text-[#ea247b] focus:outline-none focus:underline underline-offset-4 ${
+								className={`font-medium transition-colors hover:text-primary focus:text-primary focus:outline-none focus:underline underline-offset-4 ${
 									pathname === item.url
-										? 'text-[#ea247b]'
+										? 'text-primary'
 										: 'text-gray-600'
 								}`}
 								aria-current={pathname === item.url ? 'page' : undefined}
@@ -72,7 +72,7 @@ export function SiteHeader({
 					</nav>
 					<button
 						type="button"
-						className="md:hidden p-2 text-gray-600 hover:text-[#ea247b] focus:text-[#ea247b] focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded-lg transition-colors"
+						className="md:hidden p-2 text-gray-600 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded-lg transition-colors"
 						aria-label={isMenuOpen ? 'Menu sluiten' : 'Menu openen'}
 						aria-expanded={isMenuOpen}
 						aria-controls="mobile-menu"
@@ -111,10 +111,10 @@ export function SiteHeader({
 								onClick={() => {
 									setIsMenuOpen(false);
 								}}
-								className={`block py-3 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-inset ${
+								className={`block py-3 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-focus focus:ring-inset ${
 									pathname === item.url
-										? 'bg-[#ea247b]/10 text-[#ea247b]'
-										: 'text-gray-600 hover:bg-gray-50 hover:text-[#ea247b]'
+										? 'bg-primary/10 text-primary'
+										: 'text-gray-600 hover:bg-gray-50 hover:text-primary'
 								}`}
 								style={{
 									transitionDelay: isMenuOpen ? `${index * 50}ms` : '0ms',

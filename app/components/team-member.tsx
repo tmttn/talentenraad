@@ -27,11 +27,11 @@ function TeamMember({
 		.slice(0, 2);
 
 	const roleColors: Record<string, string> = {
-		Voorzitter: 'bg-[#ea247b] text-white',
-		Secretaris: 'bg-[#afbd43] text-white',
-		Penningmeester: 'bg-[#fcb142] text-white',
+		Voorzitter: 'bg-primary text-white',
+		Secretaris: 'bg-secondary text-white',
+		Penningmeester: 'bg-accent text-white',
 		Lid: 'bg-gray-200 text-gray-700',
-		default: 'bg-[#ea247b]/10 text-[#ea247b]',
+		default: 'bg-primary/10 text-primary',
 	};
 
 	const getRoleColor = (memberRole: string) => roleColors[memberRole] || roleColors.default;
@@ -50,7 +50,7 @@ function TeamMember({
 							/>
 						)
 						: (
-							<div className='w-full h-full rounded-full bg-gradient-to-br from-[#ea247b] to-[#fcb142] flex items-center justify-center'>
+							<div className='w-full h-full rounded-full bg-gradient-to-br from-brand-primary-500 to-brand-accent-400 flex items-center justify-center'>
 								<span className='text-white font-bold text-lg'>{getInitials(name)}</span>
 							</div>
 						)}
@@ -79,7 +79,7 @@ function TeamMember({
 							/>
 						)
 						: (
-							<div className='w-full h-full rounded-2xl bg-gradient-to-br from-[#ea247b] to-[#fcb142] flex items-center justify-center'>
+							<div className='w-full h-full rounded-2xl bg-gradient-to-br from-brand-primary-500 to-brand-accent-400 flex items-center justify-center'>
 								<span className='text-white font-bold text-3xl'>{getInitials(name)}</span>
 							</div>
 						)}
@@ -95,7 +95,7 @@ function TeamMember({
 					{email && (
 						<a
 							href={`mailto:${email}`}
-							className='inline-flex items-center gap-2 mt-3 text-[#ea247b] hover:underline'
+							className='inline-flex items-center gap-2 mt-3 text-primary hover:underline'
 						>
 							<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' />
@@ -111,7 +111,7 @@ function TeamMember({
 	// Default card variant
 	return (
 		<div className='group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden'>
-			<div className='relative h-48 bg-gradient-to-br from-[#ea247b] via-[#d91a6d] to-[#fcb142] overflow-hidden'>
+			<div className='relative h-48 bg-gradient-to-br from-brand-primary-500 via-brand-primary-600 to-brand-accent-400 overflow-hidden'>
 				{/* Decorative circles */}
 				<div className='absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2' />
 				<div className='absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-1/2 -translate-x-1/2' />
@@ -144,7 +144,7 @@ function TeamMember({
 				{email && (
 					<a
 						href={`mailto:${email}`}
-						className='inline-flex items-center gap-2 mt-4 text-gray-500 hover:text-[#ea247b] transition-colors text-sm'
+						className='inline-flex items-center gap-2 mt-4 text-gray-500 hover:text-primary transition-colors text-sm'
 					>
 						<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' />

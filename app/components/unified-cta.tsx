@@ -56,7 +56,7 @@ function UnifiedCTA({
 								href={action.link}
 								className={`inline-flex items-center gap-2 font-semibold py-2.5 px-5 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
 									action.variant === 'primary'
-										? 'bg-[#ea247b] text-white hover:bg-[#d11d6d] focus:ring-[#ea247b]'
+										? 'bg-primary text-white hover:bg-primary-hover focus:ring-primary'
 										: 'bg-white/10 text-white hover:bg-white/20 focus:ring-white'
 								}`}
 							>
@@ -74,7 +74,7 @@ function UnifiedCTA({
 
 	if (variant === 'compact') {
 		return (
-			<section className='bg-gradient-to-r from-[#ea247b] to-[#d11d6d] py-10 px-6' aria-labelledby='cta-title-compact'>
+			<section className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 py-10 px-6' aria-labelledby='cta-title-compact'>
 				<div className='max-w-4xl mx-auto'>
 					<div className='flex flex-col md:flex-row items-center justify-between gap-6'>
 						<div className='text-center md:text-left'>
@@ -92,9 +92,9 @@ function UnifiedCTA({
 								<a
 									key={action.link}
 									href={action.link}
-									className={`inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#ea247b] ${
+									className={`inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary ${
 										action.variant === 'primary'
-											? 'bg-white text-[#ea247b] hover:bg-gray-100 focus:ring-white'
+											? 'bg-white text-primary hover:bg-gray-100 focus:ring-white'
 											: 'bg-white/10 text-white hover:bg-white/20 border border-white/30 focus:ring-white'
 									}`}
 								>
@@ -129,9 +129,9 @@ function UnifiedCTA({
 				{/* Feature cards for different CTAs */}
 				<div className='grid md:grid-cols-3 gap-6 mb-10'>
 					{showVolunteerCTA && (
-						<div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-[#ea247b]/50 transition-colors'>
-							<div className='w-12 h-12 bg-[#ea247b]/20 rounded-xl flex items-center justify-center mb-4'>
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-[#ea247b]' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+						<div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-primary/50 transition-colors'>
+							<div className='w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-4'>
+								<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-primary' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' />
 								</svg>
 							</div>
@@ -141,7 +141,7 @@ function UnifiedCTA({
 							</p>
 							<a
 								href='/contact'
-								className='inline-flex items-center gap-1 text-[#ea247b] font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
+								className='inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
 							>
 								Meld je aan
 								<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
@@ -152,7 +152,7 @@ function UnifiedCTA({
 					)}
 
 					{showContactCTA && (
-						<div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-[#ea247b]/50 transition-colors'>
+						<div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-primary/50 transition-colors'>
 							<div className='w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4'>
 								<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-blue-400' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
@@ -175,7 +175,7 @@ function UnifiedCTA({
 					)}
 
 					{showNewsletterCTA && (
-						<div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-[#ea247b]/50 transition-colors'>
+						<div className='bg-white/5 backdrop-blur-sm rounded-xl p-6 border border-white/10 hover:border-primary/50 transition-colors'>
 							<div className='w-12 h-12 bg-amber-500/20 rounded-xl flex items-center justify-center mb-4'>
 								<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-amber-400' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' />
@@ -206,7 +206,7 @@ function UnifiedCTA({
 							href={action.link}
 							className={`inline-flex items-center gap-2 font-semibold py-3 px-8 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 ${
 								action.variant === 'primary'
-									? 'bg-[#ea247b] text-white hover:bg-[#d11d6d] hover:shadow-lg hover:shadow-[#ea247b]/25 focus:ring-[#ea247b]'
+									? 'bg-primary text-white hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/25 focus:ring-primary'
 									: 'bg-white/10 text-white hover:bg-white/20 border border-white/20 focus:ring-white'
 							}`}
 						>

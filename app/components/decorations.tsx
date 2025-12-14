@@ -32,12 +32,12 @@ function Decoration({
 			case 'confetti': {
 				return (
 					<svg viewBox='0 0 100 100' className='w-full h-full'>
-						<circle cx='15' cy='25' r='4' className='fill-[#ea247b]' />
+						<circle cx='15' cy='25' r='4' className='fill-brand-primary-500' />
 						<circle cx='45' cy='15' r='3' className='fill-yellow-400' />
 						<circle cx='75' cy='30' r='5' className='fill-blue-400' />
 						<circle cx='85' cy='60' r='3' className='fill-green-400' />
 						<circle cx='25' cy='70' r='4' className='fill-purple-400' />
-						<circle cx='55' cy='80' r='3' className='fill-[#ea247b]' />
+						<circle cx='55' cy='80' r='3' className='fill-brand-primary-500' />
 						<rect x='30' y='40' width='6' height='6' transform='rotate(45 33 43)' className='fill-orange-400' />
 						<rect x='60' y='50' width='5' height='5' transform='rotate(30 62.5 52.5)' className='fill-pink-400' />
 						<rect x='10' y='50' width='4' height='4' transform='rotate(60 12 52)' className='fill-blue-400' />
@@ -49,7 +49,7 @@ function Decoration({
 				return (
 					<svg viewBox='0 0 100 100' className='w-full h-full'>
 						<path d='M20,10 L22,18 L30,18 L24,23 L26,31 L20,26 L14,31 L16,23 L10,18 L18,18 Z' className='fill-yellow-400' />
-						<path d='M70,20 L72,26 L78,26 L74,30 L75,36 L70,33 L65,36 L66,30 L62,26 L68,26 Z' className='fill-[#ea247b]' />
+						<path d='M70,20 L72,26 L78,26 L74,30 L75,36 L70,33 L65,36 L66,30 L62,26 L68,26 Z' className='fill-brand-primary-500' />
 						<path d='M45,50 L48,60 L58,60 L50,66 L53,76 L45,70 L37,76 L40,66 L32,60 L42,60 Z' className='fill-blue-400' />
 						<path d='M80,70 L82,76 L88,76 L84,80 L85,86 L80,83 L75,86 L76,80 L72,76 L78,76 Z' className='fill-yellow-400' />
 					</svg>
@@ -59,9 +59,9 @@ function Decoration({
 			case 'hearts': {
 				return (
 					<svg viewBox='0 0 100 100' className='w-full h-full'>
-						<path d='M25,25 C25,20 20,15 15,15 C10,15 5,20 5,25 C5,35 25,45 25,45 C25,45 45,35 45,25 C45,20 40,15 35,15 C30,15 25,20 25,25' className='fill-[#ea247b]/80' />
-						<path d='M75,15 C75,12 72,9 69,9 C66,9 63,12 63,15 C63,21 75,27 75,27 C75,27 87,21 87,15 C87,12 84,9 81,9 C78,9 75,12 75,15' className='fill-[#ea247b]/60' />
-						<path d='M50,70 C50,66 46,62 42,62 C38,62 34,66 34,70 C34,78 50,86 50,86 C50,86 66,78 66,70 C66,66 62,62 58,62 C54,62 50,66 50,70' className='fill-[#ea247b]' />
+						<path d='M25,25 C25,20 20,15 15,15 C10,15 5,20 5,25 C5,35 25,45 25,45 C25,45 45,35 45,25 C45,20 40,15 35,15 C30,15 25,20 25,25' className='fill-brand-primary-500/80' />
+						<path d='M75,15 C75,12 72,9 69,9 C66,9 63,12 63,15 C63,21 75,27 75,27 C75,27 87,21 87,15 C87,12 84,9 81,9 C78,9 75,12 75,15' className='fill-brand-primary-500/60' />
+						<path d='M50,70 C50,66 46,62 42,62 C38,62 34,66 34,70 C34,78 50,86 50,86 C50,86 66,78 66,70 C66,66 62,62 58,62 C54,62 50,66 50,70' className='fill-brand-primary-500' />
 					</svg>
 				);
 			}
@@ -69,8 +69,8 @@ function Decoration({
 			case 'balloons': {
 				return (
 					<svg viewBox='0 0 100 100' className='w-full h-full'>
-						<ellipse cx='20' cy='30' rx='12' ry='16' className='fill-[#ea247b]' />
-						<path d='M20,46 Q22,50 20,55' stroke='#ea247b' strokeWidth='1' fill='none' />
+						<ellipse cx='20' cy='30' rx='12' ry='16' className='fill-brand-primary-500' />
+						<path d='M20,46 Q22,50 20,55' stroke='currentColor' className='text-brand-primary-500' strokeWidth='1' fill='none' />
 
 						<ellipse cx='45' cy='25' rx='10' ry='14' className='fill-yellow-400' />
 						<path d='M45,39 Q47,43 45,50' stroke='#facc15' strokeWidth='1' fill='none' />
@@ -88,7 +88,7 @@ function Decoration({
 				return (
 					<svg viewBox='0 0 100 100' className='w-full h-full'>
 						{/* Party hat */}
-						<polygon points='50,10 30,50 70,50' className='fill-[#ea247b]' />
+						<polygon points='50,10 30,50 70,50' className='fill-brand-primary-500' />
 						<circle cx='50' cy='10' r='4' className='fill-yellow-400' />
 						<line x1='35' y1='25' x2='65' y2='25' stroke='white' strokeWidth='2' />
 						<line x1='33' y1='35' x2='67' y2='35' stroke='white' strokeWidth='2' />
@@ -98,7 +98,7 @@ function Decoration({
 						<circle cx='15' cy='20' r='3' className='fill-yellow-400' />
 						<circle cx='85' cy='15' r='2' className='fill-blue-400' />
 						<circle cx='20' cy='70' r='2' className='fill-green-400' />
-						<circle cx='80' cy='65' r='3' className='fill-[#ea247b]' />
+						<circle cx='80' cy='65' r='3' className='fill-brand-primary-500' />
 						<rect x='75' y='35' width='4' height='4' transform='rotate(45 77 37)' className='fill-purple-400' />
 						<rect x='10' y='45' width='3' height='3' transform='rotate(30 11.5 46.5)' className='fill-orange-400' />
 					</svg>
@@ -162,7 +162,7 @@ export function Divider({
 	const colorClasses = {
 		white: 'text-white',
 		gray: 'text-gray-50',
-		pink: 'text-[#ea247b]',
+		pink: 'text-primary',
 		gradient: 'text-gray-100',
 	};
 

@@ -171,17 +171,17 @@ function ActiviteitenList({
 									>
 										<article
 											role='listitem'
-											className='flex items-start gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-[#ea247b] focus-within:ring-offset-2 group'
+											className='flex items-start gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 group'
 										>
-											<div className='flex-shrink-0 w-16 h-16 bg-[#ea247b] rounded-xl flex flex-col items-center justify-center text-white'>
+											<div className='flex-shrink-0 w-16 h-16 bg-primary rounded-xl flex flex-col items-center justify-center text-white'>
 												<span className='text-2xl font-bold leading-none'>{day}</span>
 												<span className='text-xs uppercase'>{month}</span>
 											</div>
 											<div className='flex-grow'>
-												<h3 className='font-bold text-gray-800 flex items-center gap-2 group-hover:text-[#ea247b] transition-colors'>
+												<h3 className='font-bold text-gray-800 flex items-center gap-2 group-hover:text-primary transition-colors'>
 													{activiteit.data.titel}
 													{activiteit.data.vastgepind && (
-														<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4 text-[#ea247b]' viewBox='0 0 24 24' fill='currentColor' aria-label='Vastgepind'>
+														<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4 text-primary' viewBox='0 0 24 24' fill='currentColor' aria-label='Vastgepind'>
 															<path d='M16 4h2a2 2 0 012 2v14l-7-3.5L6 20V6a2 2 0 012-2h2' />
 															<path d='M12 2L8 6h8l-4-4z' />
 														</svg>
@@ -222,7 +222,7 @@ function ActiviteitenList({
 												}`}>
 													{activiteit.data.categorie}
 												</span>
-												<span className='text-[#ea247b] text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity'>
+												<span className='text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity'>
 													Meer info →
 												</span>
 											</div>
@@ -235,7 +235,7 @@ function ActiviteitenList({
 					: (
 						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-gray-200'>
 							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-sm'>
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-10 w-10 text-[#ea247b]' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+								<svg xmlns='http://www.w3.org/2000/svg' className='h-10 w-10 text-primary' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
 								</svg>
 							</div>
@@ -245,7 +245,7 @@ function ActiviteitenList({
 							</p>
 							<a
 								href='/contact'
-								className='inline-flex items-center gap-2 text-[#ea247b] font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded'
+								className='inline-flex items-center gap-2 text-primary font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded'
 							>
 								Heb je een idee? Laat het ons weten!
 								<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
@@ -259,7 +259,7 @@ function ActiviteitenList({
 					<div className='text-center mt-8'>
 						<a
 							href={viewAllLink}
-							className='inline-flex items-center gap-2 text-[#ea247b] font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded'
+							className='inline-flex items-center gap-2 text-primary font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded'
 						>
 							Bekijk alle activiteiten
 							<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>

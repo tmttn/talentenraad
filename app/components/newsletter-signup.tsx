@@ -58,13 +58,13 @@ function NewsletterSignup({
 						placeholder='Je e-mailadres'
 						required
 						disabled={status === 'loading'}
-						className='w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed'
+						className='w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-focus focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed'
 					/>
 				</div>
 				<button
 					type='submit'
 					disabled={status === 'loading'}
-					className='px-6 py-3 bg-[#ea247b] text-white font-semibold rounded-lg hover:bg-[#d11d6d] transition-colors focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+					className='px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover transition-colors focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
 				>
 					{status === 'loading' ? 'Bezig...' : buttonText}
 				</button>
@@ -80,7 +80,7 @@ function NewsletterSignup({
 
 	if (variant === 'banner') {
 		return (
-			<section className='bg-gradient-to-r from-[#ea247b] to-[#d11d6d] py-8 px-6'>
+			<section className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 py-8 px-6'>
 				<div className='max-w-4xl mx-auto'>
 					<div className='flex flex-col md:flex-row items-center justify-between gap-6'>
 						<div className='text-center md:text-left'>
@@ -114,7 +114,7 @@ function NewsletterSignup({
 							<button
 								type='submit'
 								disabled={status === 'loading'}
-								className='px-6 py-3 bg-white text-[#ea247b] font-semibold rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#ea247b] disabled:opacity-50 disabled:cursor-not-allowed'
+								className='px-6 py-3 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500 disabled:opacity-50 disabled:cursor-not-allowed'
 							>
 								{status === 'loading' ? 'Bezig...' : buttonText}
 							</button>
@@ -136,8 +136,8 @@ function NewsletterSignup({
 			<div className='max-w-xl mx-auto'>
 				<div className='bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 shadow-sm border border-gray-100'>
 					<div className='text-center mb-6'>
-						<div className='w-16 h-16 mx-auto mb-4 bg-[#ea247b]/10 rounded-full flex items-center justify-center'>
-							<svg xmlns='http://www.w3.org/2000/svg' className='h-8 w-8 text-[#ea247b]' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+						<div className='w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center'>
+							<svg xmlns='http://www.w3.org/2000/svg' className='h-8 w-8 text-primary' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' />
 							</svg>
 						</div>
@@ -168,13 +168,13 @@ function NewsletterSignup({
 								placeholder='naam@voorbeeld.be'
 								required
 								disabled={status === 'loading'}
-								className='w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed'
+								className='w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-focus focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed'
 							/>
 						</div>
 						<button
 							type='submit'
 							disabled={status === 'loading'}
-							className='w-full px-6 py-3 bg-[#ea247b] text-white font-semibold rounded-lg hover:bg-[#d11d6d] transition-colors focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
+							className='w-full px-6 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-hover transition-colors focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed'
 						>
 							{status === 'loading' ? (
 								<span className='flex items-center justify-center gap-2'>
@@ -225,7 +225,7 @@ function NewsletterSignup({
 									href='https://facebook.com/talentenhuis'
 									target='_blank'
 									rel='noopener noreferrer'
-									className='w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-[#ea247b] hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2'
+									className='w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2'
 									aria-label='Facebook (opent in nieuw venster)'
 								>
 									<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='currentColor' viewBox='0 0 24 24' aria-hidden='true'>
@@ -236,7 +236,7 @@ function NewsletterSignup({
 									href='https://instagram.com/talentenhuis'
 									target='_blank'
 									rel='noopener noreferrer'
-									className='w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-[#ea247b] hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2'
+									className='w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-gray-600 hover:bg-primary hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2'
 									aria-label='Instagram (opent in nieuw venster)'
 								>
 									<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='currentColor' viewBox='0 0 24 24' aria-hidden='true'>

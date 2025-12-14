@@ -1,9 +1,53 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* ============================================
+   DESIGN TOKENS
+   ============================================ */
+
+@theme {
+	/* ----------------------------------------
+	   BRAND TOKENS - Semantic color shades
+	   ---------------------------------------- */
+
+	/* Primary palette (main brand actions) */
+	--color-brand-primary-50: #fdf2f8;
+	--color-brand-primary-100: #fce7f3;
+	--color-brand-primary-500: #ea247b;
+	--color-brand-primary-600: #d91a6d;
+	--color-brand-primary-700: #c4105f;
+
+	/* Secondary palette (news, activities) */
+	--color-brand-secondary-400: #afbd43;
+	--color-brand-secondary-500: #9aab2f;
+
+	/* Accent palette (highlights, warnings) */
+	--color-brand-accent-400: #fcb142;
+	--color-brand-accent-500: #e9a33a;
+
+	/* ----------------------------------------
+	   SEMANTIC TOKENS - Purpose-based mapping
+	   ---------------------------------------- */
+
+	/* Primary (main brand actions) */
+	--color-primary: #ea247b;
+	--color-primary-hover: #c4105f;
+
+	/* Secondary (news, activities) */
+	--color-secondary: #afbd43;
+	--color-secondary-hover: #9aab2f;
+
+	/* Accent (highlights, warnings) */
+	--color-accent: #fcb142;
+	--color-accent-hover: #e9a33a;
+
+	/* Focus states */
+	--color-focus: #ea247b;
+}
+
 /* Global focus styles for accessibility */
 *:focus-visible {
-  outline: 2px solid #ea247b;
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
@@ -13,7 +57,7 @@
   top: -100px;
   left: 50%;
   transform: translateX(-50%);
-  background: #ea247b;
+  background: var(--color-primary);
   color: white;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -29,14 +73,14 @@
 /* Improved button focus states */
 button:focus-visible,
 a:focus-visible {
-  outline: 2px solid #ea247b;
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
 /* High contrast mode improvements */
 @media (prefers-contrast: high) {
-  .bg-\[\#ea247b\] {
-    background-color: #c4105f;
+  .bg-primary {
+    background-color: var(--color-primary-hover);
   }
 
   .text-gray-500,
@@ -90,7 +134,7 @@ a:focus-visible {
 }
 
 .prose a {
-  color: #ea247b;
+  color: var(--color-primary);
   text-decoration: none;
 }
 

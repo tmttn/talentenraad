@@ -84,7 +84,7 @@ function FeatureGrid({
 							key={index}
 							className='bg-white rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow'
 						>
-							<div className='w-12 h-12 rounded-xl bg-[#ea247b]/10 text-[#ea247b] flex items-center justify-center mb-4'>
+							<div className='w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4'>
 								{iconMap[feature.icon] || iconMap.star}
 							</div>
 							<h3 className='text-lg md:text-xl font-bold text-gray-900 mb-2'>
@@ -96,7 +96,7 @@ function FeatureGrid({
 							{feature.link && (
 								<a
 									href={feature.link}
-									className='inline-flex items-center gap-1 mt-4 text-[#ea247b] font-medium text-sm hover:underline'
+									className='inline-flex items-center gap-1 mt-4 text-primary font-medium text-sm hover:underline'
 								>
 									Meer info
 									<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>

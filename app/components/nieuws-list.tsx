@@ -149,10 +149,10 @@ function NieuwsList({
 								<a
 									key={item.id}
 									href={`/nieuws/${generateSlug(item.data.titel)}`}
-									className='block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ea247b] focus-visible:ring-offset-2 rounded-xl'
+									className='block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl'
 								>
 									<article
-										className={`bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow group overflow-hidden ${layout === 'list' ? 'p-6 border-l-4 border-[#ea247b]' : ''}`}
+										className={`bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow group overflow-hidden ${layout === 'list' ? 'p-6 border-l-4 border-primary' : ''}`}
 									>
 										{showImages && item.data.afbeelding && layout === 'grid' && (
 											<div className='relative h-48 overflow-hidden'>
@@ -170,10 +170,10 @@ function NieuwsList({
 												</svg>
 												{formatDate(item.data.datum)}
 											</div>
-											<h3 className={`font-bold text-gray-800 mb-2 flex items-center gap-2 group-hover:text-[#ea247b] transition-colors ${layout === 'grid' ? 'text-lg line-clamp-2' : 'text-xl'}`}>
+											<h3 className={`font-bold text-gray-800 mb-2 flex items-center gap-2 group-hover:text-primary transition-colors ${layout === 'grid' ? 'text-lg line-clamp-2' : 'text-xl'}`}>
 												{item.data.titel}
 												{item.data.vastgepind && (
-													<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-[#ea247b] flex-shrink-0' viewBox='0 0 24 24' fill='currentColor' aria-label='Vastgepind'>
+													<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-primary flex-shrink-0' viewBox='0 0 24 24' fill='currentColor' aria-label='Vastgepind'>
 														<path d='M5 3a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2H5zm7 14l-5-2.5V5h10v9.5L12 17z' />
 													</svg>
 												)}
@@ -181,7 +181,7 @@ function NieuwsList({
 											<p className={`text-gray-600 ${layout === 'grid' ? 'text-sm line-clamp-2' : ''}`}>
 												{item.data.samenvatting}
 											</p>
-											<span className='inline-flex items-center gap-1 mt-3 text-[#ea247b] font-semibold text-sm group-hover:gap-2 transition-all' aria-hidden='true'>
+											<span className='inline-flex items-center gap-1 mt-3 text-primary font-semibold text-sm group-hover:gap-2 transition-all' aria-hidden='true'>
 												Lees meer
 												<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 													<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
@@ -196,7 +196,7 @@ function NieuwsList({
 					: (
 						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-gray-200'>
 							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-sm'>
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-10 w-10 text-[#ea247b]' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+								<svg xmlns='http://www.w3.org/2000/svg' className='h-10 w-10 text-primary' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' />
 								</svg>
 							</div>
@@ -209,7 +209,7 @@ function NieuwsList({
 									href='https://facebook.com/talentenhuis'
 									target='_blank'
 									rel='noopener noreferrer'
-									className='inline-flex items-center gap-2 text-[#ea247b] font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded'
+									className='inline-flex items-center gap-2 text-primary font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded'
 									aria-label='Facebook (opent in nieuw venster)'
 								>
 									<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='currentColor' viewBox='0 0 24 24' aria-hidden='true'>
@@ -221,7 +221,7 @@ function NieuwsList({
 									href='https://instagram.com/talentenhuis'
 									target='_blank'
 									rel='noopener noreferrer'
-									className='inline-flex items-center gap-2 text-[#ea247b] font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded'
+									className='inline-flex items-center gap-2 text-primary font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded'
 									aria-label='Instagram (opent in nieuw venster)'
 								>
 									<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='currentColor' viewBox='0 0 24 24' aria-hidden='true'>
