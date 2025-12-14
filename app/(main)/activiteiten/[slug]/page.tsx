@@ -17,6 +17,10 @@ type Activiteit = {
 	};
 };
 
+type BuilderResponse = {
+	results?: Activiteit[];
+};
+
 // Dynamic rendering to avoid SSG issues with Builder.io components
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -29,13 +33,13 @@ async function getActiviteit(slug: string): Promise<Activiteit | undefined> {
 		url.searchParams.set('limit', '100');
 
 		const response = await fetch(url.toString(), {cache: 'no-store'});
-		const data = await response.json();
+		const data = await response.json() as BuilderResponse;
 
 		if (data.results) {
 			// Find item by ID or by slug generated from title
-			const item = data.results.find((item: Activiteit) => {
-				const itemSlug = generateSlug(item.data.titel);
-				return item.id === slug || itemSlug === slug;
+			const item = data.results.find(activiteit => {
+				const itemSlug = generateSlug(activiteit.data.titel);
+				return activiteit.id === slug || itemSlug === slug;
 			});
 
 			if (item) {
@@ -52,12 +56,12 @@ async function getActiviteit(slug: string): Promise<Activiteit | undefined> {
 		allUrl.searchParams.set('cacheSeconds', '0');
 
 		const allResponse = await fetch(allUrl.toString(), {cache: 'no-store'});
-		const allData = await allResponse.json();
+		const allData = await allResponse.json() as BuilderResponse;
 
 		if (allData.results) {
-			const item = allData.results.find((item: Activiteit) => {
-				const itemSlug = generateSlug(item.data.titel);
-				return item.id === slug || itemSlug === slug;
+			const item = allData.results.find(activiteit => {
+				const itemSlug = generateSlug(activiteit.data.titel);
+				return activiteit.id === slug || itemSlug === slug;
 			});
 			if (item) {
 				return item;
@@ -116,7 +120,7 @@ export async function generateMetadata({params}: {params: Promise<{slug: string}
 
 	return {
 		title: `${item.data.titel} - Talentenraad`,
-		description: item.data.beschrijving || `Activiteit op ${formatDate(item.data.datum)}`,
+		description: item.data.beschrijving ?? `Activiteit op ${formatDate(item.data.datum)}`,
 	};
 }
 

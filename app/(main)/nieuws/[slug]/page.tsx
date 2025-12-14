@@ -16,6 +16,10 @@ type NieuwsItem = {
 	};
 };
 
+type BuilderResponse = {
+	results?: NieuwsItem[];
+};
+
 // Dynamic rendering to avoid SSG issues with Builder.io components
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -27,16 +31,16 @@ async function getNieuwsItem(slug: string): Promise<NieuwsItem | undefined> {
 		url.searchParams.set('limit', '100');
 
 		const response = await fetch(url.toString(), {next: {revalidate: 60}});
-		const data = await response.json();
+		const data = await response.json() as BuilderResponse;
 
 		if (!data.results) {
 			return undefined;
 		}
 
 		// Find item by ID or by slug generated from title
-		const item = data.results.find((item: NieuwsItem) => {
-			const itemSlug = generateSlug(item.data.titel);
-			return item.id === slug || itemSlug === slug;
+		const item = data.results.find(nieuwsItem => {
+			const itemSlug = generateSlug(nieuwsItem.data.titel);
+			return nieuwsItem.id === slug || itemSlug === slug;
 		});
 
 		return item;
