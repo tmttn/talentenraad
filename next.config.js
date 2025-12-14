@@ -38,7 +38,7 @@ nextConfig.headers = async () => [
 		headers: [
 			{
 				key: 'Content-Security-Policy',
-				value: "frame-ancestors 'self' https://*.builder.io https://builder.io",
+				value: 'frame-ancestors \'self\' https://*.builder.io https://builder.io',
 			},
 			{
 				key: 'X-Content-Type-Options',
