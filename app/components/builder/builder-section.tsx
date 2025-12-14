@@ -3,10 +3,10 @@
 import {useEffect, useState} from 'react';
 import {Content, fetchOneEntry, type BuilderContent} from '@builder.io/sdk-react-nextjs';
 import {HeroInfo} from '@features/marketing/hero';
-import {CTABannerInfo} from '@features/marketing/cta-banner';
+import {CtaBannerInfo} from '@features/marketing/cta-banner';
 import {InfoCardInfo} from '@features/info/info-card';
 import {SectionInfo} from '@components/section';
-import {FAQInfo} from '@features/faq/faq';
+import {FaqInfo} from '@features/faq/faq';
 import {ActiviteitenListInfo} from '@features/activities/activiteiten-list';
 import {NieuwsListInfo} from '@features/news/nieuws-list';
 import {DecorationInfo, DividerInfo} from '@components/decorations';
@@ -15,14 +15,14 @@ import {SiteFooterInfo} from '@components/layout/site-footer';
 import {ActiviteitenArchiefInfo} from '@features/activities/activiteiten-archief';
 
 // eslint-disable-next-line n/prefer-global/process
-const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 const customComponents = [
 	HeroInfo,
-	CTABannerInfo,
+	CtaBannerInfo,
 	InfoCardInfo,
 	SectionInfo,
-	FAQInfo,
+	FaqInfo,
 	ActiviteitenListInfo,
 	NieuwsListInfo,
 	DecorationInfo,
@@ -51,7 +51,7 @@ export function BuilderSection({model, url}: Readonly<BuilderSectionProperties>)
 			try {
 				const sectionContent = await fetchOneEntry({
 					model,
-					apiKey: BUILDER_API_KEY,
+					apiKey: builderApiKey,
 					userAttributes: {
 						urlPath: url || (globalThis.window === undefined ? '/' : globalThis.location.pathname),
 					},
@@ -64,7 +64,7 @@ export function BuilderSection({model, url}: Readonly<BuilderSectionProperties>)
 			}
 		}
 
-		fetchSection();
+		void fetchSection();
 	}, [model, url]);
 
 	// Don't render anything if loading or no content
@@ -76,7 +76,7 @@ export function BuilderSection({model, url}: Readonly<BuilderSectionProperties>)
 		<Content
 			content={content}
 			model={model}
-			apiKey={BUILDER_API_KEY}
+			apiKey={builderApiKey}
 			customComponents={customComponents}
 		/>
 	);

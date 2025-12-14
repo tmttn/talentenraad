@@ -27,6 +27,12 @@ type FormData = {
 	message: string;
 };
 
+type ApiResponse = {
+	success?: boolean;
+	message?: string;
+	errors?: FormErrors;
+};
+
 // Shared input styles for accessibility - improved contrast
 const inputBaseStyles = `
 	w-full px-4 py-3
@@ -123,7 +129,7 @@ function ContactForm({
 				body: JSON.stringify(formData),
 			});
 
-			const data = await response.json();
+			const data = await response.json() as ApiResponse;
 
 			if (!response.ok) {
 				// Handle validation errors from server
@@ -131,7 +137,7 @@ function ContactForm({
 					setErrors(data.errors);
 				}
 
-				setStatusMessage(data.message || 'Er is een fout opgetreden.');
+				setStatusMessage(data.message ?? 'Er is een fout opgetreden.');
 				return;
 			}
 

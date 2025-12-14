@@ -22,7 +22,7 @@ type ActiviteitenArchiefProperties = {
 };
 
 // eslint-disable-next-line n/prefer-global/process
-const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 function generateSlug(title: string): string {
 	return title
@@ -49,13 +49,13 @@ function ActiviteitenArchief({
 		async function fetchActiviteiten() {
 			try {
 				const url = new URL('https://cdn.builder.io/api/v3/content/activiteit');
-				url.searchParams.set('apiKey', BUILDER_API_KEY);
+				url.searchParams.set('apiKey', builderApiKey);
 				url.searchParams.set('limit', '100');
 				url.searchParams.set('sort.data.datum', '-1'); // Sort by date descending (newest first)
 				url.searchParams.set('cachebust', 'true');
 
 				const response = await fetch(url.toString(), {cache: 'no-store'});
-				const data = await response.json();
+				const data = await response.json() as {results?: Activiteit[]};
 
 				if (data.results) {
 					// Filter to only show past events
@@ -77,7 +77,7 @@ function ActiviteitenArchief({
 			}
 		}
 
-		fetchActiviteiten();
+		void fetchActiviteiten();
 	}, [limit]);
 
 	const formatDate = (dateString: string) => {
@@ -93,9 +93,7 @@ function ActiviteitenArchief({
 		const groups: Record<string, Activiteit[]> = {};
 		for (const item of items) {
 			const year = new Date(item.data.datum).getFullYear().toString();
-			if (!groups[year]) {
-				groups[year] = [];
-			}
+			groups[year] ||= [];
 
 			groups[year].push(item);
 		}

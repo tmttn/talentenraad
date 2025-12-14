@@ -13,7 +13,7 @@ type Announcement = {
 	};
 };
 
-const BUILDER_API_KEY = '3706422a8e454ceebe64acdc5a1475ba';
+const builderApiKey = '3706422a8e454ceebe64acdc5a1475ba';
 
 export function AnnouncementBanner() {
 	const [announcement, setAnnouncement] = useState<Announcement | undefined>(undefined);
@@ -23,7 +23,7 @@ export function AnnouncementBanner() {
 		async function fetchAnnouncement() {
 			try {
 				const url = new URL('https://cdn.builder.io/api/v3/content/aankondiging');
-				url.searchParams.set('apiKey', BUILDER_API_KEY);
+				url.searchParams.set('apiKey', builderApiKey);
 				url.searchParams.set('limit', '1');
 				url.searchParams.set('query.data.actief', 'true');
 				url.searchParams.set('cachebust', 'true');
@@ -35,7 +35,7 @@ export function AnnouncementBanner() {
 					return;
 				}
 
-				const data = await response.json();
+				const data = await response.json() as {results?: Announcement[]};
 
 				if (data.results && data.results.length > 0) {
 					setAnnouncement(data.results[0]);
@@ -45,7 +45,7 @@ export function AnnouncementBanner() {
 			}
 		}
 
-		fetchAnnouncement();
+		void fetchAnnouncement();
 	}, []);
 
 	if (!announcement || !isVisible) {

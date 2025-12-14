@@ -30,7 +30,7 @@ type ActiviteitenListProperties = {
 
 // Use environment variable for API key
 // eslint-disable-next-line n/prefer-global/process
-const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 function generateSlug(title: string): string {
 	return title
@@ -66,7 +66,7 @@ function ActiviteitenList({
 				const todayString = today.toISOString().split('T')[0];
 
 				const url = new URL('https://cdn.builder.io/api/v3/content/activiteit');
-				url.searchParams.set('apiKey', BUILDER_API_KEY);
+				url.searchParams.set('apiKey', builderApiKey);
 				// Fetch more than limit to account for pinning/sorting, then slice
 				url.searchParams.set('limit', String(Math.max(limit * 3, 20)));
 				url.searchParams.set('sort.data.datum', '1'); // Sort by date ascending
@@ -79,7 +79,7 @@ function ActiviteitenList({
 				}
 
 				const response = await fetch(url.toString(), {cache: 'no-store'});
-				const data = await response.json();
+				const data = await response.json() as {results?: Activiteit[]};
 
 				if (data.results) {
 					// Sort: pinned first, then by volgorde, then by date
@@ -116,7 +116,7 @@ function ActiviteitenList({
 			}
 		}
 
-		fetchActiviteiten();
+		void fetchActiviteiten();
 	}, [limit, categorie]);
 
 	const formatDate = (dateString: string) => {

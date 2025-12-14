@@ -19,13 +19,13 @@ const ctaStyles = `
 	}
 `;
 
-type CTAAction = {
+type CtaAction = {
 	text: string;
 	link: string;
 	variant: 'primary' | 'secondary';
 };
 
-type UnifiedCTAProperties = {
+type UnifiedCtaProperties = {
 	title?: string;
 	subtitle?: string;
 	primaryButtonText?: string;
@@ -38,7 +38,7 @@ type UnifiedCTAProperties = {
 	variant?: 'compact' | 'full' | 'minimal';
 };
 
-function UnifiedCTA({
+function UnifiedCta({
 	title = 'Doe mee met de Talentenraad',
 	subtitle = 'Heb je vragen, ideeën, of wil je meehelpen? We horen graag van je!',
 	primaryButtonText = 'Neem contact op',
@@ -49,9 +49,9 @@ function UnifiedCTA({
 	showContactCTA = true,
 	showNewsletterCTA = false,
 	variant = 'full',
-}: Readonly<UnifiedCTAProperties>) {
+}: Readonly<UnifiedCtaProperties>) {
 	// Build action buttons based on props
-	const actions: CTAAction[] = [];
+	const actions: CtaAction[] = [];
 
 	if (primaryButtonText && primaryButtonLink) {
 		actions.push({text: primaryButtonText, link: primaryButtonLink, variant: 'primary'});
@@ -244,9 +244,9 @@ function UnifiedCTA({
 	);
 }
 
-export const UnifiedCTAInfo = {
+export const UnifiedCtaInfo = {
 	name: 'UnifiedCTA',
-	component: UnifiedCTA,
+	component: UnifiedCta,
 	inputs: [
 		{
 			name: 'title',

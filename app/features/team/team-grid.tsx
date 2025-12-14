@@ -33,7 +33,7 @@ type TeamGridProperties = {
 };
 
 // Use environment variable for API key
-const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '35b5ea60db844c8ca5412e82289bcdb0';
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '35b5ea60db844c8ca5412e82289bcdb0'; // eslint-disable-line n/prefer-global/process
 
 function TeamGrid({
 	title,
@@ -56,7 +56,7 @@ function TeamGrid({
 		async function fetchTeamleden() {
 			try {
 				const url = new URL('https://cdn.builder.io/api/v3/content/teamlid');
-				url.searchParams.set('apiKey', BUILDER_API_KEY);
+				url.searchParams.set('apiKey', builderApiKey);
 				url.searchParams.set('limit', '50');
 				url.searchParams.set('cachebust', 'true');
 
@@ -65,7 +65,7 @@ function TeamGrid({
 				}
 
 				const response = await fetch(url.toString(), {cache: 'no-store'});
-				const data = await response.json();
+				const data = await response.json() as {results?: BuilderTeamlid[]};
 
 				if (data.results && data.results.length > 0) {
 					// Filter active members and sort by volgorde
@@ -97,7 +97,7 @@ function TeamGrid({
 			}
 		}
 
-		fetchTeamleden();
+		void fetchTeamleden();
 	}, [fetchFromBuilder, categorie, members]);
 
 	const displayMembers = fetchFromBuilder ? teamleden : members;
@@ -109,10 +109,10 @@ function TeamGrid({
 		.toUpperCase()
 		.slice(0, 2);
 
-	const gridCols = {
-		2: 'md:grid-cols-2',
-		3: 'md:grid-cols-2 lg:grid-cols-3',
-		4: 'md:grid-cols-2 lg:grid-cols-4',
+	const gridColsMap: Record<string, string> = {
+		cols2: 'md:grid-cols-2',
+		cols3: 'md:grid-cols-2 lg:grid-cols-3',
+		cols4: 'md:grid-cols-2 lg:grid-cols-4',
 	};
 
 	// Color palette for avatar backgrounds
@@ -151,7 +151,7 @@ function TeamGrid({
 	return (
 		<section className='py-20 bg-white'>
 			<div className='max-w-6xl mx-auto px-6'>
-				{(title || subtitle) && (
+				{(title ?? subtitle) && (
 					<div className='text-center mb-16'>
 						{title && (
 							<h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
@@ -166,45 +166,47 @@ function TeamGrid({
 					</div>
 				)}
 
-				{displayMembers.length > 0 ? (
-					<div className={`grid grid-cols-1 ${gridCols[columns]} gap-8`}>
-						{displayMembers.map((member, index) => (
-							<div
-								key={index}
-								className='text-center group'
-							>
-								{/* Avatar */}
-								<div className='relative mb-5 inline-block'>
-									<div className={`w-32 h-32 rounded-full bg-gradient-to-br ${avatarColors[index % avatarColors.length]} flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}>
-										<span className='text-white font-bold text-3xl'>
-											{getInitials(member.name)}
-										</span>
+				{displayMembers.length > 0
+					? (
+						<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-8`}>
+							{displayMembers.map((member, index) => (
+								<div
+									key={index}
+									className='text-center group'
+								>
+									{/* Avatar */}
+									<div className='relative mb-5 inline-block'>
+										<div className={`w-32 h-32 rounded-full bg-gradient-to-br ${avatarColors[index % avatarColors.length]} flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}>
+											<span className='text-white font-bold text-3xl'>
+												{getInitials(member.name)}
+											</span>
+										</div>
+										{/* Role badge */}
+										<div className='absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md'>
+											<span className='text-xs font-semibold text-primary'>
+												{member.role}
+											</span>
+										</div>
 									</div>
-									{/* Role badge */}
-									<div className='absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md'>
-										<span className='text-xs font-semibold text-primary'>
-											{member.role}
-										</span>
-									</div>
-								</div>
 
-								{/* Info */}
-								<h3 className='text-xl font-bold text-gray-900 mt-4'>
-									{member.name}
-								</h3>
-								{showDescription && member.description && (
-									<p className='text-gray-600 text-sm mt-2 max-w-xs mx-auto'>
-										{member.description}
-									</p>
-								)}
-							</div>
-						))}
-					</div>
-				) : (
-					<div className='text-center py-12 text-gray-500'>
-						Geen teamleden gevonden
-					</div>
-				)}
+									{/* Info */}
+									<h3 className='text-xl font-bold text-gray-900 mt-4'>
+										{member.name}
+									</h3>
+									{showDescription && member.description && (
+										<p className='text-gray-600 text-sm mt-2 max-w-xs mx-auto'>
+											{member.description}
+										</p>
+									)}
+								</div>
+							))}
+						</div>
+					)
+					: (
+						<div className='text-center py-12 text-gray-500'>
+							Geen teamleden gevonden
+						</div>
+					)}
 			</div>
 		</section>
 	);

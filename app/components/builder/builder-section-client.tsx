@@ -2,10 +2,10 @@
 
 import {Content, type BuilderContent} from '@builder.io/sdk-react-nextjs';
 import {HeroInfo} from '@features/marketing/hero';
-import {CTABannerInfo} from '@features/marketing/cta-banner';
+import {CtaBannerInfo} from '@features/marketing/cta-banner';
 import {InfoCardInfo} from '@features/info/info-card';
 import {SectionInfo} from '@components/section';
-import {FAQInfo} from '@features/faq/faq';
+import {FaqInfo} from '@features/faq/faq';
 import {ActiviteitenListInfo} from '@features/activities/activiteiten-list';
 import {NieuwsListInfo} from '@features/news/nieuws-list';
 import {DecorationInfo, DividerInfo} from '@components/decorations';
@@ -20,15 +20,15 @@ import {TeamMemberInfo} from '@features/team/team-member';
 import {ActiviteitenArchiefInfo} from '@features/activities/activiteiten-archief';
 import {HomepageDashboardInfo} from '@features/dashboard/homepage-dashboard';
 import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
-import {UnifiedCTAInfo} from '@features/marketing/unified-cta';
+import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
 
 // All custom components available for sections
 const customComponents = [
 	HeroInfo,
-	CTABannerInfo,
+	CtaBannerInfo,
 	InfoCardInfo,
 	SectionInfo,
-	FAQInfo,
+	FaqInfo,
 	ActiviteitenListInfo,
 	NieuwsListInfo,
 	DecorationInfo,
@@ -44,7 +44,7 @@ const customComponents = [
 	ActiviteitenArchiefInfo,
 	HomepageDashboardInfo,
 	NewsletterSignupInfo,
-	UnifiedCTAInfo,
+	UnifiedCtaInfo,
 ];
 
 type BuilderSectionClientProperties = {

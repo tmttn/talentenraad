@@ -9,7 +9,7 @@ import {ContactFormInfo} from '@features/contact/contact-form';
 import {NewsCardInfo} from '@features/news/news-card';
 import {CalendarSectionInfo} from '@features/activities/calendar-section';
 import {TeamMemberInfo} from '@features/team/team-member';
-import {CTABannerInfo} from '@features/marketing/cta-banner';
+import {CtaBannerInfo} from '@features/marketing/cta-banner';
 import {InfoCardInfo} from '@features/info/info-card';
 import {ActiviteitenListInfo} from '@features/activities/activiteiten-list';
 import {TeamGridInfo} from '@features/team/team-grid';
@@ -17,12 +17,12 @@ import {FeatureGridInfo} from '@features/info/feature-grid';
 import {SectionInfo} from '@components/section';
 import {NieuwsListInfo} from '@features/news/nieuws-list';
 import {AnnouncementBannerInfo} from '@features/marketing/announcement-banner';
-import {FAQInfo} from '@features/faq/faq';
+import {FaqInfo} from '@features/faq/faq';
 import {DecorationInfo, DividerInfo} from '@components/decorations';
 import {ActiviteitenArchiefInfo} from '@features/activities/activiteiten-archief';
 import {HomepageDashboardInfo} from '@features/dashboard/homepage-dashboard';
 import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
-import {UnifiedCTAInfo} from '@features/marketing/unified-cta';
+import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
 
 type BuilderContentProperties = {
 	// eslint-disable-next-line @typescript-eslint/no-restricted-types
@@ -46,7 +46,7 @@ export function BuilderContent({content, apiKey, model}: Readonly<BuilderContent
 				NewsCardInfo,
 				CalendarSectionInfo,
 				TeamMemberInfo,
-				CTABannerInfo,
+				CtaBannerInfo,
 				InfoCardInfo,
 				ActiviteitenListInfo,
 				TeamGridInfo,
@@ -54,13 +54,13 @@ export function BuilderContent({content, apiKey, model}: Readonly<BuilderContent
 				SectionInfo,
 				NieuwsListInfo,
 				AnnouncementBannerInfo,
-				FAQInfo,
+				FaqInfo,
 				DecorationInfo,
 				DividerInfo,
 				ActiviteitenArchiefInfo,
 				HomepageDashboardInfo,
 				NewsletterSignupInfo,
-				UnifiedCTAInfo,
+				UnifiedCtaInfo,
 			]}
 		/>
 	);

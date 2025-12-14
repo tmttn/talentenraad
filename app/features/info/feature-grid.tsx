@@ -56,15 +56,15 @@ function FeatureGrid({
 	features = [],
 	columns = 3,
 }: Readonly<FeatureGridProperties>) {
-	const gridCols = {
-		2: 'sm:grid-cols-2',
-		3: 'sm:grid-cols-2 lg:grid-cols-3',
+	const gridColsMap: Record<string, string> = {
+		cols2: 'sm:grid-cols-2',
+		cols3: 'sm:grid-cols-2 lg:grid-cols-3',
 	};
 
 	return (
 		<section className='py-16 md:py-24 bg-gray-50'>
 			<div className='max-w-6xl mx-auto px-4 sm:px-6'>
-				{(title || subtitle) && (
+				{(title ?? subtitle) && (
 					<div className='text-center mb-12 md:mb-16'>
 						{title && (
 							<h2 className='text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4'>
@@ -79,14 +79,14 @@ function FeatureGrid({
 					</div>
 				)}
 
-				<div className={`grid grid-cols-1 ${gridCols[columns]} gap-6 md:gap-8`}>
+				<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-6 md:gap-8`}>
 					{features.map((feature, index) => (
 						<div
 							key={index}
 							className='bg-white rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow'
 						>
 							<div className='w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4'>
-								{iconMap[feature.icon] || iconMap.star}
+								{iconMap[feature.icon] ?? iconMap.star}
 							</div>
 							<h3 className='text-lg md:text-xl font-bold text-gray-900 mb-2'>
 								{feature.title}

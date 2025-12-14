@@ -4,7 +4,7 @@ import {useEffect, useRef, useState} from 'react';
 import {AnimatedLink} from '@components/ui';
 
 // eslint-disable-next-line n/prefer-global/process
-const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 type CalendarEvent = {
 	date: string;
@@ -82,7 +82,7 @@ function CalendarSection({
 				const todayIso = today.toISOString().split('T')[0];
 
 				const url = new URL('https://cdn.builder.io/api/v3/content/activiteit');
-				url.searchParams.set('apiKey', BUILDER_API_KEY);
+				url.searchParams.set('apiKey', builderApiKey);
 				// Fetch more items to ensure we get future events after filtering
 				url.searchParams.set('limit', '50');
 				url.searchParams.set('sort.data.datum', '1');
@@ -114,7 +114,7 @@ function CalendarSection({
 			}
 		}
 
-		fetchActiviteiten();
+		void fetchActiviteiten();
 	}, [fetchFromBuilder, hasStaticEvents, staticEvents, limit]);
 
 	const formatDate = (dateString: string) => {

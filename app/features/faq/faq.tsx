@@ -62,7 +62,7 @@ const faqStyles = `
 	}
 `;
 
-type FAQItem = {
+type FaqItem = {
 	id: string;
 	data: {
 		vraag: string;
@@ -72,7 +72,8 @@ type FAQItem = {
 };
 
 // Generate JSON-LD structured data for FAQPage schema
-function generateFAQStructuredData(faqs: FAQItem[]) {
+function generateFaqStructuredData(faqs: FaqItem[]) {
+	/* eslint-disable @typescript-eslint/naming-convention -- JSON-LD requires @context/@type */
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'FAQPage',
@@ -85,23 +86,24 @@ function generateFAQStructuredData(faqs: FAQItem[]) {
 			},
 		})),
 	};
+	/* eslint-enable @typescript-eslint/naming-convention */
 }
 
-type FAQProperties = {
+type FaqProperties = {
 	title?: string;
 	subtitle?: string;
 	showAskQuestion?: boolean;
 };
 
 // Use environment variable for API key
-const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '3706422a8e454ceebe64acdc5a1475ba';
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '3706422a8e454ceebe64acdc5a1475ba'; // eslint-disable-line n/prefer-global/process
 
-function FAQ({
+function Faq({
 	title = 'Veelgestelde vragen',
 	subtitle,
 	showAskQuestion = true,
-}: Readonly<FAQProperties>) {
-	const [faqs, setFaqs] = useState<FAQItem[]>([]);
+}: Readonly<FaqProperties>) {
+	const [faqs, setFaqs] = useState<FaqItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [openIndex, setOpenIndex] = useState<number | undefined>(undefined);
 	const [statusMessage, setStatusMessage] = useState<string>('');
@@ -150,10 +152,10 @@ function FAQ({
 	}, [faqs.length]);
 
 	useEffect(() => {
-		async function fetchFAQs() {
+		async function fetchFaqs() {
 			try {
 				const url = new URL('https://cdn.builder.io/api/v3/content/faq');
-				url.searchParams.set('apiKey', BUILDER_API_KEY);
+				url.searchParams.set('apiKey', builderApiKey);
 				url.searchParams.set('limit', '20');
 				url.searchParams.set('sort.data.volgorde', '1');
 				url.searchParams.set('cachebust', 'true');
@@ -166,7 +168,7 @@ function FAQ({
 					return;
 				}
 
-				const data = await response.json();
+				const data = await response.json() as {results?: FaqItem[]};
 
 				if (data.results) {
 					setFaqs(data.results);
@@ -178,10 +180,10 @@ function FAQ({
 			}
 		}
 
-		fetchFAQs();
+		void fetchFaqs();
 	}, []);
 
-	const toggleFAQ = (index: number) => {
+	const toggleFaq = (index: number) => {
 		const isOpening = openIndex !== index;
 		setOpenIndex(isOpening ? index : undefined);
 		// Announce state change to screen readers
@@ -220,7 +222,7 @@ function FAQ({
 				<script
 					type='application/ld+json'
 					dangerouslySetInnerHTML={{
-						__html: JSON.stringify(generateFAQStructuredData(faqs)),
+						__html: JSON.stringify(generateFaqStructuredData(faqs)),
 					}}
 				/>
 			)}
@@ -258,7 +260,7 @@ function FAQ({
 										}}
 										type='button'
 										onClick={() => {
-											toggleFAQ(index);
+											toggleFaq(index);
 										}}
 										onKeyDown={event => {
 											handleKeyDown(event, index);
@@ -335,9 +337,9 @@ function FAQ({
 	);
 }
 
-export const FAQInfo = {
+export const FaqInfo = {
 	name: 'FAQ',
-	component: FAQ,
+	component: Faq,
 	inputs: [
 		{
 			name: 'title',

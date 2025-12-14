@@ -15,7 +15,7 @@ const ctaStyles = `
 	}
 `;
 
-type CTABannerProperties = {
+type CtaBannerProperties = {
 	title: string;
 	subtitle?: string;
 	buttonText?: string;
@@ -23,13 +23,13 @@ type CTABannerProperties = {
 	variant?: 'default' | 'accent' | 'light';
 };
 
-function CTABanner({
+function CtaBanner({
 	title,
 	subtitle,
 	buttonText = 'Neem contact op',
 	buttonLink = '/contact',
 	variant = 'default',
-}: Readonly<CTABannerProperties>) {
+}: Readonly<CtaBannerProperties>) {
 	const variants = {
 		default: {
 			bg: 'bg-gray-900',
@@ -81,9 +81,9 @@ function CTABanner({
 	);
 }
 
-export const CTABannerInfo = {
+export const CtaBannerInfo = {
 	name: 'CTABanner',
-	component: CTABanner,
+	component: CtaBanner,
 	inputs: [
 		{
 			name: 'title', type: 'string', required: true, defaultValue: 'Wil je meehelpen?',

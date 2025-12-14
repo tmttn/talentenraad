@@ -10,10 +10,10 @@ import {
 } from '@builder.io/sdk-react-nextjs';
 import {useSearchParams} from 'next/navigation';
 import {HeroInfo} from '@features/marketing/hero';
-import {CTABannerInfo} from '@features/marketing/cta-banner';
+import {CtaBannerInfo} from '@features/marketing/cta-banner';
 import {InfoCardInfo} from '@features/info/info-card';
 import {SectionInfo} from '@components/section';
-import {FAQInfo} from '@features/faq/faq';
+import {FaqInfo} from '@features/faq/faq';
 import {ActiviteitenListInfo} from '@features/activities/activiteiten-list';
 import {NieuwsListInfo} from '@features/news/nieuws-list';
 import {DecorationInfo, DividerInfo} from '@components/decorations';
@@ -32,10 +32,10 @@ const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 // All custom components available for sections
 const customComponents = [
 	HeroInfo,
-	CTABannerInfo,
+	CtaBannerInfo,
 	InfoCardInfo,
 	SectionInfo,
-	FAQInfo,
+	FaqInfo,
 	ActiviteitenListInfo,
 	NieuwsListInfo,
 	DecorationInfo,
