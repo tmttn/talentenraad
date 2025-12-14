@@ -1,6 +1,15 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	serverExternalPackages: ['isolated-vm'],
+	// Turbopack SVGR support - allows importing .svg files as React components
+	turbopack: {
+		rules: {
+			'*.svg': {
+				loaders: ['@svgr/webpack'],
+				as: '*.js',
+			},
+		},
+	},
 };
 
 nextConfig.webpack = (webpackConfig, {webpack}) => {
