@@ -132,7 +132,7 @@ function InfoCard({
 	const styles = variantStyles[variant] ?? variantStyles.default;
 
 	return (
-		<div className={`p-8 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 text-center group relative overflow-hidden ${styles.card}`}>
+		<div className={`p-8 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 text-center group relative overflow-hidden ${styles.card}`}>
 			{/* Decorative elements for colored variants */}
 			{variant !== 'default' && (
 				<>
