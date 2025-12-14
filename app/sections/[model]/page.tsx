@@ -43,7 +43,7 @@ import {NewsCardInfo} from '@/components/news-card';
 import {TeamMemberInfo} from '@/components/team-member';
 
 // eslint-disable-next-line n/prefer-global/process
-const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 // All custom components available for sections
 const customComponents = [
@@ -85,29 +85,34 @@ export default function SectionPreviewPage({params}: SectionPreviewPagePropertie
 	const [content, setContent] = useState<BuilderContent | undefined>(undefined);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | undefined>(undefined);
-	const searchParams = useSearchParams();
+	const searchParameters = useSearchParams();
 
 	// Get model from params
 	useEffect(() => {
-		params.then(resolvedParams => {
-			setModel(resolvedParams.model);
-		});
+		async function resolveParameters() {
+			const resolvedParameters = await params;
+			setModel(resolvedParameters.model);
+		}
+
+		void resolveParameters();
 	}, [params]);
 
 	// Fetch section content
 	useEffect(() => {
-		if (!model) return;
+		if (!model) {
+			return;
+		}
 
 		async function fetchSection() {
 			setLoading(true);
 			setError(undefined);
 
 			try {
-				const searchParamsObject = Object.fromEntries(searchParams.entries());
+				const searchParametersObject = Object.fromEntries(searchParameters.entries());
 				const sectionContent = await fetchOneEntry({
 					model,
-					apiKey: BUILDER_API_KEY,
-					options: searchParamsObject,
+					apiKey: builderApiKey,
+					options: searchParametersObject,
 					userAttributes: {
 						urlPath: `/sections/${model}`,
 					},
@@ -116,7 +121,7 @@ export default function SectionPreviewPage({params}: SectionPreviewPagePropertie
 				setContent(sectionContent ?? undefined);
 
 				// Allow empty content in preview/edit mode
-				if (!sectionContent && !isPreviewing(searchParamsObject) && !isEditing(searchParamsObject)) {
+				if (!sectionContent && !isPreviewing(searchParametersObject) && !isEditing(searchParametersObject)) {
 					setError(`No content found for section model "${model}"`);
 				}
 			} catch (fetchError) {
@@ -127,8 +132,8 @@ export default function SectionPreviewPage({params}: SectionPreviewPagePropertie
 			}
 		}
 
-		fetchSection();
-	}, [model, searchParams]);
+		void fetchSection();
+	}, [model, searchParameters]);
 
 	// Loading state
 	if (loading) {
@@ -144,8 +149,8 @@ export default function SectionPreviewPage({params}: SectionPreviewPagePropertie
 
 	// Error state (only shown outside of preview/edit mode)
 	if (error && !content) {
-		const searchParamsObject = Object.fromEntries(searchParams.entries());
-		const inEditMode = isPreviewing(searchParamsObject) || isEditing(searchParamsObject);
+		const searchParametersObject = Object.fromEntries(searchParameters.entries());
+		const inEditMode = isPreviewing(searchParametersObject) || isEditing(searchParametersObject);
 
 		if (!inEditMode) {
 			return (
@@ -168,7 +173,7 @@ export default function SectionPreviewPage({params}: SectionPreviewPagePropertie
 			<Content
 				content={content}
 				model={model}
-				apiKey={BUILDER_API_KEY}
+				apiKey={builderApiKey}
 				customComponents={customComponents}
 			/>
 		</div>
