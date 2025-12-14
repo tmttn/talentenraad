@@ -1,11 +1,24 @@
 import '@testing-library/jest-dom';
 
+// Suppress specific React console errors for known test limitations
+const originalConsoleError = console.error;
+console.error = (...arguments_) => {
+	const message = String(arguments_[0]);
+	// Suppress html-in-div warnings (layout tests) and fill attribute warnings (next/image mock)
+	if (message.includes('cannot be a child of')
+		|| message.includes('non-boolean attribute')) {
+		return;
+	}
+
+	originalConsoleError(...arguments_);
+};
+
 // Mock next/image
 jest.mock('next/image', () => ({
 	__esModule: true,
-	default: ({priority, ...properties}: React.ImgHTMLAttributes<HTMLImageElement> & {priority?: boolean}) => {
+	default: ({priority, fill, ...properties}: React.ImgHTMLAttributes<HTMLImageElement> & {priority?: boolean; fill?: boolean}) => {
 		// eslint-disable-next-line @next/next/no-img-element
-		return <img {...properties} data-priority={priority ? 'true' : undefined} alt={properties.alt ?? ''} />;
+		return <img {...properties} data-priority={priority ? 'true' : undefined} data-fill={fill ? 'true' : undefined} alt={properties.alt ?? ''} />;
 	},
 }));
 
