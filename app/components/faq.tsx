@@ -4,6 +4,64 @@ import {
 	useEffect, useState, useRef, useCallback, type KeyboardEvent,
 } from 'react';
 
+// CSS for smooth height animation using CSS Grid trick
+const faqStyles = `
+	.faq-content-wrapper {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.faq-content-wrapper.open {
+		grid-template-rows: 1fr;
+	}
+
+	.faq-content-inner {
+		overflow: hidden;
+	}
+
+	.faq-content-text {
+		opacity: 0;
+		transform: translateY(-8px);
+		transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+	}
+
+	.faq-content-wrapper.open .faq-content-text {
+		opacity: 1;
+		transform: translateY(0);
+		transition-delay: 0.1s;
+	}
+
+	.faq-item {
+		opacity: 0;
+		transform: translateY(16px);
+		animation: faq-item-enter 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+	}
+
+	@keyframes faq-item-enter {
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	.faq-chevron {
+		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.faq-chevron.open {
+		transform: rotate(180deg);
+	}
+
+	.faq-button:hover .faq-chevron {
+		transform: translateY(2px);
+	}
+
+	.faq-button:hover .faq-chevron.open {
+		transform: rotate(180deg) translateY(2px);
+	}
+`;
+
 type FAQItem = {
 	id: string;
 	data: {
@@ -155,6 +213,8 @@ function FAQ({
 
 	return (
 		<section className='py-16 px-6 bg-gray-50' aria-labelledby='faq-title'>
+			{/* Inject FAQ animation styles */}
+			<style dangerouslySetInnerHTML={{__html: faqStyles}} />
 			{/* JSON-LD structured data for SEO */}
 			{faqs.length > 0 && (
 				<script
@@ -189,7 +249,8 @@ function FAQ({
 							{faqs.map((faq, index) => (
 								<div
 									key={faq.id}
-									className='bg-white rounded-xl shadow-sm overflow-hidden'
+									className='faq-item bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow'
+									style={{animationDelay: `${index * 0.08}s`}}
 								>
 									<button
 										ref={element => {
@@ -202,7 +263,7 @@ function FAQ({
 										onKeyDown={event => {
 											handleKeyDown(event, index);
 										}}
-										className='w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2'
+										className='faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2'
 										aria-expanded={openIndex === index}
 										aria-controls={`faq-answer-${index}`}
 										id={`faq-button-${index}`}
@@ -210,7 +271,7 @@ function FAQ({
 										<span className='font-semibold text-gray-900'>{faq.data.vraag}</span>
 										<svg
 											xmlns='http://www.w3.org/2000/svg'
-											className={`h-5 w-5 text-primary transition-transform flex-shrink-0 ${openIndex === index ? 'rotate-180' : ''}`}
+											className={`faq-chevron h-5 w-5 text-primary flex-shrink-0 ${openIndex === index ? 'open' : ''}`}
 											fill='none'
 											viewBox='0 0 24 24'
 											stroke='currentColor'
@@ -223,11 +284,13 @@ function FAQ({
 										id={`faq-answer-${index}`}
 										role='region'
 										aria-labelledby={`faq-button-${index}`}
-										className={`overflow-hidden transition-all duration-200 ${openIndex === index ? 'max-h-96' : 'max-h-0'}`}
-										hidden={openIndex !== index}
+										className={`faq-content-wrapper ${openIndex === index ? 'open' : ''}`}
+										aria-hidden={openIndex !== index}
 									>
-										<div className='px-6 pb-4 text-gray-700'>
-											<p>{faq.data.antwoord}</p>
+										<div className='faq-content-inner'>
+											<div className='faq-content-text px-6 pb-4 text-gray-700'>
+												<p>{faq.data.antwoord}</p>
+											</div>
 										</div>
 									</div>
 								</div>
