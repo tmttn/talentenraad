@@ -75,6 +75,10 @@ export async function fetchBuilderContent(
 			userAttributes: {
 				urlPath,
 			},
+			cacheSeconds: 60,
+			fetchOptions: {
+				next: {revalidate: 60},
+			},
 		});
 		return {content};
 	} catch (error) {
@@ -100,6 +104,10 @@ export async function fetchBuilderSection(
 			apiKey,
 			userAttributes: {
 				urlPath,
+			},
+			cacheSeconds: 60,
+			fetchOptions: {
+				next: {revalidate: 60},
 			},
 		});
 		return content ?? undefined;
