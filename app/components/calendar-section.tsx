@@ -1,6 +1,6 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 // eslint-disable-next-line n/prefer-global/process
 const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -44,42 +44,56 @@ function generateSlug(title: string): string {
 function CalendarSection({
 	title = 'Komende activiteiten',
 	subtitle,
-	events: staticEvents = [],
+	events: staticEvents,
 	showViewAll = true,
 	viewAllLink = '/kalender',
 	limit = 5,
 	fetchFromBuilder = true,
 }: Readonly<CalendarSectionProperties>) {
-	const [events, setEvents] = useState<CalendarEvent[]>(staticEvents);
-	const [loading, setLoading] = useState(fetchFromBuilder && staticEvents.length === 0);
+	const hasStaticEvents = staticEvents && staticEvents.length > 0;
+	const [events, setEvents] = useState<CalendarEvent[]>(hasStaticEvents ? staticEvents : []);
+	const [loading, setLoading] = useState(fetchFromBuilder && !hasStaticEvents);
+	const hasFetched = useRef(false);
 
 	useEffect(() => {
 		// Only fetch from Builder if fetchFromBuilder is true and no static events provided
-		if (!fetchFromBuilder || staticEvents.length > 0) {
-			setEvents(staticEvents);
+		if (!fetchFromBuilder || hasStaticEvents) {
+			if (hasStaticEvents) {
+				setEvents(staticEvents);
+			}
+
 			setLoading(false);
 			return;
 		}
 
+		// Prevent duplicate fetches
+		if (hasFetched.current) {
+			return;
+		}
+
+		hasFetched.current = true;
+
 		async function fetchActiviteiten() {
 			try {
+				// Get today's date in ISO format for API query
+				const today = new Date();
+				today.setHours(0, 0, 0, 0);
+				const todayIso = today.toISOString().split('T')[0];
+
 				const url = new URL('https://cdn.builder.io/api/v3/content/activiteit');
 				url.searchParams.set('apiKey', BUILDER_API_KEY);
-				url.searchParams.set('limit', String(limit));
+				// Fetch more items to ensure we get future events after filtering
+				url.searchParams.set('limit', '50');
 				url.searchParams.set('sort.data.datum', '1');
+				// Query for future events only (datum >= today)
+				url.searchParams.set('query.data.datum.$gte', todayIso);
 
 				const response = await fetch(url.toString());
-				const data = await response.json();
+				const data = await response.json() as {results?: Activiteit[]};
 
 				if (data.results) {
-					// Filter to only show future events
-					const now = new Date();
-					now.setHours(0, 0, 0, 0);
+					// Map and limit the results
 					const futureEvents = data.results
-						.filter((item: Activiteit) => {
-							const eventDate = new Date(item.data.datum);
-							return eventDate >= now;
-						})
 						.slice(0, limit)
 						.map((item: Activiteit) => ({
 							date: item.data.datum,
@@ -98,7 +112,7 @@ function CalendarSection({
 		}
 
 		fetchActiviteiten();
-	}, [fetchFromBuilder, staticEvents, limit]);
+	}, [fetchFromBuilder, hasStaticEvents, staticEvents, limit]);
 
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString);
