@@ -2,6 +2,14 @@ import {Analytics} from '@vercel/analytics/react';
 import {SpeedInsights} from '@vercel/speed-insights/next';
 import type {Metadata} from 'next';
 import './globals.css';
+// eslint-disable-next-line import-x/extensions
+import {SiteHeader} from './components/site-header';
+// eslint-disable-next-line import-x/extensions
+import {SiteFooter} from './components/site-footer';
+// eslint-disable-next-line import-x/extensions
+import {AnnouncementBanner} from './components/announcement-banner';
+// eslint-disable-next-line import-x/extensions
+import {FooterCTASection} from './components/builder-section';
 
 export const metadata: Metadata = {
 	title: 'Talentenraad',
@@ -25,10 +33,14 @@ export default function RootLayout({
 					/>
 				)}
 			</head>
-			<body className='w-screen overflow-hidden antialiased bg-gradient-to-b from-white to-base-100'>
-				<main role='main'>
+			<body className='min-h-screen flex flex-col antialiased bg-white'>
+				<AnnouncementBanner />
+				<SiteHeader />
+				<main id='main-content' role='main' className='flex-grow' tabIndex={-1}>
 					{children}
 				</main>
+				<FooterCTASection />
+				<SiteFooter />
 				<SpeedInsights />
 				<Analytics />
 			</body>
