@@ -49,7 +49,7 @@ function ActiviteitenList({
 	viewAllLink = '/kalender',
 	limit = 5,
 	categorie,
-	showLocation = false,
+	showLocation = true,
 	showDescription = false,
 }: Readonly<ActiviteitenListProperties>) {
 	const [activiteiten, setActiviteiten] = useState<Activiteit[]>([]);
@@ -311,7 +311,7 @@ export const ActiviteitenListInfo = {
 		{
 			name: 'showLocation',
 			type: 'boolean',
-			defaultValue: false,
+			defaultValue: true,
 			helperText: 'Toon locatie van activiteiten',
 		},
 		{

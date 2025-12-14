@@ -35,6 +35,12 @@ import {NewsCardInfo} from './news-card';
 import {TeamMemberInfo} from './team-member';
 // eslint-disable-next-line import-x/extensions
 import {ActiviteitenArchiefInfo} from './activiteiten-archief';
+// eslint-disable-next-line import-x/extensions
+import {HomepageDashboardInfo} from './homepage-dashboard';
+// eslint-disable-next-line import-x/extensions
+import {NewsletterSignupInfo} from './newsletter-signup';
+// eslint-disable-next-line import-x/extensions
+import {UnifiedCTAInfo} from './unified-cta';
 
 // All custom components available for sections
 const customComponents = [
@@ -56,6 +62,9 @@ const customComponents = [
 	NewsCardInfo,
 	TeamMemberInfo,
 	ActiviteitenArchiefInfo,
+	HomepageDashboardInfo,
+	NewsletterSignupInfo,
+	UnifiedCTAInfo,
 ];
 
 type BuilderSectionClientProperties = {

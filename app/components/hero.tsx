@@ -9,7 +9,7 @@ type HeroProperties = {
 	secondaryCtaText?: string;
 	secondaryCtaLink?: string;
 	variant?: 'default' | 'centered' | 'split';
-	size?: 'small' | 'medium' | 'large';
+	size?: 'compact' | 'small' | 'medium' | 'large';
 };
 
 function Hero({
@@ -24,9 +24,24 @@ function Hero({
 	size = 'medium',
 }: Readonly<HeroProperties>) {
 	const sizeClasses = {
-		small: 'py-20 md:py-24',
-		medium: 'py-24 md:py-32',
-		large: 'py-32 md:py-40',
+		compact: 'py-12 md:py-16',
+		small: 'py-16 md:py-20',
+		medium: 'py-20 md:py-28',
+		large: 'py-28 md:py-36',
+	};
+
+	const titleClasses = {
+		compact: 'text-2xl md:text-3xl lg:text-4xl',
+		small: 'text-3xl md:text-4xl lg:text-5xl',
+		medium: 'text-4xl md:text-5xl lg:text-6xl',
+		large: 'text-4xl md:text-5xl lg:text-6xl',
+	};
+
+	const subtitleClasses = {
+		compact: 'text-base md:text-lg',
+		small: 'text-base md:text-lg',
+		medium: 'text-lg md:text-xl',
+		large: 'text-lg md:text-xl',
 	};
 
 	if (variant === 'split') {
@@ -38,11 +53,11 @@ function Hero({
 				</div>
 				<div className='relative max-w-6xl mx-auto px-6'>
 					<div className='max-w-2xl'>
-						<h1 id='hero-title-split' className='text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6'>
+						<h1 id='hero-title-split' className={`${titleClasses[size]} font-bold text-white leading-tight mb-4 md:mb-6`}>
 							{title}
 						</h1>
 						{subtitle && (
-							<p className='text-xl text-white/90 mb-8 leading-relaxed'>
+							<p className={`${subtitleClasses[size]} text-white/90 mb-6 md:mb-8 leading-relaxed`}>
 								{subtitle}
 							</p>
 						)}
@@ -92,11 +107,11 @@ function Hero({
 			</div>
 
 			<div className='relative max-w-4xl mx-auto px-6 text-center'>
-				<h1 id='hero-title' className='text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6'>
+				<h1 id='hero-title' className={`${titleClasses[size]} font-bold text-white leading-tight mb-4 md:mb-6`}>
 					{title}
 				</h1>
 				{subtitle && (
-					<p className='text-lg md:text-xl text-white/90 mb-8 max-w-2xl mx-auto leading-relaxed'>
+					<p className={`${subtitleClasses[size]} text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed`}>
 						{subtitle}
 					</p>
 				)}
@@ -181,8 +196,9 @@ export const HeroInfo = {
 		{
 			name: 'size',
 			type: 'string',
-			enum: ['small', 'medium', 'large'],
+			enum: ['compact', 'small', 'medium', 'large'],
 			defaultValue: 'medium',
+			helperText: 'compact: zeer klein voor subpagina\'s, small: klein, medium: standaard, large: groot',
 		},
 	],
 };

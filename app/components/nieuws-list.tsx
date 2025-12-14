@@ -19,6 +19,8 @@ type NieuwsListProperties = {
 	title?: string;
 	subtitle?: string;
 	limit?: number;
+	layout?: 'list' | 'grid';
+	showImages?: boolean;
 };
 
 // Use environment variable for API key
@@ -40,6 +42,8 @@ function NieuwsList({
 	title = 'Laatste nieuws',
 	subtitle,
 	limit = 10,
+	layout = 'list',
+	showImages = true,
 }: Readonly<NieuwsListProperties>) {
 	const [nieuws, setNieuws] = useState<NieuwsItem[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -140,39 +144,50 @@ function NieuwsList({
 
 				{nieuws.length > 0
 					? (
-						<div className='space-y-6' role='feed' aria-label='Nieuwsberichten'>
+						<div className={layout === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'} role='feed' aria-label='Nieuwsberichten'>
 							{nieuws.map(item => (
 								<a
 									key={item.id}
 									href={`/nieuws/${generateSlug(item.data.titel)}`}
-									className='block'
+									className='block focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ea247b] focus-visible:ring-offset-2 rounded-xl'
 								>
 									<article
-										className='bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border-l-4 border-[#ea247b] group'
+										className={`bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow group overflow-hidden ${layout === 'list' ? 'p-6 border-l-4 border-[#ea247b]' : ''}`}
 									>
-										<div className='flex items-center gap-2 text-sm text-gray-500 mb-2'>
-											<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-												<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
-											</svg>
-											{formatDate(item.data.datum)}
-										</div>
-										<h3 className='text-xl font-bold text-gray-800 mb-2 flex items-center gap-2 group-hover:text-[#ea247b] transition-colors'>
-											{item.data.titel}
-											{item.data.vastgepind && (
-												<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-[#ea247b] flex-shrink-0' viewBox='0 0 24 24' fill='currentColor' aria-label='Vastgepind'>
-													<path d='M5 3a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2H5zm7 14l-5-2.5V5h10v9.5L12 17z' />
+										{showImages && item.data.afbeelding && layout === 'grid' && (
+											<div className='relative h-48 overflow-hidden'>
+												<img
+													src={item.data.afbeelding}
+													alt=''
+													className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+												/>
+											</div>
+										)}
+										<div className={layout === 'grid' ? 'p-5' : ''}>
+											<div className='flex items-center gap-2 text-sm text-gray-500 mb-2'>
+												<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+													<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
 												</svg>
-											)}
-										</h3>
-										<p className='text-gray-600'>
-											{item.data.samenvatting}
-										</p>
-										<span className='inline-flex items-center gap-1 mt-3 text-[#ea247b] font-semibold text-sm group-hover:gap-2 transition-all' aria-hidden='true'>
-											Lees meer
-											<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-												<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-											</svg>
-										</span>
+												{formatDate(item.data.datum)}
+											</div>
+											<h3 className={`font-bold text-gray-800 mb-2 flex items-center gap-2 group-hover:text-[#ea247b] transition-colors ${layout === 'grid' ? 'text-lg line-clamp-2' : 'text-xl'}`}>
+												{item.data.titel}
+												{item.data.vastgepind && (
+													<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-[#ea247b] flex-shrink-0' viewBox='0 0 24 24' fill='currentColor' aria-label='Vastgepind'>
+														<path d='M5 3a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2H5zm7 14l-5-2.5V5h10v9.5L12 17z' />
+													</svg>
+												)}
+											</h3>
+											<p className={`text-gray-600 ${layout === 'grid' ? 'text-sm line-clamp-2' : ''}`}>
+												{item.data.samenvatting}
+											</p>
+											<span className='inline-flex items-center gap-1 mt-3 text-[#ea247b] font-semibold text-sm group-hover:gap-2 transition-all' aria-hidden='true'>
+												Lees meer
+												<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+													<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
+												</svg>
+											</span>
+										</div>
 									</article>
 								</a>
 							))}
@@ -240,6 +255,19 @@ export const NieuwsListInfo = {
 			type: 'number',
 			defaultValue: 10,
 			helperText: 'Maximum aantal nieuwsberichten',
+		},
+		{
+			name: 'layout',
+			type: 'string',
+			enum: ['list', 'grid'],
+			defaultValue: 'list',
+			helperText: 'Weergave: lijst (verticaal) of grid (kaarten)',
+		},
+		{
+			name: 'showImages',
+			type: 'boolean',
+			defaultValue: true,
+			helperText: 'Toon afbeeldingen bij nieuwsberichten (alleen bij grid layout)',
 		},
 	],
 };
