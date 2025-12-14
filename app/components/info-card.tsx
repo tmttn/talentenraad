@@ -1,5 +1,7 @@
 'use client';
 
+import {AnimatedLink} from './ui';
+
 type InfoCardProperties = {
 	title: string;
 	description: string;
@@ -140,15 +142,14 @@ function InfoCard({
 				<h3 className={`text-xl font-bold mb-3 ${styles.title}`}>{title}</h3>
 				<p className={`whitespace-pre-line ${styles.description}`}>{description}</p>
 				{link && (
-					<a
+					<AnimatedLink
 						href={link}
-						className={`inline-flex items-center gap-1 mt-4 font-semibold hover:underline ${styles.link}`}
+						size='sm'
+						variant={variant === 'default' ? 'primary' : 'white'}
+						className='mt-4'
 					>
 						{linkText}
-						<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-						</svg>
-					</a>
+					</AnimatedLink>
 				)}
 			</div>
 		</div>

@@ -1,6 +1,7 @@
 'use client';
 
 import Image from 'next/image';
+import {linkStyles} from './ui';
 
 type NewsCardProperties = {
 	title: string;
@@ -20,6 +21,8 @@ function NewsCard({
 	link,
 }: Readonly<NewsCardProperties>) {
 	const content = (
+		<>
+			<style dangerouslySetInnerHTML={{__html: linkStyles}} />
 		<article className='group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden'>
 			{image && (
 				<div className='relative h-52 overflow-hidden'>
@@ -50,15 +53,16 @@ function NewsCard({
 					<p className='text-gray-600 mt-3 line-clamp-2'>{excerpt}</p>
 				)}
 				{link && (
-					<span className='inline-flex items-center gap-1 mt-4 text-primary font-semibold group-hover:gap-2 transition-all' aria-hidden='true'>
+					<span className='animated-link inline-flex items-center gap-1 mt-4 text-primary font-semibold' aria-hidden='true'>
 						Lees meer
-						<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
+						<svg xmlns='http://www.w3.org/2000/svg' className='animated-link-arrow h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
 						</svg>
 					</span>
 				)}
 			</div>
 		</article>
+		</>
 	);
 
 	if (link) {

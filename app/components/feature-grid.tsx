@@ -1,6 +1,7 @@
 'use client';
 
 import type {ReactNode} from 'react';
+import {AnimatedLink} from './ui';
 
 type FeatureItem = {
 	icon: string;
@@ -94,15 +95,9 @@ function FeatureGrid({
 								{feature.description}
 							</p>
 							{feature.link && (
-								<a
-									href={feature.link}
-									className='inline-flex items-center gap-1 mt-4 text-primary font-medium text-sm hover:underline'
-								>
+								<AnimatedLink href={feature.link} size='sm' className='mt-4'>
 									Meer info
-									<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-										<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-									</svg>
-								</a>
+								</AnimatedLink>
 							)}
 						</div>
 					))}

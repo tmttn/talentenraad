@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useState} from 'react';
+import {AnimatedLink} from './ui';
 
 type Activiteit = {
 	id: string;
@@ -243,29 +244,17 @@ function ActiviteitenList({
 							<p className='text-gray-500 max-w-sm mx-auto mb-6'>
 								Binnenkort plannen we nieuwe activiteiten voor de schoolgemeenschap. Houd deze pagina in de gaten!
 							</p>
-							<a
-								href='/contact'
-								className='inline-flex items-center gap-2 text-primary font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded'
-							>
+							<AnimatedLink href='/contact' size='sm'>
 								Heb je een idee? Laat het ons weten!
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-								</svg>
-							</a>
+							</AnimatedLink>
 						</div>
 					)}
 
 				{showViewAll && activiteiten.length > 0 && (
 					<div className='text-center mt-8'>
-						<a
-							href={viewAllLink}
-							className='inline-flex items-center gap-2 text-primary font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded'
-						>
+						<AnimatedLink href={viewAllLink}>
 							Bekijk alle activiteiten
-							<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-							</svg>
-						</a>
+						</AnimatedLink>
 					</div>
 				)}
 			</div>

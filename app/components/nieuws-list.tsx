@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useState} from 'react';
+import {linkStyles} from './ui';
 
 type NieuwsItem = {
 	id: string;
@@ -128,6 +129,7 @@ function NieuwsList({
 
 	return (
 		<section className='py-16 px-6' aria-labelledby={title ? 'nieuws-title' : undefined}>
+			<style dangerouslySetInnerHTML={{__html: linkStyles}} />
 			<div className='max-w-4xl mx-auto'>
 				{(title || subtitle) && (
 					<div className='text-center mb-12'>
@@ -181,10 +183,10 @@ function NieuwsList({
 											<p className={`text-gray-600 ${layout === 'grid' ? 'text-sm line-clamp-2' : ''}`}>
 												{item.data.samenvatting}
 											</p>
-											<span className='inline-flex items-center gap-1 mt-3 text-primary font-semibold text-sm group-hover:gap-2 transition-all' aria-hidden='true'>
+											<span className='animated-link inline-flex items-center gap-1 mt-3 text-primary font-semibold text-sm' aria-hidden='true'>
 												Lees meer
-												<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-													<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
+												<svg xmlns='http://www.w3.org/2000/svg' className='animated-link-arrow h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+													<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
 												</svg>
 											</span>
 										</div>

@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
+import {AnimatedLink} from './ui';
 
 // eslint-disable-next-line n/prefer-global/process
 const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -209,15 +210,9 @@ function CalendarSection({
 
 				{showViewAll && events.length > 0 && (
 					<div className='text-center mt-8'>
-						<a
-							href={viewAllLink}
-							className='inline-flex items-center gap-2 text-primary font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded'
-						>
+						<AnimatedLink href={viewAllLink}>
 							Bekijk alle activiteiten
-							<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-							</svg>
-						</a>
+						</AnimatedLink>
 					</div>
 				)}
 			</div>

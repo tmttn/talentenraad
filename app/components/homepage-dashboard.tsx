@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useState} from 'react';
+import {AnimatedLink} from './ui';
 
 type Activiteit = {
 	id: string;
@@ -225,15 +226,9 @@ function HomepageDashboard({
 							)}
 						</div>
 						<div className='px-6 pb-4 border-t border-gray-100 pt-3 mt-auto'>
-							<a
-								href='/kalender'
-								className='inline-flex items-center gap-1 text-sm text-primary font-medium hover:underline'
-							>
+							<AnimatedLink href='/kalender' size='sm'>
 								Bekijk alle activiteiten
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-								</svg>
-							</a>
+							</AnimatedLink>
 						</div>
 					</div>
 
@@ -284,15 +279,9 @@ function HomepageDashboard({
 							)}
 						</div>
 						<div className='px-6 pb-4 border-t border-gray-100 pt-3 mt-auto'>
-							<a
-								href='/nieuws'
-								className='inline-flex items-center gap-1 text-sm text-secondary font-medium hover:underline'
-							>
+							<AnimatedLink href='/nieuws' size='sm' variant='secondary'>
 								Alle nieuwsberichten
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-								</svg>
-							</a>
+							</AnimatedLink>
 						</div>
 					</div>
 				</div>
