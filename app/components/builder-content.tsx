@@ -39,6 +39,12 @@ import {FAQInfo} from './faq';
 import {DecorationInfo, DividerInfo} from './decorations';
 // eslint-disable-next-line import-x/extensions
 import {ActiviteitenArchiefInfo} from './activiteiten-archief';
+// eslint-disable-next-line import-x/extensions
+import {HomepageDashboardInfo} from './homepage-dashboard';
+// eslint-disable-next-line import-x/extensions
+import {NewsletterSignupInfo} from './newsletter-signup';
+// eslint-disable-next-line import-x/extensions
+import {UnifiedCTAInfo} from './unified-cta';
 
 type BuilderContentProperties = {
 	// eslint-disable-next-line @typescript-eslint/no-restricted-types
@@ -74,6 +80,9 @@ export function BuilderContent({content, apiKey, model}: Readonly<BuilderContent
 				DecorationInfo,
 				DividerInfo,
 				ActiviteitenArchiefInfo,
+				HomepageDashboardInfo,
+				NewsletterSignupInfo,
+				UnifiedCTAInfo,
 			]}
 		/>
 	);
