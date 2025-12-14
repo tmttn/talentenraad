@@ -10,8 +10,6 @@ type FeatureItem = {
 };
 
 type FeatureGridProperties = {
-	title?: string;
-	subtitle?: string;
 	features?: FeatureItem[];
 	columns?: 2 | 3;
 };
@@ -37,8 +35,6 @@ function FeatureIcon({name}: {name: string}) {
 }
 
 function FeatureGrid({
-	title,
-	subtitle,
 	features = [],
 	columns = 3,
 }: Readonly<FeatureGridProperties>) {
@@ -47,49 +43,34 @@ function FeatureGrid({
 		cols3: 'sm:grid-cols-2 lg:grid-cols-3',
 	};
 
-	return (
-		<section className='py-16 md:py-24 bg-gray-50'>
-			<div className='max-w-6xl mx-auto px-4 sm:px-6'>
-				{(title ?? subtitle) && (
-					<div className='text-center mb-12 md:mb-16'>
-						{title && (
-							<h2 className='text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4'>
-								{title}
-							</h2>
-						)}
-						{subtitle && (
-							<p className='text-base sm:text-lg text-gray-600 max-w-2xl mx-auto'>
-								{subtitle}
-							</p>
-						)}
-					</div>
-				)}
+	if (features.length === 0) {
+		return null;
+	}
 
-				<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-6 md:gap-8`}>
-					{features.map((feature, index) => (
-						<div
-							key={index}
-							className='bg-white rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow'
-						>
-							<div className='w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4'>
-								<FeatureIcon name={feature.icon} />
-							</div>
-							<h3 className='text-lg md:text-xl font-bold text-gray-900 mb-2'>
-								{feature.title}
-							</h3>
-							<p className='text-gray-600 text-sm md:text-base leading-relaxed'>
-								{feature.description}
-							</p>
-							{feature.link && (
-								<AnimatedLink href={feature.link} size='sm' className='mt-4'>
-									Meer info
-								</AnimatedLink>
-							)}
-						</div>
-					))}
+	return (
+		<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-6 md:gap-8`}>
+			{features.map((feature, index) => (
+				<div
+					key={index}
+					className='bg-white rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow'
+				>
+					<div className='w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4'>
+						<FeatureIcon name={feature.icon} />
+					</div>
+					<h3 className='text-lg md:text-xl font-bold text-gray-900 mb-2'>
+						{feature.title}
+					</h3>
+					<p className='text-gray-600 text-sm md:text-base leading-relaxed'>
+						{feature.description}
+					</p>
+					{feature.link && (
+						<AnimatedLink href={feature.link} size='sm' className='mt-4'>
+							Meer info
+						</AnimatedLink>
+					)}
 				</div>
-			</div>
-		</section>
+			))}
+		</div>
 	);
 }
 
@@ -97,31 +78,29 @@ export const FeatureGridInfo = {
 	name: 'FeatureGrid',
 	component: FeatureGrid,
 	inputs: [
-		{name: 'title', type: 'string', defaultValue: 'Wat doen wij?'},
-		{name: 'subtitle', type: 'string', defaultValue: 'Ontdek hoe de Talentenraad het verschil maakt'},
 		{
-			name: 'columns', type: 'number', enum: [{label: '2 kolommen', value: 2}, {label: '3 kolommen', value: 3}], defaultValue: 3,
+			name: 'columns',
+			type: 'number',
+			enum: [{label: '2 kolommen', value: 2}, {label: '3 kolommen', value: 3}],
+			defaultValue: 3,
+			helperText: 'Aantal kolommen in het grid',
 		},
 		{
 			name: 'features',
 			type: 'list',
 			subFields: [
 				{
-					name: 'icon', type: 'string', enum: ['calendar', 'heart', 'users', 'star', 'money', 'gift'], defaultValue: 'star',
+					name: 'icon',
+					type: 'string',
+					enum: ['calendar', 'heart', 'users', 'star', 'money', 'gift'],
+					defaultValue: 'star',
 				},
 				{name: 'title', type: 'string', required: true},
 				{name: 'description', type: 'longText', required: true},
 				{name: 'link', type: 'string'},
 			],
-			defaultValue: [
-				{
-					icon: 'calendar', title: 'Activiteiten', description: 'Van schoolfeesten tot quiz-avonden: we organiseren leuke evenementen voor het hele gezin.', link: '/activiteiten',
-				},
-				{icon: 'money', title: 'Fondsenwerving', description: 'Door acties en sponsoring zamelen we geld in voor extra materiaal en uitstappen.'},
-				{
-					icon: 'users', title: 'Verbinding', description: 'We bouwen bruggen tussen ouders, leerkrachten en de schooldirectie.', link: '/over-ons',
-				},
-			],
+			defaultValue: [],
+			helperText: 'Feature kaarten met icoon, titel, beschrijving en optionele link',
 		},
 	],
 };

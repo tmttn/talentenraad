@@ -12,9 +12,6 @@ const submitButtonClassName = [
 ].join(' ');
 
 type ContactFormProperties = {
-	title?: string;
-	subtitle?: string;
-	emailTo?: string;
 	showPhone?: boolean;
 	showSubject?: boolean;
 };
@@ -277,8 +274,6 @@ function validateMessage(message: string): string | undefined {
 }
 
 function ContactForm({
-	title = 'Contacteer ons',
-	subtitle,
 	showPhone = false,
 	showSubject = true,
 }: Readonly<ContactFormProperties>) {
@@ -361,81 +356,70 @@ function ContactForm({
 	}
 
 	return (
-		<section className='py-16 px-6 bg-gray-50' aria-labelledby='contact-form-title'>
-			<div className='max-w-2xl mx-auto'>
-				<div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
-					{statusMessage}
-				</div>
-
-				{title && (
-					<h2 id='contact-form-title' className='text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4'>
-						{title}
-					</h2>
-				)}
-				{subtitle && (
-					<p className='text-center text-gray-600 mb-8'>{subtitle}</p>
-				)}
-
-				{errors.general && <GeneralErrorMessage message={errors.general} />}
-
-				<form onSubmit={handleSubmit} className='bg-white p-8 rounded-2xl shadow-lg' noValidate>
-					<div className='grid md:grid-cols-2 gap-6'>
-						<TextField
-							id='name'
-							label='Naam'
-							required
-							placeholder='Uw naam'
-							value={formData.name}
-							error={errors.name}
-							onChange={handleInputChange('name')}
-						/>
-						<TextField
-							id='email'
-							label='E-mail'
-							type='email'
-							required
-							placeholder='uw.email@voorbeeld.be'
-							value={formData.email}
-							error={errors.email}
-							onChange={handleInputChange('email')}
-						/>
-					</div>
-					{showPhone && (
-						<div className='mt-6'>
-							<TextField
-								id='phone'
-								label='Telefoonnummer'
-								type='tel'
-								placeholder='+32 xxx xx xx xx'
-								value={formData.phone}
-								onChange={handleInputChange('phone')}
-							/>
-						</div>
-					)}
-					{showSubject && (
-						<SelectField
-							id='subject'
-							label='Onderwerp'
-							value={formData.subject}
-							error={errors.subject}
-							options={subjectOptions}
-							onChange={handleInputChange('subject')}
-						/>
-					)}
-					<TextAreaField
-						id='message'
-						label='Bericht'
-						placeholder='Uw bericht...'
-						value={formData.message}
-						error={errors.message}
-						onChange={handleInputChange('message')}
-					/>
-					<div className='mt-8'>
-						<SubmitButton isSubmitting={isSubmitting} />
-					</div>
-				</form>
+		<div>
+			<div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
+				{statusMessage}
 			</div>
-		</section>
+
+			{errors.general && <GeneralErrorMessage message={errors.general} />}
+
+			<form onSubmit={handleSubmit} className='bg-white p-8 rounded-2xl shadow-lg' noValidate>
+				<div className='grid md:grid-cols-2 gap-6'>
+					<TextField
+						id='name'
+						label='Naam'
+						required
+						placeholder='Uw naam'
+						value={formData.name}
+						error={errors.name}
+						onChange={handleInputChange('name')}
+					/>
+					<TextField
+						id='email'
+						label='E-mail'
+						type='email'
+						required
+						placeholder='uw.email@voorbeeld.be'
+						value={formData.email}
+						error={errors.email}
+						onChange={handleInputChange('email')}
+					/>
+				</div>
+				{showPhone && (
+					<div className='mt-6'>
+						<TextField
+							id='phone'
+							label='Telefoonnummer'
+							type='tel'
+							placeholder='+32 xxx xx xx xx'
+							value={formData.phone}
+							onChange={handleInputChange('phone')}
+						/>
+					</div>
+				)}
+				{showSubject && (
+					<SelectField
+						id='subject'
+						label='Onderwerp'
+						value={formData.subject}
+						error={errors.subject}
+						options={subjectOptions}
+						onChange={handleInputChange('subject')}
+					/>
+				)}
+				<TextAreaField
+					id='message'
+					label='Bericht'
+					placeholder='Uw bericht...'
+					value={formData.message}
+					error={errors.message}
+					onChange={handleInputChange('message')}
+				/>
+				<div className='mt-8'>
+					<SubmitButton isSubmitting={isSubmitting} />
+				</div>
+			</form>
+		</div>
 	);
 }
 
@@ -443,21 +427,6 @@ export const ContactFormInfo = {
 	name: 'ContactForm',
 	component: ContactForm,
 	inputs: [
-		{
-			name: 'title',
-			type: 'string',
-			defaultValue: 'Contacteer ons',
-		},
-		{
-			name: 'subtitle',
-			type: 'string',
-			defaultValue: 'Heb je een vraag of wil je meer informatie? Neem gerust contact met ons op!',
-		},
-		{
-			name: 'emailTo',
-			type: 'email',
-			helperText: 'E-mailadres waar berichten naartoe gestuurd worden',
-		},
 		{
 			name: 'showPhone',
 			type: 'boolean',

@@ -12,12 +12,6 @@ describe('ContactForm', () => {
 		mockFetch.mockReset();
 	});
 
-	it('renders title and subtitle', () => {
-		render(<ContactForm title='Contact Title' subtitle='Contact subtitle' />);
-		expect(screen.getByRole('heading', {name: 'Contact Title'})).toBeInTheDocument();
-		expect(screen.getByText('Contact subtitle')).toBeInTheDocument();
-	});
-
 	it('renders required form fields', () => {
 		render(<ContactForm />);
 		expect(screen.getByLabelText(/naam/i)).toBeInTheDocument();

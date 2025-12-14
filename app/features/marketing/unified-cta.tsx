@@ -1,351 +1,32 @@
 'use client';
 
-// CSS for CTA button animations
-const ctaStyles = `
-	.cta-button {
-		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.cta-arrow {
-		transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.cta-button:hover .cta-arrow {
-		transform: translateX(4px);
-	}
-
-	.cta-link:hover .cta-arrow {
-		transform: translateX(3px);
-	}
-`;
-
-type CtaAction = {
-	text: string;
-	link: string;
-	variant: 'primary' | 'secondary';
-};
+import type {ReactNode} from 'react';
 
 type UnifiedCtaProperties = {
-	title?: string;
-	subtitle?: string;
-	primaryButtonText?: string;
-	primaryButtonLink?: string;
-	secondaryButtonText?: string;
-	secondaryButtonLink?: string;
-	showVolunteerCTA?: boolean;
-	showContactCTA?: boolean;
-	showNewsletterCTA?: boolean;
 	variant?: 'compact' | 'full' | 'minimal';
+	children?: ReactNode;
 };
 
-const ArrowIcon = () => (
-	<svg
-		className='cta-arrow w-4 h-4 flex-shrink-0'
-		fill='none'
-		viewBox='0 0 24 24'
-		stroke='currentColor'
-		aria-hidden='true'
-	>
-		<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-	</svg>
-);
-
-const minimalButtonBase = [
-	'cta-button inline-flex items-center justify-center gap-2',
-	'font-semibold py-2.5 px-5 rounded-lg whitespace-nowrap',
-	'focus:outline-none focus:ring-2 focus:ring-offset-2',
-].join(' ');
-
-function MinimalVariant({title, actions}: {title: string; actions: CtaAction[]}) {
-	return (
-		<section className='bg-gray-900 py-8 px-6' aria-labelledby='cta-title-minimal'>
-			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
-			<div className='max-w-4xl mx-auto text-center'>
-				<h2 id='cta-title-minimal' className='text-xl md:text-2xl font-bold text-white mb-4'>
-					{title}
-				</h2>
-				<div className='flex flex-wrap justify-center gap-4'>
-					{actions.map(action => {
-						const variantClass = action.variant === 'primary'
-							? 'bg-primary text-white hover:bg-primary-hover focus:ring-primary'
-							: 'bg-white/10 text-white hover:bg-white/20 focus:ring-white';
-						const widthClass = actions.length > 1 ? 'w-[180px]' : '';
-						return (
-							<a
-								key={action.link}
-								href={action.link}
-								className={`${minimalButtonBase} ${widthClass} ${variantClass}`}
-							>
-								{action.text}
-								<ArrowIcon />
-							</a>
-						);
-					})}
-				</div>
-			</div>
-		</section>
-	);
-}
-
-const compactButtonBase = [
-	'cta-button inline-flex items-center justify-between gap-4',
-	'font-semibold py-3 px-6 rounded-lg whitespace-nowrap',
-	'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary',
-].join(' ');
-
-function CompactVariant({title, subtitle, actions}: {title: string; subtitle?: string; actions: CtaAction[]}) {
-	return (
-		<section
-			className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 py-10 px-6'
-			aria-labelledby='cta-title-compact'
-		>
-			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
-			<div className='max-w-4xl mx-auto'>
-				<div className='flex flex-col md:flex-row items-center justify-between gap-6'>
-					<div className='text-center md:text-left'>
-						<h2 id='cta-title-compact' className='text-xl md:text-2xl font-bold text-white mb-1'>
-							{title}
-						</h2>
-						{subtitle && (
-							<p className='text-white/90 text-sm md:text-base'>
-								{subtitle}
-							</p>
-						)}
-					</div>
-					<div className='flex flex-col gap-3 min-w-[200px]'>
-						{actions.map(action => {
-							const variantClass = action.variant === 'primary'
-								? 'bg-white text-primary hover:bg-gray-100 focus:ring-white'
-								: 'bg-white/10 text-white hover:bg-white/20 border border-white/30 focus:ring-white';
-							return (
-								<a
-									key={action.link}
-									href={action.link}
-									className={`${compactButtonBase} ${variantClass}`}
-								>
-									{action.text}
-									<ArrowIcon />
-								</a>
-							);
-						})}
-					</div>
-				</div>
-			</div>
-		</section>
-	);
-}
-
 function UnifiedCta({
-	title = 'Doe mee met de Talentenraad',
-	subtitle = 'Heb je vragen, ideeën, of wil je meehelpen? We horen graag van je!',
-	primaryButtonText = 'Neem contact op',
-	primaryButtonLink = '/contact',
-	secondaryButtonText,
-	secondaryButtonLink,
-	showVolunteerCTA = true,
-	showContactCTA = true,
-	showNewsletterCTA = false,
 	variant = 'full',
+	children,
 }: Readonly<UnifiedCtaProperties>) {
-	// Build action buttons based on props
-	const actions: CtaAction[] = [];
+	const variantStyles: Record<string, string> = {
+		minimal: 'bg-gray-900 py-8 px-6',
+		compact: 'bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 py-10 px-6',
+		full: 'bg-gradient-to-br from-gray-900 to-gray-800 py-16 px-6',
+	};
 
-	if (primaryButtonText && primaryButtonLink) {
-		actions.push({text: primaryButtonText, link: primaryButtonLink, variant: 'primary'});
-	}
-
-	if (secondaryButtonText && secondaryButtonLink) {
-		actions.push({text: secondaryButtonText, link: secondaryButtonLink, variant: 'secondary'});
-	}
-
-	if (variant === 'minimal') {
-		return <MinimalVariant title={title} actions={actions} />;
-	}
-
-	if (variant === 'compact') {
-		return <CompactVariant title={title} subtitle={subtitle} actions={actions} />;
-	}
-
-	// Full variant with feature cards
-	return (
-		<FullVariant
-			title={title}
-			subtitle={subtitle}
-			actions={actions}
-			showVolunteerCTA={showVolunteerCTA}
-			showContactCTA={showContactCTA}
-			showNewsletterCTA={showNewsletterCTA}
-		/>
-	);
-}
-
-const ChevronIcon = ({className}: {className?: string}) => (
-	<svg
-		xmlns='http://www.w3.org/2000/svg'
-		className={`cta-arrow h-4 w-4 ${className ?? ''}`}
-		fill='none'
-		viewBox='0 0 24 24'
-		stroke='currentColor'
-		aria-hidden='true'
-	>
-		<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-	</svg>
-);
-
-const cardClassName = [
-	'bg-white/5 backdrop-blur-sm rounded-xl p-6',
-	'border border-white/10 hover:border-primary/50 transition-colors',
-].join(' ');
-
-const ctaLinkBase = [
-	'cta-link inline-flex items-center gap-1 font-medium text-sm',
-	'hover:underline focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 rounded',
-].join(' ');
-
-const fullButtonBase = [
-	'cta-button inline-flex items-center justify-center gap-2',
-	'font-semibold py-3 px-8 rounded-lg',
-	'focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900',
-].join(' ');
-
-/* eslint-disable @stylistic/max-len */
-const volunteerIconPath = 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z';
-const questionIconPath = 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
-const emailIconPath = 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z';
-/* eslint-enable @stylistic/max-len */
-
-function FullVariant({
-	title,
-	subtitle,
-	actions,
-	showVolunteerCTA,
-	showContactCTA,
-	showNewsletterCTA,
-}: {
-	title: string;
-	subtitle?: string;
-	actions: CtaAction[];
-	showVolunteerCTA: boolean;
-	showContactCTA: boolean;
-	showNewsletterCTA: boolean;
-}) {
-	const gridClassName = actions.length > 1
-		? 'grid justify-center gap-4 grid-cols-2 max-w-lg mx-auto'
-		: 'grid justify-center gap-4 grid-cols-1';
+	const containerStyles: Record<string, string> = {
+		minimal: 'max-w-4xl mx-auto text-center',
+		compact: 'max-w-4xl mx-auto',
+		full: 'max-w-5xl mx-auto',
+	};
 
 	return (
-		<section className='bg-gradient-to-br from-gray-900 to-gray-800 py-16 px-6' aria-labelledby='cta-title-full'>
-			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
-			<div className='max-w-5xl mx-auto'>
-				<div className='text-center mb-10'>
-					<h2 id='cta-title-full' className='text-2xl md:text-3xl font-bold text-white mb-3'>
-						{title}
-					</h2>
-					{subtitle && (
-						<p className='text-gray-300 max-w-2xl mx-auto'>
-							{subtitle}
-						</p>
-					)}
-				</div>
-
-				{/* Feature cards for different CTAs */}
-				<div className='grid md:grid-cols-3 gap-6 mb-10'>
-					{showVolunteerCTA && (
-						<div className={cardClassName}>
-							<div className='w-12 h-12 bg-primary/20 rounded-xl flex items-center justify-center mb-4'>
-								<svg
-									xmlns='http://www.w3.org/2000/svg'
-									className='h-6 w-6 text-primary'
-									fill='none'
-									viewBox='0 0 24 24'
-									stroke='currentColor'
-									aria-hidden='true'
-								>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={volunteerIconPath} />
-								</svg>
-							</div>
-							<h3 className='text-lg font-bold text-white mb-2'>Word vrijwilliger</h3>
-							<p className='text-gray-400 text-sm mb-4'>
-								Help mee bij activiteiten en maak deel uit van een enthousiast team ouders.
-							</p>
-							<a href='/contact' className={`${ctaLinkBase} text-primary focus:ring-primary`}>
-								Meld je aan
-								<ChevronIcon />
-							</a>
-						</div>
-					)}
-
-					{showContactCTA && (
-						<div className={cardClassName}>
-							<div className='w-12 h-12 bg-info-500/20 rounded-xl flex items-center justify-center mb-4'>
-								<svg
-									xmlns='http://www.w3.org/2000/svg'
-									className='h-6 w-6 text-info-400'
-									fill='none'
-									viewBox='0 0 24 24'
-									stroke='currentColor'
-									aria-hidden='true'
-								>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={questionIconPath} />
-								</svg>
-							</div>
-							<h3 className='text-lg font-bold text-white mb-2'>Vragen of ideeën?</h3>
-							<p className='text-gray-400 text-sm mb-4'>
-								We staan open voor feedback, suggesties en nieuwe ideeën voor activiteiten.
-							</p>
-							<a href='/contact' className={`${ctaLinkBase} text-info-400 focus:ring-info-400`}>
-								Stuur een bericht
-								<ChevronIcon />
-							</a>
-						</div>
-					)}
-
-					{showNewsletterCTA && (
-						<div className={cardClassName}>
-							<div className='w-12 h-12 bg-warning-500/20 rounded-xl flex items-center justify-center mb-4'>
-								<svg
-									xmlns='http://www.w3.org/2000/svg'
-									className='h-6 w-6 text-warning-400'
-									fill='none'
-									viewBox='0 0 24 24'
-									stroke='currentColor'
-									aria-hidden='true'
-								>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={emailIconPath} />
-								</svg>
-							</div>
-							<h3 className='text-lg font-bold text-white mb-2'>Blijf op de hoogte</h3>
-							<p className='text-gray-400 text-sm mb-4'>
-								Ontvang updates over activiteiten en nieuws direct in je inbox.
-							</p>
-							<a href='/contact' className={`${ctaLinkBase} text-warning-400 focus:ring-warning-400`}>
-								Schrijf je in
-								<ChevronIcon />
-							</a>
-						</div>
-					)}
-				</div>
-
-				{/* Main CTA buttons */}
-				<div className={gridClassName}>
-					{actions.map(action => {
-						const variantClass = action.variant === 'primary'
-							? 'bg-primary text-white hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/25 focus:ring-primary'
-							: 'bg-white/10 text-white hover:bg-white/20 border border-white/20 focus:ring-white';
-						return (
-							<a
-								key={action.link}
-								href={action.link}
-								className={`${fullButtonBase} ${variantClass}`}
-							>
-								{action.text}
-								<svg className='cta-arrow w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-								</svg>
-							</a>
-						);
-					})}
-				</div>
+		<section className={variantStyles[variant]}>
+			<div className={containerStyles[variant]}>
+				{children}
 			</div>
 		</section>
 	);
@@ -356,60 +37,12 @@ export const UnifiedCtaInfo = {
 	component: UnifiedCta,
 	inputs: [
 		{
-			name: 'title',
-			type: 'string',
-			defaultValue: 'Doe mee met de Talentenraad',
-			helperText: 'Hoofdtitel van de CTA sectie',
-		},
-		{
-			name: 'subtitle',
-			type: 'string',
-			defaultValue: 'Heb je vragen, ideeën, of wil je meehelpen? We horen graag van je!',
-			helperText: 'Ondertitel/beschrijving',
-		},
-		{
-			name: 'primaryButtonText',
-			type: 'string',
-			defaultValue: 'Neem contact op',
-		},
-		{
-			name: 'primaryButtonLink',
-			type: 'string',
-			defaultValue: '/contact',
-		},
-		{
-			name: 'secondaryButtonText',
-			type: 'string',
-			helperText: 'Optionele tweede knop',
-		},
-		{
-			name: 'secondaryButtonLink',
-			type: 'string',
-		},
-		{
-			name: 'showVolunteerCTA',
-			type: 'boolean',
-			defaultValue: true,
-			helperText: 'Toon "Word vrijwilliger" kaart (alleen bij full variant)',
-		},
-		{
-			name: 'showContactCTA',
-			type: 'boolean',
-			defaultValue: true,
-			helperText: 'Toon "Vragen of ideeën" kaart (alleen bij full variant)',
-		},
-		{
-			name: 'showNewsletterCTA',
-			type: 'boolean',
-			defaultValue: false,
-			helperText: 'Toon "Blijf op de hoogte" kaart (alleen bij full variant)',
-		},
-		{
 			name: 'variant',
 			type: 'string',
 			enum: ['compact', 'full', 'minimal'],
 			defaultValue: 'full',
-			helperText: 'compact: kleine balk, full: met feature kaarten, minimal: alleen titel en knoppen',
+			helperText: 'Achtergrondstijl: compact (primaire gradient), full (donkere gradient), minimal (donker)',
 		},
 	],
+	canHaveChildren: true,
 };

@@ -15,22 +15,7 @@ describe('FAQ', () => {
 	it('shows loading state initially', () => {
 		mockFetch.mockImplementation(() => new Promise(() => {}));
 		const {container} = render(<FAQ />);
-		const section = container.querySelector('section');
-		expect(section).toHaveAttribute('aria-busy', 'true');
-	});
-
-	it('renders title and subtitle after loading', async () => {
-		mockFetch.mockResolvedValue({
-			ok: true,
-			json: () => Promise.resolve({results: []}),
-		});
-
-		render(<FAQ title='FAQ Title' subtitle='FAQ subtitle' />);
-
-		await waitFor(() => {
-			expect(screen.getByRole('heading', {level: 2, name: 'FAQ Title'})).toBeInTheDocument();
-		});
-		expect(screen.getByText('FAQ subtitle')).toBeInTheDocument();
+		expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
 	});
 
 	it('renders empty state when no FAQs', async () => {
@@ -42,7 +27,7 @@ describe('FAQ', () => {
 		render(<FAQ />);
 
 		await waitFor(() => {
-			expect(screen.getByText('Nog geen vragen')).toBeInTheDocument();
+			expect(screen.getByText('Geen veelgestelde vragen gevonden')).toBeInTheDocument();
 		});
 	});
 
@@ -247,34 +232,6 @@ describe('FAQ', () => {
 		expect(document.activeElement).toBe(buttons[1]);
 	});
 
-	it('shows ask question section by default', async () => {
-		mockFetch.mockResolvedValue({
-			ok: true,
-			json: () => Promise.resolve({results: []}),
-		});
-
-		render(<FAQ />);
-
-		await waitFor(() => {
-			expect(screen.getByText('Staat jouw vraag er niet bij?')).toBeInTheDocument();
-		});
-		expect(screen.getByRole('link', {name: /stel je vraag/i})).toHaveAttribute('href', '/contact');
-	});
-
-	it('hides ask question section when showAskQuestion is false', async () => {
-		mockFetch.mockResolvedValue({
-			ok: true,
-			json: () => Promise.resolve({results: []}),
-		});
-
-		render(<FAQ showAskQuestion={false} />);
-
-		await waitFor(() => {
-			expect(screen.getByText('Nog geen vragen')).toBeInTheDocument();
-		});
-		expect(screen.queryByText('Staat jouw vraag er niet bij?')).not.toBeInTheDocument();
-	});
-
 	it('renders JSON-LD structured data', async () => {
 		const mockFaqs = {
 			results: [
@@ -302,8 +259,7 @@ describe('FAQ', () => {
 		render(<FAQ />);
 
 		await waitFor(() => {
-			// Should show empty state on error
-			expect(screen.getByText('Nog geen vragen')).toBeInTheDocument();
+			expect(screen.getByText('Geen veelgestelde vragen gevonden')).toBeInTheDocument();
 		});
 	});
 
@@ -315,7 +271,7 @@ describe('FAQ', () => {
 		render(<FAQ />);
 
 		await waitFor(() => {
-			expect(screen.getByText('Nog geen vragen')).toBeInTheDocument();
+			expect(screen.getByText('Geen veelgestelde vragen gevonden')).toBeInTheDocument();
 		});
 	});
 
@@ -336,8 +292,8 @@ describe('FAQ', () => {
 			expect(screen.getByText('Question?')).toBeInTheDocument();
 		});
 
-		const accordion = container.querySelector('[role="region"]');
-		expect(accordion).toHaveAttribute('aria-label', 'Veelgestelde vragen accordeon');
+		const accordion = container.querySelector('[role="region"][aria-label="Veelgestelde vragen accordeon"]');
+		expect(accordion).toBeInTheDocument();
 
 		const button = screen.getByRole('button');
 		expect(button).toHaveAttribute('aria-controls', 'faq-answer-0');

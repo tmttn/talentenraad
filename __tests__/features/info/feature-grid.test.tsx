@@ -16,16 +16,6 @@ describe('FeatureGrid', () => {
 		{icon: 'heart', title: 'Feature 2', description: 'Description 2', link: '/feature-2'},
 	];
 
-	it('renders title when provided', () => {
-		render(<FeatureGrid title='Grid Title' features={sampleFeatures} />);
-		expect(screen.getByRole('heading', {level: 2, name: 'Grid Title'})).toBeInTheDocument();
-	});
-
-	it('renders subtitle when provided', () => {
-		render(<FeatureGrid subtitle='Grid subtitle' features={sampleFeatures} />);
-		expect(screen.getByText('Grid subtitle')).toBeInTheDocument();
-	});
-
 	it('renders features with title and description', () => {
 		render(<FeatureGrid features={sampleFeatures} />);
 		expect(screen.getByRole('heading', {level: 3, name: 'Feature 1'})).toBeInTheDocument();
@@ -45,10 +35,9 @@ describe('FeatureGrid', () => {
 		expect(screen.queryByRole('link')).not.toBeInTheDocument();
 	});
 
-	it('renders with empty features array', () => {
+	it('returns null with empty features array', () => {
 		const {container} = render(<FeatureGrid features={[]} />);
-		const grid = container.querySelector('.grid');
-		expect(grid?.children.length).toBe(0);
+		expect(container.firstChild).toBeNull();
 	});
 
 	describe('icons', () => {

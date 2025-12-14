@@ -1,130 +1,66 @@
-import {render, screen} from '@testing-library/react';
+import {render} from '@testing-library/react';
 import {UnifiedCtaInfo} from '../../../app/features/marketing/unified-cta';
 
 const UnifiedCTA = UnifiedCtaInfo.component;
 
 describe('UnifiedCTA', () => {
-	describe('full variant (default)', () => {
-		it('renders title and subtitle', () => {
-			render(<UnifiedCTA />);
-			expect(screen.getByRole('heading', {name: /doe mee met de talentenraad/i})).toBeInTheDocument();
-			expect(screen.getByText(/heb je vragen/i)).toBeInTheDocument();
+	describe('variant styles', () => {
+		it('renders full variant with dark gradient by default', () => {
+			const {container} = render(<UnifiedCTA />);
+			const section = container.querySelector('section');
+			expect(section).toHaveClass('bg-gradient-to-br', 'from-gray-900', 'to-gray-800');
 		});
 
-		it('renders primary button with default values', () => {
-			render(<UnifiedCTA />);
-			const link = screen.getByRole('link', {name: /neem contact op/i});
-			expect(link).toHaveAttribute('href', '/contact');
-		});
-
-		it('renders secondary button when provided', () => {
-			render(<UnifiedCTA secondaryButtonText='Secondary' secondaryButtonLink='/secondary' />);
-			const link = screen.getByRole('link', {name: /secondary/i});
-			expect(link).toHaveAttribute('href', '/secondary');
-		});
-
-		it('shows volunteer CTA card by default', () => {
-			render(<UnifiedCTA />);
-			expect(screen.getByText('Word vrijwilliger')).toBeInTheDocument();
-		});
-
-		it('shows contact CTA card by default', () => {
-			render(<UnifiedCTA />);
-			expect(screen.getByText('Vragen of ideeën?')).toBeInTheDocument();
-		});
-
-		it('hides newsletter CTA card by default', () => {
-			render(<UnifiedCTA />);
-			expect(screen.queryByText('Blijf op de hoogte')).not.toBeInTheDocument();
-		});
-
-		it('shows newsletter CTA card when enabled', () => {
-			render(<UnifiedCTA showNewsletterCTA />);
-			expect(screen.getByText('Blijf op de hoogte')).toBeInTheDocument();
-		});
-
-		it('hides volunteer CTA when disabled', () => {
-			render(<UnifiedCTA showVolunteerCTA={false} />);
-			expect(screen.queryByText('Word vrijwilliger')).not.toBeInTheDocument();
-		});
-
-		it('hides contact CTA when disabled', () => {
-			render(<UnifiedCTA showContactCTA={false} />);
-			expect(screen.queryByText('Vragen of ideeën?')).not.toBeInTheDocument();
-		});
-	});
-
-	describe('compact variant', () => {
-		it('renders in compact layout', () => {
+		it('renders compact variant with primary gradient', () => {
 			const {container} = render(<UnifiedCTA variant='compact' />);
 			const section = container.querySelector('section');
-			expect(section).toHaveAttribute('aria-labelledby', 'cta-title-compact');
+			expect(section).toHaveClass('bg-gradient-to-r', 'from-brand-primary-500', 'to-brand-primary-600');
 		});
 
-		it('renders title and subtitle', () => {
-			render(<UnifiedCTA variant='compact' title='Compact Title' subtitle='Compact subtitle' />);
-			expect(screen.getByRole('heading', {name: 'Compact Title'})).toBeInTheDocument();
-			expect(screen.getByText('Compact subtitle')).toBeInTheDocument();
-		});
-
-		it('renders action buttons', () => {
-			render(<UnifiedCTA variant='compact' primaryButtonText='Primary' primaryButtonLink='/primary' />);
-			expect(screen.getByRole('link', {name: /primary/i})).toBeInTheDocument();
-		});
-	});
-
-	describe('minimal variant', () => {
-		it('renders in minimal layout', () => {
+		it('renders minimal variant with solid dark background', () => {
 			const {container} = render(<UnifiedCTA variant='minimal' />);
 			const section = container.querySelector('section');
-			expect(section).toHaveAttribute('aria-labelledby', 'cta-title-minimal');
+			expect(section).toHaveClass('bg-gray-900');
+		});
+	});
+
+	describe('container styles', () => {
+		it('uses max-w-5xl for full variant', () => {
+			const {container} = render(<UnifiedCTA variant='full' />);
+			const innerDiv = container.querySelector('section > div');
+			expect(innerDiv).toHaveClass('max-w-5xl');
 		});
 
-		it('renders title only (no subtitle)', () => {
-			render(<UnifiedCTA variant='minimal' title='Minimal Title' subtitle='Should not show feature cards' />);
-			expect(screen.getByRole('heading', {name: 'Minimal Title'})).toBeInTheDocument();
-			// Feature cards should not be rendered in minimal variant
-			expect(screen.queryByText('Word vrijwilliger')).not.toBeInTheDocument();
+		it('uses max-w-4xl for compact variant', () => {
+			const {container} = render(<UnifiedCTA variant='compact' />);
+			const innerDiv = container.querySelector('section > div');
+			expect(innerDiv).toHaveClass('max-w-4xl');
 		});
 
-		it('renders action buttons', () => {
-			render(
-				<UnifiedCTA
-					variant='minimal'
-					primaryButtonText='Action 1'
-					primaryButtonLink='/action1'
-					secondaryButtonText='Action 2'
-					secondaryButtonLink='/action2'
-				/>,
+		it('uses max-w-4xl and text-center for minimal variant', () => {
+			const {container} = render(<UnifiedCTA variant='minimal' />);
+			const innerDiv = container.querySelector('section > div');
+			expect(innerDiv).toHaveClass('max-w-4xl', 'text-center');
+		});
+	});
+
+	describe('children', () => {
+		it('renders children content', () => {
+			const {getByText} = render(
+				<UnifiedCTA>
+					<h2>Custom Title</h2>
+					<p>Custom content</p>
+				</UnifiedCTA>,
 			);
-			expect(screen.getByRole('link', {name: /action 1/i})).toBeInTheDocument();
-			expect(screen.getByRole('link', {name: /action 2/i})).toBeInTheDocument();
-		});
-	});
-
-	describe('custom props', () => {
-		it('uses custom title', () => {
-			render(<UnifiedCTA title='Custom Title' />);
-			expect(screen.getByRole('heading', {name: 'Custom Title'})).toBeInTheDocument();
+			expect(getByText('Custom Title')).toBeInTheDocument();
+			expect(getByText('Custom content')).toBeInTheDocument();
 		});
 
-		it('uses custom subtitle', () => {
-			render(<UnifiedCTA subtitle='Custom subtitle text' />);
-			expect(screen.getByText('Custom subtitle text')).toBeInTheDocument();
+		it('renders without children', () => {
+			const {container} = render(<UnifiedCTA />);
+			const section = container.querySelector('section');
+			expect(section).toBeInTheDocument();
 		});
-
-		it('uses custom primary button text and link', () => {
-			render(<UnifiedCTA primaryButtonText='Custom Button' primaryButtonLink='/custom' />);
-			const link = screen.getByRole('link', {name: /custom button/i});
-			expect(link).toHaveAttribute('href', '/custom');
-		});
-	});
-
-	it('injects CTA animation styles', () => {
-		const {container} = render(<UnifiedCTA />);
-		const style = container.querySelector('style');
-		expect(style).toBeInTheDocument();
-		expect(style?.textContent).toContain('.cta-button');
 	});
 });
 
@@ -133,5 +69,14 @@ describe('UnifiedCtaInfo', () => {
 		expect(UnifiedCtaInfo.name).toBe('UnifiedCTA');
 		expect(UnifiedCtaInfo.component).toBeDefined();
 		expect(UnifiedCtaInfo.inputs).toBeInstanceOf(Array);
+	});
+
+	it('has canHaveChildren enabled', () => {
+		expect(UnifiedCtaInfo.canHaveChildren).toBe(true);
+	});
+
+	it('only has variant input', () => {
+		expect(UnifiedCtaInfo.inputs).toHaveLength(1);
+		expect(UnifiedCtaInfo.inputs[0].name).toBe('variant');
 	});
 });

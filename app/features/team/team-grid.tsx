@@ -23,45 +23,26 @@ type BuilderTeamMember = {
 };
 
 type TeamGridProperties = {
-	title?: string;
-	subtitle?: string;
-	members?: TeamMemberData[];
 	columns?: 2 | 3 | 4;
 	showDescription?: boolean;
 	category?: 'bestuur' | 'lid' | 'helper' | '';
-	fetchFromBuilder?: boolean;
 };
 
 // Use environment variable for API key
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY; // eslint-disable-line n/prefer-global/process
 
-// Stable empty array reference to prevent infinite re-renders
-const emptyMembers: TeamMemberData[] = [];
-
 function TeamGrid({
-	title,
-	subtitle,
-	members,
 	columns = 3,
 	showDescription = true,
 	category = '',
-	fetchFromBuilder = true,
 }: Readonly<TeamGridProperties>) {
-	// Use stable reference for members to prevent infinite useEffect loops
-	const stableMembers = members ?? emptyMembers;
 	const [teamMembers, setTeamMembers] = useState<TeamMemberData[]>([]);
-	const [loading, setLoading] = useState(fetchFromBuilder);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		if (!fetchFromBuilder) {
-			setTeamMembers(stableMembers);
-			return;
-		}
-
 		async function fetchTeamMembers() {
 			if (!builderApiKey) {
 				console.error('Builder.io API key not configured');
-				setTeamMembers(stableMembers);
 				setLoading(false);
 				return;
 			}
@@ -80,7 +61,6 @@ function TeamGrid({
 				const data = await response.json() as {results?: BuilderTeamMember[]};
 
 				if (data.results && data.results.length > 0) {
-					// Filter active members and sort by volgorde
 					const activeMembers = data.results
 						.filter((item: BuilderTeamMember) => item.data.actief !== false)
 						.sort((a: BuilderTeamMember, b: BuilderTeamMember) => {
@@ -96,23 +76,16 @@ function TeamGrid({
 						}));
 
 					setTeamMembers(activeMembers);
-				} else {
-					// Fall back to props if no data from Builder
-					setTeamMembers(stableMembers);
 				}
 			} catch (error) {
 				console.error('Error fetching team members:', error);
-				// Fall back to props on error
-				setTeamMembers(stableMembers);
 			} finally {
 				setLoading(false);
 			}
 		}
 
 		void fetchTeamMembers();
-	}, [fetchFromBuilder, category, stableMembers]);
-
-	const displayMembers = fetchFromBuilder ? teamMembers : stableMembers;
+	}, [category]);
 
 	const getInitials = (fullName: string) => fullName
 		.split(' ')
@@ -127,7 +100,6 @@ function TeamGrid({
 		cols4: 'md:grid-cols-2 lg:grid-cols-4',
 	};
 
-	// Color palette for avatar backgrounds
 	const avatarColors = [
 		'from-brand-primary-500 to-brand-primary-700',
 		'from-[#7c3aed] to-[#5b21b6]',
@@ -138,93 +110,59 @@ function TeamGrid({
 
 	if (loading) {
 		return (
-			<section className='py-20 bg-white' aria-busy='true'>
-				<div className='max-w-6xl mx-auto px-6'>
-					<div className='text-center'>
-						<div className='animate-pulse'>
-							<div className='h-8 bg-gray-200 rounded w-48 mx-auto mb-4' />
-							<div className='h-4 bg-gray-200 rounded w-64 mx-auto mb-16' />
-							<div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
-								{[1, 2, 3].map(i => (
-									<div key={i} className='text-center'>
-										<div className='w-32 h-32 rounded-full bg-gray-200 mx-auto mb-4' />
-										<div className='h-6 bg-gray-200 rounded w-32 mx-auto mb-2' />
-										<div className='h-4 bg-gray-200 rounded w-24 mx-auto' />
-									</div>
-								))}
-							</div>
+			<div className='animate-pulse'>
+				<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-8`}>
+					{[1, 2, 3].map(i => (
+						<div key={i} className='text-center'>
+							<div className='w-32 h-32 rounded-full bg-gray-200 mx-auto mb-4' />
+							<div className='h-6 bg-gray-200 rounded w-32 mx-auto mb-2' />
+							<div className='h-4 bg-gray-200 rounded w-24 mx-auto' />
 						</div>
-					</div>
+					))}
 				</div>
-			</section>
+			</div>
+		);
+	}
+
+	if (teamMembers.length === 0) {
+		return (
+			<div className='text-center py-12 text-gray-500'>
+				Geen teamleden gevonden
+			</div>
 		);
 	}
 
 	return (
-		<section className='py-20 bg-white'>
-			<div className='max-w-6xl mx-auto px-6'>
-				{(title ?? subtitle) && (
-					<div className='text-center mb-16'>
-						{title && (
-							<h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
-								{title}
-							</h2>
-						)}
-						{subtitle && (
-							<p className='text-lg text-gray-600 max-w-2xl mx-auto'>
-								{subtitle}
-							</p>
-						)}
+		<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-8`}>
+			{teamMembers.map((member, index) => (
+				<div key={index} className='text-center group'>
+					<div className='relative mb-5 inline-block'>
+						<div className={[
+							'w-32 h-32 rounded-full bg-gradient-to-br flex items-center justify-center',
+							'shadow-lg group-hover:shadow-xl transition-shadow',
+							avatarColors[index % avatarColors.length],
+						].join(' ')}>
+							<span className='text-white font-bold text-3xl'>
+								{getInitials(member.name)}
+							</span>
+						</div>
+						<div className='absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md'>
+							<span className='text-xs font-semibold text-primary'>
+								{member.role}
+							</span>
+						</div>
 					</div>
-				)}
-
-				{displayMembers.length > 0
-					? (
-						<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-8`}>
-							{displayMembers.map((member, index) => (
-								<div
-									key={index}
-									className='text-center group'
-								>
-									{/* Avatar */}
-									<div className='relative mb-5 inline-block'>
-										<div className={[
-											'w-32 h-32 rounded-full bg-gradient-to-br flex items-center justify-center',
-											'shadow-lg group-hover:shadow-xl transition-shadow',
-											avatarColors[index % avatarColors.length],
-										].join(' ')}>
-											<span className='text-white font-bold text-3xl'>
-												{getInitials(member.name)}
-											</span>
-										</div>
-										{/* Role badge */}
-										<div className='absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md'>
-											<span className='text-xs font-semibold text-primary'>
-												{member.role}
-											</span>
-										</div>
-									</div>
-
-									{/* Info */}
-									<h3 className='text-xl font-bold text-gray-900 mt-4'>
-										{member.name}
-									</h3>
-									{showDescription && member.description && (
-										<p className='text-gray-600 text-sm mt-2 max-w-xs mx-auto'>
-											{member.description}
-										</p>
-									)}
-								</div>
-							))}
-						</div>
-					)
-					: (
-						<div className='text-center py-12 text-gray-500'>
-							Geen teamleden gevonden
-						</div>
+					<h3 className='text-xl font-bold text-gray-900 mt-4'>
+						{member.name}
+					</h3>
+					{showDescription && member.description && (
+						<p className='text-gray-600 text-sm mt-2 max-w-xs mx-auto'>
+							{member.description}
+						</p>
 					)}
-			</div>
-		</section>
+				</div>
+			))}
+		</div>
 	);
 }
 
@@ -232,16 +170,6 @@ export const TeamGridInfo = {
 	name: 'TeamGrid',
 	component: TeamGrid,
 	inputs: [
-		{
-			name: 'title',
-			type: 'string',
-			defaultValue: 'Het Bestuur',
-		},
-		{
-			name: 'subtitle',
-			type: 'string',
-			defaultValue: 'Maak kennis met de mensen achter de Talentenraad',
-		},
 		{
 			name: 'columns',
 			type: 'number',
@@ -251,17 +179,13 @@ export const TeamGridInfo = {
 				{label: '4 kolommen', value: 4},
 			],
 			defaultValue: 3,
+			helperText: 'Aantal kolommen in het grid',
 		},
 		{
 			name: 'showDescription',
 			type: 'boolean',
 			defaultValue: true,
-		},
-		{
-			name: 'fetchFromBuilder',
-			type: 'boolean',
-			defaultValue: true,
-			helperText: 'Haal teamleden op uit het teamlid model (aan) of gebruik handmatige lijst (uit)',
+			helperText: 'Toon beschrijving onder teamleden',
 		},
 		{
 			name: 'category',
@@ -273,18 +197,7 @@ export const TeamGridInfo = {
 				{label: 'Alleen helpers', value: 'helper'},
 			],
 			defaultValue: '',
-			helperText: 'Filter op categorie (alleen bij fetchFromBuilder)',
-		},
-		{
-			name: 'members',
-			type: 'list',
-			subFields: [
-				{name: 'name', type: 'string', required: true},
-				{name: 'role', type: 'string', required: true},
-				{name: 'description', type: 'longText'},
-			],
-			defaultValue: [],
-			helperText: 'Handmatige lijst (alleen gebruikt als fetchFromBuilder uit staat)',
+			helperText: 'Filter op categorie',
 		},
 	],
 };
