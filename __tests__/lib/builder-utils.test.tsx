@@ -68,7 +68,7 @@ describe('builder-utils', () => {
 				userAttributes: {urlPath: '/'},
 				cacheSeconds: 0,
 				staleCacheSeconds: 0,
-				fetchOptions: {next: {revalidate: 5}, cache: 'no-store'},
+				fetchOptions: {cache: 'no-store'},
 			});
 		});
 
@@ -87,7 +87,7 @@ describe('builder-utils', () => {
 				userAttributes: {urlPath: '/about'},
 				cacheSeconds: 0,
 				staleCacheSeconds: 0,
-				fetchOptions: {next: {revalidate: 5}, cache: 'no-store'},
+				fetchOptions: {cache: 'no-store'},
 			});
 		});
 

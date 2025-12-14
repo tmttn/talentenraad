@@ -78,7 +78,6 @@ export async function fetchBuilderContent(
 			cacheSeconds: 0,
 			staleCacheSeconds: 0,
 			fetchOptions: {
-				next: {revalidate: 5},
 				cache: 'no-store',
 			},
 		});
@@ -110,7 +109,6 @@ export async function fetchBuilderSection(
 			cacheSeconds: 0,
 			staleCacheSeconds: 0,
 			fetchOptions: {
-				next: {revalidate: 5},
 				cache: 'no-store',
 			},
 		});
