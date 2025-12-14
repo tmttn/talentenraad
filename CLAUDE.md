@@ -48,8 +48,55 @@ When moving files or creating route groups:
 2. Update jest.config.ts coverage exclusions (escape parentheses)
 3. Run full test suite before committing
 
-## Builder.io Models
+## Builder.io API Usage
 
+### API Keys
+- **Public API Key**: `NEXT_PUBLIC_BUILDER_API_KEY` - For reading content (CDN)
+- **Private Write Key**: `BUILDER_PRIVATE_KEY` - For writing/updating content (starts with `bpk-`)
+
+### Read API (CDN)
+Use the CDN endpoint for reading published content:
+```bash
+# List content entries
+curl "https://cdn.builder.io/api/v3/content/{model}?apiKey={PUBLIC_KEY}&limit=10"
+
+# Get single entry by ID
+curl "https://cdn.builder.io/api/v3/content/{model}/{entryId}?apiKey={PUBLIC_KEY}"
+
+# Query by field (e.g., URL)
+curl "https://cdn.builder.io/api/v3/content/{model}?apiKey={PUBLIC_KEY}&query.data.url=/"
+
+# Filter by date (use $gte, $lte, $gt, $lt)
+curl "https://cdn.builder.io/api/v3/content/{model}?apiKey={PUBLIC_KEY}&query.data.datum.\$gte=2025-01-01"
+
+# Bypass CDN cache (for debugging only)
+curl "https://cdn.builder.io/api/v3/content/{model}?apiKey={PUBLIC_KEY}&noCache=true"
+```
+
+### Write API
+Use the Write API to create or update content:
+```bash
+# Create new entry (POST)
+curl -X POST "https://builder.io/api/v1/write/{model}" \
+  -H "Authorization: Bearer {PRIVATE_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{"data": {"blocks": [...]}}'
+
+# Update existing entry by ID (PUT)
+curl -X PUT "https://builder.io/api/v1/write/{model}/{entryId}" \
+  -H "Authorization: Bearer {PRIVATE_KEY}" \
+  -H "Content-Type: application/json" \
+  -d '{"data": {"blocks": [...]}}'
+```
+
+### Important Notes
+1. **Always find entry ID first** before updating - use Read API to get the ID
+2. **CDN caching**: Changes may take 1-5 minutes to propagate on CDN
+3. **Use `noCache=true`** to verify updates immediately (debugging only)
+4. **POST creates new entries**, PUT updates existing ones
+5. **Query uses `$eq`, `$gte`, `$lte`** - escape the `$` in bash with `\$`
+
+### Builder.io Models
 When creating Builder.io models:
 - Use v2 admin API (`https://builder.io/api/v2/admin`), NOT v1 graphql
 - Always add `@type: '@builder.io/core:Field'` to field definitions

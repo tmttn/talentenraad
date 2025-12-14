@@ -66,8 +66,9 @@ describe('builder-utils', () => {
 				apiKey: 'test-api-key',
 				model: 'page',
 				userAttributes: {urlPath: '/'},
-				cacheSeconds: 60,
-				fetchOptions: {next: {revalidate: 5}},
+				cacheSeconds: 0,
+				staleCacheSeconds: 0,
+				fetchOptions: {next: {revalidate: 5}, cache: 'no-store'},
 			});
 		});
 
@@ -84,8 +85,9 @@ describe('builder-utils', () => {
 				apiKey: 'api-key',
 				model: 'page',
 				userAttributes: {urlPath: '/about'},
-				cacheSeconds: 60,
-				fetchOptions: {next: {revalidate: 5}},
+				cacheSeconds: 0,
+				staleCacheSeconds: 0,
+				fetchOptions: {next: {revalidate: 5}, cache: 'no-store'},
 			});
 		});
 

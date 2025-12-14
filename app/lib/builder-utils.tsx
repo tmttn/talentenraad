@@ -75,9 +75,11 @@ export async function fetchBuilderContent(
 			userAttributes: {
 				urlPath,
 			},
-			cacheSeconds: 60,
+			cacheSeconds: 0,
+			staleCacheSeconds: 0,
 			fetchOptions: {
 				next: {revalidate: 5},
+				cache: 'no-store',
 			},
 		});
 		return {content};
@@ -105,9 +107,11 @@ export async function fetchBuilderSection(
 			userAttributes: {
 				urlPath,
 			},
-			cacheSeconds: 60,
+			cacheSeconds: 0,
+			staleCacheSeconds: 0,
 			fetchOptions: {
 				next: {revalidate: 5},
+				cache: 'no-store',
 			},
 		});
 		return content ?? undefined;
