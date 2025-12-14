@@ -1,5 +1,24 @@
 'use client';
 
+// CSS for CTA button animations
+const ctaStyles = `
+	.cta-button {
+		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.cta-arrow {
+		transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.cta-button:hover .cta-arrow {
+		transform: translateX(4px);
+	}
+
+	.cta-link:hover .cta-arrow {
+		transform: translateX(3px);
+	}
+`;
+
 type CTAAction = {
 	text: string;
 	link: string;
@@ -45,6 +64,7 @@ function UnifiedCTA({
 	if (variant === 'minimal') {
 		return (
 			<section className='bg-gray-900 py-8 px-6' aria-labelledby='cta-title-minimal'>
+				<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
 				<div className='max-w-4xl mx-auto text-center'>
 					<h2 id='cta-title-minimal' className='text-xl md:text-2xl font-bold text-white mb-4'>
 						{title}
@@ -54,14 +74,14 @@ function UnifiedCTA({
 							<a
 								key={action.link}
 								href={action.link}
-								className={`inline-flex items-center gap-2 font-semibold py-2.5 px-5 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+								className={`cta-button inline-flex items-center justify-center gap-2 font-semibold py-2.5 px-5 rounded-lg whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 ${actions.length > 1 ? 'w-[180px]' : ''} ${
 									action.variant === 'primary'
 										? 'bg-primary text-white hover:bg-primary-hover focus:ring-primary'
 										: 'bg-white/10 text-white hover:bg-white/20 focus:ring-white'
 								}`}
 							>
 								{action.text}
-								<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+								<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
 								</svg>
 							</a>
@@ -75,6 +95,7 @@ function UnifiedCTA({
 	if (variant === 'compact') {
 		return (
 			<section className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 py-10 px-6' aria-labelledby='cta-title-compact'>
+				<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
 				<div className='max-w-4xl mx-auto'>
 					<div className='flex flex-col md:flex-row items-center justify-between gap-6'>
 						<div className='text-center md:text-left'>
@@ -87,19 +108,19 @@ function UnifiedCTA({
 								</p>
 							)}
 						</div>
-						<div className='flex flex-wrap gap-3'>
+						<div className='flex flex-col gap-3 min-w-[200px]'>
 							{actions.map(action => (
 								<a
 									key={action.link}
 									href={action.link}
-									className={`inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary ${
+									className={`cta-button inline-flex items-center justify-between gap-4 font-semibold py-3 px-6 rounded-lg whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-primary ${
 										action.variant === 'primary'
 											? 'bg-white text-primary hover:bg-gray-100 focus:ring-white'
 											: 'bg-white/10 text-white hover:bg-white/20 border border-white/30 focus:ring-white'
 									}`}
 								>
 									{action.text}
-									<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+									<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 										<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
 									</svg>
 								</a>
@@ -114,6 +135,7 @@ function UnifiedCTA({
 	// Full variant with feature cards
 	return (
 		<section className='bg-gradient-to-br from-gray-900 to-gray-800 py-16 px-6' aria-labelledby='cta-title-full'>
+			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
 			<div className='max-w-5xl mx-auto'>
 				<div className='text-center mb-10'>
 					<h2 id='cta-title-full' className='text-2xl md:text-3xl font-bold text-white mb-3'>
@@ -141,10 +163,10 @@ function UnifiedCTA({
 							</p>
 							<a
 								href='/contact'
-								className='inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
+								className='cta-link inline-flex items-center gap-1 text-primary font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
 							>
 								Meld je aan
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+								<svg xmlns='http://www.w3.org/2000/svg' className='cta-arrow h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
 								</svg>
 							</a>
@@ -164,10 +186,10 @@ function UnifiedCTA({
 							</p>
 							<a
 								href='/contact'
-								className='inline-flex items-center gap-1 text-info-400 font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-info-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
+								className='cta-link inline-flex items-center gap-1 text-info-400 font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-info-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
 							>
 								Stuur een bericht
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+								<svg xmlns='http://www.w3.org/2000/svg' className='cta-arrow h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
 								</svg>
 							</a>
@@ -187,10 +209,10 @@ function UnifiedCTA({
 							</p>
 							<a
 								href='/contact'
-								className='inline-flex items-center gap-1 text-warning-400 font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-warning-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
+								className='cta-link inline-flex items-center gap-1 text-warning-400 font-medium text-sm hover:underline focus:outline-none focus:ring-2 focus:ring-warning-400 focus:ring-offset-2 focus:ring-offset-gray-900 rounded'
 							>
 								Schrijf je in
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+								<svg xmlns='http://www.w3.org/2000/svg' className='cta-arrow h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
 								</svg>
 							</a>
@@ -199,19 +221,19 @@ function UnifiedCTA({
 				</div>
 
 				{/* Main CTA buttons */}
-				<div className='flex flex-wrap justify-center gap-4'>
+				<div className={`grid justify-center gap-4 ${actions.length > 1 ? 'grid-cols-2 max-w-lg mx-auto' : 'grid-cols-1'}`}>
 					{actions.map(action => (
 						<a
 							key={action.link}
 							href={action.link}
-							className={`inline-flex items-center gap-2 font-semibold py-3 px-8 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 ${
+							className={`cta-button inline-flex items-center justify-center gap-2 font-semibold py-3 px-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 ${
 								action.variant === 'primary'
 									? 'bg-primary text-white hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/25 focus:ring-primary'
 									: 'bg-white/10 text-white hover:bg-white/20 border border-white/20 focus:ring-white'
 							}`}
 						>
 							{action.text}
-							<svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+							<svg className='cta-arrow w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
 							</svg>
 						</a>

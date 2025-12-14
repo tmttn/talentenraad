@@ -1,5 +1,20 @@
 'use client';
 
+// CSS for CTA button animations
+const ctaStyles = `
+	.cta-button {
+		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.cta-arrow {
+		transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.cta-button:hover .cta-arrow {
+		transform: translateX(4px);
+	}
+`;
+
 type CTABannerProperties = {
 	title: string;
 	subtitle?: string;
@@ -40,6 +55,7 @@ function CTABanner({
 
 	return (
 		<section className={`py-12 md:py-16 ${styles.bg}`} aria-labelledby='cta-title'>
+			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
 			<div className='max-w-4xl mx-auto px-4 sm:px-6 text-center'>
 				<h2 id='cta-title' className={`text-xl sm:text-2xl md:text-3xl font-bold mb-3 ${styles.title}`}>
 					{title}
@@ -52,10 +68,10 @@ function CTABanner({
 				{buttonText && buttonLink && (
 					<a
 						href={buttonLink}
-						className={`inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${styles.button} ${variant === 'accent' ? 'focus:ring-white focus:ring-offset-brand-primary-500' : 'focus:ring-focus'}`}
+						className={`cta-button inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${styles.button} ${variant === 'accent' ? 'focus:ring-white focus:ring-offset-brand-primary-500' : 'focus:ring-focus'}`}
 					>
 						{buttonText}
-						<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+						<svg className='cta-arrow w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
 						</svg>
 					</a>

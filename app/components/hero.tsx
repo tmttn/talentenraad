@@ -2,6 +2,21 @@
 
 import {brandColors, gradients} from '../styles/tokens';
 
+// CSS for CTA button animations
+const ctaStyles = `
+	.cta-button {
+		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.cta-arrow {
+		transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.cta-button:hover .cta-arrow {
+		transform: translateX(4px);
+	}
+`;
+
 type HeroProperties = {
 	title: string;
 	subtitle?: string;
@@ -46,9 +61,12 @@ function Hero({
 		large: 'text-lg md:text-xl',
 	};
 
+	const hasMultipleButtons = Boolean(ctaText && ctaLink && secondaryCtaText && secondaryCtaLink);
+
 	if (variant === 'split') {
 		return (
 			<section className={`relative bg-gradient-to-br from-brand-primary-500 to-brand-primary-700 overflow-hidden ${sizeClasses[size]}`} aria-labelledby='hero-title-split'>
+				<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
 				<div className='absolute inset-0 opacity-10' aria-hidden='true'>
 					<div className='absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl' />
 					<div className='absolute bottom-10 right-20 w-96 h-96 bg-white rounded-full blur-3xl' />
@@ -68,10 +86,10 @@ function Hero({
 								{ctaText && ctaLink && (
 									<a
 										href={ctaLink}
-										className='inline-flex items-center gap-2 bg-white text-primary font-semibold py-3 px-6 rounded-lg transition-all hover:bg-gray-100 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500'
+										className={`cta-button inline-flex items-center justify-center gap-2 bg-white text-primary font-semibold py-3 px-6 rounded-lg whitespace-nowrap hover:bg-gray-100 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500 ${hasMultipleButtons ? 'w-[180px]' : ''}`}
 									>
 										{ctaText}
-										<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+										<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 											<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
 										</svg>
 									</a>
@@ -79,9 +97,12 @@ function Hero({
 								{secondaryCtaText && secondaryCtaLink && (
 									<a
 										href={secondaryCtaLink}
-										className='inline-flex items-center gap-2 bg-white/10 text-white font-semibold py-3 px-6 rounded-lg transition-all hover:bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500'
+										className={`cta-button inline-flex items-center justify-center gap-2 bg-white/10 text-white font-semibold py-3 px-6 rounded-lg whitespace-nowrap hover:bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500 ${hasMultipleButtons ? 'w-[180px]' : ''}`}
 									>
 										{secondaryCtaText}
+										<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+											<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
+										</svg>
 									</a>
 								)}
 							</div>
@@ -102,6 +123,7 @@ function Hero({
 			}}
 			aria-labelledby='hero-title'
 		>
+			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
 			{/* Subtle decorative elements */}
 			<div className='absolute inset-0 overflow-hidden pointer-events-none' aria-hidden='true'>
 				<div className='absolute -top-24 -right-24 w-96 h-96 bg-white/5 rounded-full' />
@@ -122,10 +144,10 @@ function Hero({
 						{ctaText && ctaLink && (
 							<a
 								href={ctaLink}
-								className='inline-flex items-center gap-2 bg-white text-primary font-semibold py-3 px-6 rounded-lg transition-all hover:bg-gray-100 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500'
+								className={`cta-button inline-flex items-center justify-center gap-2 bg-white text-primary font-semibold py-3 px-6 rounded-lg whitespace-nowrap hover:bg-gray-100 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500 ${hasMultipleButtons ? 'w-[180px]' : ''}`}
 							>
 								{ctaText}
-								<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+								<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
 								</svg>
 							</a>
@@ -133,9 +155,12 @@ function Hero({
 						{secondaryCtaText && secondaryCtaLink && (
 							<a
 								href={secondaryCtaLink}
-								className='inline-flex items-center gap-2 bg-white/10 text-white font-semibold py-3 px-6 rounded-lg transition-all hover:bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500'
+								className={`cta-button inline-flex items-center justify-center gap-2 bg-white/10 text-white font-semibold py-3 px-6 rounded-lg whitespace-nowrap hover:bg-white/20 border border-white/30 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500 ${hasMultipleButtons ? 'w-[180px]' : ''}`}
 							>
 								{secondaryCtaText}
+								<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
+								</svg>
 							</a>
 						)}
 					</div>
