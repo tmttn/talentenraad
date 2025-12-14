@@ -1,117 +1,104 @@
-const PRIVATE_KEY = 'bpk-4537158022f148049234c9ffbe759373';
+import {config} from 'dotenv';
+
+config();
+
+const PRIVATE_KEY = process.env.BUILDER_PRIVATE_KEY;
+
+if (!PRIVATE_KEY) {
+	console.error('Error: BUILDER_PRIVATE_KEY not found in .env');
+	process.exit(1);
+}
 
 async function createModel(modelInput) {
-  console.log(`Creating model: ${modelInput.name}...`);
+	console.log(`Creating model: ${modelInput.name}...`);
 
-  const query = `
-    mutation CreateModel($body: JSONObject!) {
-      addModel(body: $body) {
-        id
-        name
-      }
-    }
-  `;
+	const query = `
+		mutation addModel($body: JSONObject!) {
+			addModel(body: $body) {
+				id
+				name
+			}
+		}
+	`;
 
-  const response = await fetch('https://builder.io/api/v1/graphql', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
-    },
-    body: JSON.stringify({
-      query,
-      variables: {
-        body: modelInput,
-      },
-    }),
-  });
+	const body = {
+		name: modelInput.name,
+		kind: modelInput.kind,
+		publicReadable: true,
+		fields: modelInput.fields.map(field => ({
+			'@type': '@builder.io/core:Field',
+			...field,
+		})),
+	};
 
-  const result = await response.json();
+	try {
+		const response = await fetch('https://builder.io/api/v2/admin', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${PRIVATE_KEY}`,
+			},
+			body: JSON.stringify({query, variables: {body}}),
+		});
 
-  if (result.errors) {
-    console.error(`Failed to create ${modelInput.name}:`, result.errors[0].message);
-    return null;
-  }
+		const result = await response.json();
 
-  console.log(`✓ Created model: ${modelInput.name}`);
-  return result.data?.addModel;
+		if (result.errors) {
+			const errorMsg = result.errors[0]?.message || 'Unknown error';
+			if (errorMsg.includes('already exists')) {
+				console.log(`  ✓ Model ${modelInput.name} already exists`);
+				return null;
+			}
+
+			console.error(`  ✗ Failed: ${modelInput.name} - ${errorMsg}`);
+			return null;
+		}
+
+		console.log(`  ✓ Created: ${modelInput.name} (ID: ${result.data?.addModel?.id})`);
+		return result.data?.addModel;
+	} catch (error) {
+		console.error(`  ✗ Failed: ${modelInput.name} - ${error.message}`);
+		return null;
+	}
 }
 
 async function main() {
-  // Aankondiging model for announcement banners
-  const aankondigingModel = {
-    name: 'aankondiging',
-    kind: 'data',
-    fields: [
-      {
-        name: 'tekst',
-        type: 'text',
-        required: true,
-        helperText: 'De aankondigingstekst',
-      },
-      {
-        name: 'link',
-        type: 'url',
-        helperText: 'Optionele link voor meer info',
-      },
-      {
-        name: 'linkTekst',
-        type: 'text',
-        helperText: 'Tekst voor de link (bijv. "Meer info")',
-      },
-      {
-        name: 'type',
-        type: 'text',
-        required: true,
-        enum: ['info', 'waarschuwing', 'belangrijk'],
-        defaultValue: 'info',
-        helperText: 'Type bepaalt de kleur: info (blauw), waarschuwing (oranje), belangrijk (roze)',
-      },
-      {
-        name: 'actief',
-        type: 'boolean',
-        required: true,
-        defaultValue: true,
-        helperText: 'Alleen actieve aankondigingen worden getoond',
-      },
-    ],
-  };
+	console.log('Creating Builder.io data models...\n');
 
-  // FAQ model for frequently asked questions
-  const faqModel = {
-    name: 'faq',
-    kind: 'data',
-    fields: [
-      {
-        name: 'vraag',
-        type: 'text',
-        required: true,
-        helperText: 'De vraag',
-      },
-      {
-        name: 'antwoord',
-        type: 'longText',
-        required: true,
-        helperText: 'Het antwoord op de vraag',
-      },
-      {
-        name: 'volgorde',
-        type: 'number',
-        defaultValue: 0,
-        helperText: 'Volgorde van weergave (lager = eerder)',
-      },
-    ],
-  };
+	const dataModels = [
+		{
+			name: 'faq',
+			kind: 'data',
+			fields: [
+				{
+					name: 'vraag',
+					type: 'text',
+					required: true,
+					helperText: 'De vraag',
+				},
+				{
+					name: 'antwoord',
+					type: 'longText',
+					required: true,
+					helperText: 'Het antwoord op de vraag',
+				},
+				{
+					name: 'volgorde',
+					type: 'number',
+					defaultValue: 0,
+					helperText: 'Volgorde van weergave (lager = eerder)',
+				},
+			],
+		},
+	];
 
-  console.log('Creating Builder.io models...\n');
+	for (const model of dataModels) {
+		await createModel(model);
+	}
 
-  await createModel(aankondigingModel);
-  await createModel(faqModel);
-
-  console.log('\n✅ All models created!');
-  console.log('\nNu kun je in Builder.io content toevoegen voor:');
-  console.log('- Aankondigingen (aankondiging model)');
-  console.log('- Veelgestelde vragen (faq model)');
+	console.log('\n✅ Klaar!');
+	console.log('\nData models zijn beschikbaar in Builder.io:');
+	console.log('- Content > faq: Veelgestelde vragen');
 }
 
-main();
+main().catch(console.error);
