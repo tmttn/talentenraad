@@ -25,7 +25,7 @@ describe('BuilderContent', () => {
 		render(<BuilderContent {...defaultProps} />);
 
 		const builderContent = screen.getByTestId('builder-content');
-		expect(builderContent).toHaveAttribute('data-components', '19');
+		expect(builderContent).toHaveAttribute('data-components', '20');
 	});
 
 	it('renders with null content', () => {

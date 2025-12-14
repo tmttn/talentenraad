@@ -33,6 +33,8 @@ import {EventCardInfo} from './event-card';
 import {NewsCardInfo} from './news-card';
 // eslint-disable-next-line import-x/extensions
 import {TeamMemberInfo} from './team-member';
+// eslint-disable-next-line import-x/extensions
+import {ActiviteitenArchiefInfo} from './activiteiten-archief';
 
 // All custom components available for sections
 const customComponents = [
@@ -53,6 +55,7 @@ const customComponents = [
 	EventCardInfo,
 	NewsCardInfo,
 	TeamMemberInfo,
+	ActiviteitenArchiefInfo,
 ];
 
 type BuilderSectionClientProperties = {

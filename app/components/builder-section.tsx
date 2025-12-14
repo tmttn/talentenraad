@@ -22,6 +22,8 @@ import {DecorationInfo, DividerInfo} from './decorations';
 import {SiteHeaderInfo} from './site-header';
 // eslint-disable-next-line import-x/extensions
 import {SiteFooterInfo} from './site-footer';
+// eslint-disable-next-line import-x/extensions
+import {ActiviteitenArchiefInfo} from './activiteiten-archief';
 
 // eslint-disable-next-line n/prefer-global/process
 const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -38,6 +40,7 @@ const customComponents = [
 	DividerInfo,
 	SiteHeaderInfo,
 	SiteFooterInfo,
+	ActiviteitenArchiefInfo,
 ];
 
 type BuilderSectionProperties = {

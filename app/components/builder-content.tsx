@@ -37,6 +37,8 @@ import {AnnouncementBannerInfo} from './announcement-banner';
 import {FAQInfo} from './faq';
 // eslint-disable-next-line import-x/extensions
 import {DecorationInfo, DividerInfo} from './decorations';
+// eslint-disable-next-line import-x/extensions
+import {ActiviteitenArchiefInfo} from './activiteiten-archief';
 
 type BuilderContentProperties = {
 	// eslint-disable-next-line @typescript-eslint/no-restricted-types
@@ -71,6 +73,7 @@ export function BuilderContent({content, apiKey, model}: Readonly<BuilderContent
 				FAQInfo,
 				DecorationInfo,
 				DividerInfo,
+				ActiviteitenArchiefInfo,
 			]}
 		/>
 	);
