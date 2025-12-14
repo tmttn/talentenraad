@@ -1,0 +1,9 @@
+echo "Running pre-commit checks..."
+
+echo "1/2 Running XO linter..."
+npm run test:xo
+
+echo "2/2 Running tests..."
+npm test
+
+echo "Pre-commit checks passed!"
