@@ -58,6 +58,135 @@ const inputErrorStyles = 'border-red-500 focus:border-red-500 focus:ring-red-500
 
 const labelStyles = 'block text-sm font-semibold text-gray-800 mb-2';
 
+// Extracted form field components to reduce complexity
+type TextFieldProps = {
+	id: string;
+	label: string;
+	type?: 'text' | 'email' | 'tel';
+	required?: boolean;
+	placeholder: string;
+	value: string;
+	error?: string;
+	onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+};
+
+function TextField({id, label, type = 'text', required = false, placeholder, value, error, onChange}: TextFieldProps) {
+	return (
+		<div>
+			<label className={labelStyles} htmlFor={id}>
+				{label} {required && <span className='text-primary-hover' aria-hidden='true'>*</span>}
+				{required && <span className='sr-only'>(verplicht)</span>}
+				{!required && <span className='text-gray-500 font-normal'>(optioneel)</span>}
+			</label>
+			<input
+				type={type}
+				id={id}
+				name={id}
+				required={required}
+				aria-required={required}
+				aria-invalid={Boolean(error)}
+				aria-describedby={error ? `${id}-error` : undefined}
+				className={`${inputBaseStyles} ${error ? inputErrorStyles : ''}`}
+				placeholder={placeholder}
+				value={value}
+				onChange={onChange}
+			/>
+			{error && (
+				<p id={`${id}-error`} className='mt-1 text-sm text-red-600 font-medium' role='alert'>
+					{error}
+				</p>
+			)}
+		</div>
+	);
+}
+
+type TextAreaFieldProps = {
+	id: string;
+	label: string;
+	placeholder: string;
+	value: string;
+	error?: string;
+	onChange: (event: ChangeEvent<HTMLTextAreaElement>) => void;
+};
+
+function TextAreaField({id, label, placeholder, value, error, onChange}: TextAreaFieldProps) {
+	return (
+		<div className='mt-6'>
+			<label className={labelStyles} htmlFor={id}>
+				{label} <span className='text-primary-hover' aria-hidden='true'>*</span>
+				<span className='sr-only'>(verplicht)</span>
+			</label>
+			<textarea
+				id={id}
+				name={id}
+				required
+				aria-required='true'
+				aria-invalid={Boolean(error)}
+				aria-describedby={error ? `${id}-error` : undefined}
+				rows={5}
+				className={`${inputBaseStyles} resize-y min-h-[120px] ${error ? inputErrorStyles : ''}`}
+				placeholder={placeholder}
+				value={value}
+				onChange={onChange}
+			/>
+			{error && (
+				<p id={`${id}-error`} className='mt-1 text-sm text-red-600 font-medium' role='alert'>
+					{error}
+				</p>
+			)}
+		</div>
+	);
+}
+
+type SelectFieldProps = {
+	id: string;
+	label: string;
+	value: string;
+	error?: string;
+	options: Array<{value: string; label: string}>;
+	onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
+};
+
+function SelectField({id, label, value, error, options, onChange}: SelectFieldProps) {
+	return (
+		<div className='mt-6'>
+			<label className={labelStyles} htmlFor={id}>
+				{label} <span className='text-primary-hover' aria-hidden='true'>*</span>
+				<span className='sr-only'>(verplicht)</span>
+			</label>
+			<select
+				id={id}
+				name={id}
+				required
+				aria-required='true'
+				aria-invalid={Boolean(error)}
+				aria-describedby={error ? `${id}-error` : undefined}
+				className={`${inputBaseStyles} ${error ? inputErrorStyles : ''}`}
+				value={value}
+				onChange={onChange}
+			>
+				{options.map(option => (
+					<option key={option.value} value={option.value}>{option.label}</option>
+				))}
+			</select>
+			{error && (
+				<p id={`${id}-error`} className='mt-1 text-sm text-red-600 font-medium' role='alert'>
+					{error}
+				</p>
+			)}
+		</div>
+	);
+}
+
+const subjectOptions = [
+	{value: '', label: 'Selecteer een onderwerp'},
+	{value: 'vraag', label: 'Algemene vraag'},
+	{value: 'activiteit', label: 'Vraag over activiteit'},
+	{value: 'lidmaatschap', label: 'Lid worden'},
+	{value: 'sponsoring', label: 'Sponsoring'},
+	{value: 'anders', label: 'Anders'},
+];
+
 // Extracted component for success message
 function SuccessMessage() {
 	return (
@@ -251,65 +380,32 @@ function ContactForm({
 
 				<form onSubmit={handleSubmit} className='bg-white p-8 rounded-2xl shadow-lg' noValidate>
 					<div className='grid md:grid-cols-2 gap-6'>
-						<div>
-							<label className={labelStyles} htmlFor='name'>
-								Naam <span className='text-primary-hover' aria-hidden='true'>*</span>
-								<span className='sr-only'>(verplicht)</span>
-							</label>
-							<input
-								type='text'
-								id='name'
-								name='name'
-								required
-								aria-required='true'
-								aria-invalid={Boolean(errors.name)}
-								aria-describedby={errors.name ? 'name-error' : undefined}
-								className={`${inputBaseStyles} ${errors.name ? inputErrorStyles : ''}`}
-								placeholder='Uw naam'
-								value={formData.name}
-								onChange={handleInputChange('name')}
-							/>
-							{errors.name && (
-								<p id='name-error' className='mt-1 text-sm text-red-600 font-medium' role='alert'>
-									{errors.name}
-								</p>
-							)}
-						</div>
-						<div>
-							<label className={labelStyles} htmlFor='email'>
-								E-mail <span className='text-primary-hover' aria-hidden='true'>*</span>
-								<span className='sr-only'>(verplicht)</span>
-							</label>
-							<input
-								type='email'
-								id='email'
-								name='email'
-								required
-								aria-required='true'
-								aria-invalid={Boolean(errors.email)}
-								aria-describedby={errors.email ? 'email-error' : undefined}
-								className={`${inputBaseStyles} ${errors.email ? inputErrorStyles : ''}`}
-								placeholder='uw.email@voorbeeld.be'
-								value={formData.email}
-								onChange={handleInputChange('email')}
-							/>
-							{errors.email && (
-								<p id='email-error' className='mt-1 text-sm text-red-600 font-medium' role='alert'>
-									{errors.email}
-								</p>
-							)}
-						</div>
+						<TextField
+							id='name'
+							label='Naam'
+							required
+							placeholder='Uw naam'
+							value={formData.name}
+							error={errors.name}
+							onChange={handleInputChange('name')}
+						/>
+						<TextField
+							id='email'
+							label='E-mail'
+							type='email'
+							required
+							placeholder='uw.email@voorbeeld.be'
+							value={formData.email}
+							error={errors.email}
+							onChange={handleInputChange('email')}
+						/>
 					</div>
 					{showPhone && (
 						<div className='mt-6'>
-							<label className={labelStyles} htmlFor='phone'>
-								Telefoonnummer <span className='text-gray-500 font-normal'>(optioneel)</span>
-							</label>
-							<input
-								type='tel'
+							<TextField
 								id='phone'
-								name='phone'
-								className={inputBaseStyles}
+								label='Telefoonnummer'
+								type='tel'
 								placeholder='+32 xxx xx xx xx'
 								value={formData.phone}
 								onChange={handleInputChange('phone')}
@@ -317,60 +413,23 @@ function ContactForm({
 						</div>
 					)}
 					{showSubject && (
-						<div className='mt-6'>
-							<label className={labelStyles} htmlFor='subject'>
-								Onderwerp <span className='text-primary-hover' aria-hidden='true'>*</span>
-								<span className='sr-only'>(verplicht)</span>
-							</label>
-							<select
-								id='subject'
-								name='subject'
-								required
-								aria-required='true'
-								aria-invalid={Boolean(errors.subject)}
-								aria-describedby={errors.subject ? 'subject-error' : undefined}
-								className={`${inputBaseStyles} ${errors.subject ? inputErrorStyles : ''}`}
-								value={formData.subject}
-								onChange={handleInputChange('subject')}
-							>
-								<option value=''>Selecteer een onderwerp</option>
-								<option value='vraag'>Algemene vraag</option>
-								<option value='activiteit'>Vraag over activiteit</option>
-								<option value='lidmaatschap'>Lid worden</option>
-								<option value='sponsoring'>Sponsoring</option>
-								<option value='anders'>Anders</option>
-							</select>
-							{errors.subject && (
-								<p id='subject-error' className='mt-1 text-sm text-red-600 font-medium' role='alert'>
-									{errors.subject}
-								</p>
-							)}
-						</div>
-					)}
-					<div className='mt-6'>
-						<label className={labelStyles} htmlFor='message'>
-							Bericht <span className='text-primary-hover' aria-hidden='true'>*</span>
-							<span className='sr-only'>(verplicht)</span>
-						</label>
-						<textarea
-							id='message'
-							name='message'
-							required
-							aria-required='true'
-							aria-invalid={Boolean(errors.message)}
-							aria-describedby={errors.message ? 'message-error' : undefined}
-							rows={5}
-							className={`${inputBaseStyles} resize-y min-h-[120px] ${errors.message ? inputErrorStyles : ''}`}
-							placeholder='Uw bericht...'
-							value={formData.message}
-							onChange={handleInputChange('message')}
+						<SelectField
+							id='subject'
+							label='Onderwerp'
+							value={formData.subject}
+							error={errors.subject}
+							options={subjectOptions}
+							onChange={handleInputChange('subject')}
 						/>
-						{errors.message && (
-							<p id='message-error' className='mt-1 text-sm text-red-600 font-medium' role='alert'>
-								{errors.message}
-							</p>
-						)}
-					</div>
+					)}
+					<TextAreaField
+						id='message'
+						label='Bericht'
+						placeholder='Uw bericht...'
+						value={formData.message}
+						error={errors.message}
+						onChange={handleInputChange('message')}
+					/>
 					<div className='mt-8'>
 						<SubmitButton isSubmitting={isSubmitting} />
 					</div>
