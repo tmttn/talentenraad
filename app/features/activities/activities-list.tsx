@@ -23,7 +23,7 @@ type ActivitiesListProperties = {
 	showViewAll?: boolean;
 	viewAllLink?: string;
 	limit?: number;
-	categorie?: string;
+	category?: string;
 	showLocation?: boolean;
 	showDescription?: boolean;
 };
@@ -49,7 +49,7 @@ function ActivitiesList({
 	showViewAll = true,
 	viewAllLink = '/kalender',
 	limit = 5,
-	categorie,
+	category,
 	showLocation = true,
 	showDescription = false,
 }: Readonly<ActivitiesListProperties>) {
@@ -74,8 +74,8 @@ function ActivitiesList({
 				// Filter for future events at API level
 				url.searchParams.set('query.data.datum.$gte', todayString);
 
-				if (categorie) {
-					url.searchParams.set('query.data.categorie.$eq', categorie);
+				if (category) {
+					url.searchParams.set('query.data.categorie.$eq', category);
 				}
 
 				const response = await fetch(url.toString(), {cache: 'no-store'});
@@ -117,7 +117,7 @@ function ActivitiesList({
 		}
 
 		void fetchActivities();
-	}, [limit, categorie]);
+	}, [limit, category]);
 
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString);
@@ -283,7 +283,7 @@ export const ActivitiesListInfo = {
 			helperText: 'Maximum aantal activiteiten om te tonen',
 		},
 		{
-			name: 'categorie',
+			name: 'category',
 			type: 'string',
 			enum: ['', 'kalender', 'activiteit', 'nieuws', 'feest'],
 			helperText: 'Filter op categorie (leeg voor alle)',

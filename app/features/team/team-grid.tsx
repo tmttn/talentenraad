@@ -9,7 +9,7 @@ type TeamMemberData = {
 	description?: string;
 };
 
-type BuilderTeamlid = {
+type BuilderTeamMember = {
 	id: string;
 	data: {
 		naam: string;
@@ -28,7 +28,7 @@ type TeamGridProperties = {
 	members?: TeamMemberData[];
 	columns?: 2 | 3 | 4;
 	showDescription?: boolean;
-	categorie?: 'bestuur' | 'lid' | 'helper' | '';
+	category?: 'bestuur' | 'lid' | 'helper' | '';
 	fetchFromBuilder?: boolean;
 };
 
@@ -41,66 +41,66 @@ function TeamGrid({
 	members = [],
 	columns = 3,
 	showDescription = true,
-	categorie = '',
+	category = '',
 	fetchFromBuilder = true,
 }: Readonly<TeamGridProperties>) {
-	const [teamleden, setTeamleden] = useState<TeamMemberData[]>([]);
+	const [teamMembers, setTeamMembers] = useState<TeamMemberData[]>([]);
 	const [loading, setLoading] = useState(fetchFromBuilder);
 
 	useEffect(() => {
 		if (!fetchFromBuilder) {
-			setTeamleden(members);
+			setTeamMembers(members);
 			return;
 		}
 
-		async function fetchTeamleden() {
+		async function fetchTeamMembers() {
 			try {
 				const url = new URL('https://cdn.builder.io/api/v3/content/teamlid');
 				url.searchParams.set('apiKey', builderApiKey);
 				url.searchParams.set('limit', '50');
 				url.searchParams.set('cachebust', 'true');
 
-				if (categorie) {
-					url.searchParams.set('query.data.categorie.$eq', categorie);
+				if (category) {
+					url.searchParams.set('query.data.categorie.$eq', category);
 				}
 
 				const response = await fetch(url.toString(), {cache: 'no-store'});
-				const data = await response.json() as {results?: BuilderTeamlid[]};
+				const data = await response.json() as {results?: BuilderTeamMember[]};
 
 				if (data.results && data.results.length > 0) {
 					// Filter active members and sort by volgorde
 					const activeMembers = data.results
-						.filter((item: BuilderTeamlid) => item.data.actief !== false)
-						.sort((a: BuilderTeamlid, b: BuilderTeamlid) => {
+						.filter((item: BuilderTeamMember) => item.data.actief !== false)
+						.sort((a: BuilderTeamMember, b: BuilderTeamMember) => {
 							const orderA = a.data.volgorde ?? 99;
 							const orderB = b.data.volgorde ?? 99;
 							return orderA - orderB;
 						})
-						.map((item: BuilderTeamlid) => ({
+						.map((item: BuilderTeamMember) => ({
 							name: item.data.naam,
 							role: item.data.rol,
 							description: item.data.beschrijving,
 							image: item.data.afbeelding,
 						}));
 
-					setTeamleden(activeMembers);
+					setTeamMembers(activeMembers);
 				} else {
 					// Fall back to props if no data from Builder
-					setTeamleden(members);
+					setTeamMembers(members);
 				}
 			} catch (error) {
-				console.error('Error fetching teamleden:', error);
+				console.error('Error fetching team members:', error);
 				// Fall back to props on error
-				setTeamleden(members);
+				setTeamMembers(members);
 			} finally {
 				setLoading(false);
 			}
 		}
 
-		void fetchTeamleden();
-	}, [fetchFromBuilder, categorie, members]);
+		void fetchTeamMembers();
+	}, [fetchFromBuilder, category, members]);
 
-	const displayMembers = fetchFromBuilder ? teamleden : members;
+	const displayMembers = fetchFromBuilder ? teamMembers : members;
 
 	const getInitials = (fullName: string) => fullName
 		.split(' ')
@@ -248,7 +248,7 @@ export const TeamGridInfo = {
 			helperText: 'Haal teamleden op uit het teamlid model (aan) of gebruik handmatige lijst (uit)',
 		},
 		{
-			name: 'categorie',
+			name: 'category',
 			type: 'string',
 			enum: [
 				{label: 'Alle teamleden', value: ''},

@@ -5,7 +5,7 @@ import {AnimatedButton, AnimatedLink} from '@components/ui';
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
-type Activiteit = {
+type Activity = {
 	id: string;
 	data: {
 		titel: string;
@@ -19,14 +19,14 @@ type Activiteit = {
 };
 
 type BuilderResponse = {
-	results?: Activiteit[];
+	results?: Activity[];
 };
 
 // Dynamic rendering to avoid SSG issues with Builder.io components
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-async function getActiviteit(slug: string): Promise<Activiteit | undefined> {
+async function getActivity(slug: string): Promise<Activity | undefined> {
 	try {
 		// First try to find in the list
 		const url = new URL('https://cdn.builder.io/api/v3/content/activiteit');
@@ -38,9 +38,9 @@ async function getActiviteit(slug: string): Promise<Activiteit | undefined> {
 
 		if (data.results) {
 			// Find item by ID or by slug generated from title
-			const item = data.results.find(activiteit => {
-				const itemSlug = generateSlug(activiteit.data.titel);
-				return activiteit.id === slug || itemSlug === slug;
+			const item = data.results.find(activity => {
+				const itemSlug = generateSlug(activity.data.titel);
+				return activity.id === slug || itemSlug === slug;
 			});
 
 			if (item) {
@@ -60,9 +60,9 @@ async function getActiviteit(slug: string): Promise<Activiteit | undefined> {
 		const allData = await allResponse.json() as BuilderResponse;
 
 		if (allData.results) {
-			const item = allData.results.find(activiteit => {
-				const itemSlug = generateSlug(activiteit.data.titel);
-				return activiteit.id === slug || itemSlug === slug;
+			const item = allData.results.find(activity => {
+				const itemSlug = generateSlug(activity.data.titel);
+				return activity.id === slug || itemSlug === slug;
 			});
 			if (item) {
 				return item;
@@ -71,7 +71,7 @@ async function getActiviteit(slug: string): Promise<Activiteit | undefined> {
 
 		return undefined;
 	} catch (error) {
-		console.error('Error fetching activiteit:', error);
+		console.error('Error fetching activity:', error);
 		return undefined;
 	}
 }
@@ -113,7 +113,7 @@ const categoryStyles: Record<string, {bg: string; text: string}> = {
 
 export async function generateMetadata({params}: {params: Promise<{slug: string}>}) {
 	const {slug} = await params;
-	const item = await getActiviteit(slug);
+	const item = await getActivity(slug);
 
 	if (!item) {
 		return {title: 'Activiteit niet gevonden'};
@@ -129,9 +129,9 @@ type PageProperties = {
 	params: Promise<{slug: string}>;
 };
 
-export default async function ActiviteitDetailPage({params}: Readonly<PageProperties>) {
+export default async function ActivityDetailPage({params}: Readonly<PageProperties>) {
 	const {slug} = await params;
-	const item = await getActiviteit(slug);
+	const item = await getActivity(slug);
 
 	if (!item) {
 		notFound();

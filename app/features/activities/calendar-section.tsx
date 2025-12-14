@@ -12,7 +12,7 @@ type CalendarEvent = {
 	time?: string;
 };
 
-type Activiteit = {
+type Activity = {
 	id: string;
 	data: {
 		titel: string;
@@ -74,7 +74,7 @@ function CalendarSection({
 
 		hasFetched.current = true;
 
-		async function fetchActiviteiten() {
+		async function fetchActivities() {
 			try {
 				// Get today's date in ISO format for API query
 				const today = new Date();
@@ -92,13 +92,13 @@ function CalendarSection({
 				url.searchParams.set('cachebust', 'true');
 
 				const response = await fetch(url.toString(), {cache: 'no-store'});
-				const data = await response.json() as {results?: Activiteit[]};
+				const data = await response.json() as {results?: Activity[]};
 
 				if (data.results) {
 					// Map and limit the results
 					const futureEvents = data.results
 						.slice(0, limit)
-						.map((item: Activiteit) => ({
+						.map((item: Activity) => ({
 							date: item.data.datum,
 							title: item.data.titel,
 							time: item.data.tijd,
@@ -108,13 +108,13 @@ function CalendarSection({
 					setEvents(futureEvents);
 				}
 			} catch (error) {
-				console.error('Error fetching activiteiten:', error);
+				console.error('Error fetching activities:', error);
 			} finally {
 				setLoading(false);
 			}
 		}
 
-		void fetchActiviteiten();
+		void fetchActivities();
 	}, [fetchFromBuilder, hasStaticEvents, staticEvents, limit]);
 
 	const formatDate = (dateString: string) => {

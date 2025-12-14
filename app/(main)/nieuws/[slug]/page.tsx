@@ -6,7 +6,7 @@ import {AnimatedLink} from '@components/ui';
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
-type NieuwsItem = {
+type NewsItem = {
 	id: string;
 	data: {
 		titel: string;
@@ -18,14 +18,14 @@ type NieuwsItem = {
 };
 
 type BuilderResponse = {
-	results?: NieuwsItem[];
+	results?: NewsItem[];
 };
 
 // Dynamic rendering to avoid SSG issues with Builder.io components
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-async function getNieuwsItem(slug: string): Promise<NieuwsItem | undefined> {
+async function getNewsItem(slug: string): Promise<NewsItem | undefined> {
 	try {
 		const url = new URL('https://cdn.builder.io/api/v3/content/nieuws');
 		url.searchParams.set('apiKey', builderApiKey);
@@ -39,14 +39,14 @@ async function getNieuwsItem(slug: string): Promise<NieuwsItem | undefined> {
 		}
 
 		// Find item by ID or by slug generated from title
-		const item = data.results.find(nieuwsItem => {
-			const itemSlug = generateSlug(nieuwsItem.data.titel);
-			return nieuwsItem.id === slug || itemSlug === slug;
+		const item = data.results.find(newsItem => {
+			const itemSlug = generateSlug(newsItem.data.titel);
+			return newsItem.id === slug || itemSlug === slug;
 		});
 
 		return item;
 	} catch (error) {
-		console.error('Error fetching nieuws item:', error);
+		console.error('Error fetching news item:', error);
 		return undefined;
 	}
 }
@@ -74,7 +74,7 @@ function formatDate(dateString: string) {
 
 export async function generateMetadata({params}: {params: Promise<{slug: string}>}) {
 	const {slug} = await params;
-	const item = await getNieuwsItem(slug);
+	const item = await getNewsItem(slug);
 
 	if (!item) {
 		return {title: 'Nieuws niet gevonden'};
@@ -90,9 +90,9 @@ type PageProperties = {
 	params: Promise<{slug: string}>;
 };
 
-export default async function NieuwsDetailPage({params}: Readonly<PageProperties>) {
+export default async function NewsDetailPage({params}: Readonly<PageProperties>) {
 	const {slug} = await params;
-	const item = await getNieuwsItem(slug);
+	const item = await getNewsItem(slug);
 
 	if (!item) {
 		notFound();
