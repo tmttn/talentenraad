@@ -12,6 +12,15 @@ npm run build      # Next.js build - must succeed
 
 Do NOT commit if any of these fail. Fix all issues first.
 
+## Workflow
+
+After completing a working unit of code:
+1. Run the pre-commit checklist (linter, tests, build)
+2. Commit the changes with a descriptive message
+3. Push to origin
+
+Always commit and push after finishing a task, don't wait for the user to ask.
+
 ## XO Linter Rules
 
 This project uses XO with strict TypeScript settings:
