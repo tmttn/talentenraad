@@ -3,7 +3,7 @@
 import {useState, type FormEvent, type ChangeEvent} from 'react';
 import {
 	SuccessIcon, ErrorIcon, SendIcon, SpinnerIcon,
-} from '@components/icons/icons';
+} from '@components/ui/icons';
 
 const submitButtonClassName = [
 	'w-full py-4 px-6 bg-primary-hover hover:bg-brand-primary-700 text-white font-semibold rounded-xl',

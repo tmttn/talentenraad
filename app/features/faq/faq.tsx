@@ -5,7 +5,7 @@ import {
 } from 'react';
 import {
 	QuestionIcon, ArrowRightIcon, questionPath, arrowRightPath,
-} from '@components/icons/icons';
+} from '@components/ui/icons';
 
 const faqButtonClassName = [
 	'faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4',

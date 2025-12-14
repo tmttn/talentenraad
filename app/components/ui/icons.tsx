@@ -1,10 +1,51 @@
-import type {SVGProps} from 'react';
+/**
+ * Centralized icon components with size variants
+ * Icons are imported from separate .svg files for maintainability
+ */
+import type {ComponentType, SVGProps} from 'react';
+
+// Import raw SVG components
+import ArrowLeftSvg from './svg/arrow-left.svg';
+import ArrowRightSvg from './svg/arrow-right.svg';
+import BookmarkSvg from './svg/bookmark.svg';
+import BookmarkFilledSvg from './svg/bookmark-filled.svg';
+import CalendarSvg from './svg/calendar.svg';
+import ChatSvg from './svg/chat.svg';
+import CheckSvg from './svg/check.svg';
+import ChevronDownSvg from './svg/chevron-down.svg';
+import ChevronRightSvg from './svg/chevron-right.svg';
+import ClockSvg from './svg/clock.svg';
+import EmailSvg from './svg/email.svg';
+import ErrorSvg from './svg/error.svg';
+import FacebookSvg from './svg/facebook.svg';
+import GiftSvg from './svg/gift.svg';
+import HeartSvg from './svg/heart.svg';
+import InfoSvg from './svg/info.svg';
+import InstagramSvg from './svg/instagram.svg';
+import LocationSvg from './svg/location.svg';
+import MoneySvg from './svg/money.svg';
+import NewsSvg from './svg/news.svg';
+import PhoneSvg from './svg/phone.svg';
+import PinnedSvg from './svg/pinned.svg';
+import QuestionSvg from './svg/question.svg';
+import SchoolSvg from './svg/school.svg';
+import SendSvg from './svg/send.svg';
+import SpinnerSvg from './svg/spinner.svg';
+import StarSvg from './svg/star.svg';
+import SuccessSvg from './svg/success.svg';
+import UserSvg from './svg/user.svg';
+import UsersSvg from './svg/users.svg';
+import WarningSvg from './svg/warning.svg';
+import XSvg from './svg/x.svg';
+
+// Size variants
+type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 type IconProperties = SVGProps<SVGSVGElement> & {
-	size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+	size?: IconSize;
 };
 
-const sizeMap = {
+const sizeMap: Record<IconSize, string> = {
 	xs: 'h-3 w-3',
 	sm: 'h-4 w-4',
 	md: 'h-5 w-5',
@@ -12,314 +53,137 @@ const sizeMap = {
 	xl: 'h-8 w-8',
 };
 
-function CalendarIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
-		</svg>
-	);
-}
-
-function ClockIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
-		</svg>
-	);
-}
-
-function LocationIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' />
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 11a3 3 0 11-6 0 3 3 0 016 0z' />
-		</svg>
-	);
-}
-
-function ArrowRightIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-		</svg>
-	);
-}
-
-function ArrowLeftIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M7 16l-4-4m0 0l4-4m-4 4h18' />
-		</svg>
-	);
-}
-
-function ChevronRightIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-		</svg>
-	);
-}
-
-function UsersIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' />
-		</svg>
-	);
-}
-
-function HeartIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' />
-		</svg>
-	);
-}
-
-function StarIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z' />
-		</svg>
-	);
-}
-
-function EmailIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z' />
-		</svg>
-	);
-}
-
-function QuestionIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
-		</svg>
-	);
-}
-
-function NewsIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' />
-		</svg>
-	);
-}
-
-type BookmarkIconProperties = Omit<IconProperties, 'fill'> & {filled?: boolean};
-
-function BookmarkIcon({size = 'md', className = '', filled = false, ...props}: BookmarkIconProperties) {
-	if (filled) {
+// Factory function to create icon wrapper with size support
+function createIcon(SvgComponent: ComponentType<SVGProps<SVGSVGElement>>, displayName: string) {
+	function Icon({size = 'md', className = '', ...props}: IconProperties) {
 		return (
-			<svg
-				xmlns='http://www.w3.org/2000/svg'
+			<SvgComponent
 				className={`${sizeMap[size]} ${className}`}
-				viewBox='0 0 20 20'
-				fill='currentColor'
 				aria-hidden='true'
 				{...props}
-			>
-				<path d='M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z' />
-			</svg>
+			/>
 		);
 	}
 
+	Icon.displayName = displayName;
+	return Icon;
+}
+
+// Navigation & Actions
+const ArrowLeftIcon = createIcon(ArrowLeftSvg, 'ArrowLeftIcon');
+const ArrowRightIcon = createIcon(ArrowRightSvg, 'ArrowRightIcon');
+const ChevronDownIcon = createIcon(ChevronDownSvg, 'ChevronDownIcon');
+const ChevronRightIcon = createIcon(ChevronRightSvg, 'ChevronRightIcon');
+const CheckIcon = createIcon(CheckSvg, 'CheckIcon');
+const XIcon = createIcon(XSvg, 'XIcon');
+
+// Communication
+const EmailIcon = createIcon(EmailSvg, 'EmailIcon');
+const PhoneIcon = createIcon(PhoneSvg, 'PhoneIcon');
+const ChatIcon = createIcon(ChatSvg, 'ChatIcon');
+const SendIcon = createIcon(SendSvg, 'SendIcon');
+
+// Date & Time
+const CalendarIcon = createIcon(CalendarSvg, 'CalendarIcon');
+const ClockIcon = createIcon(ClockSvg, 'ClockIcon');
+
+// Location
+const LocationIcon = createIcon(LocationSvg, 'LocationIcon');
+
+// People & Social
+const UsersIcon = createIcon(UsersSvg, 'UsersIcon');
+const UserIcon = createIcon(UserSvg, 'UserIcon');
+
+// Status & Feedback
+const SuccessIcon = createIcon(SuccessSvg, 'SuccessIcon');
+const ErrorIcon = createIcon(ErrorSvg, 'ErrorIcon');
+const InfoIcon = createIcon(InfoSvg, 'InfoIcon');
+const WarningIcon = createIcon(WarningSvg, 'WarningIcon');
+const QuestionIcon = createIcon(QuestionSvg, 'QuestionIcon');
+
+// Objects & Items
+const HeartIcon = createIcon(HeartSvg, 'HeartIcon');
+const StarIcon = createIcon(StarSvg, 'StarIcon');
+const GiftIcon = createIcon(GiftSvg, 'GiftIcon');
+const MoneyIcon = createIcon(MoneySvg, 'MoneyIcon');
+const SchoolIcon = createIcon(SchoolSvg, 'SchoolIcon');
+const NewsIcon = createIcon(NewsSvg, 'NewsIcon');
+const PinnedIcon = createIcon(PinnedSvg, 'PinnedIcon');
+
+// Loading
+const SpinnerIcon = createIcon(SpinnerSvg, 'SpinnerIcon');
+
+// Social Media
+const FacebookIcon = createIcon(FacebookSvg, 'FacebookIcon');
+const InstagramIcon = createIcon(InstagramSvg, 'InstagramIcon');
+
+// Special icons with additional props
+type BookmarkIconProperties = Omit<IconProperties, 'fill'> & {filled?: boolean};
+
+function BookmarkIcon({size = 'md', className = '', filled = false, ...props}: BookmarkIconProperties) {
+	const SvgComponent = filled ? BookmarkFilledSvg : BookmarkSvg;
 	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
+		<SvgComponent
 			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
 			aria-hidden='true'
 			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z' />
-		</svg>
+		/>
 	);
 }
 
-function GiftIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7' />
-		</svg>
-	);
-}
+BookmarkIcon.displayName = 'BookmarkIcon';
 
-function MoneyIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
-		</svg>
-	);
-}
-
-function CheckIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 13l4 4L19 7' />
-		</svg>
-	);
-}
-
-function XIcon({size = 'md', className = '', ...props}: IconProperties) {
-	return (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`${sizeMap[size]} ${className}`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-			{...props}
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M6 18L18 6M6 6l12 12' />
-		</svg>
-	);
-}
+// Re-export path strings for cases where raw paths are needed
+/* eslint-disable @stylistic/max-len */
+const arrowRightPath = 'M17 8l4 4m0 0l-4 4m4-4H3';
+const questionPath = 'M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z';
+/* eslint-enable @stylistic/max-len */
 
 export {
+	// Navigation & Actions
 	ArrowLeftIcon,
 	ArrowRightIcon,
-	BookmarkIcon,
-	CalendarIcon,
-	CheckIcon,
+	ChevronDownIcon,
 	ChevronRightIcon,
-	ClockIcon,
-	EmailIcon,
-	GiftIcon,
-	HeartIcon,
-	LocationIcon,
-	MoneyIcon,
-	NewsIcon,
-	QuestionIcon,
-	StarIcon,
-	UsersIcon,
+	CheckIcon,
 	XIcon,
+	// Communication
+	EmailIcon,
+	PhoneIcon,
+	ChatIcon,
+	SendIcon,
+	// Date & Time
+	CalendarIcon,
+	ClockIcon,
+	// Location
+	LocationIcon,
+	// People & Social
+	UsersIcon,
+	UserIcon,
+	// Status & Feedback
+	SuccessIcon,
+	ErrorIcon,
+	InfoIcon,
+	WarningIcon,
+	QuestionIcon,
+	// Objects & Items
+	HeartIcon,
+	StarIcon,
+	GiftIcon,
+	MoneyIcon,
+	SchoolIcon,
+	NewsIcon,
+	PinnedIcon,
+	// Loading
+	SpinnerIcon,
+	// Social Media
+	FacebookIcon,
+	InstagramIcon,
+	// Special
+	BookmarkIcon,
+	// Paths
+	arrowRightPath,
+	questionPath,
 };
 
-export type {IconProperties};
+export type {IconProperties, BookmarkIconProperties};

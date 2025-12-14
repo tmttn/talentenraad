@@ -9,7 +9,9 @@ const customJestConfig: Config = {
 	setupFilesAfterEnv: ['<rootDir>/jest.setup.tsx'],
 	testEnvironment: 'jest-environment-jsdom',
 	moduleNameMapper: {
-		'^@/(.*)$': '<rootDir>/$1',
+		'^@/(.*)$': '<rootDir>/app/$1',
+		'^@components/(.*)$': '<rootDir>/app/components/$1',
+		'^@features/(.*)$': '<rootDir>/app/features/$1',
 	},
 	testPathIgnorePatterns: ['<rootDir>/node_modules/', '<rootDir>/.next/'],
 	collectCoverageFrom: [

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import {EmailIcon} from '@components/icons/icons';
+import {EmailIcon} from '@components/ui/icons';
 
 type TeamMemberProperties = {
 	name: string;

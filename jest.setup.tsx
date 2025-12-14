@@ -2,7 +2,7 @@ import '@testing-library/jest-dom';
 
 // Mock SVG icons module - Next.js default SVG handling returns objects, not components
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-jest.mock('@/app/components/icons/icons', () => {
+jest.mock('@components/ui/icons', () => {
 	// eslint-disable-next-line @typescript-eslint/no-require-imports
 	const React = require('react');
 	const createMockIcon = (name: string) =>
@@ -12,23 +12,33 @@ jest.mock('@/app/components/icons/icons', () => {
 
 	return {
 		__esModule: true,
+		// Navigation & Actions
+		ArrowLeftIcon: createMockIcon('arrow-left'),
 		ArrowRightIcon: createMockIcon('arrow-right'),
 		ChevronDownIcon: createMockIcon('chevron-down'),
 		ChevronRightIcon: createMockIcon('chevron-right'),
+		CheckIcon: createMockIcon('check'),
+		XIcon: createMockIcon('x'),
+		// Communication
 		EmailIcon: createMockIcon('email'),
 		PhoneIcon: createMockIcon('phone'),
 		ChatIcon: createMockIcon('chat'),
 		SendIcon: createMockIcon('send'),
+		// Date & Time
 		CalendarIcon: createMockIcon('calendar'),
 		ClockIcon: createMockIcon('clock'),
+		// Location
 		LocationIcon: createMockIcon('location'),
+		// People & Social
 		UsersIcon: createMockIcon('users'),
 		UserIcon: createMockIcon('user'),
+		// Status & Feedback
 		SuccessIcon: createMockIcon('success'),
 		ErrorIcon: createMockIcon('error'),
 		InfoIcon: createMockIcon('info'),
 		WarningIcon: createMockIcon('warning'),
 		QuestionIcon: createMockIcon('question'),
+		// Objects & Items
 		HeartIcon: createMockIcon('heart'),
 		StarIcon: createMockIcon('star'),
 		GiftIcon: createMockIcon('gift'),
@@ -36,9 +46,14 @@ jest.mock('@/app/components/icons/icons', () => {
 		SchoolIcon: createMockIcon('school'),
 		NewsIcon: createMockIcon('news'),
 		PinnedIcon: createMockIcon('pinned'),
+		// Loading
 		SpinnerIcon: createMockIcon('spinner'),
+		// Social Media
 		FacebookIcon: createMockIcon('facebook'),
 		InstagramIcon: createMockIcon('instagram'),
+		// Special
+		BookmarkIcon: createMockIcon('bookmark'),
+		// Paths
 		arrowRightPath: 'M17 8l4 4m0 0l-4 4m4-4H3',
 		questionPath: 'M8.228 9c.549-1.165 2.03-2 3.772-2...',
 	};

@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {AnimatedLink} from '@components/ui';
-import {CalendarIcon, NewsIcon} from '@components/icons/icons';
+import {CalendarIcon, NewsIcon} from '@components/ui/icons';
 
 type Activiteit = {
 	id: string;

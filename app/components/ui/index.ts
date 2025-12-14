@@ -21,22 +21,49 @@ export type {CategoryBadgeProperties} from './category-badge';
 
 // Icons
 export {
+	// Navigation & Actions
 	ArrowLeftIcon,
 	ArrowRightIcon,
-	BookmarkIcon,
-	CalendarIcon,
-	CheckIcon,
+	ChevronDownIcon,
 	ChevronRightIcon,
-	ClockIcon,
-	EmailIcon,
-	GiftIcon,
-	HeartIcon,
-	LocationIcon,
-	MoneyIcon,
-	NewsIcon,
-	QuestionIcon,
-	StarIcon,
-	UsersIcon,
+	CheckIcon,
 	XIcon,
+	// Communication
+	EmailIcon,
+	PhoneIcon,
+	ChatIcon,
+	SendIcon,
+	// Date & Time
+	CalendarIcon,
+	ClockIcon,
+	// Location
+	LocationIcon,
+	// People & Social
+	UsersIcon,
+	UserIcon,
+	// Status & Feedback
+	SuccessIcon,
+	ErrorIcon,
+	InfoIcon,
+	WarningIcon,
+	QuestionIcon,
+	// Objects & Items
+	HeartIcon,
+	StarIcon,
+	GiftIcon,
+	MoneyIcon,
+	SchoolIcon,
+	NewsIcon,
+	PinnedIcon,
+	// Loading
+	SpinnerIcon,
+	// Social Media
+	FacebookIcon,
+	InstagramIcon,
+	// Special
+	BookmarkIcon,
+	// Paths
+	arrowRightPath,
+	questionPath,
 } from './icons';
-export type {IconProperties} from './icons';
+export type {IconProperties, BookmarkIconProperties} from './icons';
