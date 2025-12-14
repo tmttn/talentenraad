@@ -1,9 +1,23 @@
 'use client';
 
+import {useEffect, useState} from 'react';
+
+// eslint-disable-next-line n/prefer-global/process
+const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+
 type CalendarEvent = {
 	date: string;
 	title: string;
 	time?: string;
+};
+
+type Activiteit = {
+	id: string;
+	data: {
+		titel: string;
+		datum: string;
+		tijd?: string;
+	};
 };
 
 type CalendarSectionProperties = {
@@ -12,21 +26,112 @@ type CalendarSectionProperties = {
 	events?: CalendarEvent[];
 	showViewAll?: boolean;
 	viewAllLink?: string;
+	limit?: number;
+	fetchFromBuilder?: boolean;
 };
+
+function generateSlug(title: string): string {
+	return title
+		.toLowerCase()
+		.normalize('NFD')
+		.replaceAll(/[\u0300-\u036F]/g, '')
+		.replaceAll(/[^a-z\d\s-]/g, '')
+		.replaceAll(/\s+/g, '-')
+		.replaceAll(/-+/g, '-')
+		.trim();
+}
 
 function CalendarSection({
 	title = 'Komende activiteiten',
 	subtitle,
-	events = [],
+	events: staticEvents = [],
 	showViewAll = true,
 	viewAllLink = '/kalender',
+	limit = 5,
+	fetchFromBuilder = true,
 }: Readonly<CalendarSectionProperties>) {
+	const [events, setEvents] = useState<CalendarEvent[]>(staticEvents);
+	const [loading, setLoading] = useState(fetchFromBuilder && staticEvents.length === 0);
+
+	useEffect(() => {
+		// Only fetch from Builder if fetchFromBuilder is true and no static events provided
+		if (!fetchFromBuilder || staticEvents.length > 0) {
+			setEvents(staticEvents);
+			setLoading(false);
+			return;
+		}
+
+		async function fetchActiviteiten() {
+			try {
+				const url = new URL('https://cdn.builder.io/api/v3/content/activiteit');
+				url.searchParams.set('apiKey', BUILDER_API_KEY);
+				url.searchParams.set('limit', String(limit));
+				url.searchParams.set('sort.data.datum', '1');
+
+				const response = await fetch(url.toString());
+				const data = await response.json();
+
+				if (data.results) {
+					// Filter to only show future events
+					const now = new Date();
+					now.setHours(0, 0, 0, 0);
+					const futureEvents = data.results
+						.filter((item: Activiteit) => {
+							const eventDate = new Date(item.data.datum);
+							return eventDate >= now;
+						})
+						.slice(0, limit)
+						.map((item: Activiteit) => ({
+							date: item.data.datum,
+							title: item.data.titel,
+							time: item.data.tijd,
+							slug: generateSlug(item.data.titel),
+						}));
+
+					setEvents(futureEvents);
+				}
+			} catch (error) {
+				console.error('Error fetching activiteiten:', error);
+			} finally {
+				setLoading(false);
+			}
+		}
+
+		fetchActiviteiten();
+	}, [fetchFromBuilder, staticEvents, limit]);
+
 	const formatDate = (dateString: string) => {
 		const date = new Date(dateString);
 		const day = date.getDate();
 		const month = date.toLocaleDateString('nl-BE', {month: 'short'}).toUpperCase();
 		return {day, month};
 	};
+
+	if (loading) {
+		return (
+			<section className='py-16 px-6' aria-busy='true' aria-label='Activiteiten worden geladen'>
+				<div className='max-w-4xl mx-auto'>
+					<div className='text-center mb-12'>
+						<div className='animate-pulse'>
+							<div className='h-8 bg-gray-200 rounded w-64 mx-auto mb-4' />
+							<div className='h-4 bg-gray-200 rounded w-48 mx-auto' />
+						</div>
+					</div>
+					<div className='space-y-4'>
+						{Array.from({length: 3}).map((_, i) => (
+							<div key={i} className='animate-pulse flex items-center gap-6 bg-white p-4 rounded-xl shadow-md'>
+								<div className='w-16 h-16 bg-gray-200 rounded-xl' />
+								<div className='flex-grow'>
+									<div className='h-5 bg-gray-200 rounded w-48 mb-2' />
+									<div className='h-4 bg-gray-200 rounded w-24' />
+								</div>
+							</div>
+						))}
+					</div>
+				</div>
+			</section>
+		);
+	}
 
 	return (
 		<section className='py-16 px-6' aria-labelledby='calendar-section-title'>
@@ -47,17 +152,19 @@ function CalendarSection({
 						<div className='space-y-4'>
 							{events.map((event, index) => {
 								const {day, month} = formatDate(event.date);
+								const slug = 'slug' in event ? (event as CalendarEvent & {slug: string}).slug : generateSlug(event.title);
 								return (
-									<div
+									<a
 										key={index}
-										className='flex items-center gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow'
+										href={`/activiteiten/${slug}`}
+										className='flex items-center gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow group'
 									>
 										<div className='flex-shrink-0 w-16 h-16 bg-[#ea247b] rounded-xl flex flex-col items-center justify-center text-white'>
 											<span className='text-2xl font-bold leading-none'>{day}</span>
 											<span className='text-xs uppercase'>{month}</span>
 										</div>
 										<div className='flex-grow'>
-											<h3 className='font-bold text-gray-800'>{event.title}</h3>
+											<h3 className='font-bold text-gray-800 group-hover:text-[#ea247b] transition-colors'>{event.title}</h3>
 											{event.time && (
 												<p className='text-sm text-gray-500 flex items-center gap-1'>
 													<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
@@ -67,10 +174,10 @@ function CalendarSection({
 												</p>
 											)}
 										</div>
-										<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-gray-400' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+										<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-gray-400 group-hover:text-[#ea247b] transition-colors' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 											<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
 										</svg>
-									</div>
+									</a>
 								);
 							})}
 						</div>
@@ -117,8 +224,21 @@ export const CalendarSectionInfo = {
 			defaultValue: 'Mis geen enkele activiteit van de Talentenraad',
 		},
 		{
+			name: 'fetchFromBuilder',
+			type: 'boolean',
+			defaultValue: true,
+			helperText: 'Automatisch activiteiten ophalen van Builder.io (aanbevolen)',
+		},
+		{
+			name: 'limit',
+			type: 'number',
+			defaultValue: 5,
+			helperText: 'Maximum aantal activiteiten om te tonen',
+		},
+		{
 			name: 'events',
 			type: 'list',
+			helperText: 'Handmatig events toevoegen (alleen als fetchFromBuilder uit staat)',
 			subFields: [
 				{
 					name: 'date',
@@ -135,11 +255,7 @@ export const CalendarSectionInfo = {
 					type: 'string',
 				},
 			],
-			defaultValue: [
-				{date: '2025-03-15', title: 'Schoolfeest', time: '14:00 - 18:00'},
-				{date: '2025-04-20', title: 'Quiz avond', time: '19:30'},
-				{date: '2025-05-11', title: 'Moederdag ontbijt', time: '09:00 - 12:00'},
-			],
+			defaultValue: [],
 		},
 		{
 			name: 'showViewAll',
