@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 import Link from 'next/link';
 
 // eslint-disable-next-line n/prefer-global/process
-const builderApiKey = process.env.NEXT_PUBLIC_builderApiKey!;
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 type Activiteit = {
 	id: string;

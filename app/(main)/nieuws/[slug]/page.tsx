@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 // eslint-disable-next-line n/prefer-global/process
-const builderApiKey = process.env.NEXT_PUBLIC_builderApiKey!;
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 type NieuwsItem = {
 	id: string;
