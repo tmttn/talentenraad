@@ -1,2 +1,2 @@
-export {SiteFooterInfo} from '@components/site-footer';
-export {SiteHeaderInfo} from '@components/site-header';
+export {SiteFooterInfo} from '@components/layout/site-footer';
+export {SiteHeaderInfo} from '@components/layout/site-header';

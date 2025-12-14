@@ -27,6 +27,9 @@
       ],
       "@components/*": [
         "./app/components/*"
+      ],
+      "@features/*": [
+        "./app/features/*"
       ]
     },
     "target": "ES2017"

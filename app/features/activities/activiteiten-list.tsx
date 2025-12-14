@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useState} from 'react';
-import {AnimatedLink} from './ui';
+import {AnimatedLink} from '@components/ui';
 
 type Activiteit = {
 	id: string;

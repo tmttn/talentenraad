@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {SiteHeader, SiteHeaderInfo} from '../../app/components/site-header';
+import {SiteHeader, SiteHeaderInfo} from '../../app/components/layout/site-header';
 
 // Mock usePathname
 jest.mock('next/navigation', () => ({

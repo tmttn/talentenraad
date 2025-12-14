@@ -1,6 +1,6 @@
 'use client';
 
-import {AnimatedLink} from './ui';
+import {AnimatedLink} from '@components/ui';
 
 type InfoCardProperties = {
 	title: string;

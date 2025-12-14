@@ -1,0 +1,75 @@
+'use client';
+
+import {Content, type BuilderContent} from '@builder.io/sdk-react-nextjs';
+import {HeroInfo} from '@features/marketing/hero';
+import {CTABannerInfo} from '@features/marketing/cta-banner';
+import {InfoCardInfo} from '@features/info/info-card';
+import {SectionInfo} from '@components/section';
+import {FAQInfo} from '@features/faq/faq';
+import {ActiviteitenListInfo} from '@features/activities/activiteiten-list';
+import {NieuwsListInfo} from '@features/news/nieuws-list';
+import {DecorationInfo, DividerInfo} from '@components/decorations';
+import {AnnouncementBannerInfo} from '@features/marketing/announcement-banner';
+import {TeamGridInfo} from '@features/team/team-grid';
+import {FeatureGridInfo} from '@features/info/feature-grid';
+import {ContactFormInfo} from '@features/contact/contact-form';
+import {CalendarSectionInfo} from '@features/activities/calendar-section';
+import {EventCardInfo} from '@features/activities/event-card';
+import {NewsCardInfo} from '@features/news/news-card';
+import {TeamMemberInfo} from '@features/team/team-member';
+import {ActiviteitenArchiefInfo} from '@features/activities/activiteiten-archief';
+import {HomepageDashboardInfo} from '@features/dashboard/homepage-dashboard';
+import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
+import {UnifiedCTAInfo} from '@features/marketing/unified-cta';
+
+// All custom components available for sections
+const customComponents = [
+	HeroInfo,
+	CTABannerInfo,
+	InfoCardInfo,
+	SectionInfo,
+	FAQInfo,
+	ActiviteitenListInfo,
+	NieuwsListInfo,
+	DecorationInfo,
+	DividerInfo,
+	AnnouncementBannerInfo,
+	TeamGridInfo,
+	FeatureGridInfo,
+	ContactFormInfo,
+	CalendarSectionInfo,
+	EventCardInfo,
+	NewsCardInfo,
+	TeamMemberInfo,
+	ActiviteitenArchiefInfo,
+	HomepageDashboardInfo,
+	NewsletterSignupInfo,
+	UnifiedCTAInfo,
+];
+
+type BuilderSectionClientProperties = {
+	content: BuilderContent;
+	model: string;
+	apiKey: string;
+};
+
+/**
+ * Client-side Builder Section Renderer
+ *
+ * Receives pre-fetched content from the server and renders it.
+ * This is a lightweight client component that handles the interactive parts.
+ */
+export function BuilderSectionClient({
+	content,
+	model,
+	apiKey,
+}: Readonly<BuilderSectionClientProperties>) {
+	return (
+		<Content
+			content={content}
+			model={model}
+			apiKey={apiKey}
+			customComponents={customComponents}
+		/>
+	);
+}

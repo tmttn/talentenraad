@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {BuilderContent} from '../../app/components/builder-content';
+import {BuilderContent} from '../../app/components/builder/builder-content';
 
 describe('BuilderContent', () => {
 	const defaultProps = {

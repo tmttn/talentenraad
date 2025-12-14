@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {SiteFooter, SiteFooterInfo} from '../../app/components/site-footer';
+import {SiteFooter, SiteFooterInfo} from '../../app/components/layout/site-footer';
 
 describe('SiteFooter', () => {
 	const mockNavigationGroups = [

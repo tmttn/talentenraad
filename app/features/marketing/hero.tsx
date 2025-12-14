@@ -1,6 +1,7 @@
 'use client';
 
-import {brandColors, gradients} from '../styles/tokens';
+// eslint-disable-next-line import-x/extensions
+import {brandColors, gradients} from '@/styles/tokens';
 
 // CSS for CTA button animations
 const ctaStyles = `

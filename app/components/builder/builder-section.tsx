@@ -2,28 +2,17 @@
 
 import {useEffect, useState} from 'react';
 import {Content, fetchOneEntry, type BuilderContent} from '@builder.io/sdk-react-nextjs';
-// eslint-disable-next-line import-x/extensions
-import {HeroInfo} from './hero';
-// eslint-disable-next-line import-x/extensions
-import {CTABannerInfo} from './cta-banner';
-// eslint-disable-next-line import-x/extensions
-import {InfoCardInfo} from './info-card';
-// eslint-disable-next-line import-x/extensions
-import {SectionInfo} from './section';
-// eslint-disable-next-line import-x/extensions
-import {FAQInfo} from './faq';
-// eslint-disable-next-line import-x/extensions
-import {ActiviteitenListInfo} from './activiteiten-list';
-// eslint-disable-next-line import-x/extensions
-import {NieuwsListInfo} from './nieuws-list';
-// eslint-disable-next-line import-x/extensions
-import {DecorationInfo, DividerInfo} from './decorations';
-// eslint-disable-next-line import-x/extensions
-import {SiteHeaderInfo} from './site-header';
-// eslint-disable-next-line import-x/extensions
-import {SiteFooterInfo} from './site-footer';
-// eslint-disable-next-line import-x/extensions
-import {ActiviteitenArchiefInfo} from './activiteiten-archief';
+import {HeroInfo} from '@features/marketing/hero';
+import {CTABannerInfo} from '@features/marketing/cta-banner';
+import {InfoCardInfo} from '@features/info/info-card';
+import {SectionInfo} from '@components/section';
+import {FAQInfo} from '@features/faq/faq';
+import {ActiviteitenListInfo} from '@features/activities/activiteiten-list';
+import {NieuwsListInfo} from '@features/news/nieuws-list';
+import {DecorationInfo, DividerInfo} from '@components/decorations';
+import {SiteHeaderInfo} from '@components/layout/site-header';
+import {SiteFooterInfo} from '@components/layout/site-footer';
+import {ActiviteitenArchiefInfo} from '@features/activities/activiteiten-archief';
 
 // eslint-disable-next-line n/prefer-global/process
 const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;

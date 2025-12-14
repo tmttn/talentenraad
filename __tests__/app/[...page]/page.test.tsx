@@ -12,7 +12,7 @@ jest.mock('../../../app/lib/builder-utils', () => ({
 	NotFoundContent: () => <div>404 Not Found</div>,
 }));
 
-jest.mock('../../../app/components/builder-content', () => ({
+jest.mock('../../../app/components/builder/builder-content', () => ({
 	BuilderContent: ({content}: {content: unknown}) => (
 		<div data-testid='builder-content'>{content ? 'Has Content' : 'No Content'}</div>
 	),

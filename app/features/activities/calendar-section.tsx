@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
-import {AnimatedLink} from './ui';
+import {AnimatedLink} from '@components/ui';
 
 // eslint-disable-next-line n/prefer-global/process
 const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;

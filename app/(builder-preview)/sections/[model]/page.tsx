@@ -9,38 +9,22 @@ import {
 	type BuilderContent,
 } from '@builder.io/sdk-react-nextjs';
 import {useSearchParams} from 'next/navigation';
-// eslint-disable-next-line import-x/extensions
-import {HeroInfo} from '@/components/hero';
-// eslint-disable-next-line import-x/extensions
-import {CTABannerInfo} from '@/components/cta-banner';
-// eslint-disable-next-line import-x/extensions
-import {InfoCardInfo} from '@/components/info-card';
-// eslint-disable-next-line import-x/extensions
-import {SectionInfo} from '@/components/section';
-// eslint-disable-next-line import-x/extensions
-import {FAQInfo} from '@/components/faq';
-// eslint-disable-next-line import-x/extensions
-import {ActiviteitenListInfo} from '@/components/activiteiten-list';
-// eslint-disable-next-line import-x/extensions
-import {NieuwsListInfo} from '@/components/nieuws-list';
-// eslint-disable-next-line import-x/extensions
-import {DecorationInfo, DividerInfo} from '@/components/decorations';
-// eslint-disable-next-line import-x/extensions
-import {AnnouncementBannerInfo} from '@/components/announcement-banner';
-// eslint-disable-next-line import-x/extensions
-import {TeamGridInfo} from '@/components/team-grid';
-// eslint-disable-next-line import-x/extensions
-import {FeatureGridInfo} from '@/components/feature-grid';
-// eslint-disable-next-line import-x/extensions
-import {ContactFormInfo} from '@/components/contact-form';
-// eslint-disable-next-line import-x/extensions
-import {CalendarSectionInfo} from '@/components/calendar-section';
-// eslint-disable-next-line import-x/extensions
-import {EventCardInfo} from '@/components/event-card';
-// eslint-disable-next-line import-x/extensions
-import {NewsCardInfo} from '@/components/news-card';
-// eslint-disable-next-line import-x/extensions
-import {TeamMemberInfo} from '@/components/team-member';
+import {HeroInfo} from '@features/marketing/hero';
+import {CTABannerInfo} from '@features/marketing/cta-banner';
+import {InfoCardInfo} from '@features/info/info-card';
+import {SectionInfo} from '@components/section';
+import {FAQInfo} from '@features/faq/faq';
+import {ActiviteitenListInfo} from '@features/activities/activiteiten-list';
+import {NieuwsListInfo} from '@features/news/nieuws-list';
+import {DecorationInfo, DividerInfo} from '@components/decorations';
+import {AnnouncementBannerInfo} from '@features/marketing/announcement-banner';
+import {TeamGridInfo} from '@features/team/team-grid';
+import {FeatureGridInfo} from '@features/info/feature-grid';
+import {ContactFormInfo} from '@features/contact/contact-form';
+import {CalendarSectionInfo} from '@features/activities/calendar-section';
+import {EventCardInfo} from '@features/activities/event-card';
+import {NewsCardInfo} from '@features/news/news-card';
+import {TeamMemberInfo} from '@features/team/team-member';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;

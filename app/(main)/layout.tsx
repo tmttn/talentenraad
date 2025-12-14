@@ -1,9 +1,6 @@
-// eslint-disable-next-line import-x/extensions
-import {SiteHeaderServer} from '../components/site-header-server';
-// eslint-disable-next-line import-x/extensions
-import {SiteFooterServer} from '../components/site-footer-server';
-// eslint-disable-next-line import-x/extensions
-import {AnnouncementBanner} from '../components/announcement-banner';
+import {SiteHeaderServer} from '@components/layout/site-header-server';
+import {SiteFooterServer} from '@components/layout/site-footer-server';
+import {AnnouncementBanner} from '@features/marketing/announcement-banner';
 
 /**
  * Main Site Layout

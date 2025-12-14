@@ -1,4 +1,4 @@
-import {BuilderContent} from '@components/builder-content';
+import {BuilderContent} from '@components/builder/builder-content';
 import {
 	builderPublicApiKey,
 	fetchBuilderContent,

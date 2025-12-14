@@ -1,7 +1,7 @@
 'use client';
 
 import {useEffect, useState} from 'react';
-import {linkStyles} from './ui';
+import {linkStyles} from '@components/ui';
 
 type NieuwsItem = {
 	id: string;

@@ -1,7 +1,7 @@
 'use client';
 
 import type {ReactNode} from 'react';
-import {AnimatedLink} from './ui';
+import {AnimatedLink} from '@components/ui';
 
 type FeatureItem = {
 	icon: string;

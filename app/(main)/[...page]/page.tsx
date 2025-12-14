@@ -1,3 +1,4 @@
+import {BuilderContent} from '@components/builder/builder-content';
 import {
 	builderPublicApiKey,
 	fetchBuilderContent,
@@ -8,8 +9,6 @@ import {
 	type PageSearchParameters,
 // eslint-disable-next-line import-x/extensions
 } from '../../lib/builder-utils';
-// eslint-disable-next-line import-x/extensions
-import {BuilderContent} from '@/components/builder-content';
 
 // Enable ISR with fast revalidation for quick content updates
 export const revalidate = 5;
