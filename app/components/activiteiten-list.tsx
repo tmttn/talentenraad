@@ -204,8 +204,10 @@ function ActiviteitenList({
 													</p>
 												)}
 												{showDescription && activiteit.data.beschrijving && (
-													<p className='text-sm text-gray-600 mt-2'>
-														{activiteit.data.beschrijving}
+													<p className='text-sm text-gray-600 mt-2 line-clamp-2'>
+														{activiteit.data.beschrijving.length > 150
+															? `${activiteit.data.beschrijving.slice(0, 150)}...`
+															: activiteit.data.beschrijving}
 													</p>
 												)}
 											</div>
