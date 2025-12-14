@@ -43,6 +43,44 @@
 
 	/* Focus states */
 	--color-focus: #ea247b;
+
+	/* ----------------------------------------
+	   STATE TOKENS - Feedback colors
+	   ---------------------------------------- */
+
+	/* Success (confirmations, completed) */
+	--color-success-50: #f0fdf4;
+	--color-success-100: #dcfce7;
+	--color-success-200: #bbf7d0;
+	--color-success-600: #16a34a;
+	--color-success-800: #166534;
+
+	/* Info (informational, neutral) */
+	--color-info-100: #dbeafe;
+	--color-info-400: #60a5fa;
+	--color-info-500: #3b82f6;
+	--color-info-600: #2563eb;
+	--color-info-800: #1e40af;
+
+	/* Warning (alerts, caution) */
+	--color-warning-500: #f59e0b;
+	--color-warning-400: #fbbf24;
+
+	/* ----------------------------------------
+	   CATEGORY TOKENS - Content type badges
+	   ---------------------------------------- */
+
+	/* Event/Party category */
+	--color-category-event-bg: #fce7f3;
+	--color-category-event-text: #9d174d;
+
+	/* Calendar category */
+	--color-category-calendar-bg: #dbeafe;
+	--color-category-calendar-text: #1e40af;
+
+	/* Activity/Default category */
+	--color-category-activity-bg: #dcfce7;
+	--color-category-activity-text: #166534;
 }
 
 /* Global focus styles for accessibility */

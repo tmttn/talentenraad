@@ -149,7 +149,7 @@ function ContactForm({
 		return (
 			<section className='py-16 px-6 bg-gray-50'>
 				<div className='max-w-2xl mx-auto text-center'>
-					<div className='bg-green-600 text-white p-8 rounded-2xl' role='alert'>
+					<div className='bg-success-600 text-white p-8 rounded-2xl' role='alert'>
 						<svg xmlns='http://www.w3.org/2000/svg' className='h-16 w-16 mx-auto mb-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z' />
 						</svg>

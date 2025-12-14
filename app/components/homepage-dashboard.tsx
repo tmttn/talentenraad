@@ -207,10 +207,10 @@ function HomepageDashboard({
 												</div>
 												<span className={`flex-shrink-0 px-2 py-0.5 text-[10px] font-medium rounded-full ${
 													activiteit.data.categorie === 'feest'
-														? 'bg-pink-100 text-pink-800'
+														? 'bg-category-event-bg text-category-event-text'
 														: (activiteit.data.categorie === 'kalender'
-															? 'bg-blue-100 text-blue-800'
-															: 'bg-green-100 text-green-800')
+															? 'bg-category-calendar-bg text-category-calendar-text'
+															: 'bg-category-activity-bg text-category-activity-text')
 												}`}>
 													{activiteit.data.categorie}
 												</span>

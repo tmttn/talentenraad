@@ -101,7 +101,7 @@ function Section({
 				return (
 					<div className='absolute inset-0 overflow-hidden pointer-events-none' aria-hidden='true'>
 						<div className='absolute -top-24 -right-24 w-96 h-96 rounded-full bg-primary/5' />
-						<div className='absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-blue-500/5' />
+						<div className='absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-info-500/5' />
 					</div>
 				);
 			}

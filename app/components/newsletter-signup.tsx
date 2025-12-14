@@ -69,7 +69,7 @@ function NewsletterSignup({
 					{status === 'loading' ? 'Bezig...' : buttonText}
 				</button>
 				{status === 'success' && (
-					<p className='text-green-600 text-sm mt-2'>{message}</p>
+					<p className='text-success-600 text-sm mt-2'>{message}</p>
 				)}
 				{status === 'error' && (
 					<p className='text-red-600 text-sm mt-2'>{message}</p>
@@ -195,8 +195,8 @@ function NewsletterSignup({
 						</button>
 
 						{status === 'success' && (
-							<div className='p-4 bg-green-50 border border-green-200 rounded-lg' role='alert'>
-								<p className='text-green-800 text-sm flex items-center gap-2'>
+							<div className='p-4 bg-success-50 border border-success-200 rounded-lg' role='alert'>
+								<p className='text-success-800 text-sm flex items-center gap-2'>
 									<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 										<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 13l4 4L19 7' />
 									</svg>
