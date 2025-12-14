@@ -2,7 +2,7 @@ import {notFound} from 'next/navigation';
 import Link from 'next/link';
 
 // eslint-disable-next-line n/prefer-global/process
-const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+const builderApiKey = process.env.NEXT_PUBLIC_builderApiKey!;
 
 type Activiteit = {
 	id: string;
@@ -25,7 +25,7 @@ async function getActiviteit(slug: string): Promise<Activiteit | undefined> {
 	try {
 		// First try to find in the list
 		const url = new URL('https://cdn.builder.io/api/v3/content/activiteit');
-		url.searchParams.set('apiKey', BUILDER_API_KEY);
+		url.searchParams.set('apiKey', builderApiKey);
 		url.searchParams.set('limit', '100');
 
 		const response = await fetch(url.toString(), {cache: 'no-store'});
@@ -46,7 +46,7 @@ async function getActiviteit(slug: string): Promise<Activiteit | undefined> {
 		// Fallback: try direct query by matching slug in all items
 		// This handles cases where CDN cache hasn't updated yet
 		const allUrl = new URL('https://cdn.builder.io/api/v3/content/activiteit');
-		allUrl.searchParams.set('apiKey', BUILDER_API_KEY);
+		allUrl.searchParams.set('apiKey', builderApiKey);
 		allUrl.searchParams.set('limit', '100');
 		allUrl.searchParams.set('includeUnpublished', 'false');
 		allUrl.searchParams.set('cacheSeconds', '0');

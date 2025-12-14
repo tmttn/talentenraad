@@ -7,19 +7,18 @@ export const metadata: Metadata = {
 };
 
 /**
- * Section Preview Layout
+ * Builder Preview Layout
  *
- * This layout provides a minimal wrapper for section previews.
- * It excludes the main site header, footer, and navigation
- * so Builder.io can preview sections in isolation.
+ * Minimal layout for Builder.io section previews.
+ * No header, footer, or site navigation - just the section content.
  */
-export default function SectionPreviewLayout({
+export default function BuilderPreviewLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
 	return (
-		<div className='section-preview bg-white'>
+		<div className='builder-preview min-h-screen'>
 			{children}
 		</div>
 	);

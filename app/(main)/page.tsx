@@ -1,3 +1,4 @@
+import {BuilderContent} from '@components/builder-content';
 import {
 	builderPublicApiKey,
 	fetchBuilderContent,
@@ -8,21 +9,18 @@ import {
 	type PageSearchParameters,
 // eslint-disable-next-line import-x/extensions
 } from '../lib/builder-utils';
-// eslint-disable-next-line import-x/extensions
-import {BuilderContent} from '@/components/builder-content';
 
 // Enable ISR with revalidation every 60 seconds for better performance
 // While still keeping content relatively fresh
 export const revalidate = 60;
 
 type PageProperties = {
-	params: Promise<{page: string[]}>;
+	params: Promise<{slug: string[]}>;
 	searchParams: Promise<PageSearchParameters>;
 };
 
 export default async function Page(properties: Readonly<PageProperties>) {
-	const parameters = await properties.params;
-	const urlPath = '/' + (parameters?.page?.join('/') || '');
+	const urlPath = '/';
 
 	if (!builderPublicApiKey) {
 		return <ConfigurationError />;

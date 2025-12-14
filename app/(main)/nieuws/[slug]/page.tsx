@@ -3,7 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 
 // eslint-disable-next-line n/prefer-global/process
-const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+const builderApiKey = process.env.NEXT_PUBLIC_builderApiKey!;
 
 type NieuwsItem = {
 	id: string;
@@ -23,7 +23,7 @@ export const revalidate = 0;
 async function getNieuwsItem(slug: string): Promise<NieuwsItem | undefined> {
 	try {
 		const url = new URL('https://cdn.builder.io/api/v3/content/nieuws');
-		url.searchParams.set('apiKey', BUILDER_API_KEY);
+		url.searchParams.set('apiKey', builderApiKey);
 		url.searchParams.set('limit', '100');
 
 		const response = await fetch(url.toString(), {next: {revalidate: 60}});
