@@ -17,6 +17,12 @@ nextConfig.webpack = (webpackConfig, {webpack}) => {
 	// eslint-disable-next-line @stylistic/function-paren-newline
 	);
 
+	// Add SVGR support for importing SVG files as React components
+	webpackConfig.module.rules.push({
+		test: /\.svg$/,
+		use: ['@svgr/webpack'],
+	});
+
 	return webpackConfig;
 };
 
