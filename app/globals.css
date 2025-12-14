@@ -81,6 +81,10 @@
 	/* Activity/Default category */
 	--color-category-activity-bg: #dcfce7;
 	--color-category-activity-text: #166534;
+
+	/* News category */
+	--color-category-news-bg: #f3e8ff;
+	--color-category-news-text: #6b21a8;
 }
 
 /* Global focus styles for accessibility */

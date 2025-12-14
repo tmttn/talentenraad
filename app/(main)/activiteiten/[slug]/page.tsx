@@ -104,10 +104,10 @@ function formatShortDate(dateString: string) {
 }
 
 const categoryStyles: Record<string, {bg: string; text: string}> = {
-	feest: {bg: 'bg-pink-100', text: 'text-pink-800'},
-	kalender: {bg: 'bg-blue-100', text: 'text-blue-800'},
-	activiteit: {bg: 'bg-green-100', text: 'text-green-800'},
-	nieuws: {bg: 'bg-purple-100', text: 'text-purple-800'},
+	feest: {bg: 'bg-category-event-bg', text: 'text-category-event-text'},
+	kalender: {bg: 'bg-category-calendar-bg', text: 'text-category-calendar-text'},
+	activiteit: {bg: 'bg-category-activity-bg', text: 'text-category-activity-text'},
+	nieuws: {bg: 'bg-category-news-bg', text: 'text-category-news-text'},
 };
 
 export async function generateMetadata({params}: {params: Promise<{slug: string}>}) {
@@ -152,11 +152,11 @@ export default async function ActiviteitDetailPage({params}: Readonly<PageProper
 				<nav className='mb-8' aria-label='Breadcrumb'>
 					<ol className='flex items-center gap-2 text-sm text-gray-500'>
 						<li>
-							<Link href='/' className='hover:text-[#ea247b]'>Home</Link>
+							<Link href='/' className='hover:text-primary'>Home</Link>
 						</li>
 						<li>/</li>
 						<li>
-							<Link href='/kalender' className='hover:text-[#ea247b]'>Kalender</Link>
+							<Link href='/kalender' className='hover:text-primary'>Kalender</Link>
 						</li>
 						<li>/</li>
 						<li className='text-gray-800 font-medium truncate max-w-[200px]'>
@@ -168,7 +168,7 @@ export default async function ActiviteitDetailPage({params}: Readonly<PageProper
 				{/* Header with date badge */}
 				<header className='mb-8'>
 					<div className='flex items-start gap-6'>
-						<div className='flex-shrink-0 w-20 h-20 bg-[#ea247b] rounded-2xl flex flex-col items-center justify-center text-white shadow-lg'>
+						<div className='flex-shrink-0 w-20 h-20 bg-primary rounded-2xl flex flex-col items-center justify-center text-white shadow-lg'>
 							<span className='text-3xl font-bold leading-none'>{day}</span>
 							<span className='text-sm uppercase'>{month}</span>
 						</div>
@@ -196,7 +196,7 @@ export default async function ActiviteitDetailPage({params}: Readonly<PageProper
 					<dl className='space-y-4'>
 						<div className='flex items-start gap-3'>
 							<dt className='sr-only'>Datum</dt>
-							<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-[#ea247b] mt-0.5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+							<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-primary mt-0.5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
 							</svg>
 							<dd className='text-gray-700'>{formatDate(item.data.datum)}</dd>
@@ -205,7 +205,7 @@ export default async function ActiviteitDetailPage({params}: Readonly<PageProper
 						{item.data.tijd && (
 							<div className='flex items-start gap-3'>
 								<dt className='sr-only'>Tijd</dt>
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-[#ea247b] mt-0.5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+								<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-primary mt-0.5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
 								</svg>
 								<dd className='text-gray-700'>{item.data.tijd}</dd>
@@ -215,7 +215,7 @@ export default async function ActiviteitDetailPage({params}: Readonly<PageProper
 						{item.data.locatie && (
 							<div className='flex items-start gap-3'>
 								<dt className='sr-only'>Locatie</dt>
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-[#ea247b] mt-0.5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+								<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-primary mt-0.5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' />
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 11a3 3 0 11-6 0 3 3 0 016 0z' />
 								</svg>
@@ -246,14 +246,14 @@ export default async function ActiviteitDetailPage({params}: Readonly<PageProper
 
 				{/* CTA for future events */}
 				{!isPast && (
-					<div className='mt-8 p-6 bg-gradient-to-r from-[#ea247b]/10 to-pink-50 rounded-2xl'>
+					<div className='mt-8 p-6 bg-gradient-to-r from-primary/10 to-brand-primary-50 rounded-2xl'>
 						<h3 className='font-bold text-gray-800 mb-2'>Vragen over deze activiteit?</h3>
 						<p className='text-gray-600 mb-4'>
 							Neem contact op met de Talentenraad voor meer informatie.
 						</p>
 						<Link
 							href='/contact'
-							className='inline-flex items-center gap-2 bg-[#ea247b] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#d11d6d] transition-colors'
+							className='inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-hover transition-colors'
 						>
 							Contact opnemen
 							<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
@@ -267,7 +267,7 @@ export default async function ActiviteitDetailPage({params}: Readonly<PageProper
 				<div className='mt-12 pt-8 border-t border-gray-200'>
 					<Link
 						href='/kalender'
-						className='inline-flex items-center gap-2 text-[#ea247b] font-semibold hover:underline'
+						className='inline-flex items-center gap-2 text-primary font-semibold hover:underline'
 					>
 						<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M7 16l-4-4m0 0l4-4m-4 4h18' />

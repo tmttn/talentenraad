@@ -140,7 +140,7 @@ export default function SectionPreviewPage({params}: SectionPreviewPagePropertie
 		return (
 			<div className='min-h-screen flex items-center justify-center bg-gray-50'>
 				<div className='text-center'>
-					<div className='animate-spin rounded-full h-8 w-8 border-b-2 border-[#ea247b] mx-auto' />
+					<div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto' />
 					<p className='mt-4 text-gray-600'>Sectie laden...</p>
 				</div>
 			</div>

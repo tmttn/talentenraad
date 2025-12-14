@@ -46,6 +46,54 @@ export const semanticColors = {
 } as const;
 
 // ============================================
+// STATE TOKENS - Feedback colors
+// ============================================
+
+export const stateColors = {
+	success: {
+		shade50: '#f0fdf4',
+		shade100: '#dcfce7',
+		shade200: '#bbf7d0',
+		shade600: '#16a34a',
+		shade800: '#166534',
+	},
+	info: {
+		shade100: '#dbeafe',
+		shade400: '#60a5fa',
+		shade500: '#3b82f6',
+		shade600: '#2563eb',
+		shade800: '#1e40af',
+	},
+	warning: {
+		shade400: '#fbbf24',
+		shade500: '#f59e0b',
+	},
+} as const;
+
+// ============================================
+// CATEGORY TOKENS - Content type badges
+// ============================================
+
+export const categoryColors = {
+	event: {
+		bg: '#fce7f3',
+		text: '#9d174d',
+	},
+	calendar: {
+		bg: '#dbeafe',
+		text: '#1e40af',
+	},
+	activity: {
+		bg: '#dcfce7',
+		text: '#166534',
+	},
+	news: {
+		bg: '#f3e8ff',
+		text: '#6b21a8',
+	},
+} as const;
+
+// ============================================
 // GRADIENT PRESETS
 // ============================================
 
@@ -118,7 +166,10 @@ export const componentStyles = {
 
 export type BrandColors = typeof brandColors;
 export type SemanticColors = typeof semanticColors;
+export type StateColors = typeof stateColors;
+export type CategoryColors = typeof categoryColors;
 export type Gradients = typeof gradients;
 export type ComponentStyles = typeof componentStyles;
 export type CardVariant = keyof typeof componentStyles.card;
 export type ButtonVariant = keyof typeof componentStyles.button;
+export type CategoryType = keyof typeof categoryColors;
