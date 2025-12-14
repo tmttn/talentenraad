@@ -39,6 +39,14 @@ When moving files or creating route groups:
 2. Update jest.config.ts coverage exclusions (escape parentheses)
 3. Run full test suite before committing
 
+## Builder.io Models
+
+When creating Builder.io models:
+- Use v2 admin API (`https://builder.io/api/v2/admin`), NOT v1 graphql
+- Always add `@type: '@builder.io/core:Field'` to field definitions
+- Always verify the model exists after creation by listing models
+- Include `helperText` (description) for all models and fields
+
 ## Common Mistakes to Avoid
 
 1. Committing without running linter first
@@ -46,3 +54,5 @@ When moving files or creating route groups:
 3. Using `||` instead of `??` for optional values
 4. Adding parentheses around single arrow function parameters
 5. Not escaping `()` in jest glob patterns
+6. Assuming Builder.io models exist without verifying
+7. Forgetting helperText/description on Builder.io models

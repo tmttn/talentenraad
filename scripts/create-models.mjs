@@ -25,6 +25,7 @@ async function createModel(modelInput) {
 		name: modelInput.name,
 		kind: modelInput.kind,
 		publicReadable: true,
+		helperText: modelInput.helperText || '',
 		fields: modelInput.fields.map(field => ({
 			'@type': '@builder.io/core:Field',
 			...field,
@@ -69,6 +70,7 @@ async function main() {
 		{
 			name: 'faq',
 			kind: 'data',
+			helperText: 'Veelgestelde vragen - beheer hier de FAQ items die op de website worden getoond',
 			fields: [
 				{
 					name: 'vraag',
