@@ -3,52 +3,10 @@
 // eslint-disable-next-line import-x/extensions
 import {brandColors, gradients} from '@/styles/tokens';
 
-// CSS for CTA button animations
-const ctaStyles = `
-	.cta-button {
-		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.cta-arrow {
-		transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-	}
-
-	.cta-button:hover .cta-arrow {
-		transform: translateX(4px);
-	}
-`;
-
 type HeroProperties = {
-	title: string;
-	subtitle?: string;
 	backgroundImage?: string;
-	ctaText?: string;
-	ctaLink?: string;
-	secondaryCtaText?: string;
-	secondaryCtaLink?: string;
-	variant?: 'default' | 'centered' | 'split';
 	size?: 'compact' | 'small' | 'medium' | 'large';
 };
-
-const ArrowIcon = () => (
-	<svg className='cta-arrow w-4 h-4 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-		<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-	</svg>
-);
-
-const primaryButtonBase = [
-	'cta-button inline-flex items-center justify-center gap-2',
-	'bg-white text-primary font-semibold py-3 px-6 rounded-lg whitespace-nowrap',
-	'hover:bg-gray-100 hover:shadow-lg',
-	'focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500',
-].join(' ');
-
-const secondaryButtonBase = [
-	'cta-button inline-flex items-center justify-center gap-2',
-	'bg-white/10 text-white font-semibold py-3 px-6 rounded-lg whitespace-nowrap',
-	'hover:bg-white/20 border border-white/30',
-	'focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-brand-primary-500',
-].join(' ');
 
 const sizeClasses = {
 	compact: 'py-12 md:py-16',
@@ -56,89 +14,6 @@ const sizeClasses = {
 	medium: 'py-20 md:py-28',
 	large: 'py-28 md:py-36',
 };
-
-const titleClasses = {
-	compact: 'text-2xl md:text-3xl lg:text-4xl',
-	small: 'text-3xl md:text-4xl lg:text-5xl',
-	medium: 'text-4xl md:text-5xl lg:text-6xl',
-	large: 'text-4xl md:text-5xl lg:text-6xl',
-};
-
-const subtitleClasses = {
-	compact: 'text-base md:text-lg',
-	small: 'text-base md:text-lg',
-	medium: 'text-lg md:text-xl',
-	large: 'text-lg md:text-xl',
-};
-
-function SplitVariant({
-	title,
-	subtitle,
-	ctaText,
-	ctaLink,
-	secondaryCtaText,
-	secondaryCtaLink,
-	size,
-	hasMultipleButtons,
-}: {
-	title: string;
-	subtitle?: string;
-	ctaText?: string;
-	ctaLink?: string;
-	secondaryCtaText?: string;
-	secondaryCtaLink?: string;
-	size: 'compact' | 'small' | 'medium' | 'large';
-	hasMultipleButtons: boolean;
-}) {
-	const sectionClassName = [
-		'relative bg-gradient-to-br from-brand-primary-500 to-brand-primary-700 overflow-hidden',
-		sizeClasses[size],
-	].join(' ');
-
-	return (
-		<section className={sectionClassName} aria-labelledby='hero-title-split'>
-			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
-			<div className='absolute inset-0 opacity-10' aria-hidden='true'>
-				<div className='absolute top-20 left-10 w-72 h-72 bg-white rounded-full blur-3xl' />
-				<div className='absolute bottom-10 right-20 w-96 h-96 bg-white rounded-full blur-3xl' />
-			</div>
-			<div className='relative max-w-6xl mx-auto px-6'>
-				<div className='max-w-2xl'>
-					<h1 id='hero-title-split' className={`${titleClasses[size]} font-bold text-white leading-tight mb-4 md:mb-6`}>
-						{title}
-					</h1>
-					{subtitle && (
-						<p className={`${subtitleClasses[size]} text-white/90 mb-6 md:mb-8 leading-relaxed`}>
-							{subtitle}
-						</p>
-					)}
-					{(ctaText ?? secondaryCtaText) && (
-						<div className='flex flex-wrap gap-4'>
-							{ctaText && ctaLink && (
-								<a
-									href={ctaLink}
-									className={`${primaryButtonBase} ${hasMultipleButtons ? 'w-[180px]' : ''}`}
-								>
-									{ctaText}
-									<ArrowIcon />
-								</a>
-							)}
-							{secondaryCtaText && secondaryCtaLink && (
-								<a
-									href={secondaryCtaLink}
-									className={`${secondaryButtonBase} ${hasMultipleButtons ? 'w-[180px]' : ''}`}
-								>
-									{secondaryCtaText}
-									<ArrowIcon />
-								</a>
-							)}
-						</div>
-					)}
-				</div>
-			</div>
-		</section>
-	);
-}
 
 function getBackgroundStyle(backgroundImage?: string) {
 	if (backgroundImage) {
@@ -151,77 +26,18 @@ function getBackgroundStyle(backgroundImage?: string) {
 }
 
 function Hero({
-	title,
-	subtitle,
 	backgroundImage,
-	ctaText = 'Bekijk activiteiten',
-	ctaLink = '/kalender',
-	secondaryCtaText,
-	secondaryCtaLink,
-	variant = 'centered',
 	size = 'medium',
 }: Readonly<HeroProperties>) {
-	const hasMultipleButtons = Boolean(ctaText && ctaLink && secondaryCtaText && secondaryCtaLink);
-
-	if (variant === 'split') {
-		return (
-			<SplitVariant
-				title={title}
-				subtitle={subtitle}
-				ctaText={ctaText}
-				ctaLink={ctaLink}
-				secondaryCtaText={secondaryCtaText}
-				secondaryCtaLink={secondaryCtaLink}
-				size={size}
-				hasMultipleButtons={hasMultipleButtons}
-			/>
-		);
-	}
-
 	return (
 		<section
 			className={`relative overflow-hidden ${sizeClasses[size]}`}
 			style={{background: getBackgroundStyle(backgroundImage)}}
-			aria-labelledby='hero-title'
 		>
-			<style dangerouslySetInnerHTML={{__html: ctaStyles}} />
 			{/* Subtle decorative elements */}
 			<div className='absolute inset-0 overflow-hidden pointer-events-none' aria-hidden='true'>
 				<div className='absolute -top-24 -right-24 w-96 h-96 bg-white/5 rounded-full' />
 				<div className='absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-white/5 rounded-full' />
-			</div>
-
-			<div className='relative max-w-4xl mx-auto px-6 text-center'>
-				<h1 id='hero-title' className={`${titleClasses[size]} font-bold text-white leading-tight mb-4 md:mb-6`}>
-					{title}
-				</h1>
-				{subtitle && (
-					<p className={`${subtitleClasses[size]} text-white/90 mb-6 md:mb-8 max-w-2xl mx-auto leading-relaxed`}>
-						{subtitle}
-					</p>
-				)}
-				{(ctaText ?? secondaryCtaText) && (
-					<div className='flex flex-wrap justify-center gap-4'>
-						{ctaText && ctaLink && (
-							<a
-								href={ctaLink}
-								className={`${primaryButtonBase} ${hasMultipleButtons ? 'w-[180px]' : ''}`}
-							>
-								{ctaText}
-								<ArrowIcon />
-							</a>
-						)}
-						{secondaryCtaText && secondaryCtaLink && (
-							<a
-								href={secondaryCtaLink}
-								className={`${secondaryButtonBase} ${hasMultipleButtons ? 'w-[180px]' : ''}`}
-							>
-								{secondaryCtaText}
-								<ArrowIcon />
-							</a>
-						)}
-					</div>
-				)}
 			</div>
 		</section>
 	);
@@ -232,50 +48,10 @@ export const HeroInfo = {
 	component: Hero,
 	inputs: [
 		{
-			name: 'title',
-			type: 'string',
-			required: true,
-			defaultValue: 'Welkom bij de Talentenraad',
-		},
-		{
-			name: 'subtitle',
-			type: 'string',
-			defaultValue: 'De ouderraad van het Talentenhuis - School met een hart voor ieder kind',
-		},
-		{
 			name: 'backgroundImage',
 			type: 'file',
 			allowedFileTypes: ['jpeg', 'jpg', 'png', 'webp'],
-		},
-		{
-			name: 'ctaText',
-			type: 'string',
-			defaultValue: 'Bekijk activiteiten',
-			helperText: 'Tekst voor de primaire actieknop',
-		},
-		{
-			name: 'ctaLink',
-			type: 'string',
-			defaultValue: '/kalender',
-			helperText: 'Link voor de primaire actieknop',
-		},
-		{
-			name: 'secondaryCtaText',
-			type: 'string',
-			defaultValue: 'Neem contact op',
-			helperText: 'Tekst voor de secundaire actieknop (optioneel)',
-		},
-		{
-			name: 'secondaryCtaLink',
-			type: 'string',
-			defaultValue: '/contact',
-			helperText: 'Link voor de secundaire actieknop',
-		},
-		{
-			name: 'variant',
-			type: 'string',
-			enum: ['default', 'centered', 'split'],
-			defaultValue: 'centered',
+			helperText: 'Achtergrondafbeelding (optioneel)',
 		},
 		{
 			name: 'size',
