@@ -49,7 +49,7 @@ describe('builder-utils', () => {
 			render(<NotFoundContent />);
 
 			expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('404');
-			expect(screen.getByText('Make sure you have your content published at builder.io.')).toBeInTheDocument();
+			expect(screen.getByText('Controleer of de content gepubliceerd is op builder.io')).toBeInTheDocument();
 		});
 	});
 

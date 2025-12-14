@@ -21,11 +21,11 @@ describe('BuilderContent', () => {
 		expect(builderContent).toHaveAttribute('data-content', JSON.stringify(defaultProps.content));
 	});
 
-	it('registers custom components (Header and Footer)', () => {
+	it('registers custom components', () => {
 		render(<BuilderContent {...defaultProps} />);
 
 		const builderContent = screen.getByTestId('builder-content');
-		expect(builderContent).toHaveAttribute('data-components', '2');
+		expect(builderContent).toHaveAttribute('data-components', '19');
 	});
 
 	it('renders with null content', () => {

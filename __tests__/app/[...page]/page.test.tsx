@@ -30,7 +30,7 @@ describe('[...page] Dynamic Route', () => {
 		mockCanShowBuilderContent.mockReturnValue(true);
 
 		const Component = await Page({
-			params: Promise.resolve({slug: ['about']}),
+			params: Promise.resolve({page: ['about']}),
 			searchParams: Promise.resolve({}),
 		});
 		render(Component);
@@ -44,7 +44,7 @@ describe('[...page] Dynamic Route', () => {
 		mockCanShowBuilderContent.mockReturnValue(true);
 
 		const Component = await Page({
-			params: Promise.resolve({slug: ['blog', 'posts', 'my-article']}),
+			params: Promise.resolve({page: ['blog', 'posts', 'my-article']}),
 			searchParams: Promise.resolve({}),
 		});
 		render(Component);
@@ -52,12 +52,12 @@ describe('[...page] Dynamic Route', () => {
 		expect(mockFetchBuilderContent).toHaveBeenCalledWith('/blog/posts/my-article', {}, 'test-api-key');
 	});
 
-	it('handles empty slug array', async () => {
+	it('handles empty page array', async () => {
 		mockFetchBuilderContent.mockResolvedValue({content: {id: '789'}});
 		mockCanShowBuilderContent.mockReturnValue(true);
 
 		const Component = await Page({
-			params: Promise.resolve({slug: []}),
+			params: Promise.resolve({page: []}),
 			searchParams: Promise.resolve({}),
 		});
 		render(Component);
@@ -65,12 +65,12 @@ describe('[...page] Dynamic Route', () => {
 		expect(mockFetchBuilderContent).toHaveBeenCalledWith('/', {}, 'test-api-key');
 	});
 
-	it('handles undefined slug', async () => {
+	it('handles undefined page', async () => {
 		mockFetchBuilderContent.mockResolvedValue({content: {id: '101'}});
 		mockCanShowBuilderContent.mockReturnValue(true);
 
 		const Component = await Page({
-			params: Promise.resolve({slug: undefined as unknown as string[]}),
+			params: Promise.resolve({page: undefined as unknown as string[]}),
 			searchParams: Promise.resolve({}),
 		});
 		render(Component);
@@ -82,7 +82,7 @@ describe('[...page] Dynamic Route', () => {
 		mockFetchBuilderContent.mockResolvedValue({content: undefined, error: 'API Error'});
 
 		const Component = await Page({
-			params: Promise.resolve({slug: ['test']}),
+			params: Promise.resolve({page: ['test']}),
 			searchParams: Promise.resolve({}),
 		});
 		render(Component);
@@ -95,7 +95,7 @@ describe('[...page] Dynamic Route', () => {
 		mockCanShowBuilderContent.mockReturnValue(false);
 
 		const Component = await Page({
-			params: Promise.resolve({slug: ['nonexistent']}),
+			params: Promise.resolve({page: ['nonexistent']}),
 			searchParams: Promise.resolve({}),
 		});
 		render(Component);
@@ -108,7 +108,7 @@ describe('[...page] Dynamic Route', () => {
 		mockCanShowBuilderContent.mockReturnValue(true);
 
 		const Component = await Page({
-			params: Promise.resolve({slug: ['page']}),
+			params: Promise.resolve({page: ['page']}),
 			searchParams: Promise.resolve({preview: 'true', locale: 'nl'}),
 		});
 		render(Component);
@@ -138,7 +138,7 @@ describe('[...page] without API key', () => {
 
 		const {default: PageWithoutKey} = await import('../../../app/[...page]/page');
 		const Component = await PageWithoutKey({
-			params: Promise.resolve({slug: ['test']}),
+			params: Promise.resolve({page: ['test']}),
 			searchParams: Promise.resolve({}),
 		});
 		render(Component);
@@ -147,9 +147,9 @@ describe('[...page] without API key', () => {
 	});
 });
 
-describe('[...page] dynamic export', () => {
-	it('exports force-dynamic setting', async () => {
-		const {dynamic} = await import('../../../app/[...page]/page');
-		expect(dynamic).toBe('force-dynamic');
+describe('[...page] revalidate export', () => {
+	it('exports ISR revalidate setting', async () => {
+		const {revalidate} = await import('../../../app/[...page]/page');
+		expect(revalidate).toBe(60);
 	});
 });

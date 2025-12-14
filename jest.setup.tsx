@@ -22,6 +22,7 @@ jest.mock('@builder.io/sdk-react-nextjs', () => ({
 	fetchOneEntry: jest.fn(),
 	isPreviewing: jest.fn(),
 	isEditing: jest.fn(),
+	getBuilderSearchParams: jest.fn((params: Record<string, string>) => params),
 	Content: ({content, customComponents}: {content: unknown; customComponents: unknown[]}) => (
 		<div data-testid="builder-content" data-content={JSON.stringify(content)} data-components={customComponents?.length ?? 0}>
 			Builder Content
