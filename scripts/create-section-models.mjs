@@ -89,10 +89,7 @@ async function main() {
 			name: 'cta-section',
 			helperText: 'Call-to-action sectie',
 		},
-		{
-			name: 'faq-section',
-			helperText: 'Veelgestelde vragen sectie',
-		},
+		// FAQ is a data model, not a section model - see create-models.mjs
 	];
 
 	for (const model of sectionModels) {
