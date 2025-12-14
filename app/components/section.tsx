@@ -64,44 +64,51 @@ function Section({
 	// Decorations
 	const renderDecoration = () => {
 		switch (decoration) {
-			case 'dots':
+			case 'dots': {
 				return (
-					<div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-						<div className="absolute top-0 left-0 w-64 h-64 opacity-5">
-							<svg viewBox="0 0 200 200" fill="currentColor" className="text-[#ea247b]">
-								<pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-									<circle cx="2" cy="2" r="2" />
+					<div className='absolute inset-0 overflow-hidden pointer-events-none' aria-hidden='true'>
+						<div className='absolute top-0 left-0 w-64 h-64 opacity-5'>
+							<svg viewBox='0 0 200 200' fill='currentColor' className='text-[#ea247b]'>
+								<pattern id='dots' x='0' y='0' width='20' height='20' patternUnits='userSpaceOnUse'>
+									<circle cx='2' cy='2' r='2' />
 								</pattern>
-								<rect fill="url(#dots)" width="200" height="200" />
+								<rect fill='url(#dots)' width='200' height='200' />
 							</svg>
 						</div>
-						<div className="absolute bottom-0 right-0 w-64 h-64 opacity-5 rotate-180">
-							<svg viewBox="0 0 200 200" fill="currentColor" className="text-[#ea247b]">
-								<pattern id="dots2" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-									<circle cx="2" cy="2" r="2" />
+						<div className='absolute bottom-0 right-0 w-64 h-64 opacity-5 rotate-180'>
+							<svg viewBox='0 0 200 200' fill='currentColor' className='text-[#ea247b]'>
+								<pattern id='dots2' x='0' y='0' width='20' height='20' patternUnits='userSpaceOnUse'>
+									<circle cx='2' cy='2' r='2' />
 								</pattern>
-								<rect fill="url(#dots2)" width="200" height="200" />
+								<rect fill='url(#dots2)' width='200' height='200' />
 							</svg>
 						</div>
 					</div>
 				);
-			case 'waves':
+			}
+
+			case 'waves': {
 				return (
-					<div className="absolute inset-x-0 bottom-0 overflow-hidden pointer-events-none" aria-hidden="true">
-						<svg viewBox="0 0 1200 120" preserveAspectRatio="none" className="w-full h-16 text-white/10">
-							<path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C57.1,110.83,129.12,97.56,321.39,56.44Z" fill="currentColor"/>
+					<div className='absolute inset-x-0 bottom-0 overflow-hidden pointer-events-none' aria-hidden='true'>
+						<svg viewBox='0 0 1200 120' preserveAspectRatio='none' className='w-full h-16 text-white/10'>
+							<path d='M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C57.1,110.83,129.12,97.56,321.39,56.44Z' fill='currentColor'/>
 						</svg>
 					</div>
 				);
-			case 'circles':
+			}
+
+			case 'circles': {
 				return (
-					<div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-						<div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#ea247b]/5" />
-						<div className="absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-blue-500/5" />
+					<div className='absolute inset-0 overflow-hidden pointer-events-none' aria-hidden='true'>
+						<div className='absolute -top-24 -right-24 w-96 h-96 rounded-full bg-[#ea247b]/5' />
+						<div className='absolute -bottom-32 -left-32 w-80 h-80 rounded-full bg-blue-500/5' />
 					</div>
 				);
-			default:
+			}
+
+			default: {
 				return null;
+			}
 		}
 	};
 

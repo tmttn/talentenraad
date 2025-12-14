@@ -29,10 +29,10 @@ function generateSlug(title: string): string {
 	return title
 		.toLowerCase()
 		.normalize('NFD')
-		.replace(/[\u0300-\u036f]/g, '')
-		.replace(/[^a-z0-9\s-]/g, '')
-		.replace(/\s+/g, '-')
-		.replace(/-+/g, '-')
+		.replaceAll(/[\u0300-\u036F]/g, '')
+		.replaceAll(/[^a-z\d\s-]/g, '')
+		.replaceAll(/\s+/g, '-')
+		.replaceAll(/-+/g, '-')
 		.trim();
 }
 
@@ -60,13 +60,20 @@ function NieuwsList({
 					// Sort: pinned first, then by volgorde, then by date (newest first)
 					const sortedNews = data.results.sort((a: NieuwsItem, b: NieuwsItem) => {
 						// Pinned items first
-						if (a.data.vastgepind && !b.data.vastgepind) return -1;
-						if (!a.data.vastgepind && b.data.vastgepind) return 1;
+						if (a.data.vastgepind && !b.data.vastgepind) {
+							return -1;
+						}
+
+						if (!a.data.vastgepind && b.data.vastgepind) {
+							return 1;
+						}
 
 						// Then by volgorde (lower = earlier)
 						const orderA = a.data.volgorde ?? 999;
 						const orderB = b.data.volgorde ?? 999;
-						if (orderA !== orderB) return orderA - orderB;
+						if (orderA !== orderB) {
+							return orderA - orderB;
+						}
 
 						// Then by date (newest first)
 						return new Date(b.data.datum).getTime() - new Date(a.data.datum).getTime();
@@ -97,17 +104,17 @@ function NieuwsList({
 
 	if (loading) {
 		return (
-			<section className="py-16 px-6" aria-busy="true" aria-label="Nieuwsberichten worden geladen">
-				<div className="max-w-4xl mx-auto">
-					<div className="text-center">
-						<div className="animate-pulse">
-							<div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4" />
-							<div className="h-4 bg-gray-200 rounded w-48 mx-auto" />
+			<section className='py-16 px-6' aria-busy='true' aria-label='Nieuwsberichten worden geladen'>
+				<div className='max-w-4xl mx-auto'>
+					<div className='text-center'>
+						<div className='animate-pulse'>
+							<div className='h-8 bg-gray-200 rounded w-64 mx-auto mb-4' />
+							<div className='h-4 bg-gray-200 rounded w-48 mx-auto' />
 						</div>
 					</div>
 				</div>
 				{/* Screen reader announcement */}
-				<div className="sr-only" role="status" aria-live="polite">
+				<div className='sr-only' role='status' aria-live='polite'>
 					{loadingMessage}
 				</div>
 			</section>
@@ -115,98 +122,100 @@ function NieuwsList({
 	}
 
 	return (
-		<section className="py-16 px-6" aria-labelledby={title ? 'nieuws-title' : undefined}>
-			<div className="max-w-4xl mx-auto">
+		<section className='py-16 px-6' aria-labelledby={title ? 'nieuws-title' : undefined}>
+			<div className='max-w-4xl mx-auto'>
 				{(title || subtitle) && (
-					<div className="text-center mb-12">
+					<div className='text-center mb-12'>
 						{title && (
-							<h2 id="nieuws-title" className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+							<h2 id='nieuws-title' className='text-3xl md:text-4xl font-bold text-gray-800 mb-4'>
 								{title}
 							</h2>
 						)}
 						{subtitle && (
-							<p className="text-gray-600">{subtitle}</p>
+							<p className='text-gray-600'>{subtitle}</p>
 						)}
 					</div>
 				)}
 
-				{nieuws.length > 0 ? (
-					<div className="space-y-6" role="feed" aria-label="Nieuwsberichten">
-						{nieuws.map((item) => (
-							<a
-								key={item.id}
-								href={`/nieuws/${generateSlug(item.data.titel)}`}
-								className="block"
-							>
-								<article
-									className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border-l-4 border-[#ea247b] group"
+				{nieuws.length > 0
+					? (
+						<div className='space-y-6' role='feed' aria-label='Nieuwsberichten'>
+							{nieuws.map(item => (
+								<a
+									key={item.id}
+									href={`/nieuws/${generateSlug(item.data.titel)}`}
+									className='block'
 								>
-									<div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-										<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-										</svg>
-										{formatDate(item.data.datum)}
-									</div>
-									<h3 className="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2 group-hover:text-[#ea247b] transition-colors">
-										{item.data.titel}
-										{item.data.vastgepind && (
-											<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-[#ea247b] flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" aria-label="Vastgepind">
-												<path d="M5 3a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2H5zm7 14l-5-2.5V5h10v9.5L12 17z" />
+									<article
+										className='bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border-l-4 border-[#ea247b] group'
+									>
+										<div className='flex items-center gap-2 text-sm text-gray-500 mb-2'>
+											<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+												<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
 											</svg>
-										)}
-									</h3>
-									<p className="text-gray-600">
-										{item.data.samenvatting}
-									</p>
-									<span className="inline-flex items-center gap-1 mt-3 text-[#ea247b] font-semibold text-sm group-hover:gap-2 transition-all" aria-hidden="true">
-										Lees meer
-										<svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-										</svg>
-									</span>
-								</article>
-							</a>
-						))}
-					</div>
-				) : (
-					<div className="text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-gray-200">
-						<div className="w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-sm">
-							<svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#ea247b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-							</svg>
+											{formatDate(item.data.datum)}
+										</div>
+										<h3 className='text-xl font-bold text-gray-800 mb-2 flex items-center gap-2 group-hover:text-[#ea247b] transition-colors'>
+											{item.data.titel}
+											{item.data.vastgepind && (
+												<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5 text-[#ea247b] flex-shrink-0' viewBox='0 0 24 24' fill='currentColor' aria-label='Vastgepind'>
+													<path d='M5 3a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2H5zm7 14l-5-2.5V5h10v9.5L12 17z' />
+												</svg>
+											)}
+										</h3>
+										<p className='text-gray-600'>
+											{item.data.samenvatting}
+										</p>
+										<span className='inline-flex items-center gap-1 mt-3 text-[#ea247b] font-semibold text-sm group-hover:gap-2 transition-all' aria-hidden='true'>
+											Lees meer
+											<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+												<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
+											</svg>
+										</span>
+									</article>
+								</a>
+							))}
 						</div>
-						<h3 className="text-xl font-bold text-gray-800 mb-2">Nog geen nieuwsberichten</h3>
-						<p className="text-gray-500 max-w-sm mx-auto mb-6">
-							Hier verschijnt binnenkort nieuws van de Talentenraad. Volg ons op sociale media voor updates!
-						</p>
-						<div className="flex items-center justify-center gap-4">
-							<a
-								href="https://facebook.com/talentenhuis"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="inline-flex items-center gap-2 text-[#ea247b] font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded"
-								aria-label="Facebook (opent in nieuw venster)"
-							>
-								<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-									<path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z" />
+					)
+					: (
+						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-gray-200'>
+							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-sm'>
+								<svg xmlns='http://www.w3.org/2000/svg' className='h-10 w-10 text-[#ea247b]' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' />
 								</svg>
-								Facebook
-							</a>
-							<a
-								href="https://instagram.com/talentenhuis"
-								target="_blank"
-								rel="noopener noreferrer"
-								className="inline-flex items-center gap-2 text-[#ea247b] font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded"
-								aria-label="Instagram (opent in nieuw venster)"
-							>
-								<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-									<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-								</svg>
-								Instagram
-							</a>
+							</div>
+							<h3 className='text-xl font-bold text-gray-800 mb-2'>Nog geen nieuwsberichten</h3>
+							<p className='text-gray-500 max-w-sm mx-auto mb-6'>
+								Hier verschijnt binnenkort nieuws van de Talentenraad. Volg ons op sociale media voor updates!
+							</p>
+							<div className='flex items-center justify-center gap-4'>
+								<a
+									href='https://facebook.com/talentenhuis'
+									target='_blank'
+									rel='noopener noreferrer'
+									className='inline-flex items-center gap-2 text-[#ea247b] font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded'
+									aria-label='Facebook (opent in nieuw venster)'
+								>
+									<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='currentColor' viewBox='0 0 24 24' aria-hidden='true'>
+										<path d='M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z' />
+									</svg>
+									Facebook
+								</a>
+								<a
+									href='https://instagram.com/talentenhuis'
+									target='_blank'
+									rel='noopener noreferrer'
+									className='inline-flex items-center gap-2 text-[#ea247b] font-semibold hover:underline focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2 rounded'
+									aria-label='Instagram (opent in nieuw venster)'
+								>
+									<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='currentColor' viewBox='0 0 24 24' aria-hidden='true'>
+										<path d='M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z' />
+									</svg>
+									Instagram
+								</a>
+							</div>
 						</div>
-					</div>
-				)}
+					)}
 			</div>
 		</section>
 	);

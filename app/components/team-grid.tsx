@@ -101,14 +101,12 @@ function TeamGrid({
 
 	const displayMembers = fetchFromBuilder ? teamleden : members;
 
-	const getInitials = (fullName: string) => {
-		return fullName
-			.split(' ')
-			.map(n => n[0])
-			.join('')
-			.toUpperCase()
-			.slice(0, 2);
-	};
+	const getInitials = (fullName: string) => fullName
+		.split(' ')
+		.map(n => n[0])
+		.join('')
+		.toUpperCase()
+		.slice(0, 2);
 
 	const gridCols = {
 		2: 'md:grid-cols-2',
@@ -127,18 +125,18 @@ function TeamGrid({
 
 	if (loading) {
 		return (
-			<section className="py-20 bg-white" aria-busy="true">
-				<div className="max-w-6xl mx-auto px-6">
-					<div className="text-center">
-						<div className="animate-pulse">
-							<div className="h-8 bg-gray-200 rounded w-48 mx-auto mb-4" />
-							<div className="h-4 bg-gray-200 rounded w-64 mx-auto mb-16" />
-							<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-								{[1, 2, 3].map((i) => (
-									<div key={i} className="text-center">
-										<div className="w-32 h-32 rounded-full bg-gray-200 mx-auto mb-4" />
-										<div className="h-6 bg-gray-200 rounded w-32 mx-auto mb-2" />
-										<div className="h-4 bg-gray-200 rounded w-24 mx-auto" />
+			<section className='py-20 bg-white' aria-busy='true'>
+				<div className='max-w-6xl mx-auto px-6'>
+					<div className='text-center'>
+						<div className='animate-pulse'>
+							<div className='h-8 bg-gray-200 rounded w-48 mx-auto mb-4' />
+							<div className='h-4 bg-gray-200 rounded w-64 mx-auto mb-16' />
+							<div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
+								{[1, 2, 3].map(i => (
+									<div key={i} className='text-center'>
+										<div className='w-32 h-32 rounded-full bg-gray-200 mx-auto mb-4' />
+										<div className='h-6 bg-gray-200 rounded w-32 mx-auto mb-2' />
+										<div className='h-4 bg-gray-200 rounded w-24 mx-auto' />
 									</div>
 								))}
 							</div>
@@ -150,17 +148,17 @@ function TeamGrid({
 	}
 
 	return (
-		<section className="py-20 bg-white">
-			<div className="max-w-6xl mx-auto px-6">
+		<section className='py-20 bg-white'>
+			<div className='max-w-6xl mx-auto px-6'>
 				{(title || subtitle) && (
-					<div className="text-center mb-16">
+					<div className='text-center mb-16'>
 						{title && (
-							<h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+							<h2 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
 								{title}
 							</h2>
 						)}
 						{subtitle && (
-							<p className="text-lg text-gray-600 max-w-2xl mx-auto">
+							<p className='text-lg text-gray-600 max-w-2xl mx-auto'>
 								{subtitle}
 							</p>
 						)}
@@ -172,29 +170,29 @@ function TeamGrid({
 						{displayMembers.map((member, index) => (
 							<div
 								key={index}
-								className="text-center group"
+								className='text-center group'
 							>
 								{/* Avatar */}
-								<div className="relative mb-5 inline-block">
+								<div className='relative mb-5 inline-block'>
 									<div className={`w-32 h-32 rounded-full bg-gradient-to-br ${avatarColors[index % avatarColors.length]} flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow`}>
-										<span className="text-white font-bold text-3xl">
+										<span className='text-white font-bold text-3xl'>
 											{getInitials(member.name)}
 										</span>
 									</div>
 									{/* Role badge */}
-									<div className="absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md">
-										<span className="text-xs font-semibold text-[#ea247b]">
+									<div className='absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md'>
+										<span className='text-xs font-semibold text-[#ea247b]'>
 											{member.role}
 										</span>
 									</div>
 								</div>
 
 								{/* Info */}
-								<h3 className="text-xl font-bold text-gray-900 mt-4">
+								<h3 className='text-xl font-bold text-gray-900 mt-4'>
 									{member.name}
 								</h3>
 								{showDescription && member.description && (
-									<p className="text-gray-600 text-sm mt-2 max-w-xs mx-auto">
+									<p className='text-gray-600 text-sm mt-2 max-w-xs mx-auto'>
 										{member.description}
 									</p>
 								)}
@@ -202,7 +200,7 @@ function TeamGrid({
 						))}
 					</div>
 				) : (
-					<div className="text-center py-12 text-gray-500">
+					<div className='text-center py-12 text-gray-500'>
 						Geen teamleden gevonden
 					</div>
 				)}

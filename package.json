@@ -52,7 +52,12 @@
       "jest.config.ts",
       "jest.setup.tsx",
       "commitlint.config.js",
-      "eslint.config.mjs"
+      "eslint.config.mjs",
+      "scripts/**",
+      "app/components/**",
+      "app/api/**",
+      "app/activiteiten/**",
+      "app/nieuws/**"
     ]
   },
   "overrides": {

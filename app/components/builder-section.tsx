@@ -45,7 +45,7 @@ type BuilderSectionProperties = {
  * Use this for reusable sections like announcement bars, CTAs, etc.
  */
 export function BuilderSection({model, url}: Readonly<BuilderSectionProperties>) {
-	const [content, setContent] = useState<BuilderContent | null>(null);
+	const [content, setContent] = useState<BuilderContent | undefined>(null);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -55,7 +55,7 @@ export function BuilderSection({model, url}: Readonly<BuilderSectionProperties>)
 					model,
 					apiKey: BUILDER_API_KEY,
 					userAttributes: {
-						urlPath: url || (typeof window !== 'undefined' ? window.location.pathname : '/'),
+						urlPath: url || (globalThis.window === undefined ? '/' : globalThis.location.pathname),
 					},
 				});
 				setContent(sectionContent);
@@ -89,21 +89,21 @@ export function BuilderSection({model, url}: Readonly<BuilderSectionProperties>)
  */
 
 export function AnnouncementBarSection() {
-	return <BuilderSection model="announcement-bar" />;
+	return <BuilderSection model='announcement-bar' />;
 }
 
 export function HeroSection({url}: {url?: string}) {
-	return <BuilderSection model="hero-section" url={url} />;
+	return <BuilderSection model='hero-section' url={url} />;
 }
 
 export function CTASection({url}: {url?: string}) {
-	return <BuilderSection model="cta-section" url={url} />;
+	return <BuilderSection model='cta-section' url={url} />;
 }
 
 export function FooterCTASection() {
-	return <BuilderSection model="footer-cta" />;
+	return <BuilderSection model='footer-cta' />;
 }
 
 export function FAQSection({url}: {url?: string}) {
-	return <BuilderSection model="faq-section" url={url} />;
+	return <BuilderSection model='faq-section' url={url} />;
 }

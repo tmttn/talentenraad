@@ -39,9 +39,9 @@ function CTABanner({
 	const styles = variants[variant] || variants.default;
 
 	return (
-		<section className={`py-12 md:py-16 ${styles.bg}`} aria-labelledby="cta-title">
-			<div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-				<h2 id="cta-title" className={`text-xl sm:text-2xl md:text-3xl font-bold mb-3 ${styles.title}`}>
+		<section className={`py-12 md:py-16 ${styles.bg}`} aria-labelledby='cta-title'>
+			<div className='max-w-4xl mx-auto px-4 sm:px-6 text-center'>
+				<h2 id='cta-title' className={`text-xl sm:text-2xl md:text-3xl font-bold mb-3 ${styles.title}`}>
 					{title}
 				</h2>
 				{subtitle && (
@@ -55,8 +55,8 @@ function CTABanner({
 						className={`inline-flex items-center gap-2 font-semibold py-3 px-6 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 ${styles.button} ${variant === 'accent' ? 'focus:ring-white focus:ring-offset-[#ea247b]' : 'focus:ring-[#ea247b]'}`}
 					>
 						{buttonText}
-						<svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-							<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+						<svg className='w-4 h-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
 						</svg>
 					</a>
 				)}
@@ -69,10 +69,14 @@ export const CTABannerInfo = {
 	name: 'CTABanner',
 	component: CTABanner,
 	inputs: [
-		{name: 'title', type: 'string', required: true, defaultValue: 'Wil je meehelpen?'},
+		{
+			name: 'title', type: 'string', required: true, defaultValue: 'Wil je meehelpen?',
+		},
 		{name: 'subtitle', type: 'string', defaultValue: 'Nieuwe ouders zijn altijd welkom bij de Talentenraad.'},
 		{name: 'buttonText', type: 'string', defaultValue: 'Neem contact op'},
 		{name: 'buttonLink', type: 'string', defaultValue: '/contact'},
-		{name: 'variant', type: 'string', enum: ['default', 'accent', 'light'], defaultValue: 'default'},
+		{
+			name: 'variant', type: 'string', enum: ['default', 'accent', 'light'], defaultValue: 'default',
+		},
 	],
 };

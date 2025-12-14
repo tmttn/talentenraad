@@ -16,10 +16,10 @@ export type PageSearchParameters = Record<string, string>;
  */
 export function ConfigurationError() {
 	return (
-		<div className="min-h-[50vh] flex items-center justify-center">
-			<div className="text-center">
-				<h1 className="text-2xl font-bold text-gray-800">Configuration Error</h1>
-				<p className="text-gray-600 mt-2">NEXT_PUBLIC_BUILDER_API_KEY is not set</p>
+		<div className='min-h-[50vh] flex items-center justify-center'>
+			<div className='text-center'>
+				<h1 className='text-2xl font-bold text-gray-800'>Configuration Error</h1>
+				<p className='text-gray-600 mt-2'>NEXT_PUBLIC_BUILDER_API_KEY is not set</p>
 			</div>
 		</div>
 	);
@@ -30,10 +30,10 @@ export function ConfigurationError() {
  */
 export function FetchError({message}: Readonly<{message: string}>) {
 	return (
-		<div className="min-h-[50vh] flex items-center justify-center">
-			<div className="text-center">
-				<h1 className="text-2xl font-bold text-gray-800">Error fetching content</h1>
-				<p className="text-gray-600 mt-2">{message}</p>
+		<div className='min-h-[50vh] flex items-center justify-center'>
+			<div className='text-center'>
+				<h1 className='text-2xl font-bold text-gray-800'>Error fetching content</h1>
+				<p className='text-gray-600 mt-2'>{message}</p>
 			</div>
 		</div>
 	);
@@ -44,11 +44,11 @@ export function FetchError({message}: Readonly<{message: string}>) {
  */
 export function NotFoundContent() {
 	return (
-		<div className="min-h-[50vh] flex items-center justify-center">
-			<div className="text-center">
-				<h1 className="text-6xl font-bold text-[#ea247b]">404</h1>
-				<p className="text-gray-600 mt-4">Deze pagina bestaat niet.</p>
-				<p className="text-gray-500 text-sm mt-2">Controleer of de content gepubliceerd is op builder.io</p>
+		<div className='min-h-[50vh] flex items-center justify-center'>
+			<div className='text-center'>
+				<h1 className='text-6xl font-bold text-[#ea247b]'>404</h1>
+				<p className='text-gray-600 mt-4'>Deze pagina bestaat niet.</p>
+				<p className='text-gray-500 text-sm mt-2'>Controleer of de content gepubliceerd is op builder.io</p>
 			</div>
 		</div>
 	);
@@ -91,7 +91,7 @@ export async function fetchBuilderContent(
  */
 export async function fetchBuilderSection(
 	model: string,
-	urlPath: string = '/',
+	urlPath = '/',
 	apiKey: string = builderPublicApiKey,
 ): Promise<Awaited<ReturnType<typeof fetchOneEntry>> | undefined> {
 	try {
@@ -119,4 +119,4 @@ export function canShowBuilderContent(
 	return Boolean(content) || isPreviewing(searchParameters) || isEditing(searchParameters);
 }
 
-export {getBuilderSearchParams, isPreviewing, isEditing};
+export {getBuilderSearchParams, isEditing, isPreviewing} from '@builder.io/sdk-react-nextjs';

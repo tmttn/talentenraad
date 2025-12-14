@@ -17,10 +17,10 @@ function isValidEmail(email: string): boolean {
 function sanitizeInput(input: string): string {
 	return input
 		.trim()
-		.replace(/</g, '&lt;')
-		.replace(/>/g, '&gt;')
-		.replace(/"/g, '&quot;')
-		.replace(/'/g, '&#x27;');
+		.replaceAll('<', '&lt;')
+		.replaceAll('>', '&gt;')
+		.replaceAll('"', '&quot;')
+		.replaceAll('\'', '&#x27;');
 }
 
 export async function POST(request: NextRequest) {

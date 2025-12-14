@@ -1,6 +1,8 @@
 'use client';
 
-import {useEffect, useState, useRef, useCallback, type KeyboardEvent} from 'react';
+import {
+	useEffect, useState, useRef, useCallback, type KeyboardEvent,
+} from 'react';
 
 type FAQItem = {
 	id: string;
@@ -27,9 +29,9 @@ function FAQ({
 }: Readonly<FAQProperties>) {
 	const [faqs, setFaqs] = useState<FAQItem[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [openIndex, setOpenIndex] = useState<number | null>(null);
+	const [openIndex, setOpenIndex] = useState<number | undefined>(null);
 	const [statusMessage, setStatusMessage] = useState<string>('');
-	const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+	const buttonRefs = useRef<Array<HTMLButtonElement | undefined>>([]);
 
 	// Keyboard navigation handler for accordion
 	const handleKeyDown = useCallback((event: KeyboardEvent<HTMLButtonElement>, index: number) => {
@@ -63,8 +65,9 @@ function FAQ({
 				break;
 			}
 
-			default:
+			default: {
 				break;
+			}
 		}
 
 		if (newIndex !== undefined) {
@@ -113,20 +116,20 @@ function FAQ({
 
 	if (loading) {
 		return (
-			<section className="py-16 px-6 bg-gray-50" aria-busy="true" aria-label="Veelgestelde vragen worden geladen">
-				<div className="max-w-3xl mx-auto">
-					<div className="animate-pulse">
-						<div className="h-8 bg-gray-200 rounded w-64 mx-auto mb-4" />
-						<div className="h-4 bg-gray-200 rounded w-48 mx-auto mb-8" />
-						<div className="space-y-4">
-							{[1, 2, 3].map((i) => (
-								<div key={i} className="h-16 bg-gray-200 rounded" />
+			<section className='py-16 px-6 bg-gray-50' aria-busy='true' aria-label='Veelgestelde vragen worden geladen'>
+				<div className='max-w-3xl mx-auto'>
+					<div className='animate-pulse'>
+						<div className='h-8 bg-gray-200 rounded w-64 mx-auto mb-4' />
+						<div className='h-4 bg-gray-200 rounded w-48 mx-auto mb-8' />
+						<div className='space-y-4'>
+							{[1, 2, 3].map(i => (
+								<div key={i} className='h-16 bg-gray-200 rounded' />
 							))}
 						</div>
 					</div>
 				</div>
 				{/* Screen reader announcement for loading state */}
-				<div className="sr-only" role="status" aria-live="polite">
+				<div className='sr-only' role='status' aria-live='polite'>
 					Veelgestelde vragen worden geladen...
 				</div>
 			</section>
@@ -134,100 +137,106 @@ function FAQ({
 	}
 
 	return (
-		<section className="py-16 px-6 bg-gray-50" aria-labelledby="faq-title">
-			<div className="max-w-3xl mx-auto">
+		<section className='py-16 px-6 bg-gray-50' aria-labelledby='faq-title'>
+			<div className='max-w-3xl mx-auto'>
 				{/* Screen reader announcement for accordion state changes */}
-				<div className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+				<div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
 					{statusMessage}
 				</div>
 
 				{(title || subtitle) && (
-					<div className="text-center mb-12">
+					<div className='text-center mb-12'>
 						{title && (
-							<h2 id="faq-title" className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+							<h2 id='faq-title' className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>
 								{title}
 							</h2>
 						)}
 						{subtitle && (
-							<p className="text-gray-600">{subtitle}</p>
+							<p className='text-gray-600'>{subtitle}</p>
 						)}
 					</div>
 				)}
 
-				{faqs.length > 0 ? (
-					<div className="space-y-4" role="region" aria-label="Veelgestelde vragen accordeon">
-						{faqs.map((faq, index) => (
-							<div
-								key={faq.id}
-								className="bg-white rounded-xl shadow-sm overflow-hidden"
-							>
-								<button
-									ref={(element) => {
-										buttonRefs.current[index] = element;
-									}}
-									type="button"
-									onClick={() => toggleFAQ(index)}
-									onKeyDown={(event) => handleKeyDown(event, index)}
-									className="w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ea247b] focus-visible:ring-offset-2"
-									aria-expanded={openIndex === index}
-									aria-controls={`faq-answer-${index}`}
-									id={`faq-button-${index}`}
-								>
-									<span className="font-semibold text-gray-900">{faq.data.vraag}</span>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										className={`h-5 w-5 text-[#ea247b] transition-transform flex-shrink-0 ${openIndex === index ? 'rotate-180' : ''}`}
-										fill="none"
-										viewBox="0 0 24 24"
-										stroke="currentColor"
-										aria-hidden="true"
-									>
-										<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-									</svg>
-								</button>
+				{faqs.length > 0
+					? (
+						<div className='space-y-4' role='region' aria-label='Veelgestelde vragen accordeon'>
+							{faqs.map((faq, index) => (
 								<div
-									id={`faq-answer-${index}`}
-									role="region"
-									aria-labelledby={`faq-button-${index}`}
-									className={`overflow-hidden transition-all duration-200 ${openIndex === index ? 'max-h-96' : 'max-h-0'}`}
-									hidden={openIndex !== index}
+									key={faq.id}
+									className='bg-white rounded-xl shadow-sm overflow-hidden'
 								>
-									<div className="px-6 pb-4 text-gray-700">
-										<p>{faq.data.antwoord}</p>
+									<button
+										ref={element => {
+											buttonRefs.current[index] = element;
+										}}
+										type='button'
+										onClick={() => {
+											toggleFAQ(index);
+										}}
+										onKeyDown={event => {
+											handleKeyDown(event, index);
+										}}
+										className='w-full px-6 py-4 text-left flex items-center justify-between gap-4 hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ea247b] focus-visible:ring-offset-2'
+										aria-expanded={openIndex === index}
+										aria-controls={`faq-answer-${index}`}
+										id={`faq-button-${index}`}
+									>
+										<span className='font-semibold text-gray-900'>{faq.data.vraag}</span>
+										<svg
+											xmlns='http://www.w3.org/2000/svg'
+											className={`h-5 w-5 text-[#ea247b] transition-transform flex-shrink-0 ${openIndex === index ? 'rotate-180' : ''}`}
+											fill='none'
+											viewBox='0 0 24 24'
+											stroke='currentColor'
+											aria-hidden='true'
+										>
+											<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
+										</svg>
+									</button>
+									<div
+										id={`faq-answer-${index}`}
+										role='region'
+										aria-labelledby={`faq-button-${index}`}
+										className={`overflow-hidden transition-all duration-200 ${openIndex === index ? 'max-h-96' : 'max-h-0'}`}
+										hidden={openIndex !== index}
+									>
+										<div className='px-6 pb-4 text-gray-700'>
+											<p>{faq.data.antwoord}</p>
+										</div>
 									</div>
 								</div>
-							</div>
-						))}
-					</div>
-				) : (
-					<div className="text-center py-16 px-8 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
-						<div className="w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
-							<svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-[#ea247b]" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-							</svg>
+							))}
 						</div>
-						<h3 className="text-xl font-bold text-gray-800 mb-2">Nog geen vragen</h3>
-						<p className="text-gray-500 max-w-sm mx-auto">
-							Binnenkort voegen we hier veelgestelde vragen toe.
-						</p>
-					</div>
-				)}
+					)
+					: (
+						<div className='text-center py-16 px-8 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-dashed border-gray-200'>
+							<div className='w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center'>
+								<svg xmlns='http://www.w3.org/2000/svg' className='h-10 w-10 text-[#ea247b]' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
+								</svg>
+							</div>
+							<h3 className='text-xl font-bold text-gray-800 mb-2'>Nog geen vragen</h3>
+							<p className='text-gray-500 max-w-sm mx-auto'>
+								Binnenkort voegen we hier veelgestelde vragen toe.
+							</p>
+						</div>
+					)}
 
 				{showAskQuestion && (
-					<div className="mt-12 text-center p-8 bg-white rounded-2xl shadow-sm">
-						<h3 className="text-xl font-bold text-gray-900 mb-2">
+					<div className='mt-12 text-center p-8 bg-white rounded-2xl shadow-sm'>
+						<h3 className='text-xl font-bold text-gray-900 mb-2'>
 							Staat jouw vraag er niet bij?
 						</h3>
-						<p className="text-gray-600 mb-6">
+						<p className='text-gray-600 mb-6'>
 							Neem gerust contact met ons op. We helpen je graag verder!
 						</p>
 						<a
-							href="/contact"
-							className="inline-flex items-center gap-2 bg-[#ea247b] text-white font-semibold py-3 px-6 rounded-lg hover:bg-[#d11d6d] transition-colors focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2"
+							href='/contact'
+							className='inline-flex items-center gap-2 bg-[#ea247b] text-white font-semibold py-3 px-6 rounded-lg hover:bg-[#d11d6d] transition-colors focus:outline-none focus:ring-2 focus:ring-[#ea247b] focus:ring-offset-2'
 						>
 							Stel je vraag
-							<svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+							<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
 							</svg>
 						</a>
 					</div>
