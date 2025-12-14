@@ -1,11 +1,15 @@
 'use client';
 
+import type {ReactNode} from 'react';
+
 type CtaBannerProperties = {
 	variant?: 'default' | 'accent' | 'light';
+	children?: ReactNode;
 };
 
 function CtaBanner({
 	variant = 'default',
+	children,
 }: Readonly<CtaBannerProperties>) {
 	const variants = {
 		default: 'bg-gray-900',
@@ -16,7 +20,11 @@ function CtaBanner({
 	const bg = variants[variant] ?? variants.default;
 
 	return (
-		<section className={`py-12 md:py-16 ${bg}`} />
+		<section className={`py-12 md:py-16 ${bg}`}>
+			<div className='max-w-4xl mx-auto px-6 text-center'>
+				{children}
+			</div>
+		</section>
 	);
 }
 
@@ -32,4 +40,5 @@ export const CtaBannerInfo = {
 			helperText: 'default: donkergrijs, accent: primaire kleur gradient, light: lichtgrijs',
 		},
 	],
+	canHaveChildren: true,
 };

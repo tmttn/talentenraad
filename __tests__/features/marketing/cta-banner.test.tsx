@@ -58,4 +58,27 @@ describe('CtaBannerInfo', () => {
 		expect(variantInput?.enum).toContain('accent');
 		expect(variantInput?.enum).toContain('light');
 	});
+
+	it('has canHaveChildren enabled', () => {
+		expect(CtaBannerInfo.canHaveChildren).toBe(true);
+	});
+});
+
+describe('CTABanner children', () => {
+	it('renders children content', () => {
+		const {getByText} = render(
+			<CTABanner>
+				<h2>CTA Title</h2>
+				<p>CTA description</p>
+			</CTABanner>,
+		);
+		expect(getByText('CTA Title')).toBeInTheDocument();
+		expect(getByText('CTA description')).toBeInTheDocument();
+	});
+
+	it('renders without children', () => {
+		const {container} = render(<CTABanner />);
+		const section = container.querySelector('section');
+		expect(section).toBeInTheDocument();
+	});
 });

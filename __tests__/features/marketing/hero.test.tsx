@@ -62,4 +62,27 @@ describe('HeroInfo', () => {
 		expect(bgInput).toBeDefined();
 		expect(bgInput?.type).toBe('file');
 	});
+
+	it('has canHaveChildren enabled', () => {
+		expect(HeroInfo.canHaveChildren).toBe(true);
+	});
+});
+
+describe('Hero children', () => {
+	it('renders children content', () => {
+		const {getByText} = render(
+			<Hero>
+				<h1>Hero Title</h1>
+				<p>Hero subtitle</p>
+			</Hero>,
+		);
+		expect(getByText('Hero Title')).toBeInTheDocument();
+		expect(getByText('Hero subtitle')).toBeInTheDocument();
+	});
+
+	it('renders without children', () => {
+		const {container} = render(<Hero />);
+		const section = container.querySelector('section');
+		expect(section).toBeInTheDocument();
+	});
 });

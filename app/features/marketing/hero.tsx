@@ -1,11 +1,13 @@
 'use client';
 
+import type {ReactNode} from 'react';
 // eslint-disable-next-line import-x/extensions
 import {brandColors, gradients} from '@/styles/tokens';
 
 type HeroProperties = {
 	backgroundImage?: string;
 	size?: 'compact' | 'small' | 'medium' | 'large';
+	children?: ReactNode;
 };
 
 const sizeClasses = {
@@ -28,6 +30,7 @@ function getBackgroundStyle(backgroundImage?: string) {
 function Hero({
 	backgroundImage,
 	size = 'medium',
+	children,
 }: Readonly<HeroProperties>) {
 	return (
 		<section
@@ -38,6 +41,10 @@ function Hero({
 			<div className='absolute inset-0 overflow-hidden pointer-events-none' aria-hidden='true'>
 				<div className='absolute -top-24 -right-24 w-96 h-96 bg-white/5 rounded-full' />
 				<div className='absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-white/5 rounded-full' />
+			</div>
+			{/* Content */}
+			<div className='relative z-10 max-w-4xl mx-auto px-6 text-center'>
+				{children}
 			</div>
 		</section>
 	);
@@ -61,4 +68,5 @@ export const HeroInfo = {
 			helperText: 'compact: zeer klein voor subpagina\'s, small: klein, medium: standaard, large: groot',
 		},
 	],
+	canHaveChildren: true,
 };
