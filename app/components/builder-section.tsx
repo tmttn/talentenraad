@@ -18,6 +18,10 @@ import {ActiviteitenListInfo} from './activiteiten-list';
 import {NieuwsListInfo} from './nieuws-list';
 // eslint-disable-next-line import-x/extensions
 import {DecorationInfo, DividerInfo} from './decorations';
+// eslint-disable-next-line import-x/extensions
+import {SiteHeaderInfo} from './site-header';
+// eslint-disable-next-line import-x/extensions
+import {SiteFooterInfo} from './site-footer';
 
 // eslint-disable-next-line n/prefer-global/process
 const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -32,6 +36,8 @@ const customComponents = [
 	NieuwsListInfo,
 	DecorationInfo,
 	DividerInfo,
+	SiteHeaderInfo,
+	SiteFooterInfo,
 ];
 
 type BuilderSectionProperties = {
@@ -106,4 +112,12 @@ export function FooterCTASection() {
 
 export function FAQSection({url}: {url?: string}) {
 	return <BuilderSection model='faq-section' url={url} />;
+}
+
+export function SiteHeaderSection() {
+	return <BuilderSection model='site-header' />;
+}
+
+export function SiteFooterSection() {
+	return <BuilderSection model='site-footer' />;
 }

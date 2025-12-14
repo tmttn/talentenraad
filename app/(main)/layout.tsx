@@ -1,7 +1,7 @@
 // eslint-disable-next-line import-x/extensions
-import {SiteHeader} from '../components/site-header';
+import {SiteHeaderServer} from '../components/site-header-server';
 // eslint-disable-next-line import-x/extensions
-import {SiteFooter} from '../components/site-footer';
+import {SiteFooterServer} from '../components/site-footer-server';
 // eslint-disable-next-line import-x/extensions
 import {AnnouncementBanner} from '../components/announcement-banner';
 // eslint-disable-next-line import-x/extensions
@@ -11,7 +11,7 @@ import {FooterCTASection} from '../components/builder-section';
  * Main Site Layout
  *
  * Includes header, footer, announcement banner, and CTA section.
- * Used for all public-facing pages.
+ * Header and footer content is managed via Builder.io.
  */
 export default function MainSiteLayout({
 	children,
@@ -21,12 +21,12 @@ export default function MainSiteLayout({
 	return (
 		<>
 			<AnnouncementBanner />
-			<SiteHeader />
+			<SiteHeaderServer />
 			<main id='main-content' role='main' className='flex-grow' tabIndex={-1}>
 				{children}
 			</main>
 			<FooterCTASection />
-			<SiteFooter />
+			<SiteFooterServer />
 		</>
 	);
 }

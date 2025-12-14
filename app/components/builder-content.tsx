@@ -2,9 +2,9 @@
 
 import {Content, type BuilderContent as BuilderContentType} from '@builder.io/sdk-react-nextjs';
 // eslint-disable-next-line import-x/extensions
-import {HeaderInfo} from './header';
+import {SiteHeaderInfo} from './site-header';
 // eslint-disable-next-line import-x/extensions
-import {FooterInfo} from './footer';
+import {SiteFooterInfo} from './site-footer';
 // eslint-disable-next-line import-x/extensions
 import {HeroInfo} from './hero';
 // eslint-disable-next-line import-x/extensions
@@ -52,8 +52,8 @@ export function BuilderContent({content, apiKey, model}: Readonly<BuilderContent
 			apiKey={apiKey}
 			model={model}
 			customComponents={[
-				HeaderInfo,
-				FooterInfo,
+				SiteHeaderInfo,
+				SiteFooterInfo,
 				HeroInfo,
 				EventCardInfo,
 				ContactFormInfo,

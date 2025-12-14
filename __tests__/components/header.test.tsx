@@ -1,68 +1,67 @@
 import {render, screen} from '@testing-library/react';
-import {HeaderInfo} from '../../app/components/header';
+import {SiteHeader, SiteHeaderInfo} from '../../app/components/site-header';
 
-const Header = HeaderInfo.component;
+// Mock usePathname
+jest.mock('next/navigation', () => ({
+	usePathname: () => '/',
+}));
 
-describe('Header', () => {
-	const mockNavigation = {
-		value: {
-			data: {
-				links: [
-					{url: '/', text: 'Home'},
-					{url: '/about', text: 'About'},
-					{url: '/contact', text: 'Contact'},
-				],
-			},
-		},
-	};
+describe('SiteHeader', () => {
+	const mockNavigationLinks = [
+		{url: '/', text: 'Home'},
+		{url: '/about', text: 'About'},
+		{url: '/contact', text: 'Contact'},
+	];
 
 	it('renders the logo image', () => {
-		render(<Header navigation={mockNavigation} />);
+		render(<SiteHeader />);
 
-		const logo = screen.getByRole('img', {name: 'Logo'});
+		const logo = screen.getByRole('img', {name: 'Talentenraad Logo'});
 		expect(logo).toBeInTheDocument();
-		expect(logo).toHaveAttribute('src', '/Logo.jpeg');
 	});
 
-	it('renders navigation links', () => {
-		render(<Header navigation={mockNavigation} />);
+	it('renders navigation links from props', () => {
+		render(<SiteHeader navigationLinks={mockNavigationLinks} />);
 
 		expect(screen.getByRole('link', {name: 'Home'})).toHaveAttribute('href', '/');
 		expect(screen.getByRole('link', {name: 'About'})).toHaveAttribute('href', '/about');
 		expect(screen.getByRole('link', {name: 'Contact'})).toHaveAttribute('href', '/contact');
 	});
 
-	it('renders with empty navigation when links are undefined', () => {
-		const emptyNavigation = {value: {data: {links: undefined as never}}};
-		render(<Header navigation={emptyNavigation} />);
+	it('renders default navigation links when none provided', () => {
+		render(<SiteHeader />);
 
-		expect(screen.getByRole('banner')).toBeInTheDocument();
-		expect(screen.queryByRole('link')).not.toBeInTheDocument();
+		expect(screen.getByRole('link', {name: 'Home'})).toBeInTheDocument();
+		expect(screen.getByRole('link', {name: 'Kalender'})).toBeInTheDocument();
+		expect(screen.getByRole('link', {name: 'Nieuws'})).toBeInTheDocument();
 	});
 
-	it('renders with empty navigation when value is undefined', () => {
-		const undefinedNavigation = {value: undefined as never};
-		render(<Header navigation={undefinedNavigation} />);
+	it('renders custom logo when provided', () => {
+		render(<SiteHeader logoUrl="/custom-logo.png" logoAlt="Custom Logo" />);
 
-		expect(screen.getByRole('banner')).toBeInTheDocument();
+		const logo = screen.getByRole('img', {name: 'Custom Logo'});
+		expect(logo).toBeInTheDocument();
 	});
 
 	it('has correct accessibility roles', () => {
-		render(<Header navigation={mockNavigation} />);
+		render(<SiteHeader />);
 
 		expect(screen.getByRole('banner')).toBeInTheDocument();
-		expect(screen.getByRole('navigation')).toBeInTheDocument();
+		expect(screen.getByRole('navigation', {name: 'Hoofdnavigatie'})).toBeInTheDocument();
 	});
 
-	it('has correct HeaderInfo export properties', () => {
-		expect(HeaderInfo.name).toBe('Header');
-		expect(HeaderInfo.component).toBeDefined();
-		expect(HeaderInfo.inputs).toHaveLength(1);
-		expect(HeaderInfo.inputs[0]).toEqual({
-			name: 'navigation',
-			type: 'reference',
-			model: 'navigation-list',
-			required: true,
-		});
+	it('has skip to main content link', () => {
+		render(<SiteHeader />);
+
+		const skipLink = screen.getByRole('link', {name: 'Ga naar hoofdinhoud'});
+		expect(skipLink).toBeInTheDocument();
+		expect(skipLink).toHaveAttribute('href', '#main-content');
+	});
+
+	it('has correct SiteHeaderInfo export properties', () => {
+		expect(SiteHeaderInfo.name).toBe('SiteHeader');
+		expect(SiteHeaderInfo.component).toBeDefined();
+		expect(SiteHeaderInfo.inputs).toBeDefined();
+		expect(SiteHeaderInfo.inputs.length).toBeGreaterThan(0);
 	});
 });
