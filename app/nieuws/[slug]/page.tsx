@@ -30,7 +30,7 @@ async function getNieuwsItem(slug: string): Promise<NieuwsItem | undefined> {
 		const data = await response.json();
 
 		if (!data.results) {
-			return null;
+			return undefined;
 		}
 
 		// Find item by ID or by slug generated from title
@@ -39,10 +39,10 @@ async function getNieuwsItem(slug: string): Promise<NieuwsItem | undefined> {
 			return item.id === slug || itemSlug === slug;
 		});
 
-		return item || null;
+		return item;
 	} catch (error) {
 		console.error('Error fetching nieuws item:', error);
-		return null;
+		return undefined;
 	}
 }
 

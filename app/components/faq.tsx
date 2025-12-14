@@ -29,7 +29,7 @@ function FAQ({
 }: Readonly<FAQProperties>) {
 	const [faqs, setFaqs] = useState<FAQItem[]>([]);
 	const [loading, setLoading] = useState(true);
-	const [openIndex, setOpenIndex] = useState<number | undefined>(null);
+	const [openIndex, setOpenIndex] = useState<number | undefined>(undefined);
 	const [statusMessage, setStatusMessage] = useState<string>('');
 	const buttonRefs = useRef<Array<HTMLButtonElement | undefined>>([]);
 
@@ -108,7 +108,7 @@ function FAQ({
 
 	const toggleFAQ = (index: number) => {
 		const isOpening = openIndex !== index;
-		setOpenIndex(isOpening ? index : null);
+		setOpenIndex(isOpening ? index : undefined);
 		// Announce state change to screen readers
 		const faqTitle = faqs[index]?.data.vraag ?? '';
 		setStatusMessage(isOpening ? `${faqTitle} geopend` : `${faqTitle} gesloten`);
@@ -167,7 +167,7 @@ function FAQ({
 								>
 									<button
 										ref={element => {
-											buttonRefs.current[index] = element;
+											buttonRefs.current[index] = element ?? undefined;
 										}}
 										type='button'
 										onClick={() => {

@@ -16,7 +16,7 @@ type Announcement = {
 const BUILDER_API_KEY = '3706422a8e454ceebe64acdc5a1475ba';
 
 export function AnnouncementBanner() {
-	const [announcement, setAnnouncement] = useState<Announcement | undefined>(null);
+	const [announcement, setAnnouncement] = useState<Announcement | undefined>(undefined);
 	const [isVisible, setIsVisible] = useState(true);
 
 	useEffect(() => {

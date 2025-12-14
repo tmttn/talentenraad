@@ -64,10 +64,10 @@ async function getActiviteit(slug: string): Promise<Activiteit | undefined> {
 			}
 		}
 
-		return null;
+		return undefined;
 	} catch (error) {
 		console.error('Error fetching activiteit:', error);
-		return null;
+		return undefined;
 	}
 }
 

@@ -45,7 +45,7 @@ type BuilderSectionProperties = {
  * Use this for reusable sections like announcement bars, CTAs, etc.
  */
 export function BuilderSection({model, url}: Readonly<BuilderSectionProperties>) {
-	const [content, setContent] = useState<BuilderContent | undefined>(null);
+	const [content, setContent] = useState<BuilderContent | undefined>(undefined);
 	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
@@ -58,7 +58,7 @@ export function BuilderSection({model, url}: Readonly<BuilderSectionProperties>)
 						urlPath: url || (globalThis.window === undefined ? '/' : globalThis.location.pathname),
 					},
 				});
-				setContent(sectionContent);
+				setContent(sectionContent ?? undefined);
 			} catch (error) {
 				console.error(`Error fetching section ${model}:`, error);
 			} finally {
