@@ -13,6 +13,22 @@ type FAQItem = {
 	};
 };
 
+// Generate JSON-LD structured data for FAQPage schema
+function generateFAQStructuredData(faqs: FAQItem[]) {
+	return {
+		'@context': 'https://schema.org',
+		'@type': 'FAQPage',
+		mainEntity: faqs.map(faq => ({
+			'@type': 'Question',
+			name: faq.data.vraag,
+			acceptedAnswer: {
+				'@type': 'Answer',
+				text: faq.data.antwoord,
+			},
+		})),
+	};
+}
+
 type FAQProperties = {
 	title?: string;
 	subtitle?: string;
@@ -138,6 +154,15 @@ function FAQ({
 
 	return (
 		<section className='py-16 px-6 bg-gray-50' aria-labelledby='faq-title'>
+			{/* JSON-LD structured data for SEO */}
+			{faqs.length > 0 && (
+				<script
+					type='application/ld+json'
+					dangerouslySetInnerHTML={{
+						__html: JSON.stringify(generateFAQStructuredData(faqs)),
+					}}
+				/>
+			)}
 			<div className='max-w-3xl mx-auto'>
 				{/* Screen reader announcement for accordion state changes */}
 				<div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
