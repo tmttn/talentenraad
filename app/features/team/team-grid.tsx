@@ -33,7 +33,7 @@ type TeamGridProperties = {
 };
 
 // Use environment variable for API key
-const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '35b5ea60db844c8ca5412e82289bcdb0'; // eslint-disable-line n/prefer-global/process
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY; // eslint-disable-line n/prefer-global/process
 
 // Stable empty array reference to prevent infinite re-renders
 const emptyMembers: TeamMemberData[] = [];
@@ -59,6 +59,13 @@ function TeamGrid({
 		}
 
 		async function fetchTeamMembers() {
+			if (!builderApiKey) {
+				console.error('Builder.io API key not configured');
+				setTeamMembers(stableMembers);
+				setLoading(false);
+				return;
+			}
+
 			try {
 				const url = new URL('https://cdn.builder.io/api/v3/content/teamlid');
 				url.searchParams.set('apiKey', builderApiKey);
