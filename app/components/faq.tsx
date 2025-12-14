@@ -98,8 +98,9 @@ function FAQ({
 				url.searchParams.set('apiKey', BUILDER_API_KEY);
 				url.searchParams.set('limit', '20');
 				url.searchParams.set('sort.data.volgorde', '1');
+				url.searchParams.set('cachebust', 'true');
 
-				const response = await fetch(url.toString());
+				const response = await fetch(url.toString(), {cache: 'no-store'});
 
 				// Gracefully handle 404 - content type may not exist yet
 				if (!response.ok) {

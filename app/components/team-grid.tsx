@@ -58,12 +58,13 @@ function TeamGrid({
 				const url = new URL('https://cdn.builder.io/api/v3/content/teamlid');
 				url.searchParams.set('apiKey', BUILDER_API_KEY);
 				url.searchParams.set('limit', '50');
+				url.searchParams.set('cachebust', 'true');
 
 				if (categorie) {
 					url.searchParams.set('query.data.categorie.$eq', categorie);
 				}
 
-				const response = await fetch(url.toString());
+				const response = await fetch(url.toString(), {cache: 'no-store'});
 				const data = await response.json();
 
 				if (data.results && data.results.length > 0) {

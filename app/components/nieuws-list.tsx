@@ -52,8 +52,9 @@ function NieuwsList({
 				url.searchParams.set('apiKey', BUILDER_API_KEY);
 				url.searchParams.set('limit', String(limit));
 				url.searchParams.set('sort.data.datum', '-1'); // Sort by date descending (newest first)
+				url.searchParams.set('cachebust', 'true');
 
-				const response = await fetch(url.toString());
+				const response = await fetch(url.toString(), {cache: 'no-store'});
 				const data = await response.json();
 
 				if (data.results) {

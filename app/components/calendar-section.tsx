@@ -87,8 +87,10 @@ function CalendarSection({
 				url.searchParams.set('sort.data.datum', '1');
 				// Query for future events only (datum >= today)
 				url.searchParams.set('query.data.datum.$gte', todayIso);
+				// Bypass Builder.io CDN cache
+				url.searchParams.set('cachebust', 'true');
 
-				const response = await fetch(url.toString());
+				const response = await fetch(url.toString(), {cache: 'no-store'});
 				const data = await response.json() as {results?: Activiteit[]};
 
 				if (data.results) {

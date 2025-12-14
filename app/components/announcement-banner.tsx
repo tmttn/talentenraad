@@ -26,8 +26,9 @@ export function AnnouncementBanner() {
 				url.searchParams.set('apiKey', BUILDER_API_KEY);
 				url.searchParams.set('limit', '1');
 				url.searchParams.set('query.data.actief', 'true');
+				url.searchParams.set('cachebust', 'true');
 
-				const response = await fetch(url.toString());
+				const response = await fetch(url.toString(), {cache: 'no-store'});
 
 				// Gracefully handle 404 - content type may not exist yet
 				if (!response.ok) {
