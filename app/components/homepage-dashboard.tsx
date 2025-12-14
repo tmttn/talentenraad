@@ -239,7 +239,7 @@ function HomepageDashboard({
 
 					{/* Laatste Nieuws */}
 					<div className='bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col'>
-						<div className='bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-3'>
+						<div className='bg-gradient-to-r from-[#afbd43] to-[#9aab2f] px-6 py-3'>
 							<h3 className='text-white font-semibold flex items-center gap-2'>
 								<svg xmlns='http://www.w3.org/2000/svg' className='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z' />
@@ -259,10 +259,10 @@ function HomepageDashboard({
 											<div className='p-2 rounded-lg hover:bg-gray-50 transition-colors'>
 												<div className='flex items-start justify-between gap-2'>
 													<div className='min-w-0'>
-														<h4 className='font-semibold text-gray-800 group-hover:text-blue-600 transition-colors text-sm truncate'>
+														<h4 className='font-semibold text-gray-800 group-hover:text-[#afbd43] transition-colors text-sm truncate'>
 															{nieuws.data.titel}
 															{nieuws.data.vastgepind && (
-																<svg xmlns='http://www.w3.org/2000/svg' className='inline-block ml-1 h-3 w-3 text-blue-600' viewBox='0 0 20 20' fill='currentColor' aria-label='Vastgepind'>
+																<svg xmlns='http://www.w3.org/2000/svg' className='inline-block ml-1 h-3 w-3 text-[#afbd43]' viewBox='0 0 20 20' fill='currentColor' aria-label='Vastgepind'>
 																	<path d='M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z' />
 																</svg>
 															)}
@@ -286,7 +286,7 @@ function HomepageDashboard({
 						<div className='px-6 pb-4 border-t border-gray-100 pt-3 mt-auto'>
 							<a
 								href='/nieuws'
-								className='inline-flex items-center gap-1 text-sm text-blue-600 font-medium hover:underline'
+								className='inline-flex items-center gap-1 text-sm text-[#afbd43] font-medium hover:underline'
 							>
 								Alle nieuwsberichten
 								<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
