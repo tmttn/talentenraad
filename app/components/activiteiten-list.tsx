@@ -59,11 +59,19 @@ function ActiviteitenList({
 	useEffect(() => {
 		async function fetchActiviteiten() {
 			try {
+				// Get today's date in YYYY-MM-DD format for API filtering
+				const today = new Date();
+				today.setHours(0, 0, 0, 0);
+				const todayString = today.toISOString().split('T')[0];
+
 				const url = new URL('https://cdn.builder.io/api/v3/content/activiteit');
 				url.searchParams.set('apiKey', BUILDER_API_KEY);
-				url.searchParams.set('limit', String(limit));
+				// Fetch more than limit to account for pinning/sorting, then slice
+				url.searchParams.set('limit', String(Math.max(limit * 3, 20)));
 				url.searchParams.set('sort.data.datum', '1'); // Sort by date ascending
 				url.searchParams.set('cachebust', 'true');
+				// Filter for future events at API level
+				url.searchParams.set('query.data.datum.$gte', todayString);
 
 				if (categorie) {
 					url.searchParams.set('query.data.categorie.$eq', categorie);
@@ -73,16 +81,8 @@ function ActiviteitenList({
 				const data = await response.json();
 
 				if (data.results) {
-					// Filter to only show future events
-					const now = new Date();
-					now.setHours(0, 0, 0, 0);
-					const futureEvents = data.results.filter((item: Activiteit) => {
-						const eventDate = new Date(item.data.datum);
-						return eventDate >= now;
-					});
-
 					// Sort: pinned first, then by volgorde, then by date
-					const sortedEvents = futureEvents.sort((a: Activiteit, b: Activiteit) => {
+					const sortedEvents = [...data.results].sort((a: Activiteit, b: Activiteit) => {
 						// Pinned items first
 						if (a.data.vastgepind && !b.data.vastgepind) {
 							return -1;
@@ -103,7 +103,8 @@ function ActiviteitenList({
 						return new Date(a.data.datum).getTime() - new Date(b.data.datum).getTime();
 					});
 
-					setActiviteiten(sortedEvents);
+					// Apply limit after sorting
+					setActiviteiten(sortedEvents.slice(0, limit));
 				}
 			} catch (error) {
 				console.error('Error fetching activiteiten:', error);
