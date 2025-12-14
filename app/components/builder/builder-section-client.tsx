@@ -6,8 +6,8 @@ import {CtaBannerInfo} from '@features/marketing/cta-banner';
 import {InfoCardInfo} from '@features/info/info-card';
 import {SectionInfo} from '@components/section';
 import {FaqInfo} from '@features/faq/faq';
-import {ActiviteitenListInfo} from '@features/activities/activiteiten-list';
-import {NieuwsListInfo} from '@features/news/nieuws-list';
+import {ActivitiesListInfo} from '@features/activities/activities-list';
+import {NewsListInfo} from '@features/news/news-list';
 import {DecorationInfo, DividerInfo} from '@components/decorations';
 import {AnnouncementBannerInfo} from '@features/marketing/announcement-banner';
 import {TeamGridInfo} from '@features/team/team-grid';
@@ -17,7 +17,7 @@ import {CalendarSectionInfo} from '@features/activities/calendar-section';
 import {EventCardInfo} from '@features/activities/event-card';
 import {NewsCardInfo} from '@features/news/news-card';
 import {TeamMemberInfo} from '@features/team/team-member';
-import {ActiviteitenArchiefInfo} from '@features/activities/activiteiten-archief';
+import {ActivitiesArchiveInfo} from '@features/activities/activities-archive';
 import {HomepageDashboardInfo} from '@features/dashboard/homepage-dashboard';
 import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
 import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
@@ -29,8 +29,8 @@ const customComponents = [
 	InfoCardInfo,
 	SectionInfo,
 	FaqInfo,
-	ActiviteitenListInfo,
-	NieuwsListInfo,
+	ActivitiesListInfo,
+	NewsListInfo,
 	DecorationInfo,
 	DividerInfo,
 	AnnouncementBannerInfo,
@@ -41,7 +41,7 @@ const customComponents = [
 	EventCardInfo,
 	NewsCardInfo,
 	TeamMemberInfo,
-	ActiviteitenArchiefInfo,
+	ActivitiesArchiveInfo,
 	HomepageDashboardInfo,
 	NewsletterSignupInfo,
 	UnifiedCtaInfo,

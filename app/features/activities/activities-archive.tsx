@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from 'react';
 
-type Activiteit = {
+type Activity = {
 	id: string;
 	data: {
 		titel: string;
@@ -14,7 +14,7 @@ type Activiteit = {
 	};
 };
 
-type ActiviteitenArchiefProperties = {
+type ActivitiesArchiveProperties = {
 	title?: string;
 	subtitle?: string;
 	limit?: number;
@@ -35,18 +35,18 @@ function generateSlug(title: string): string {
 		.trim();
 }
 
-function ActiviteitenArchief({
+function ActivitiesArchive({
 	title = 'Archief',
 	subtitle = 'Bekijk onze voorbije activiteiten',
 	limit = 20,
 	showYear = true,
-}: Readonly<ActiviteitenArchiefProperties>) {
-	const [activiteiten, setActiviteiten] = useState<Activiteit[]>([]);
+}: Readonly<ActivitiesArchiveProperties>) {
+	const [activities, setActivities] = useState<Activity[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [isExpanded, setIsExpanded] = useState(false);
 
 	useEffect(() => {
-		async function fetchActiviteiten() {
+		async function fetchActivities() {
 			try {
 				const url = new URL('https://cdn.builder.io/api/v3/content/activiteit');
 				url.searchParams.set('apiKey', builderApiKey);
@@ -55,29 +55,29 @@ function ActiviteitenArchief({
 				url.searchParams.set('cachebust', 'true');
 
 				const response = await fetch(url.toString(), {cache: 'no-store'});
-				const data = await response.json() as {results?: Activiteit[]};
+				const data = await response.json() as {results?: Activity[]};
 
 				if (data.results) {
 					// Filter to only show past events
 					const now = new Date();
 					now.setHours(0, 0, 0, 0);
 					const pastEvents = data.results
-						.filter((item: Activiteit) => {
+						.filter((item: Activity) => {
 							const eventDate = new Date(item.data.datum);
 							return eventDate < now;
 						})
 						.slice(0, limit);
 
-					setActiviteiten(pastEvents);
+					setActivities(pastEvents);
 				}
 			} catch (error) {
-				console.error('Error fetching archief:', error);
+				console.error('Error fetching archive:', error);
 			} finally {
 				setLoading(false);
 			}
 		}
 
-		void fetchActiviteiten();
+		void fetchActivities();
 	}, [limit]);
 
 	const formatDate = (dateString: string) => {
@@ -89,8 +89,8 @@ function ActiviteitenArchief({
 		});
 	};
 
-	const groupByYear = (items: Activiteit[]) => {
-		const groups: Record<string, Activiteit[]> = {};
+	const groupByYear = (items: Activity[]) => {
+		const groups: Record<string, Activity[]> = {};
 		for (const item of items) {
 			const year = new Date(item.data.datum).getFullYear().toString();
 			groups[year] ||= [];
@@ -117,12 +117,12 @@ function ActiviteitenArchief({
 		);
 	}
 
-	if (activiteiten.length === 0) {
+	if (activities.length === 0) {
 		return null;
 	}
 
-	const groupedActiviteiten = groupByYear(activiteiten);
-	const years = Object.keys(groupedActiviteiten).sort((a, b) => Number(b) - Number(a));
+	const groupedActivities = groupByYear(activities);
+	const years = Object.keys(groupedActivities).sort((a, b) => Number(b) - Number(a));
 
 	return (
 		<section className='py-12 px-6 bg-gray-50' aria-labelledby='archief-title'>
@@ -143,7 +143,7 @@ function ActiviteitenArchief({
 							</svg>
 							{title}
 							<span className='text-sm font-normal text-gray-500'>
-								({activiteiten.length} activiteiten)
+								({activities.length} activiteiten)
 							</span>
 						</h2>
 						{subtitle && (
@@ -170,35 +170,35 @@ function ActiviteitenArchief({
 						<div key={year} className='mb-8'>
 							<h3 className='text-lg font-bold text-gray-700 mb-4 flex items-center gap-2'>
 								<span className='w-8 h-8 bg-primary rounded-full flex items-center justify-center text-white text-sm'>
-									{groupedActiviteiten[year].length}
+									{groupedActivities[year].length}
 								</span>
 								{year}
 							</h3>
 							<div className='space-y-3 pl-4 border-l-2 border-gray-200'>
-								{groupedActiviteiten[year].map(activiteit => (
+								{groupedActivities[year].map(activity => (
 									<a
-										key={activiteit.id}
-										href={`/activiteiten/${generateSlug(activiteit.data.titel)}`}
+										key={activity.id}
+										href={`/activiteiten/${generateSlug(activity.data.titel)}`}
 										className='block bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow group'
 									>
 										<div className='flex items-center justify-between'>
 											<div>
 												<h4 className='font-semibold text-gray-800 group-hover:text-primary transition-colors'>
-													{activiteit.data.titel}
+													{activity.data.titel}
 												</h4>
 												<p className='text-sm text-gray-500'>
-													{formatDate(activiteit.data.datum)}
-													{activiteit.data.locatie && ` • ${activiteit.data.locatie}`}
+													{formatDate(activity.data.datum)}
+													{activity.data.locatie && ` • ${activity.data.locatie}`}
 												</p>
 											</div>
 											<span className={`px-2 py-1 text-xs font-medium rounded-full ${
-												activiteit.data.categorie === 'feest'
+												activity.data.categorie === 'feest'
 													? 'bg-pink-100 text-pink-800'
-													: (activiteit.data.categorie === 'kalender'
+													: (activity.data.categorie === 'kalender'
 														? 'bg-blue-100 text-blue-800'
 														: 'bg-green-100 text-green-800')
 											}`}>
-												{activiteit.data.categorie}
+												{activity.data.categorie}
 											</span>
 										</div>
 									</a>
@@ -212,9 +212,9 @@ function ActiviteitenArchief({
 	);
 }
 
-export const ActiviteitenArchiefInfo = {
-	name: 'ActiviteitenArchief',
-	component: ActiviteitenArchief,
+export const ActivitiesArchiveInfo = {
+	name: 'ActivitiesArchive',
+	component: ActivitiesArchive,
 	inputs: [
 		{
 			name: 'title',

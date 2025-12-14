@@ -7,12 +7,12 @@ import {CtaBannerInfo} from '@features/marketing/cta-banner';
 import {InfoCardInfo} from '@features/info/info-card';
 import {SectionInfo} from '@components/section';
 import {FaqInfo} from '@features/faq/faq';
-import {ActiviteitenListInfo} from '@features/activities/activiteiten-list';
-import {NieuwsListInfo} from '@features/news/nieuws-list';
+import {ActivitiesListInfo} from '@features/activities/activities-list';
+import {NewsListInfo} from '@features/news/news-list';
 import {DecorationInfo, DividerInfo} from '@components/decorations';
 import {SiteHeaderInfo} from '@components/layout/site-header';
 import {SiteFooterInfo} from '@components/layout/site-footer';
-import {ActiviteitenArchiefInfo} from '@features/activities/activiteiten-archief';
+import {ActivitiesArchiveInfo} from '@features/activities/activities-archive';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -23,13 +23,13 @@ const customComponents = [
 	InfoCardInfo,
 	SectionInfo,
 	FaqInfo,
-	ActiviteitenListInfo,
-	NieuwsListInfo,
+	ActivitiesListInfo,
+	NewsListInfo,
 	DecorationInfo,
 	DividerInfo,
 	SiteHeaderInfo,
 	SiteFooterInfo,
-	ActiviteitenArchiefInfo,
+	ActivitiesArchiveInfo,
 ];
 
 type BuilderSectionProperties = {

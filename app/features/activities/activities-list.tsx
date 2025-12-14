@@ -3,7 +3,7 @@
 import {useEffect, useState} from 'react';
 import {AnimatedLink} from '@components/ui';
 
-type Activiteit = {
+type Activity = {
 	id: string;
 	data: {
 		titel: string;
@@ -17,7 +17,7 @@ type Activiteit = {
 	};
 };
 
-type ActiviteitenListProperties = {
+type ActivitiesListProperties = {
 	title?: string;
 	subtitle?: string;
 	showViewAll?: boolean;
@@ -43,7 +43,7 @@ function generateSlug(title: string): string {
 		.trim();
 }
 
-function ActiviteitenList({
+function ActivitiesList({
 	title = 'Komende activiteiten',
 	subtitle,
 	showViewAll = true,
@@ -52,13 +52,13 @@ function ActiviteitenList({
 	categorie,
 	showLocation = true,
 	showDescription = false,
-}: Readonly<ActiviteitenListProperties>) {
-	const [activiteiten, setActiviteiten] = useState<Activiteit[]>([]);
+}: Readonly<ActivitiesListProperties>) {
+	const [activities, setActivities] = useState<Activity[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [loadingMessage, setLoadingMessage] = useState('Activiteiten worden geladen...');
 
 	useEffect(() => {
-		async function fetchActiviteiten() {
+		async function fetchActivities() {
 			try {
 				// Get today's date in YYYY-MM-DD format for API filtering
 				const today = new Date();
@@ -79,11 +79,11 @@ function ActiviteitenList({
 				}
 
 				const response = await fetch(url.toString(), {cache: 'no-store'});
-				const data = await response.json() as {results?: Activiteit[]};
+				const data = await response.json() as {results?: Activity[]};
 
 				if (data.results) {
 					// Sort: pinned first, then by volgorde, then by date
-					const sortedEvents = [...data.results].sort((a: Activiteit, b: Activiteit) => {
+					const sortedEvents = [...data.results].sort((a: Activity, b: Activity) => {
 						// Pinned items first
 						if (a.data.vastgepind && !b.data.vastgepind) {
 							return -1;
@@ -105,10 +105,10 @@ function ActiviteitenList({
 					});
 
 					// Apply limit after sorting
-					setActiviteiten(sortedEvents.slice(0, limit));
+					setActivities(sortedEvents.slice(0, limit));
 				}
 			} catch (error) {
-				console.error('Error fetching activiteiten:', error);
+				console.error('Error fetching activities:', error);
 				setLoadingMessage('Er is een fout opgetreden bij het laden van activiteiten.');
 			} finally {
 				setLoading(false);
@@ -116,7 +116,7 @@ function ActiviteitenList({
 			}
 		}
 
-		void fetchActiviteiten();
+		void fetchActivities();
 	}, [limit, categorie]);
 
 	const formatDate = (dateString: string) => {
@@ -159,15 +159,15 @@ function ActiviteitenList({
 					)}
 				</div>
 
-				{activiteiten.length > 0
+				{activities.length > 0
 					? (
 						<div className='space-y-4' role='list' aria-label='Lijst van activiteiten'>
-							{activiteiten.map(activiteit => {
-								const {day, month} = formatDate(activiteit.data.datum);
+							{activities.map(activity => {
+								const {day, month} = formatDate(activity.data.datum);
 								return (
 									<a
-										key={activiteit.id}
-										href={`/activiteiten/${generateSlug(activiteit.data.titel)}`}
+										key={activity.id}
+										href={`/activiteiten/${generateSlug(activity.data.titel)}`}
 										className='block'
 									>
 										<article
@@ -180,48 +180,48 @@ function ActiviteitenList({
 											</div>
 											<div className='flex-grow'>
 												<h3 className='font-bold text-gray-800 flex items-center gap-2 group-hover:text-primary transition-colors'>
-													{activiteit.data.titel}
-													{activiteit.data.vastgepind && (
+													{activity.data.titel}
+													{activity.data.vastgepind && (
 														<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4 text-primary' viewBox='0 0 24 24' fill='currentColor' aria-label='Vastgepind'>
 															<path d='M16 4h2a2 2 0 012 2v14l-7-3.5L6 20V6a2 2 0 012-2h2' />
 															<path d='M12 2L8 6h8l-4-4z' />
 														</svg>
 													)}
 												</h3>
-												{activiteit.data.tijd && (
+												{activity.data.tijd && (
 													<p className='text-sm text-gray-500 flex items-center gap-1'>
 														<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 															<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
 														</svg>
-														{activiteit.data.tijd}
+														{activity.data.tijd}
 													</p>
 												)}
-												{showLocation && activiteit.data.locatie && (
+												{showLocation && activity.data.locatie && (
 													<p className='text-sm text-gray-500 flex items-center gap-1 mt-1'>
 														<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
 															<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z' />
 															<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M15 11a3 3 0 11-6 0 3 3 0 016 0z' />
 														</svg>
-														{activiteit.data.locatie}
+														{activity.data.locatie}
 													</p>
 												)}
-												{showDescription && activiteit.data.beschrijving && (
+												{showDescription && activity.data.beschrijving && (
 													<p className='text-sm text-gray-600 mt-2 line-clamp-2'>
-														{activiteit.data.beschrijving.length > 150
-															? `${activiteit.data.beschrijving.slice(0, 150)}...`
-															: activiteit.data.beschrijving}
+														{activity.data.beschrijving.length > 150
+															? `${activity.data.beschrijving.slice(0, 150)}...`
+															: activity.data.beschrijving}
 													</p>
 												)}
 											</div>
 											<div className='flex-shrink-0 flex flex-col items-end gap-2'>
 												<span className={`px-2 py-1 text-xs font-medium rounded-full ${
-													activiteit.data.categorie === 'feest'
+													activity.data.categorie === 'feest'
 														? 'bg-category-event-bg text-category-event-text'
-														: (activiteit.data.categorie === 'kalender'
+														: (activity.data.categorie === 'kalender'
 															? 'bg-category-calendar-bg text-category-calendar-text'
 															: 'bg-category-activity-bg text-category-activity-text')
 												}`}>
-													{activiteit.data.categorie}
+													{activity.data.categorie}
 												</span>
 												<span className='text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity'>
 													Meer info →
@@ -250,7 +250,7 @@ function ActiviteitenList({
 						</div>
 					)}
 
-				{showViewAll && activiteiten.length > 0 && (
+				{showViewAll && activities.length > 0 && (
 					<div className='text-center mt-8'>
 						<AnimatedLink href={viewAllLink}>
 							Bekijk alle activiteiten
@@ -262,9 +262,9 @@ function ActiviteitenList({
 	);
 }
 
-export const ActiviteitenListInfo = {
-	name: 'ActiviteitenList',
-	component: ActiviteitenList,
+export const ActivitiesListInfo = {
+	name: 'ActivitiesList',
+	component: ActivitiesList,
 	inputs: [
 		{
 			name: 'title',

@@ -3,7 +3,7 @@
 import {useEffect, useState} from 'react';
 import {linkStyles} from '@components/ui';
 
-type NieuwsItem = {
+type NewsItem = {
 	id: string;
 	data: {
 		titel: string;
@@ -16,7 +16,7 @@ type NieuwsItem = {
 	};
 };
 
-type NieuwsListProperties = {
+type NewsListProperties = {
 	title?: string;
 	subtitle?: string;
 	limit?: number;
@@ -39,19 +39,19 @@ function generateSlug(title: string): string {
 		.trim();
 }
 
-function NieuwsList({
+function NewsList({
 	title = 'Laatste nieuws',
 	subtitle,
 	limit = 10,
 	layout = 'list',
 	showImages = true,
-}: Readonly<NieuwsListProperties>) {
-	const [nieuws, setNieuws] = useState<NieuwsItem[]>([]);
+}: Readonly<NewsListProperties>) {
+	const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [loadingMessage, setLoadingMessage] = useState('Nieuwsberichten worden geladen...');
 
 	useEffect(() => {
-		async function fetchNieuws() {
+		async function fetchNews() {
 			try {
 				const url = new URL('https://cdn.builder.io/api/v3/content/nieuws');
 				url.searchParams.set('apiKey', builderApiKey);
@@ -60,11 +60,11 @@ function NieuwsList({
 				url.searchParams.set('cachebust', 'true');
 
 				const response = await fetch(url.toString(), {cache: 'no-store'});
-				const data = await response.json() as {results?: NieuwsItem[]};
+				const data = await response.json() as {results?: NewsItem[]};
 
 				if (data.results) {
 					// Sort: pinned first, then by volgorde, then by date (newest first)
-					const sortedNews = data.results.sort((a: NieuwsItem, b: NieuwsItem) => {
+					const sortedNews = data.results.sort((a: NewsItem, b: NewsItem) => {
 						// Pinned items first
 						if (a.data.vastgepind && !b.data.vastgepind) {
 							return -1;
@@ -85,10 +85,10 @@ function NieuwsList({
 						return new Date(b.data.datum).getTime() - new Date(a.data.datum).getTime();
 					});
 
-					setNieuws(sortedNews);
+					setNewsItems(sortedNews);
 				}
 			} catch (error) {
-				console.error('Error fetching nieuws:', error);
+				console.error('Error fetching news:', error);
 				setLoadingMessage('Er is een fout opgetreden bij het laden van nieuws.');
 			} finally {
 				setLoading(false);
@@ -96,7 +96,7 @@ function NieuwsList({
 			}
 		}
 
-		void fetchNieuws();
+		void fetchNews();
 	}, [limit]);
 
 	const formatDate = (dateString: string) => {
@@ -144,10 +144,10 @@ function NieuwsList({
 					</div>
 				)}
 
-				{nieuws.length > 0
+				{newsItems.length > 0
 					? (
 						<div className={layout === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'} role='feed' aria-label='Nieuwsberichten'>
-							{nieuws.map(item => (
+							{newsItems.map(item => (
 								<a
 									key={item.id}
 									href={`/nieuws/${generateSlug(item.data.titel)}`}
@@ -239,9 +239,9 @@ function NieuwsList({
 	);
 }
 
-export const NieuwsListInfo = {
-	name: 'NieuwsList',
-	component: NieuwsList,
+export const NewsListInfo = {
+	name: 'NewsList',
+	component: NewsList,
 	inputs: [
 		{
 			name: 'title',

@@ -1,25 +1,25 @@
 import {render, screen, waitFor} from '@testing-library/react';
-import {NieuwsListInfo} from '../../../app/features/news/nieuws-list';
+import {NewsListInfo} from '../../../app/features/news/news-list';
 
 // Mock the linkStyles import
 jest.mock('../../../app/components/ui', () => ({
 	linkStyles: '.animated-link { transition: all 0.2s; }',
 }));
 
-const NieuwsList = NieuwsListInfo.component;
+const NewsList = NewsListInfo.component;
 
 // Mock fetch globally
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
 
-describe('NieuwsList', () => {
+describe('NewsList', () => {
 	beforeEach(() => {
 		mockFetch.mockReset();
 	});
 
 	it('shows loading state initially', () => {
 		mockFetch.mockImplementation(() => new Promise(() => {})); // Never resolves
-		const {container} = render(<NieuwsList />);
+		const {container} = render(<NewsList />);
 		const section = container.querySelector('section');
 		expect(section).toHaveAttribute('aria-busy', 'true');
 	});
@@ -29,7 +29,7 @@ describe('NieuwsList', () => {
 			json: () => Promise.resolve({results: []}),
 		});
 
-		render(<NieuwsList title='News Title' subtitle='News subtitle' />);
+		render(<NewsList title='News Title' subtitle='News subtitle' />);
 
 		await waitFor(() => {
 			expect(screen.getByRole('heading', {level: 2, name: 'News Title'})).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe('NieuwsList', () => {
 			json: () => Promise.resolve(mockNews),
 		});
 
-		render(<NieuwsList />);
+		render(<NewsList />);
 
 		await waitFor(() => {
 			expect(screen.getByRole('heading', {level: 3, name: /news item 1/i})).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe('NieuwsList', () => {
 			json: () => Promise.resolve({results: []}),
 		});
 
-		render(<NieuwsList />);
+		render(<NewsList />);
 
 		await waitFor(() => {
 			expect(screen.getByText('Nog geen nieuwsberichten')).toBeInTheDocument();
@@ -101,7 +101,7 @@ describe('NieuwsList', () => {
 			json: () => Promise.resolve(mockNews),
 		});
 
-		render(<NieuwsList />);
+		render(<NewsList />);
 
 		await waitFor(() => {
 			expect(screen.getByLabelText('Vastgepind')).toBeInTheDocument();
@@ -135,7 +135,7 @@ describe('NieuwsList', () => {
 			json: () => Promise.resolve(mockNews),
 		});
 
-		render(<NieuwsList />);
+		render(<NewsList />);
 
 		await waitFor(() => {
 			const headings = screen.getAllByRole('heading', {level: 3});
@@ -153,7 +153,7 @@ describe('NieuwsList', () => {
 				json: () => Promise.resolve(mockNews),
 			});
 
-			const {container} = render(<NieuwsList />);
+			const {container} = render(<NewsList />);
 
 			await waitFor(() => {
 				const feed = container.querySelector('[role="feed"]');
@@ -169,7 +169,7 @@ describe('NieuwsList', () => {
 				json: () => Promise.resolve(mockNews),
 			});
 
-			const {container} = render(<NieuwsList layout='grid' />);
+			const {container} = render(<NewsList layout='grid' />);
 
 			await waitFor(() => {
 				const feed = container.querySelector('[role="feed"]');
@@ -182,7 +182,7 @@ describe('NieuwsList', () => {
 		mockFetch.mockRejectedValue(new Error('Fetch failed'));
 		const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-		render(<NieuwsList />);
+		render(<NewsList />);
 
 		await waitFor(() => {
 			// Should show empty state or error message
@@ -203,7 +203,7 @@ describe('NieuwsList', () => {
 			json: () => Promise.resolve(mockNews),
 		});
 
-		render(<NieuwsList />);
+		render(<NewsList />);
 
 		await waitFor(() => {
 			const link = screen.getByRole('link');
@@ -221,7 +221,7 @@ describe('NieuwsList', () => {
 			json: () => Promise.resolve(mockNews),
 		});
 
-		render(<NieuwsList />);
+		render(<NewsList />);
 
 		await waitFor(() => {
 			// Dutch date format should include "januari"
@@ -230,10 +230,10 @@ describe('NieuwsList', () => {
 	});
 });
 
-describe('NieuwsListInfo', () => {
+describe('NewsListInfo', () => {
 	it('exports correct component info', () => {
-		expect(NieuwsListInfo.name).toBe('NieuwsList');
-		expect(NieuwsListInfo.component).toBeDefined();
-		expect(NieuwsListInfo.inputs).toBeInstanceOf(Array);
+		expect(NewsListInfo.name).toBe('NewsList');
+		expect(NewsListInfo.component).toBeDefined();
+		expect(NewsListInfo.inputs).toBeInstanceOf(Array);
 	});
 });
