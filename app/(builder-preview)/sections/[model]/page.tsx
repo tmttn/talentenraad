@@ -25,6 +25,7 @@ import {CalendarSectionInfo} from '@features/activities/calendar-section';
 import {EventCardInfo} from '@features/activities/event-card';
 import {NewsCardInfo} from '@features/news/news-card';
 import {TeamMemberInfo} from '@features/team/team-member';
+import {TypographyInfo} from '@components/ui/typography';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -48,6 +49,7 @@ const customComponents = [
 	EventCardInfo,
 	NewsCardInfo,
 	TeamMemberInfo,
+	TypographyInfo,
 ];
 
 type SectionPreviewPageProperties = {

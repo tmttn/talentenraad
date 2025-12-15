@@ -24,6 +24,7 @@ import {HomepageDashboardInfo} from '@features/dashboard/homepage-dashboard';
 import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
 import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
 import {CtaButtonInfo} from '@components/ui/cta-button';
+import {TypographyInfo} from '@components/ui/typography';
 
 type BuilderContentProperties = {
 	// eslint-disable-next-line @typescript-eslint/no-restricted-types
@@ -63,6 +64,7 @@ export function BuilderContent({content, apiKey, model}: Readonly<BuilderContent
 				NewsletterSignupInfo,
 				UnifiedCtaInfo,
 				CtaButtonInfo,
+				TypographyInfo,
 			]}
 		/>
 	);
