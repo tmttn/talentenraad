@@ -13,6 +13,8 @@ import {DecorationInfo, DividerInfo} from '@components/decorations';
 import {SiteHeaderInfo} from '@components/layout/site-header';
 import {SiteFooterInfo} from '@components/layout/site-footer';
 import {ActivitiesArchiveInfo} from '@features/activities/activities-archive';
+import {CtaButtonInfo} from '@components/ui/cta-button';
+import {TypographyInfo} from '@components/ui/typography';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -30,6 +32,8 @@ const customComponents = [
 	SiteHeaderInfo,
 	SiteFooterInfo,
 	ActivitiesArchiveInfo,
+	CtaButtonInfo,
+	TypographyInfo,
 ];
 
 type BuilderSectionProperties = {

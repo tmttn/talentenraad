@@ -8,7 +8,7 @@ type TypographyProperties = {
 	weight?: 'normal' | 'medium' | 'semibold' | 'bold';
 };
 
-function Typography({
+export function Typography({
 	text,
 	variant = 'body',
 	color = 'default',

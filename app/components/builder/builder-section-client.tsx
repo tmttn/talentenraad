@@ -21,6 +21,8 @@ import {ActivitiesArchiveInfo} from '@features/activities/activities-archive';
 import {HomepageDashboardInfo} from '@features/dashboard/homepage-dashboard';
 import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
 import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
+import {CtaButtonInfo} from '@components/ui/cta-button';
+import {TypographyInfo} from '@components/ui/typography';
 
 // All custom components available for sections
 const customComponents = [
@@ -45,6 +47,8 @@ const customComponents = [
 	HomepageDashboardInfo,
 	NewsletterSignupInfo,
 	UnifiedCtaInfo,
+	CtaButtonInfo,
+	TypographyInfo,
 ];
 
 type BuilderSectionClientProperties = {
