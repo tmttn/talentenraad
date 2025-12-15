@@ -42,7 +42,7 @@ const arrowSizes = {
 	lg: 'h-5 w-5',
 };
 
-function CtaButton({
+export function CtaButton({
 	text = 'Klik hier',
 	href = '#',
 	variant = 'primary',
