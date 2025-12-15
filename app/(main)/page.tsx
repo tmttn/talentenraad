@@ -1,4 +1,5 @@
 import {BuilderContent} from '@components/builder/builder-content';
+import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {
 	builderPublicApiKey,
 	fetchBuilderContent,
@@ -36,5 +37,9 @@ export default async function Page(properties: Readonly<PageProperties>) {
 		return <NotFoundContent />;
 	}
 
-	return <BuilderContent content={content ?? null} apiKey={builderPublicApiKey} model='page' />;
+	return (
+		<PageWithAnnouncements content={content ?? undefined}>
+			<BuilderContent content={content ?? null} apiKey={builderPublicApiKey} model='page' />
+		</PageWithAnnouncements>
+	);
 }

@@ -130,3 +130,77 @@ export function canShowBuilderContent(
 }
 
 export {getBuilderSearchParams, isEditing, isPreviewing} from '@builder.io/sdk-react-nextjs';
+
+// Announcement types
+export type AnnouncementType = 'info' | 'waarschuwing' | 'belangrijk';
+
+export type PageAnnouncementData = {
+	actief: boolean;
+	tekst: string;
+	type: AnnouncementType;
+	link?: string;
+	linkTekst?: string;
+};
+
+export type GlobalAnnouncementEntry = {
+	id: string;
+	data: {
+		tekst: string;
+		link?: string;
+		linkTekst?: string;
+		type: AnnouncementType;
+		actief: boolean;
+	};
+};
+
+/**
+ * Fetch global announcement from Builder.io
+ * Returns the first active announcement from the 'aankondiging' model
+ */
+export async function fetchGlobalAnnouncement(apiKey: string = builderPublicApiKey): Promise<GlobalAnnouncementEntry['data'] | undefined> {
+	try {
+		const url = new URL('https://cdn.builder.io/api/v3/content/aankondiging');
+		url.searchParams.set('apiKey', apiKey);
+		url.searchParams.set('limit', '1');
+		url.searchParams.set('query.data.actief', 'true');
+		url.searchParams.set('cachebust', 'true');
+
+		const response = await fetch(url.toString(), {cache: 'no-store'});
+
+		if (!response.ok) {
+			return undefined;
+		}
+
+		const data = await response.json() as {results?: GlobalAnnouncementEntry[]};
+
+		if (data.results && data.results.length > 0) {
+			return data.results[0].data;
+		}
+
+		return undefined;
+	} catch {
+		return undefined;
+	}
+}
+
+/**
+ * Extract page-specific announcement from Builder.io page content
+ */
+export function extractPageAnnouncement(content: Awaited<ReturnType<typeof fetchOneEntry>> | undefined): {tekst: string; type: AnnouncementType; link?: string; linkTekst?: string} | undefined {
+	if (!content?.data) {
+		return undefined;
+	}
+
+	const announcement = content.data.paginaAankondiging as PageAnnouncementData | undefined;
+
+	if (!announcement?.actief || !announcement.tekst) {
+		return undefined;
+	}
+
+	return {
+		tekst: announcement.tekst,
+		type: announcement.type ?? 'info',
+		link: announcement.link,
+		linkTekst: announcement.linkTekst,
+	};
+}

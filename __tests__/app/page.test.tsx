@@ -18,6 +18,10 @@ jest.mock('../../app/components/builder/builder-content', () => ({
 	),
 }));
 
+jest.mock('../../app/components/layout/page-with-announcements', () => ({
+	PageWithAnnouncements: ({children}: {children: React.ReactNode}) => <>{children}</>,
+}));
+
 import Page from '../../app/(main)/page';
 
 describe('Home Page', () => {

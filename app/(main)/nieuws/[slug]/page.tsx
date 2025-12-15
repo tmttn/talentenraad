@@ -2,6 +2,7 @@ import {notFound} from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import {AnimatedLink} from '@components/ui';
+import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -106,69 +107,71 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
 	}
 
 	return (
-		<article className='py-12 px-6'>
-			<div className='max-w-3xl mx-auto'>
-				{/* Breadcrumb */}
-				<nav className='mb-8' aria-label='Breadcrumb'>
-					<ol className='flex items-center gap-2 text-sm text-gray-500'>
-						<li>
-							<Link href='/' className='hover:text-primary'>Home</Link>
-						</li>
-						<li>/</li>
-						<li>
-							<Link href='/nieuws' className='hover:text-primary'>Nieuws</Link>
-						</li>
-						<li>/</li>
-						<li className='text-gray-800 font-medium truncate max-w-[200px]'>
+		<PageWithAnnouncements content={undefined}>
+			<article className='py-12 px-6'>
+				<div className='max-w-3xl mx-auto'>
+					{/* Breadcrumb */}
+					<nav className='mb-8' aria-label='Breadcrumb'>
+						<ol className='flex items-center gap-2 text-sm text-gray-500'>
+							<li>
+								<Link href='/' className='hover:text-primary'>Home</Link>
+							</li>
+							<li>/</li>
+							<li>
+								<Link href='/nieuws' className='hover:text-primary'>Nieuws</Link>
+							</li>
+							<li>/</li>
+							<li className='text-gray-800 font-medium truncate max-w-[200px]'>
+								{item.data.titel}
+							</li>
+						</ol>
+					</nav>
+
+					{/* Header */}
+					<header className='mb-8'>
+						<time className='text-sm text-primary font-semibold flex items-center gap-2 mb-4'>
+							<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
+							</svg>
+							{formatDate(item.data.datum)}
+						</time>
+						<h1 className='text-3xl md:text-4xl font-bold text-gray-800 mb-4'>
 							{item.data.titel}
-						</li>
-					</ol>
-				</nav>
+						</h1>
+						<p className='text-xl text-gray-600 leading-relaxed'>
+							{item.data.samenvatting}
+						</p>
+					</header>
 
-				{/* Header */}
-				<header className='mb-8'>
-					<time className='text-sm text-primary font-semibold flex items-center gap-2 mb-4'>
-						<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
-						</svg>
-						{formatDate(item.data.datum)}
-					</time>
-					<h1 className='text-3xl md:text-4xl font-bold text-gray-800 mb-4'>
-						{item.data.titel}
-					</h1>
-					<p className='text-xl text-gray-600 leading-relaxed'>
-						{item.data.samenvatting}
-					</p>
-				</header>
+					{/* Featured Image */}
+					{item.data.afbeelding && (
+						<div className='relative aspect-video rounded-2xl overflow-hidden mb-8'>
+							<Image
+								src={item.data.afbeelding}
+								alt={item.data.titel}
+								fill
+								className='object-cover'
+								priority
+							/>
+						</div>
+					)}
 
-				{/* Featured Image */}
-				{item.data.afbeelding && (
-					<div className='relative aspect-video rounded-2xl overflow-hidden mb-8'>
-						<Image
-							src={item.data.afbeelding}
-							alt={item.data.titel}
-							fill
-							className='object-cover'
-							priority
+					{/* Content */}
+					{item.data.inhoud && (
+						<div
+							className={proseClassName}
+							dangerouslySetInnerHTML={{__html: item.data.inhoud}}
 						/>
+					)}
+
+					{/* Back link */}
+					<div className='mt-12 pt-8 border-t border-gray-200'>
+						<AnimatedLink href='/nieuws' arrowDirection='left'>
+							Terug naar nieuws
+						</AnimatedLink>
 					</div>
-				)}
-
-				{/* Content */}
-				{item.data.inhoud && (
-					<div
-						className={proseClassName}
-						dangerouslySetInnerHTML={{__html: item.data.inhoud}}
-					/>
-				)}
-
-				{/* Back link */}
-				<div className='mt-12 pt-8 border-t border-gray-200'>
-					<AnimatedLink href='/nieuws' arrowDirection='left'>
-						Terug naar nieuws
-					</AnimatedLink>
 				</div>
-			</div>
-		</article>
+			</article>
+		</PageWithAnnouncements>
 	);
 }
