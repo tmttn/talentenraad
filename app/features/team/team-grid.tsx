@@ -110,7 +110,7 @@ function TeamGrid({
 
 	if (loading) {
 		return (
-			<div className='animate-pulse'>
+			<div className='max-w-6xl mx-auto px-6 animate-pulse'>
 				<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-8`}>
 					{[1, 2, 3].map(i => (
 						<div key={i} className='text-center'>
@@ -126,14 +126,14 @@ function TeamGrid({
 
 	if (teamMembers.length === 0) {
 		return (
-			<div className='text-center py-12 text-gray-500'>
+			<div className='max-w-6xl mx-auto px-6 text-center py-12 text-gray-500'>
 				Geen teamleden gevonden
 			</div>
 		);
 	}
 
 	return (
-		<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-8`}>
+		<div className={`max-w-6xl mx-auto px-6 grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-8`}>
 			{teamMembers.map((member, index) => (
 				<div key={index} className='text-center group'>
 					<div className='relative mb-5 inline-block'>

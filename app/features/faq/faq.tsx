@@ -190,7 +190,7 @@ function Faq() {
 
 	if (loading) {
 		return (
-			<div className='animate-pulse space-y-4'>
+			<div className='max-w-4xl mx-auto px-6 animate-pulse space-y-4'>
 				{[1, 2, 3].map(i => (
 					<div key={i} className='h-16 bg-gray-200 rounded' />
 				))}
@@ -200,7 +200,7 @@ function Faq() {
 
 	if (faqs.length === 0) {
 		return (
-			<div className='text-center py-16 px-8 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-dashed border-gray-200'>
+			<div className='max-w-4xl mx-auto px-6 text-center py-16 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-dashed border-gray-200'>
 				<div className='w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center'>
 					<svg
 						xmlns='http://www.w3.org/2000/svg'
@@ -219,7 +219,7 @@ function Faq() {
 	}
 
 	return (
-		<div>
+		<div className='max-w-4xl mx-auto px-6'>
 			<style dangerouslySetInnerHTML={{__html: faqStyles}} />
 			{faqs.length > 0 && (
 				<script
