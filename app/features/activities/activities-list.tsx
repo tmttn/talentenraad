@@ -26,8 +26,6 @@ type Activity = {
 };
 
 type ActivitiesListProperties = {
-	title?: string;
-	subtitle?: string;
 	showViewAll?: boolean;
 	viewAllLink?: string;
 	limit?: number;
@@ -52,8 +50,6 @@ function generateSlug(title: string): string {
 }
 
 function ActivitiesList({
-	title = 'Komende activiteiten',
-	subtitle,
 	showViewAll = true,
 	viewAllLink = '/kalender',
 	limit = 5,
@@ -154,19 +150,8 @@ function ActivitiesList({
 	}
 
 	return (
-		<section className='py-16 px-6' aria-labelledby={title ? 'activiteiten-title' : undefined}>
+		<section className='py-16 px-6'>
 			<div className='max-w-4xl mx-auto'>
-				<div className='text-center mb-12'>
-					{title && (
-						<h2 id='activiteiten-title' className='text-3xl md:text-4xl font-bold text-gray-800 mb-4'>
-							{title}
-						</h2>
-					)}
-					{subtitle && (
-						<p className='text-gray-600'>{subtitle}</p>
-					)}
-				</div>
-
 				{activities.length > 0
 					? (
 						<div className='space-y-4' role='list' aria-label='Lijst van activiteiten'>
@@ -281,16 +266,6 @@ export const ActivitiesListInfo = {
 	name: 'ActivitiesList',
 	component: ActivitiesList,
 	inputs: [
-		{
-			name: 'title',
-			type: 'string',
-			defaultValue: 'Komende activiteiten',
-		},
-		{
-			name: 'subtitle',
-			type: 'string',
-			defaultValue: 'Mis geen enkele activiteit van de Talentenraad',
-		},
 		{
 			name: 'limit',
 			type: 'number',

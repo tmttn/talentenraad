@@ -43,8 +43,6 @@ type NewsItem = {
 };
 
 type NewsListProperties = {
-	title?: string;
-	subtitle?: string;
 	limit?: number;
 	layout?: 'list' | 'grid';
 	showImages?: boolean;
@@ -65,8 +63,6 @@ function generateSlug(title: string): string {
 }
 
 function NewsList({
-	title = 'Laatste nieuws',
-	subtitle,
 	limit = 10,
 	layout = 'list',
 	showImages = true,
@@ -160,22 +156,9 @@ function NewsList({
 	}
 
 	return (
-		<section className='py-16 px-6' aria-labelledby={title ? 'nieuws-title' : undefined}>
+		<section className='py-16 px-6'>
 			<style dangerouslySetInnerHTML={{__html: linkStyles}} />
 			<div className='max-w-4xl mx-auto'>
-				{(title || subtitle) && (
-					<div className='text-center mb-12'>
-						{title && (
-							<h2 id='nieuws-title' className='text-3xl md:text-4xl font-bold text-gray-800 mb-4'>
-								{title}
-							</h2>
-						)}
-						{subtitle && (
-							<p className='text-gray-600'>{subtitle}</p>
-						)}
-					</div>
-				)}
-
 				{newsItems.length > 0
 					? (
 						<div
@@ -323,15 +306,6 @@ export const NewsListInfo = {
 	name: 'NewsList',
 	component: NewsList,
 	inputs: [
-		{
-			name: 'title',
-			type: 'string',
-			defaultValue: 'Laatste nieuws',
-		},
-		{
-			name: 'subtitle',
-			type: 'string',
-		},
 		{
 			name: 'limit',
 			type: 'number',

@@ -15,8 +15,6 @@ type Activity = {
 };
 
 type ActivitiesArchiveProperties = {
-	title?: string;
-	subtitle?: string;
 	limit?: number;
 	showYear?: boolean;
 };
@@ -36,8 +34,6 @@ function generateSlug(title: string): string {
 }
 
 function ActivitiesArchive({
-	title = 'Archief',
-	subtitle = 'Bekijk onze voorbije activiteiten',
 	limit = 20,
 	showYear = true,
 }: Readonly<ActivitiesArchiveProperties>) {
@@ -136,19 +132,16 @@ function ActivitiesArchive({
 					aria-expanded={isExpanded}
 					aria-controls='archief-content'
 				>
-					<div>
-						<h2 id='archief-title' className='text-2xl font-bold text-gray-800 flex items-center gap-3'>
-							<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-gray-400' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4' />
-							</svg>
-							{title}
-							<span className='text-sm font-normal text-gray-500'>
-								({activities.length} activiteiten)
-							</span>
-						</h2>
-						{subtitle && (
-							<p className='text-gray-600 mt-1'>{subtitle}</p>
-						)}
+					<div className='flex items-center gap-3'>
+						<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-gray-400' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
+							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4' />
+						</svg>
+						<span id='archief-title' className='text-2xl font-bold text-gray-800'>
+							Archief
+						</span>
+						<span className='text-sm font-normal text-gray-500'>
+							({activities.length} activiteiten)
+						</span>
 					</div>
 					<svg
 						xmlns='http://www.w3.org/2000/svg'
@@ -216,18 +209,6 @@ export const ActivitiesArchiveInfo = {
 	name: 'ActivitiesArchive',
 	component: ActivitiesArchive,
 	inputs: [
-		{
-			name: 'title',
-			type: 'string',
-			defaultValue: 'Archief',
-			helperText: 'Titel van de archief sectie',
-		},
-		{
-			name: 'subtitle',
-			type: 'string',
-			defaultValue: 'Bekijk onze voorbije activiteiten',
-			helperText: 'Ondertitel van de archief sectie',
-		},
 		{
 			name: 'limit',
 			type: 'number',

@@ -4,8 +4,6 @@ import type {ReactNode} from 'react';
 
 type SectionProperties = {
 	children?: ReactNode;
-	title?: string;
-	subtitle?: string;
 	background?: 'white' | 'light' | 'dark' | 'accent' | 'secondary' | 'tertiary' | 'gradient';
 	align?: 'left' | 'center';
 	size?: 'small' | 'medium' | 'large';
@@ -15,8 +13,6 @@ type SectionProperties = {
 
 function Section({
 	children,
-	title,
-	subtitle,
 	background = 'white',
 	align = 'center',
 	size = 'medium',
@@ -45,17 +41,6 @@ function Section({
 		wide: 'max-w-7xl',
 		full: 'max-w-full',
 	};
-
-	const darkBackgrounds = ['dark', 'accent', 'secondary', 'tertiary'];
-	const isDarkBackground = darkBackgrounds.includes(background);
-
-	const titleClasses = isDarkBackground
-		? 'text-white'
-		: 'text-gray-900';
-
-	const subtitleClasses = isDarkBackground
-		? 'text-white/90'
-		: 'text-gray-600';
 
 	const bgClass = bgClasses[background] || bgClasses.white;
 	const sizeClass = sizeClasses[size] || sizeClasses.medium;
@@ -115,21 +100,7 @@ function Section({
 	return (
 		<section className={`${bgClass} ${sizeClass} relative`}>
 			{renderDecoration()}
-			<div className={`${widthClass} mx-auto px-6 relative z-10`}>
-				{(title || subtitle) && (
-					<div className={`mb-12 ${align === 'center' ? 'text-center' : ''}`}>
-						{title && (
-							<h2 className={`text-3xl md:text-4xl font-bold ${titleClasses} mb-4`}>
-								{title}
-							</h2>
-						)}
-						{subtitle && (
-							<p className={`text-lg ${subtitleClasses} max-w-2xl ${align === 'center' ? 'mx-auto' : ''}`}>
-								{subtitle}
-							</p>
-						)}
-					</div>
-				)}
+			<div className={`${widthClass} mx-auto px-6 relative z-10 ${align === 'center' ? 'text-center' : ''}`}>
 				{children}
 			</div>
 		</section>
@@ -141,14 +112,6 @@ export const SectionInfo = {
 	component: Section,
 	canHaveChildren: true,
 	inputs: [
-		{
-			name: 'title',
-			type: 'string',
-		},
-		{
-			name: 'subtitle',
-			type: 'string',
-		},
 		{
 			name: 'background',
 			type: 'string',

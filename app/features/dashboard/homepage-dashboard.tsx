@@ -28,10 +28,7 @@ type NieuwsItem = {
 	};
 };
 
-type HomepageDashboardProperties = {
-	title?: string;
-	subtitle?: string;
-};
+type HomepageDashboardProperties = Record<string, never>;
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -47,10 +44,7 @@ function generateSlug(title: string): string {
 		.trim();
 }
 
-function HomepageDashboard({
-	title = '',
-	subtitle = '',
-}: Readonly<HomepageDashboardProperties>) {
+function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 	const [activiteiten, setActiviteiten] = useState<Activiteit[]>([]);
 	const [nieuwsItems, setNieuwsItems] = useState<NieuwsItem[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -166,21 +160,8 @@ function HomepageDashboard({
 	}
 
 	return (
-		<section className='py-12 px-6 bg-gray-50' aria-labelledby='dashboard-title'>
+		<section className='py-12 px-6 bg-gray-50'>
 			<div className='max-w-6xl mx-auto'>
-				{(title || subtitle) && (
-					<div className='text-center mb-10'>
-						{title && (
-							<h2 id='dashboard-title' className='text-2xl md:text-3xl font-bold text-gray-900 mb-2'>
-								{title}
-							</h2>
-						)}
-						{subtitle && (
-							<p className='text-gray-600'>{subtitle}</p>
-						)}
-					</div>
-				)}
-
 				<div className='grid md:grid-cols-2 gap-6'>
 					{/* Komende Activiteiten */}
 					<div className='bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col'>
@@ -309,18 +290,5 @@ function HomepageDashboard({
 export const HomepageDashboardInfo = {
 	name: 'HomepageDashboard',
 	component: HomepageDashboard,
-	inputs: [
-		{
-			name: 'title',
-			type: 'string',
-			defaultValue: '',
-			helperText: 'Optioneel: titel boven het dashboard (gebruik liever Typography component)',
-		},
-		{
-			name: 'subtitle',
-			type: 'string',
-			defaultValue: '',
-			helperText: 'Optioneel: ondertitel (gebruik liever Typography component)',
-		},
-	],
+	inputs: [],
 };

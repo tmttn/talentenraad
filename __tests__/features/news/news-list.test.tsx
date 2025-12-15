@@ -24,19 +24,6 @@ describe('NewsList', () => {
 		expect(section).toHaveAttribute('aria-busy', 'true');
 	});
 
-	it('renders title and subtitle', async () => {
-		mockFetch.mockResolvedValue({
-			json: () => Promise.resolve({results: []}),
-		});
-
-		render(<NewsList title='News Title' subtitle='News subtitle' />);
-
-		await waitFor(() => {
-			expect(screen.getByRole('heading', {level: 2, name: 'News Title'})).toBeInTheDocument();
-		});
-		expect(screen.getByText('News subtitle')).toBeInTheDocument();
-	});
-
 	it('renders news items', async () => {
 		const mockNews = {
 			results: [
@@ -182,11 +169,11 @@ describe('NewsList', () => {
 		mockFetch.mockRejectedValue(new Error('Fetch failed'));
 		const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
 
-		render(<NewsList />);
+		const {container} = render(<NewsList />);
 
 		await waitFor(() => {
 			// Should show empty state or error message
-			const section = screen.getByRole('region', {name: /nieuws/i});
+			const section = container.querySelector('section');
 			expect(section).toBeInTheDocument();
 		});
 
