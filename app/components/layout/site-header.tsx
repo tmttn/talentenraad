@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
-import {useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 
 type NavigationLink = {
 	text: string;
@@ -31,14 +31,43 @@ export function SiteHeader({
 }: Readonly<SiteHeaderProperties>) {
 	const pathname = usePathname();
 	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [isSkipLinkVisible, setIsSkipLinkVisible] = useState(false);
+	const hadRecentTabPress = useRef(false);
 	const links = navigationLinks ?? defaultLinks;
+
+	// Track Tab keypresses to distinguish intentional focus from programmatic focus
+	useEffect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Tab') {
+				hadRecentTabPress.current = true;
+				// Reset after a short delay
+				setTimeout(() => {
+					hadRecentTabPress.current = false;
+				}, 100);
+			}
+		};
+
+		document.addEventListener('keydown', handleKeyDown);
+		return () => {
+			document.removeEventListener('keydown', handleKeyDown);
+		};
+	}, []);
 
 	return (
 		<>
-			{/* Skip to main content link for accessibility - only shows on keyboard focus */}
+			{/* Skip to main content link - only visible when focused via Tab keypress */}
 			<a
 				href="#main-content"
-				className="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-2 focus-visible:left-2 focus-visible:z-[100] focus-visible:bg-primary focus-visible:text-white focus-visible:px-4 focus-visible:py-2 focus-visible:rounded-lg focus-visible:font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-brand-primary-500"
+				className={`skip-link focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-primary ${isSkipLinkVisible ? 'skip-link-visible' : ''}`}
+				onFocus={() => {
+					// Only show if focus came from a Tab keypress
+					if (hadRecentTabPress.current) {
+						setIsSkipLinkVisible(true);
+					}
+				}}
+				onBlur={() => {
+					setIsSkipLinkVisible(false);
+				}}
 			>
 				Ga naar hoofdinhoud
 			</a>

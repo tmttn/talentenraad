@@ -108,7 +108,7 @@
   transition: top 0.2s ease;
 }
 
-.skip-link:focus {
+.skip-link.skip-link-visible {
   top: 1rem;
 }
 
