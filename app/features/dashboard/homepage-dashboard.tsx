@@ -48,8 +48,8 @@ function generateSlug(title: string): string {
 }
 
 function HomepageDashboard({
-	title = 'Op een oogopslag',
-	subtitle = 'Bekijk snel wat er speelt bij de Talentenraad',
+	title = '',
+	subtitle = '',
 }: Readonly<HomepageDashboardProperties>) {
 	const [activiteiten, setActiviteiten] = useState<Activiteit[]>([]);
 	const [nieuwsItems, setNieuwsItems] = useState<NieuwsItem[]>([]);
@@ -313,14 +313,14 @@ export const HomepageDashboardInfo = {
 		{
 			name: 'title',
 			type: 'string',
-			defaultValue: 'Op een oogopslag',
-			helperText: 'Titel boven het dashboard',
+			defaultValue: '',
+			helperText: 'Optioneel: titel boven het dashboard (gebruik liever Typography component)',
 		},
 		{
 			name: 'subtitle',
 			type: 'string',
-			defaultValue: 'Bekijk snel wat er speelt bij de Talentenraad',
-			helperText: 'Ondertitel',
+			defaultValue: '',
+			helperText: 'Optioneel: ondertitel (gebruik liever Typography component)',
 		},
 	],
 };
