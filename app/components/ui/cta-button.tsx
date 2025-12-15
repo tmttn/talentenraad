@@ -24,10 +24,10 @@ type CtaButtonProperties = {
 };
 
 const variantStyles = {
-	primary: 'bg-primary text-white hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/25 focus:ring-primary',
+	primary: 'bg-primary text-white hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/25 focus:ring-primary border border-transparent',
 	secondary: 'bg-white/10 text-white hover:bg-white/20 border border-white/20 focus:ring-white',
 	outline: 'bg-transparent border-2 border-white text-white hover:bg-white/10 focus:ring-white',
-	white: 'bg-white text-gray-900 hover:bg-gray-100 focus:ring-white',
+	white: 'bg-white text-gray-900 hover:bg-gray-100 focus:ring-white border border-transparent',
 };
 
 const sizeStyles = {

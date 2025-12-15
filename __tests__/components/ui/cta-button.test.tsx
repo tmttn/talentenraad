@@ -30,7 +30,7 @@ describe('CtaButton', () => {
 		it('applies primary variant by default', () => {
 			render(<CtaButton />);
 			const link = screen.getByRole('link');
-			expect(link).toHaveClass('bg-primary', 'text-white');
+			expect(link).toHaveClass('bg-primary', 'text-white', 'border', 'border-transparent');
 		});
 
 		it('applies secondary variant', () => {
@@ -48,7 +48,7 @@ describe('CtaButton', () => {
 		it('applies white variant', () => {
 			render(<CtaButton variant='white' />);
 			const link = screen.getByRole('link');
-			expect(link).toHaveClass('bg-white', 'text-gray-900');
+			expect(link).toHaveClass('bg-white', 'text-gray-900', 'border', 'border-transparent');
 		});
 	});
 
