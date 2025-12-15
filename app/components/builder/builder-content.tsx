@@ -23,6 +23,7 @@ import {ActivitiesArchiveInfo} from '@features/activities/activities-archive';
 import {HomepageDashboardInfo} from '@features/dashboard/homepage-dashboard';
 import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
 import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
+import {CtaButtonInfo} from '@components/ui/cta-button';
 
 type BuilderContentProperties = {
 	// eslint-disable-next-line @typescript-eslint/no-restricted-types
@@ -61,6 +62,7 @@ export function BuilderContent({content, apiKey, model}: Readonly<BuilderContent
 				HomepageDashboardInfo,
 				NewsletterSignupInfo,
 				UnifiedCtaInfo,
+				CtaButtonInfo,
 			]}
 		/>
 	);
