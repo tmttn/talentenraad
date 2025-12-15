@@ -27,6 +27,10 @@ import {NewsCardInfo} from '@features/news/news-card';
 import {TeamMemberInfo} from '@features/team/team-member';
 import {TypographyInfo} from '@components/ui/typography';
 import {CtaButtonInfo} from '@components/ui/cta-button';
+import {ActivitiesArchiveInfo} from '@features/activities/activities-archive';
+import {HomepageDashboardInfo} from '@features/dashboard/homepage-dashboard';
+import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
+import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -52,6 +56,10 @@ const customComponents = [
 	TeamMemberInfo,
 	TypographyInfo,
 	CtaButtonInfo,
+	ActivitiesArchiveInfo,
+	HomepageDashboardInfo,
+	NewsletterSignupInfo,
+	UnifiedCtaInfo,
 ];
 
 type SectionPreviewPageProperties = {
