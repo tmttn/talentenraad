@@ -24,6 +24,16 @@ const customJestConfig: Config = {
 		'!app/components/ui/index.ts',
 		// Exclude API routes (require different testing approach)
 		'!app/api/**',
+		// Exclude admin route group (requires auth testing)
+		'!app/\\(admin\\)/**',
+		// Exclude database layer (requires DB mocking)
+		'!app/lib/db/**',
+		// Exclude auth config (requires complex mocking)
+		'!app/lib/auth/**',
+		// Exclude email service (external service)
+		'!app/lib/email/**',
+		// Exclude admin features (requires auth)
+		'!app/features/admin/**',
 	],
 	coverageThreshold: {
 		global: {

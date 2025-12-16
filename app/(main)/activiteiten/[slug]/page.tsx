@@ -254,7 +254,7 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 							<p className='text-gray-600 mb-4'>
 								Neem contact op met de Talentenraad voor meer informatie.
 							</p>
-							<AnimatedButton href='/contact'>
+							<AnimatedButton href='/contact?onderwerp=activiteit'>
 								Contact opnemen
 							</AnimatedButton>
 						</div>

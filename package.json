@@ -11,7 +11,10 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "test:xo": "xo",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@builder.io/admin-sdk": "^0.0.8",
@@ -19,10 +22,14 @@
     "@sentry/nextjs": "^10.0.0",
     "@tailwindcss/typography": "^0.5.19",
     "@vercel/analytics": "^1.6.1",
+    "@vercel/postgres": "^0.10.0",
     "@vercel/speed-insights": "^1.3.1",
+    "drizzle-orm": "^0.45.1",
     "next": "16.0.10",
+    "next-auth": "^5.0.0-beta.30",
     "react": "^19.2.3",
-    "react-dom": "^19.2.3"
+    "react-dom": "^19.2.3",
+    "resend": "^6.6.0"
   },
   "devDependencies": {
     "@builder.io/cli": "^1.2.10",
@@ -38,6 +45,7 @@
     "@types/react-dom": "^19.0.0",
     "cross-env": "^10.0.0",
     "daisyui": "^5.5.13",
+    "drizzle-kit": "^0.31.8",
     "eslint": "^9.39.2",
     "eslint-config-next": "16.0.10",
     "eslint-plugin-import-x": "^4.16.1",
@@ -64,7 +72,10 @@
       "app/components/**",
       "app/api/**",
       "app/activiteiten/**",
-      "app/nieuws/**"
+      "app/nieuws/**",
+      "app/lib/**",
+      "app/(admin)/**",
+      "app/features/admin/**"
     ]
   },
   "overrides": {

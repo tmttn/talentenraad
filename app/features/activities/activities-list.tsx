@@ -232,7 +232,7 @@ function ActivitiesList({
 							<p className='text-gray-500 max-w-sm mx-auto mb-6'>
 								Binnenkort plannen we nieuwe activiteiten voor de schoolgemeenschap. Houd deze pagina in de gaten!
 							</p>
-							<AnimatedLink href='/contact' size='sm'>
+							<AnimatedLink href='/contact?onderwerp=activiteit' size='sm'>
 								Heb je een idee? Laat het ons weten!
 							</AnimatedLink>
 						</div>

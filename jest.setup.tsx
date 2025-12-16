@@ -89,6 +89,20 @@ jest.mock('next/link', () => ({
 	),
 }));
 
+// Mock next/navigation
+jest.mock('next/navigation', () => ({
+	useSearchParams: () => new URLSearchParams(),
+	usePathname: () => '/',
+	useRouter: () => ({
+		push: jest.fn(),
+		replace: jest.fn(),
+		refresh: jest.fn(),
+		back: jest.fn(),
+		forward: jest.fn(),
+		prefetch: jest.fn(),
+	}),
+}));
+
 // Mock Builder.io SDK
 jest.mock('@builder.io/sdk-react-nextjs', () => ({
 	fetchOneEntry: jest.fn(),

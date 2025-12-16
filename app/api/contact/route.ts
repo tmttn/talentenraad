@@ -1,4 +1,6 @@
 import {type NextRequest, NextResponse} from 'next/server';
+import {db, submissions} from '@/lib/db';
+import {sendContactNotification} from '@/lib/email/resend';
 
 type ContactFormData = {
 	name: string;
@@ -64,47 +66,33 @@ export async function POST(request: NextRequest) {
 		const sanitizedData = {
 			name: sanitizeInput(body.name),
 			email: sanitizeInput(body.email),
-			phone: body.phone ? sanitizeInput(body.phone) : undefined,
-			subject: body.subject ? sanitizeInput(body.subject) : 'Algemene vraag',
+			phone: body.phone ? sanitizeInput(body.phone) : null,
+			subject: body.subject ? sanitizeInput(body.subject) : 'vraag',
 			message: sanitizeInput(body.message),
-			timestamp: new Date().toISOString(),
 		};
 
-		// Log the contact form submission (in production, you would send an email or save to database)
-		console.log('Contact form submission:', sanitizedData);
+		// Save to database
+		const [submission] = await db.insert(submissions)
+			.values({
+				name: sanitizedData.name,
+				email: sanitizedData.email,
+				phone: sanitizedData.phone,
+				subject: sanitizedData.subject,
+				message: sanitizedData.message,
+			})
+			.returning();
 
-		// In a production environment, you would:
-		// 1. Send an email using a service like SendGrid, Resend, or Nodemailer
-		// 2. Save to a database
-		// 3. Integrate with a CRM
-		// 4. Send a Slack notification
-
-		// Example with Builder.io write API (if you want to store submissions)
-		// eslint-disable-next-line n/prefer-global/process
-		const builderPrivateKey = process.env.BUILDER_PRIVATE_KEY;
-
-		if (builderPrivateKey) {
-			try {
-				// Store submission in Builder.io (optional)
-				const builderResponse = await fetch('https://builder.io/api/v1/write/contact-submission', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${builderPrivateKey}`,
-					},
-					body: JSON.stringify({
-						data: sanitizedData,
-					}),
-				});
-
-				if (!builderResponse.ok) {
-					console.warn('Failed to save to Builder.io:', await builderResponse.text());
-				}
-			} catch (builderError) {
-				// Log but don't fail the request if Builder.io save fails
-				console.warn('Builder.io save error:', builderError);
-			}
-		}
+		// Send email notification (non-blocking)
+		sendContactNotification({
+			name: sanitizedData.name,
+			email: sanitizedData.email,
+			phone: sanitizedData.phone ?? undefined,
+			subject: sanitizedData.subject,
+			message: sanitizedData.message,
+			submissionId: submission.id,
+		}).catch(error => {
+			console.error('Failed to send notification email:', error);
+		});
 
 		return NextResponse.json(
 			{

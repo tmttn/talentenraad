@@ -1,6 +1,12 @@
 'use client';
 
-import {useState, type FormEvent, type ChangeEvent} from 'react';
+import {
+	useState,
+	Suspense,
+	type FormEvent,
+	type ChangeEvent,
+} from 'react';
+import {useSearchParams} from 'next/navigation';
 import {
 	SuccessIcon, ErrorIcon, SendIcon, SpinnerIcon,
 } from '@components/ui/icons';
@@ -184,6 +190,8 @@ const subjectOptions = [
 	{value: 'anders', label: 'Anders'},
 ];
 
+const validSubjectValues = new Set(['vraag', 'activiteit', 'lidmaatschap', 'sponsoring', 'anders']);
+
 // Extracted component for success message
 function SuccessMessage() {
 	return (
@@ -273,10 +281,15 @@ function validateMessage(message: string): string | undefined {
 	return undefined;
 }
 
-function ContactForm({
+type ContactFormInnerProperties = ContactFormProperties & {
+	defaultSubject?: string;
+};
+
+function ContactFormInner({
 	showPhone = false,
 	showSubject = true,
-}: Readonly<ContactFormProperties>) {
+	defaultSubject = '',
+}: Readonly<ContactFormInnerProperties>) {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [errors, setErrors] = useState<FormErrors>({});
@@ -285,7 +298,7 @@ function ContactForm({
 		name: '',
 		email: '',
 		phone: '',
-		subject: '',
+		subject: defaultSubject,
 		message: '',
 	});
 
@@ -420,6 +433,55 @@ function ContactForm({
 				</div>
 			</form>
 		</div>
+	);
+}
+
+// Loading skeleton for Suspense fallback
+function ContactFormSkeleton() {
+	return (
+		<div className='bg-white p-8 rounded-2xl shadow-lg animate-pulse'>
+			<div className='grid md:grid-cols-2 gap-6'>
+				<div>
+					<div className='h-4 w-16 bg-gray-200 rounded mb-2' />
+					<div className='h-12 bg-gray-200 rounded-lg' />
+				</div>
+				<div>
+					<div className='h-4 w-16 bg-gray-200 rounded mb-2' />
+					<div className='h-12 bg-gray-200 rounded-lg' />
+				</div>
+			</div>
+			<div className='mt-6'>
+				<div className='h-4 w-24 bg-gray-200 rounded mb-2' />
+				<div className='h-12 bg-gray-200 rounded-lg' />
+			</div>
+			<div className='mt-6'>
+				<div className='h-4 w-16 bg-gray-200 rounded mb-2' />
+				<div className='h-32 bg-gray-200 rounded-lg' />
+			</div>
+			<div className='mt-8'>
+				<div className='h-14 bg-gray-200 rounded-xl' />
+			</div>
+		</div>
+	);
+}
+
+// Wrapper component that reads URL parameters
+function ContactFormWithParameters(props: Readonly<ContactFormProperties>) {
+	const searchParameters = useSearchParams();
+	const urlSubject = searchParameters.get('onderwerp');
+
+	// Validate that the URL param is a valid subject value
+	const defaultSubject = urlSubject && validSubjectValues.has(urlSubject) ? urlSubject : '';
+
+	return <ContactFormInner {...props} defaultSubject={defaultSubject} />;
+}
+
+// Main exported component with Suspense boundary
+function ContactForm(props: Readonly<ContactFormProperties>) {
+	return (
+		<Suspense fallback={<ContactFormSkeleton />}>
+			<ContactFormWithParameters {...props} />
+		</Suspense>
 	);
 }
 
