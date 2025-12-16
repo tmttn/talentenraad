@@ -3,14 +3,14 @@
 ## Overview
 Add a complete admin system for managing contact form submissions with:
 - Vercel Postgres database for storing submissions
-- NextAuth.js with Google OIDC for admin authentication
+- NextAuth.js with Auth0 for admin authentication
 - Resend for notification emails
 - Admin dashboard to view/manage submissions
 - URL parameter prefilling for contact form subject
 
 ## Key Decisions
 - **User seeding**: Allow-list via `ADMIN_EMAILS` environment variable
-- **Auth restriction**: No domain restriction, any Google account in allow-list can sign in
+- **Auth restriction**: No domain restriction, any Auth0 account in allow-list can sign in
 - **Roles**: Admin only (no viewer role) - simplifies the system
 
 ---
@@ -32,7 +32,7 @@ export const users = pgTable('users', {
 	id: uuid('id').defaultRandom().primaryKey(),
 	email: text('email').notNull().unique(),
 	name: text('name'),
-	googleId: text('google_id').unique(),
+	auth0Id: text('auth0_id').unique(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -100,7 +100,7 @@ export default {
 **File: `app/lib/auth/config.ts`**
 ```typescript
 import NextAuth from 'next-auth';
-import Google from 'next-auth/providers/google';
+import Auth0 from 'next-auth/providers/auth0';
 import {db, users} from '@/lib/db';
 import {eq} from 'drizzle-orm';
 
@@ -111,14 +111,15 @@ const getAdminEmails = (): string[] => {
 
 export const {handlers, signIn, signOut, auth} = NextAuth({
 	providers: [
-		Google({
-			clientId: process.env.GOOGLE_CLIENT_ID!,
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+		Auth0({
+			clientId: process.env.AUTH0_CLIENT_ID!,
+			clientSecret: process.env.AUTH0_CLIENT_SECRET!,
+			issuer: process.env.AUTH0_ISSUER,
 		}),
 	],
 	callbacks: {
 		async signIn({user, account}) {
-			if (account?.provider !== 'google' || !user.email) {
+			if (account?.provider !== 'auth0' || !user.email) {
 				return false;
 			}
 
@@ -139,11 +140,11 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
 				await db.insert(users).values({
 					email: userEmail,
 					name: user.name ?? null,
-					googleId: account.providerAccountId,
+					auth0Id: account.providerAccountId,
 				});
-			} else if (!existingUser.googleId) {
+			} else if (!existingUser.auth0Id) {
 				await db.update(users)
-					.set({googleId: account.providerAccountId, updatedAt: new Date()})
+					.set({auth0Id: account.providerAccountId, updatedAt: new Date()})
 					.where(eq(users.id, existingUser.id));
 			}
 
@@ -308,7 +309,7 @@ export async function sendContactNotification(data: ContactNotificationData) {
 
 ### 8.1 Login page
 **File: `app/(admin)/admin/login/page.tsx`**
-- Google sign-in button with server action
+- Auth0 sign-in button with server action
 
 ### 8.2 Dashboard page
 **File: `app/(admin)/admin/page.tsx`**
@@ -354,8 +355,11 @@ POSTGRES_URL=
 
 # NextAuth.js
 AUTH_SECRET=          # openssl rand -base64 32
-GOOGLE_CLIENT_ID=     # Google Cloud Console
-GOOGLE_CLIENT_SECRET= # Google Cloud Console
+
+# Auth0
+AUTH0_CLIENT_ID=      # Auth0 Dashboard
+AUTH0_CLIENT_SECRET=  # Auth0 Dashboard
+AUTH0_ISSUER=         # https://YOUR_AUTH0_DOMAIN (e.g., https://dev-xxx.us.auth0.com)
 
 # Admin allow-list (comma-separated)
 ADMIN_EMAILS=admin@example.com,another@example.com

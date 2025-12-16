@@ -1,6 +1,6 @@
 import {eq} from 'drizzle-orm';
 import NextAuth from 'next-auth';
-import Google from 'next-auth/providers/google';
+import Auth0 from 'next-auth/providers/auth0';
 import {db, users} from '@/lib/db';
 
 const getAdminEmails = (): string[] => {
@@ -13,16 +13,18 @@ const getAdminEmails = (): string[] => {
 export const {handlers, signIn, signOut, auth} = NextAuth({
 	providers: [
 		// eslint-disable-next-line new-cap
-		Google({
+		Auth0({
 			// eslint-disable-next-line n/prefer-global/process
-			clientId: process.env.GOOGLE_CLIENT_ID!,
+			clientId: process.env.AUTH0_CLIENT_ID!,
 			// eslint-disable-next-line n/prefer-global/process
-			clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+			clientSecret: process.env.AUTH0_CLIENT_SECRET!,
+			// eslint-disable-next-line n/prefer-global/process
+			issuer: process.env.AUTH0_ISSUER,
 		}),
 	],
 	callbacks: {
 		async signIn({user, account}) {
-			if (account?.provider !== 'google' || !user.email) {
+			if (account?.provider !== 'auth0' || !user.email) {
 				return false;
 			}
 
@@ -43,11 +45,11 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
 				await db.insert(users).values({
 					email: userEmail,
 					name: user.name ?? undefined,
-					googleId: account.providerAccountId,
+					auth0Id: account.providerAccountId,
 				});
-			} else if (!existingUser.googleId) {
+			} else if (!existingUser.auth0Id) {
 				await db.update(users)
-					.set({googleId: account.providerAccountId, updatedAt: new Date()})
+					.set({auth0Id: account.providerAccountId, updatedAt: new Date()})
 					.where(eq(users.id, existingUser.id));
 			}
 

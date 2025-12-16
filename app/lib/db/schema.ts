@@ -10,7 +10,7 @@ export const users = pgTable('users', {
 	id: uuid('id').defaultRandom().primaryKey(),
 	email: text('email').notNull().unique(),
 	name: text('name'),
-	googleId: text('google_id').unique(),
+	auth0Id: text('auth0_id').unique(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
