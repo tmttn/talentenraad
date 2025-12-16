@@ -28,10 +28,10 @@ import {SiteHeaderInfo} from '@components/layout/site-header';
 import {SiteFooterInfo} from '@components/layout/site-footer';
 
 // Component registry with sample props for preview
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const componentRegistry: Record<string, {
 	info: {
 		name: string;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		component: React.ComponentType<any>;
 	};
 	sampleProps: Record<string, unknown>;
