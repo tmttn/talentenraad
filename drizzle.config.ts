@@ -6,6 +6,6 @@ export default {
 	dialect: 'postgresql',
 	dbCredentials: {
 		// eslint-disable-next-line n/prefer-global/process
-		url: process.env.POSTGRES_URL!,
+		url: process.env.POSTGRES_URL ?? process.env.DATABASE_URL!,
 	},
 } satisfies Config;
