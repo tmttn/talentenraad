@@ -1,11 +1,17 @@
 import {render, screen} from '@testing-library/react';
 import {FeatureGridInfo} from '../../../app/features/info/feature-grid';
 
-// Mock the AnimatedLink component
+// Mock the UI components
 jest.mock('../../../app/components/ui', () => ({
 	AnimatedLink: ({href, children}: {href: string; children: React.ReactNode}) => (
 		<a href={href}>{children}</a>
 	),
+	CalendarIcon: () => <svg data-testid='icon-calendar' />,
+	HeartIcon: () => <svg data-testid='icon-heart' />,
+	UsersIcon: () => <svg data-testid='icon-users' />,
+	StarIcon: () => <svg data-testid='icon-star' />,
+	MoneyIcon: () => <svg data-testid='icon-money' />,
+	GiftIcon: () => <svg data-testid='icon-gift' />,
 }));
 
 const FeatureGrid = FeatureGridInfo.component;
