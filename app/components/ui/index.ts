@@ -28,6 +28,7 @@ export {
 	ChevronRightIcon,
 	CheckIcon,
 	XIcon,
+	MenuIcon,
 	// Communication
 	EmailIcon,
 	PhoneIcon,
@@ -60,6 +61,9 @@ export {
 	// Social Media
 	FacebookIcon,
 	InstagramIcon,
+	LinkedinIcon,
+	TwitterIcon,
+	YoutubeIcon,
 	// Special
 	BookmarkIcon,
 	// Paths

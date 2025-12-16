@@ -19,10 +19,12 @@ import EmailSvg from './svg/email.svg';
 import ErrorSvg from './svg/error.svg';
 import FacebookSvg from './svg/facebook.svg';
 import GiftSvg from './svg/gift.svg';
+import LinkedinSvg from './svg/linkedin.svg';
 import HeartSvg from './svg/heart.svg';
 import InfoSvg from './svg/info.svg';
 import InstagramSvg from './svg/instagram.svg';
 import LocationSvg from './svg/location.svg';
+import MenuSvg from './svg/menu.svg';
 import MoneySvg from './svg/money.svg';
 import NewsSvg from './svg/news.svg';
 import PhoneSvg from './svg/phone.svg';
@@ -33,10 +35,12 @@ import SendSvg from './svg/send.svg';
 import SpinnerSvg from './svg/spinner.svg';
 import StarSvg from './svg/star.svg';
 import SuccessSvg from './svg/success.svg';
+import TwitterSvg from './svg/twitter.svg';
 import UserSvg from './svg/user.svg';
 import UsersSvg from './svg/users.svg';
 import WarningSvg from './svg/warning.svg';
 import XSvg from './svg/x.svg';
+import YoutubeSvg from './svg/youtube.svg';
 
 // Size variants
 type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
@@ -76,6 +80,7 @@ const ChevronDownIcon = createIcon(ChevronDownSvg, 'ChevronDownIcon');
 const ChevronRightIcon = createIcon(ChevronRightSvg, 'ChevronRightIcon');
 const CheckIcon = createIcon(CheckSvg, 'CheckIcon');
 const XIcon = createIcon(XSvg, 'XIcon');
+const MenuIcon = createIcon(MenuSvg, 'MenuIcon');
 
 // Communication
 const EmailIcon = createIcon(EmailSvg, 'EmailIcon');
@@ -116,6 +121,9 @@ const SpinnerIcon = createIcon(SpinnerSvg, 'SpinnerIcon');
 // Social Media
 const FacebookIcon = createIcon(FacebookSvg, 'FacebookIcon');
 const InstagramIcon = createIcon(InstagramSvg, 'InstagramIcon');
+const LinkedinIcon = createIcon(LinkedinSvg, 'LinkedinIcon');
+const TwitterIcon = createIcon(TwitterSvg, 'TwitterIcon');
+const YoutubeIcon = createIcon(YoutubeSvg, 'YoutubeIcon');
 
 // Special icons with additional props
 type BookmarkIconProperties = Omit<IconProperties, 'fill'> & {filled?: boolean};
@@ -147,6 +155,7 @@ export {
 	ChevronRightIcon,
 	CheckIcon,
 	XIcon,
+	MenuIcon,
 	// Communication
 	EmailIcon,
 	PhoneIcon,
@@ -179,6 +188,9 @@ export {
 	// Social Media
 	FacebookIcon,
 	InstagramIcon,
+	LinkedinIcon,
+	TwitterIcon,
+	YoutubeIcon,
 	// Special
 	BookmarkIcon,
 	// Paths

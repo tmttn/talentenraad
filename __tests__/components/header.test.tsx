@@ -6,6 +6,12 @@ jest.mock('next/navigation', () => ({
 	usePathname: () => '/',
 }));
 
+// Mock icons
+jest.mock('@components/ui', () => ({
+	MenuIcon: () => <span data-testid='menu-icon' />,
+	XIcon: () => <span data-testid='x-icon' />,
+}));
+
 describe('SiteHeader', () => {
 	const mockNavigationLinks = [
 		{url: '/', text: 'Home'},

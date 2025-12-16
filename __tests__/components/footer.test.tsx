@@ -1,6 +1,15 @@
 import {render, screen} from '@testing-library/react';
 import {SiteFooter, SiteFooterInfo} from '../../app/components/layout/site-footer';
 
+// Mock icons
+jest.mock('@components/ui', () => ({
+	FacebookIcon: () => <span data-testid='facebook-icon' />,
+	InstagramIcon: () => <span data-testid='instagram-icon' />,
+	LinkedinIcon: () => <span data-testid='linkedin-icon' />,
+	TwitterIcon: () => <span data-testid='twitter-icon' />,
+	YoutubeIcon: () => <span data-testid='youtube-icon' />,
+}));
+
 describe('SiteFooter', () => {
 	const mockNavigationGroups = [
 		{
