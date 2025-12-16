@@ -1,6 +1,14 @@
 import {render, screen, fireEvent} from '@testing-library/react';
 import {AnnouncementDisplay, type AnnouncementData} from '../../../app/features/marketing/announcement-display';
 
+// Mock the UI components
+jest.mock('../../../app/components/ui', () => ({
+	InfoIcon: () => <svg data-testid='icon-info' />,
+	WarningIcon: () => <svg data-testid='icon-warning' />,
+	StarIcon: () => <svg data-testid='icon-star' />,
+	XIcon: () => <svg data-testid='icon-x' />,
+}));
+
 describe('AnnouncementDisplay', () => {
 	const baseAnnouncement: AnnouncementData = {
 		tekst: 'Test announcement',

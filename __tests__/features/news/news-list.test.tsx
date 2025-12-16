@@ -1,9 +1,15 @@
 import {render, screen, waitFor} from '@testing-library/react';
 import {NewsListInfo} from '../../../app/features/news/news-list';
 
-// Mock the linkStyles import
+// Mock the UI components
 jest.mock('../../../app/components/ui', () => ({
 	linkStyles: '.animated-link { transition: all 0.2s; }',
+	CalendarIcon: () => <svg data-testid='icon-calendar' />,
+	PinnedIcon: () => <svg data-testid='icon-pinned' />,
+	NewsIcon: () => <svg data-testid='icon-news' />,
+	ArrowRightIcon: () => <svg data-testid='icon-arrow-right' />,
+	FacebookIcon: () => <svg data-testid='icon-facebook' />,
+	InstagramIcon: () => <svg data-testid='icon-instagram' />,
 }));
 
 const NewsList = NewsListInfo.component;

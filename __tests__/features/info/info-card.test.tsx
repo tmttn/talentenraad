@@ -1,11 +1,23 @@
 import {render, screen} from '@testing-library/react';
 import {InfoCardInfo} from '../../../app/features/info/info-card';
 
-// Mock the AnimatedLink component
+// Mock the UI components
 jest.mock('../../../app/components/ui', () => ({
 	AnimatedLink: ({href, children}: {href: string; children: React.ReactNode}) => (
 		<a href={href}>{children}</a>
 	),
+	HeartIcon: () => <svg data-testid='icon-heart' />,
+	UserIcon: () => <svg data-testid='icon-user' />,
+	CalendarIcon: () => <svg data-testid='icon-calendar' />,
+	StarIcon: () => <svg data-testid='icon-star' />,
+	GiftIcon: () => <svg data-testid='icon-gift' />,
+	SchoolIcon: () => <svg data-testid='icon-school' />,
+	MoneyIcon: () => <svg data-testid='icon-money' />,
+	ChatIcon: () => <svg data-testid='icon-chat' />,
+	UsersIcon: () => <svg data-testid='icon-users' />,
+	EmailIcon: () => <svg data-testid='icon-email' />,
+	LocationIcon: () => <svg data-testid='icon-location' />,
+	PhoneIcon: () => <svg data-testid='icon-phone' />,
 }));
 
 const InfoCard = InfoCardInfo.component;

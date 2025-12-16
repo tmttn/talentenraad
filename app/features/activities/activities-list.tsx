@@ -1,10 +1,13 @@
 'use client';
 
 import {useEffect, useState} from 'react';
-import {AnimatedLink} from '@components/ui';
-
-const locationIconPath = 'M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z';
-const locationDotPath = 'M15 11a3 3 0 11-6 0 3 3 0 016 0z';
+import {
+	AnimatedLink,
+	LocationIcon,
+	ClockIcon,
+	CalendarIcon,
+	BookmarkIcon,
+} from '@components/ui';
 
 const articleClassName = [
 	'flex items-start gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow',
@@ -175,33 +178,20 @@ function ActivitiesList({
 												<h3 className='font-bold text-gray-800 flex items-center gap-2 group-hover:text-primary transition-colors'>
 													{activity.data.titel}
 													{activity.data.vastgepind && (
-														<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4 text-primary' viewBox='0 0 24 24' fill='currentColor' aria-label='Vastgepind'>
-															<path d='M16 4h2a2 2 0 012 2v14l-7-3.5L6 20V6a2 2 0 012-2h2' />
-															<path d='M12 2L8 6h8l-4-4z' />
-														</svg>
+														<span className='text-primary' aria-label='Vastgepind'>
+															<BookmarkIcon size='sm' filled />
+														</span>
 													)}
 												</h3>
 												{activity.data.tijd && (
 													<p className='text-sm text-gray-500 flex items-center gap-1'>
-														<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-															<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
-														</svg>
+														<ClockIcon size='sm' />
 														{activity.data.tijd}
 													</p>
 												)}
 												{showLocation && activity.data.locatie && (
 													<p className='text-sm text-gray-500 flex items-center gap-1 mt-1'>
-														<svg
-															xmlns='http://www.w3.org/2000/svg'
-															className='h-4 w-4'
-															fill='none'
-															viewBox='0 0 24 24'
-															stroke='currentColor'
-															aria-hidden='true'
-														>
-															<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={locationIconPath} />
-															<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d={locationDotPath} />
-														</svg>
+														<LocationIcon size='sm' />
 														{activity.data.locatie}
 													</p>
 												)}
@@ -235,10 +225,8 @@ function ActivitiesList({
 					)
 					: (
 						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-gray-200'>
-							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-sm'>
-								<svg xmlns='http://www.w3.org/2000/svg' className='h-10 w-10 text-primary' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
-								</svg>
+							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-sm text-primary'>
+								<CalendarIcon size='xl' className='!h-10 !w-10' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-800 mb-2'>Nog geen activiteiten gepland</h3>
 							<p className='text-gray-500 max-w-sm mx-auto mb-6'>
