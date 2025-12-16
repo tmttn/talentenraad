@@ -27,15 +27,21 @@ import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
 import {SiteHeaderInfo} from '@components/layout/site-header';
 import {SiteFooterInfo} from '@components/layout/site-footer';
 
-// Component registry with sample props for preview
-const componentRegistry: Record<string, {
-	info: {
-		name: string;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		component: React.ComponentType<any>;
-	};
+// Builder.io component info structure
+type BuilderComponentInfo = {
+	name: string;
+	component: React.ElementType;
+	inputs?: unknown[];
+	canHaveChildren?: boolean;
+};
+
+type ComponentRegistryEntry = {
+	info: BuilderComponentInfo;
 	sampleProps: Record<string, unknown>;
-}> = {
+};
+
+// Component registry with sample props for preview
+const componentRegistry: Record<string, ComponentRegistryEntry> = {
 	hero: {
 		info: HeroInfo,
 		sampleProps: {
