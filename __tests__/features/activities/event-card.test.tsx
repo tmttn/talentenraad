@@ -1,6 +1,12 @@
 import {render, screen} from '@testing-library/react';
 import {EventCardInfo} from '../../../app/features/activities/event-card';
 
+// Mock the UI components
+jest.mock('../../../app/components/ui', () => ({
+	CalendarIcon: () => <svg data-testid='icon-calendar' />,
+	LocationIcon: () => <svg data-testid='icon-location' />,
+}));
+
 const EventCard = EventCardInfo.component;
 
 describe('EventCard', () => {

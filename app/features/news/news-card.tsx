@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import {linkStyles} from '@components/ui';
+import {linkStyles, ClockIcon, ArrowRightIcon} from '@components/ui';
 
 type NewsCardProperties = {
 	title: string;
@@ -41,9 +41,7 @@ function NewsCard({
 				)}
 				<div className='p-6'>
 					<time className='text-sm text-gray-500 flex items-center gap-2'>
-						<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
-						</svg>
+						<ClockIcon size='sm' />
 						{date}
 					</time>
 					<h3 className='text-xl font-bold text-gray-800 mt-2 group-hover:text-primary transition-colors'>
@@ -55,9 +53,7 @@ function NewsCard({
 					{link && (
 						<span className='animated-link inline-flex items-center gap-1 mt-4 text-primary font-semibold' aria-hidden='true'>
 							Lees meer
-							<svg xmlns='http://www.w3.org/2000/svg' className='animated-link-arrow h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-							</svg>
+							<ArrowRightIcon size='sm' className='animated-link-arrow' />
 						</span>
 					)}
 				</div>
