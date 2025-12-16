@@ -19,7 +19,7 @@ export const {handlers, signIn, signOut, auth} = NextAuth({
 			// eslint-disable-next-line n/prefer-global/process
 			clientSecret: process.env.AUTH0_CLIENT_SECRET!,
 			// eslint-disable-next-line n/prefer-global/process
-			issuer: process.env.AUTH0_ISSUER,
+			issuer: process.env.AUTH0_ISSUER_BASE_URL,
 		}),
 	],
 	callbacks: {
