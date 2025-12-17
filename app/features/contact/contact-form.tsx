@@ -10,6 +10,7 @@ import {useSearchParams} from 'next/navigation';
 import {
 	SuccessIcon, ErrorIcon, SendIcon, SpinnerIcon,
 } from '@components/ui/icons';
+import {useRecaptcha} from './use-recaptcha';
 
 const submitButtonClassName = [
 	'w-full py-4 px-6 bg-primary-hover hover:bg-brand-primary-700 text-white font-semibold rounded-xl',
@@ -301,6 +302,7 @@ function ContactFormInner({
 		subject: defaultSubject,
 		message: '',
 	});
+	const {executeRecaptcha} = useRecaptcha();
 
 	const validateForm = (): boolean => {
 		const newErrors: FormErrors = {
@@ -337,10 +339,13 @@ function ContactFormInner({
 		setStatusMessage('Bericht wordt verzonden...');
 
 		try {
+			// Get reCAPTCHA token
+			const recaptchaToken = await executeRecaptcha('contact_form');
+
 			const response = await fetch('/api/contact', {
 				method: 'POST',
 				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify(formData),
+				body: JSON.stringify({...formData, recaptchaToken}),
 			});
 
 			const data = await response.json() as ApiResponse;

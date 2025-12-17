@@ -1,6 +1,7 @@
 import {type NextRequest, NextResponse} from 'next/server';
 import {db, submissions} from '@/lib/db';
 import {sendContactNotification} from '@/lib/email/resend';
+import {verifyRecaptcha} from '@/lib/recaptcha';
 
 type ContactFormData = {
 	name: string;
@@ -8,6 +9,7 @@ type ContactFormData = {
 	phone?: string;
 	subject?: string;
 	message: string;
+	recaptchaToken?: string | null;
 };
 
 // Validation helpers
@@ -60,6 +62,22 @@ export async function POST(request: NextRequest) {
 				},
 				{status: 400},
 			);
+		}
+
+		// Verify reCAPTCHA token
+		if (body.recaptchaToken) {
+			const recaptchaResult = await verifyRecaptcha(body.recaptchaToken);
+
+			if (!recaptchaResult.success) {
+				console.warn('reCAPTCHA verification failed:', recaptchaResult.error);
+				return NextResponse.json(
+					{
+						success: false,
+						message: 'Beveiligingsverificatie mislukt. Probeer het opnieuw.',
+					},
+					{status: 400},
+				);
+			}
 		}
 
 		// Sanitize inputs

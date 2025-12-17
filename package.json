@@ -77,7 +77,8 @@
       "app/nieuws/**",
       "app/lib/**",
       "app/(admin)/**",
-      "app/features/admin/**"
+      "app/features/admin/**",
+      "app/features/contact/**"
     ]
   },
   "overrides": {

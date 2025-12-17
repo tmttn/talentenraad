@@ -15,6 +15,9 @@ type AdminSidebarProperties = {
 const navItems = [
 	{href: '/admin', label: 'Dashboard'},
 	{href: '/admin/submissions', label: 'Berichten'},
+	{href: '/admin/activiteiten', label: 'Activiteiten'},
+	{href: '/admin/nieuws', label: 'Nieuws'},
+	{href: '/admin/aankondigingen', label: 'Aankondigingen'},
 ];
 
 export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
