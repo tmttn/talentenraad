@@ -5,7 +5,7 @@ import {inArray} from 'drizzle-orm';
 
 type BulkActionRequest = {
 	ids: string[];
-	action: 'markRead' | 'markUnread' | 'archive' | 'delete';
+	action: 'markRead' | 'markUnread' | 'archive' | 'unarchive' | 'delete';
 };
 
 export async function PATCH(request: NextRequest) {
@@ -46,6 +46,13 @@ export async function PATCH(request: NextRequest) {
 			case 'archive': {
 				await db.update(submissions)
 					.set({archivedAt: new Date()})
+					.where(inArray(submissions.id, body.ids));
+				break;
+			}
+
+			case 'unarchive': {
+				await db.update(submissions)
+					.set({archivedAt: null})
 					.where(inArray(submissions.id, body.ids));
 				break;
 			}

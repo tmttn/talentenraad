@@ -63,6 +63,7 @@ export async function PUT(
 		const body = await request.json() as {
 			name?: string;
 			isAdmin?: boolean;
+			resendInvitation?: boolean;
 		};
 
 		// Check if user exists
@@ -72,6 +73,20 @@ export async function PUT(
 
 		if (!existingUser) {
 			return NextResponse.json({error: 'User not found'}, {status: 404});
+		}
+
+		// Handle resend invitation
+		if (body.resendInvitation) {
+			const [updatedUser] = await db.update(users)
+				.set({
+					invitedAt: new Date(),
+					updatedAt: new Date(),
+				})
+				.where(eq(users.id, id))
+				.returning();
+
+			// TODO: Send actual invitation email here
+			return NextResponse.json({success: true, user: updatedUser});
 		}
 
 		// Prevent removing admin from yourself

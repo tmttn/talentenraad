@@ -76,6 +76,7 @@ export async function POST(request: NextRequest) {
 			email,
 			name: body.name?.trim() ?? undefined,
 			isAdmin: body.isAdmin ?? false,
+			invitedAt: new Date(),
 		}).returning();
 
 		return NextResponse.json({success: true, user: newUser});

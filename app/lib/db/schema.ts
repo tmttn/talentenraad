@@ -13,6 +13,8 @@ export const users = pgTable('users', {
 	name: text('name'),
 	auth0Id: text('auth0_id').unique(),
 	isAdmin: boolean('is_admin').default(false).notNull(),
+	invitedAt: timestamp('invited_at'),
+	acceptedAt: timestamp('accepted_at'),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

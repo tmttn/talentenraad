@@ -8,6 +8,7 @@ import type {Submission} from '@/lib/db/index.js';
 
 type SubmissionsTableProperties = {
 	submissions: Submission[];
+	isArchiveView?: boolean;
 };
 
 const subjectLabels: Record<string, string> = {
@@ -18,7 +19,7 @@ const subjectLabels: Record<string, string> = {
 	anders: 'Anders',
 };
 
-export function SubmissionsTable({submissions}: Readonly<SubmissionsTableProperties>) {
+export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<SubmissionsTableProperties>) {
 	const router = useRouter();
 	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 	const [isProcessing, setIsProcessing] = useState(false);
@@ -50,7 +51,7 @@ export function SubmissionsTable({submissions}: Readonly<SubmissionsTablePropert
 		setSelectedIds(newIds);
 	};
 
-	const handleBulkAction = async (action: 'markRead' | 'markUnread' | 'archive' | 'delete') => {
+	const handleBulkAction = async (action: 'markRead' | 'markUnread' | 'archive' | 'unarchive' | 'delete') => {
 		if (selectedIds.size === 0) {
 			return;
 		}
@@ -113,11 +114,11 @@ export function SubmissionsTable({submissions}: Readonly<SubmissionsTablePropert
 							type='button'
 							disabled={isProcessing}
 							onClick={() => {
-								void handleBulkAction('archive');
+								void handleBulkAction(isArchiveView ? 'unarchive' : 'archive');
 							}}
 							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50'
 						>
-							Archiveren
+							{isArchiveView ? 'Terugzetten' : 'Archiveren'}
 						</button>
 						<button
 							type='button'

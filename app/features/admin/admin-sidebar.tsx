@@ -4,6 +4,7 @@ import {useState, useEffect, useCallback} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {usePathname} from 'next/navigation';
+import {ChevronLeftIcon, ChevronRightIcon} from '@/components/ui/icons';
 
 type AdminSidebarProperties = {
 	user: {
@@ -12,6 +13,8 @@ type AdminSidebarProperties = {
 		image?: string | null;
 	};
 };
+
+const SIDEBAR_COLLAPSED_KEY = 'admin-sidebar-collapsed';
 
 const navItems = [
 	{href: '/admin', label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6'},
@@ -25,6 +28,23 @@ const navItems = [
 export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 	const pathname = usePathname();
 	const [isOpen, setIsOpen] = useState(false);
+	const [isCollapsed, setIsCollapsed] = useState(false);
+
+	// Load collapsed state from localStorage on mount
+	useEffect(() => {
+		const stored = localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+		if (stored !== null) {
+			setIsCollapsed(stored === 'true');
+		}
+	}, []);
+
+	const toggleCollapsed = useCallback(() => {
+		setIsCollapsed(previous => {
+			const newValue = !previous;
+			localStorage.setItem(SIDEBAR_COLLAPSED_KEY, String(newValue));
+			return newValue;
+		});
+	}, []);
 
 	const isActive = (href: string) => {
 		if (href === '/admin') {
@@ -68,8 +88,8 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 
 	const sidebarContent = (
 		<>
-			<div className='p-6 border-b border-gray-200 flex items-center justify-between'>
-				<div>
+			<div className={`p-4 ${isCollapsed ? 'lg:px-2' : 'lg:p-6'} border-b border-gray-200 flex items-center justify-between`}>
+				<div className={isCollapsed ? 'lg:hidden' : ''}>
 					<Link href='/admin' onClick={() => setIsOpen(false)}>
 						<Image
 							src='/Logo.png'
@@ -81,6 +101,12 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 					</Link>
 					<p className='text-xs text-gray-500 mt-2'>Admin Dashboard</p>
 				</div>
+				{/* Collapsed logo - just show T */}
+				{isCollapsed && (
+					<Link href='/admin' className='hidden lg:flex w-10 h-10 rounded-lg bg-primary/10 items-center justify-center mx-auto'>
+						<span className='text-primary font-bold text-lg'>T</span>
+					</Link>
+				)}
 				{/* Close button for mobile */}
 				<button
 					type='button'
@@ -93,14 +119,15 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 					</svg>
 				</button>
 			</div>
-			<nav className='flex-1 p-4 overflow-y-auto'>
+			<nav className={`flex-1 ${isCollapsed ? 'lg:p-2' : 'p-4'} overflow-y-auto`}>
 				<ul className='space-y-1'>
 					{navItems.map(item => (
 						<li key={item.href}>
 							<Link
 								href={item.href}
 								onClick={() => setIsOpen(false)}
-								className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+								title={isCollapsed ? item.label : undefined}
+								className={`flex items-center gap-3 ${isCollapsed ? 'lg:justify-center lg:px-2' : 'px-4'} py-3 rounded-lg transition-colors ${
 									isActive(item.href)
 										? 'bg-primary/10 text-primary font-medium'
 										: 'text-gray-600 hover:bg-gray-100'
@@ -109,14 +136,25 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 								<svg className='w-5 h-5 flex-shrink-0' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 									<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d={item.icon} />
 								</svg>
-								<span>{item.label}</span>
+								<span className={isCollapsed ? 'lg:hidden' : ''}>{item.label}</span>
 							</Link>
 						</li>
 					))}
 				</ul>
 			</nav>
-			<div className='p-4 border-t border-gray-200'>
-				<div className='flex items-center gap-3 mb-4'>
+			{/* Collapse toggle button - only on desktop */}
+			<div className='hidden lg:flex p-2 border-t border-gray-200 justify-center'>
+				<button
+					type='button'
+					onClick={toggleCollapsed}
+					title={isCollapsed ? 'Uitklappen' : 'Inklappen'}
+					className='p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors'
+				>
+					{isCollapsed ? <ChevronRightIcon size='md' /> : <ChevronLeftIcon size='md' />}
+				</button>
+			</div>
+			<div className={`${isCollapsed ? 'lg:p-2' : 'p-4'} border-t border-gray-200`}>
+				<div className={`flex items-center gap-3 ${isCollapsed ? 'lg:justify-center' : ''} mb-4`}>
 					{user.image ? (
 						<Image
 							src={user.image}
@@ -124,27 +162,32 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 							width={40}
 							height={40}
 							className='rounded-full flex-shrink-0'
+							title={isCollapsed ? (user.name ?? user.email ?? '') : undefined}
 						/>
 					) : (
-						<div className='w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'>
+						<div
+							className='w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'
+							title={isCollapsed ? (user.name ?? user.email ?? '') : undefined}
+						>
 							<span className='text-primary font-medium'>
 								{user.name?.charAt(0) ?? user.email?.charAt(0) ?? '?'}
 							</span>
 						</div>
 					)}
-					<div className='text-sm min-w-0 flex-1'>
+					<div className={`text-sm min-w-0 flex-1 ${isCollapsed ? 'lg:hidden' : ''}`}>
 						<p className='font-medium text-gray-800 truncate'>{user.name ?? 'Gebruiker'}</p>
 						<p className='text-gray-500 text-xs truncate'>{user.email}</p>
 					</div>
 				</div>
 				<a
 					href='/auth/logout'
-					className='flex items-center gap-3 w-full px-4 py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors'
+					title={isCollapsed ? 'Uitloggen' : undefined}
+					className={`flex items-center gap-3 w-full ${isCollapsed ? 'lg:justify-center lg:px-2' : 'px-4'} py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors`}
 				>
 					<svg className='w-5 h-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
 						<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1' />
 					</svg>
-					<span>Uitloggen</span>
+					<span className={isCollapsed ? 'lg:hidden' : ''}>Uitloggen</span>
 				</a>
 			</div>
 		</>
@@ -189,9 +232,9 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 			<aside
 				className={`
 					fixed lg:static inset-y-0 left-0 z-50
-					w-72 lg:w-64 bg-white border-r border-gray-200
+					w-72 ${isCollapsed ? 'lg:w-16' : 'lg:w-64'} bg-white border-r border-gray-200
 					flex flex-col min-h-screen
-					transform transition-transform duration-300 ease-in-out
+					transform transition-all duration-300 ease-in-out
 					${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
 				`}
 			>

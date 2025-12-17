@@ -13,6 +13,7 @@ import CalendarSvg from './svg/calendar.svg';
 import ChatSvg from './svg/chat.svg';
 import CheckSvg from './svg/check.svg';
 import ChevronDownSvg from './svg/chevron-down.svg';
+import ChevronLeftSvg from './svg/chevron-left.svg';
 import ChevronRightSvg from './svg/chevron-right.svg';
 import ClockSvg from './svg/clock.svg';
 import EmailSvg from './svg/email.svg';
@@ -82,6 +83,7 @@ function createIcon(SvgComponent: ComponentType<SVGProps<SVGSVGElement>>, displa
 const ArrowLeftIcon = createIcon(ArrowLeftSvg, 'ArrowLeftIcon');
 const ArrowRightIcon = createIcon(ArrowRightSvg, 'ArrowRightIcon');
 const ChevronDownIcon = createIcon(ChevronDownSvg, 'ChevronDownIcon');
+const ChevronLeftIcon = createIcon(ChevronLeftSvg, 'ChevronLeftIcon');
 const ChevronRightIcon = createIcon(ChevronRightSvg, 'ChevronRightIcon');
 const CheckIcon = createIcon(CheckSvg, 'CheckIcon');
 const XIcon = createIcon(XSvg, 'XIcon');
@@ -164,6 +166,7 @@ export {
 	ArrowLeftIcon,
 	ArrowRightIcon,
 	ChevronDownIcon,
+	ChevronLeftIcon,
 	ChevronRightIcon,
 	CheckIcon,
 	XIcon,

@@ -2,7 +2,7 @@
 
 import {useState, type FormEvent, type ChangeEvent} from 'react';
 import {useRouter} from 'next/navigation';
-import {SpinnerIcon, ErrorIcon, ShieldIcon, PencilIcon, TrashIcon} from '@/components/ui/icons';
+import {SpinnerIcon, ErrorIcon, ShieldIcon, PencilIcon, TrashIcon, SendIcon} from '@/components/ui/icons';
 import type {User} from '@/lib/db/schema';
 import {DeleteDialog} from '@/features/admin/delete-dialog';
 
@@ -148,10 +148,31 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 		router.refresh();
 	};
 
+	const handleResendInvitation = async (user: User) => {
+		const response = await fetch(`/api/admin/users/${user.id}`, {
+			method: 'PUT',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify({resendInvitation: true}),
+		});
+
+		const data = await response.json() as {error?: string; user?: User};
+
+		if (!response.ok) {
+			setError(data.error ?? 'Uitnodiging opnieuw versturen mislukt');
+			return;
+		}
+
+		if (data.user) {
+			setUsers(previous => previous.map(u => u.id === user.id ? data.user! : u));
+		}
+
+		router.refresh();
+	};
+
 	const renderForm = () => (
 		<form onSubmit={handleSubmit} className='bg-white rounded-xl shadow-md p-4 sm:p-6 mb-6'>
 			<h2 className='text-lg sm:text-xl font-bold text-gray-800 mb-4'>
-				{editingId ? 'Gebruiker bewerken' : 'Nieuwe gebruiker'}
+				{editingId ? 'Gebruiker bewerken' : 'Gebruiker uitnodigen'}
 			</h2>
 
 			{error && (
@@ -236,8 +257,13 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 							<SpinnerIcon size='sm' className='animate-spin' />
 							Bezig...
 						</>
-					) : (
+					) : editingId ? (
 						'Opslaan'
+					) : (
+						<>
+							<SendIcon size='sm' />
+							Uitnodigen
+						</>
 					)}
 				</button>
 			</div>
@@ -256,9 +282,10 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 				<button
 					type='button'
 					onClick={handleCreate}
-					className='mb-6 px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors'
+					className='mb-6 px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors flex items-center gap-2'
 				>
-					Nieuwe gebruiker
+					<SendIcon size='sm' />
+					Gebruiker uitnodigen
 				</button>
 			)}
 
@@ -312,19 +339,43 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 											</button>
 										</td>
 										<td className='px-4 sm:px-6 py-4'>
-											<span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
-												user.isAdmin
-													? 'bg-green-100 text-green-800'
-													: 'bg-gray-100 text-gray-600'
-											}`}>
-												{user.isAdmin ? 'Administrator' : 'Gebruiker'}
-											</span>
+											<div className='flex flex-col gap-1'>
+												<span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit ${
+													user.isAdmin
+														? 'bg-green-100 text-green-800'
+														: 'bg-gray-100 text-gray-600'
+												}`}>
+													{user.isAdmin ? 'Administrator' : 'Gebruiker'}
+												</span>
+												{user.invitedAt && !user.acceptedAt && (
+													<span className='px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit bg-amber-100 text-amber-800'>
+														Uitnodiging verstuurd
+													</span>
+												)}
+												{user.acceptedAt && (
+													<span className='px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit bg-blue-100 text-blue-800'>
+														Actief
+													</span>
+												)}
+											</div>
 										</td>
 										<td className='px-4 sm:px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
 											{formatDate(user.createdAt)}
 										</td>
 										<td className='px-4 sm:px-6 py-4 text-right'>
 											<div className='flex justify-end gap-1'>
+												{user.invitedAt && !user.acceptedAt && (
+													<button
+														type='button'
+														onClick={() => {
+															void handleResendInvitation(user);
+														}}
+														title='Uitnodiging opnieuw versturen'
+														className='p-2 rounded-lg text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-300'
+													>
+														<SendIcon size='md' />
+													</button>
+												)}
 												<button
 													type='button'
 													onClick={() => {
