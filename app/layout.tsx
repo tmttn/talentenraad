@@ -1,6 +1,7 @@
 import {Analytics} from '@vercel/analytics/react';
 import {SpeedInsights} from '@vercel/speed-insights/next';
 import type {Metadata} from 'next';
+import {SeasonalDecorationsServer} from '@components/seasonal-decorations-server';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -32,6 +33,7 @@ export default function RootLayout({
 				)}
 			</head>
 			<body className='min-h-screen flex flex-col antialiased bg-white'>
+				<SeasonalDecorationsServer />
 				{children}
 				<SpeedInsights />
 				<Analytics />

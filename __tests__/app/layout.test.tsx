@@ -10,6 +10,11 @@ jest.mock('@vercel/speed-insights/next', () => ({
 	SpeedInsights: () => null,
 }));
 
+// Mock seasonal decorations server component
+jest.mock('@components/seasonal-decorations-server', () => ({
+	SeasonalDecorationsServer: () => null,
+}));
+
 describe('RootLayout', () => {
 	it('renders children content', () => {
 		render(
