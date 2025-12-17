@@ -1,6 +1,5 @@
 'use client';
 
-import {useRouter} from 'next/navigation';
 import {ContentForm, type FieldDefinition} from '@/features/admin/content-form';
 
 const activityFields: FieldDefinition[] = [
@@ -70,8 +69,6 @@ const activityFields: FieldDefinition[] = [
 ];
 
 export default function NewActivityPage() {
-	const router = useRouter();
-
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const response = await fetch('/api/admin/content/activiteit', {
 			method: 'POST',
@@ -87,9 +84,6 @@ export default function NewActivityPage() {
 			const error = await response.json() as {error: string};
 			throw new Error(error.error ?? 'Aanmaken mislukt');
 		}
-
-		router.push('/admin/activiteiten');
-		router.refresh();
 	};
 
 	return (
@@ -100,6 +94,7 @@ export default function NewActivityPage() {
 					fields={activityFields}
 					onSubmit={handleSubmit}
 					submitLabel='Activiteit aanmaken'
+					successMessage='Activiteit aangemaakt'
 					cancelPath='/admin/activiteiten'
 				/>
 			</div>

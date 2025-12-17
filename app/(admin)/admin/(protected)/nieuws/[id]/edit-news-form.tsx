@@ -1,6 +1,5 @@
 'use client';
 
-import {useRouter} from 'next/navigation';
 import {ContentForm, type FieldDefinition} from '@/features/admin/content-form';
 import type {NewsItem} from '@/lib/builder-types';
 
@@ -60,8 +59,6 @@ type EditNewsFormProps = {
 };
 
 export function EditNewsForm({newsItem}: EditNewsFormProps) {
-	const router = useRouter();
-
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const response = await fetch(`/api/admin/content/nieuws/${newsItem.id}`, {
 			method: 'PUT',
@@ -77,9 +74,6 @@ export function EditNewsForm({newsItem}: EditNewsFormProps) {
 			const error = await response.json() as {error: string};
 			throw new Error(error.error ?? 'Opslaan mislukt');
 		}
-
-		router.push('/admin/nieuws');
-		router.refresh();
 	};
 
 	return (
@@ -88,6 +82,7 @@ export function EditNewsForm({newsItem}: EditNewsFormProps) {
 			initialData={newsItem.data}
 			onSubmit={handleSubmit}
 			submitLabel='Wijzigingen opslaan'
+			successMessage='Nieuwsbericht opgeslagen'
 			cancelPath='/admin/nieuws'
 		/>
 	);

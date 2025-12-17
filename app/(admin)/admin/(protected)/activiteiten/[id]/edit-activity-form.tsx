@@ -1,6 +1,5 @@
 'use client';
 
-import {useRouter} from 'next/navigation';
 import {ContentForm, type FieldDefinition} from '@/features/admin/content-form';
 import type {Activity} from '@/lib/builder-types';
 
@@ -75,8 +74,6 @@ type EditActivityFormProps = {
 };
 
 export function EditActivityForm({activity}: EditActivityFormProps) {
-	const router = useRouter();
-
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const response = await fetch(`/api/admin/content/activiteit/${activity.id}`, {
 			method: 'PUT',
@@ -92,9 +89,6 @@ export function EditActivityForm({activity}: EditActivityFormProps) {
 			const error = await response.json() as {error: string};
 			throw new Error(error.error ?? 'Opslaan mislukt');
 		}
-
-		router.push('/admin/activiteiten');
-		router.refresh();
 	};
 
 	return (
@@ -103,6 +97,7 @@ export function EditActivityForm({activity}: EditActivityFormProps) {
 			initialData={activity.data}
 			onSubmit={handleSubmit}
 			submitLabel='Wijzigingen opslaan'
+			successMessage='Activiteit opgeslagen'
 			cancelPath='/admin/activiteiten'
 		/>
 	);

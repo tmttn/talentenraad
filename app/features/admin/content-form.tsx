@@ -2,6 +2,7 @@
 
 import {useState, type FormEvent, type ChangeEvent} from 'react';
 import {useRouter} from 'next/navigation';
+import {toast} from 'sonner';
 import {RichTextEditor} from './rich-text-editor';
 
 export type FieldDefinition = {
@@ -19,6 +20,7 @@ type ContentFormProps = {
 	initialData?: Record<string, unknown>;
 	onSubmit: (data: Record<string, unknown>) => Promise<void>;
 	submitLabel?: string;
+	successMessage?: string;
 	cancelPath: string;
 };
 
@@ -44,6 +46,7 @@ export function ContentForm({
 	initialData = {},
 	onSubmit,
 	submitLabel = 'Opslaan',
+	successMessage = 'Opgeslagen',
 	cancelPath,
 }: ContentFormProps) {
 	const router = useRouter();
@@ -70,10 +73,13 @@ export function ContentForm({
 			}
 
 			await onSubmit(formData);
+			toast.success(successMessage);
 			router.push(cancelPath);
 			router.refresh();
 		} catch (submitError) {
-			setError(submitError instanceof Error ? submitError.message : 'Er is een fout opgetreden');
+			const errorMessage = submitError instanceof Error ? submitError.message : 'Er is een fout opgetreden';
+			setError(errorMessage);
+			toast.error(errorMessage);
 		} finally {
 			setIsSubmitting(false);
 		}

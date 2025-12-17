@@ -1,6 +1,5 @@
 'use client';
 
-import {useRouter} from 'next/navigation';
 import {ContentForm, type FieldDefinition} from '@/features/admin/content-form';
 
 const newsFields: FieldDefinition[] = [
@@ -55,8 +54,6 @@ const newsFields: FieldDefinition[] = [
 ];
 
 export default function NewNewsPage() {
-	const router = useRouter();
-
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const response = await fetch('/api/admin/content/nieuws', {
 			method: 'POST',
@@ -72,9 +69,6 @@ export default function NewNewsPage() {
 			const error = await response.json() as {error: string};
 			throw new Error(error.error ?? 'Aanmaken mislukt');
 		}
-
-		router.push('/admin/nieuws');
-		router.refresh();
 	};
 
 	return (
@@ -85,6 +79,7 @@ export default function NewNewsPage() {
 					fields={newsFields}
 					onSubmit={handleSubmit}
 					submitLabel='Artikel aanmaken'
+					successMessage='Nieuwsbericht aangemaakt'
 					cancelPath='/admin/nieuws'
 				/>
 			</div>
