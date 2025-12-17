@@ -1,6 +1,7 @@
 import {eq} from 'drizzle-orm';
-import {db, siteSettings, type SeasonalDecorationsConfig} from '@/lib/db';
-import {SeasonalDecorations, defaultSeasonalConfig} from './seasonal-decorations';
+import {db, siteSettings} from '@/lib/db';
+import {SeasonalDecorationsProvider, type SeasonalDecorationsConfig} from './seasonal-decorations-context';
+import {Snowfall, SeasonalStyles, defaultSeasonalConfig} from './seasonal-decorations';
 
 const SEASONAL_DECORATIONS_KEY = 'seasonal_decorations';
 
@@ -20,8 +21,24 @@ export async function getSeasonalDecorationsConfig(): Promise<SeasonalDecoration
 	return defaultSeasonalConfig;
 }
 
-export async function SeasonalDecorationsServer() {
+/**
+ * Server component that provides seasonal decorations context and renders global decorations.
+ * - Wraps children with SeasonalDecorationsProvider for context
+ * - Renders global decorations (Snowfall, styles)
+ * - Individual decorations (ChristmasLights, Icicles) are rendered by their respective components
+ */
+export async function SeasonalDecorationsServer({
+	children,
+}: Readonly<{
+	children: React.ReactNode;
+}>) {
 	const config = await getSeasonalDecorationsConfig();
 
-	return <SeasonalDecorations config={config} />;
+	return (
+		<SeasonalDecorationsProvider config={config}>
+			<SeasonalStyles />
+			<Snowfall />
+			{children}
+		</SeasonalDecorationsProvider>
+	);
 }

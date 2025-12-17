@@ -6,6 +6,11 @@ jest.mock('@components/layout/site-footer-server', () => ({
 	SiteFooterServer: () => <footer data-testid='site-footer'>Footer</footer>,
 }));
 
+// Mock the SeasonalDecorationsServer component (async server component)
+jest.mock('@components/seasonal-decorations-server', () => ({
+	SeasonalDecorationsServer: ({children}: {children: React.ReactNode}) => <>{children}</>,
+}));
+
 describe('MainSiteLayout', () => {
 	it('renders children', () => {
 		render(

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import {useEffect, useRef, useState} from 'react';
 import {MenuIcon, XIcon} from '@components/ui';
+import {ChristmasLights} from '@components/seasonal-decorations';
 
 type NavigationLink = {
 	text: string;
@@ -151,6 +152,8 @@ export function SiteHeader({
 						))}
 					</div>
 				</nav>
+				{/* Seasonal Christmas lights decoration */}
+				<ChristmasLights />
 			</header>
 		</>
 	);

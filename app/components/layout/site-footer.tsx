@@ -11,6 +11,7 @@ import {
 	YoutubeIcon,
 	type IconProperties,
 } from '@components/ui';
+import {Icicles} from '@components/seasonal-decorations';
 
 type NavigationLink = {
 	text: string;
@@ -94,6 +95,8 @@ export function SiteFooter({
 
 	return (
 		<footer role="contentinfo" className="bg-gray-100">
+			{/* Seasonal icicles decoration */}
+			<Icicles />
 			<div className="max-w-[1280px] mx-auto px-6 py-12">
 				<div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 					{/* Logo and info */}
