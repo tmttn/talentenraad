@@ -8,5 +8,8 @@
     "replacements:all",
     "helpers:followTypescriptNext",
     "security:openssf-scorecard"
-  ]
+  ],
+  "automergeType": "pr",
+  "automergeStrategy": "squash",
+  "platformAutomerge": true
 }
