@@ -68,23 +68,31 @@ export async function fetchBuilderContent(
 	apiKey: string,
 ): Promise<FetchBuilderContentResult> {
 	try {
-		const content = await fetchOneEntry({
-			model: 'page',
-			apiKey,
-			options: getBuilderSearchParams(searchParameters),
-			userAttributes: {
-				urlPath,
-			},
-			query: {
-				'data.url': urlPath,
-			},
-			cacheSeconds: 0,
-			staleCacheSeconds: 0,
-			fetchOptions: {
-				cache: 'no-store',
-			},
-		});
-		return {content};
+		// Use direct API call with URL query for accurate page matching
+		const url = new URL('https://cdn.builder.io/api/v3/content/page');
+		url.searchParams.set('apiKey', apiKey);
+		url.searchParams.set('query.data.url', urlPath);
+		url.searchParams.set('limit', '1');
+		url.searchParams.set('cachebust', 'true');
+
+		// Add preview/edit params if present
+		const builderParams = getBuilderSearchParams(searchParameters);
+		for (const [key, value] of Object.entries(builderParams)) {
+			if (value) {
+				url.searchParams.set(key, String(value));
+			}
+		}
+
+		const response = await fetch(url.toString(), {cache: 'no-store'});
+
+		if (!response.ok) {
+			return {content: undefined, error: `HTTP ${response.status}`};
+		}
+
+		const data = await response.json() as {results?: Array<{id: string; data: Record<string, unknown>}>};
+		const content = data.results?.[0] ?? null;
+
+		return {content: content as Awaited<ReturnType<typeof fetchOneEntry>>};
 	} catch (error) {
 		return {
 			content: undefined,

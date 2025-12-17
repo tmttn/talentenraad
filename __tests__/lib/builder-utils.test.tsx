@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {fetchOneEntry, isPreviewing, isEditing} from '@builder.io/sdk-react-nextjs';
+import {isPreviewing, isEditing} from '@builder.io/sdk-react-nextjs';
 import {
 	ConfigurationError,
 	FetchError,
@@ -9,9 +9,12 @@ import {
 } from '../../app/lib/builder-utils';
 
 // Get mocked functions
-const mockFetchOneEntry = fetchOneEntry as jest.MockedFunction<typeof fetchOneEntry>;
 const mockIsPreviewing = isPreviewing as jest.MockedFunction<typeof isPreviewing>;
 const mockIsEditing = isEditing as jest.MockedFunction<typeof isEditing>;
+
+// Mock global fetch
+const mockFetch = jest.fn();
+global.fetch = mockFetch;
 
 describe('builder-utils', () => {
 	beforeEach(() => {
@@ -55,46 +58,48 @@ describe('builder-utils', () => {
 
 	describe('fetchBuilderContent', () => {
 		it('returns content when fetch succeeds', async () => {
-			const mockContent = {id: '123', name: 'Test Page'};
-			mockFetchOneEntry.mockResolvedValue(mockContent as never);
+			const mockContent = {id: '123', name: 'Test Page', data: {url: '/'}};
+			mockFetch.mockResolvedValue({
+				ok: true,
+				json: async () => ({results: [mockContent]}),
+			});
 
 			const result = await fetchBuilderContent('/', {}, 'test-api-key');
 
 			expect(result).toEqual({content: mockContent});
-			expect(mockFetchOneEntry).toHaveBeenCalledWith({
-				options: {},
-				apiKey: 'test-api-key',
-				model: 'page',
-				userAttributes: {urlPath: '/'},
-				query: {'data.url': '/'},
-				cacheSeconds: 0,
-				staleCacheSeconds: 0,
-				fetchOptions: {cache: 'no-store'},
+			expect(mockFetch).toHaveBeenCalledWith(
+				expect.stringContaining('cdn.builder.io'),
+				{cache: 'no-store'},
+			);
+		});
+
+		it('returns null content when no results', async () => {
+			mockFetch.mockResolvedValue({
+				ok: true,
+				json: async () => ({results: []}),
+			});
+
+			const result = await fetchBuilderContent('/nonexistent', {}, 'api-key');
+
+			expect(result).toEqual({content: null});
+		});
+
+		it('returns error when fetch fails with non-ok response', async () => {
+			mockFetch.mockResolvedValue({
+				ok: false,
+				status: 500,
+			});
+
+			const result = await fetchBuilderContent('/', {}, 'test-api-key');
+
+			expect(result).toEqual({
+				content: undefined,
+				error: 'HTTP 500',
 			});
 		});
 
-		it('returns content with search parameters', async () => {
-			const mockContent = {id: '456', name: 'About Page'};
-			mockFetchOneEntry.mockResolvedValue(mockContent as never);
-			const searchParameters = {preview: 'true', locale: 'en'};
-
-			const result = await fetchBuilderContent('/about', searchParameters, 'api-key');
-
-			expect(result).toEqual({content: mockContent});
-			expect(mockFetchOneEntry).toHaveBeenCalledWith({
-				options: searchParameters,
-				apiKey: 'api-key',
-				model: 'page',
-				userAttributes: {urlPath: '/about'},
-				query: {'data.url': '/about'},
-				cacheSeconds: 0,
-				staleCacheSeconds: 0,
-				fetchOptions: {cache: 'no-store'},
-			});
-		});
-
-		it('returns error when fetch fails with Error instance', async () => {
-			mockFetchOneEntry.mockRejectedValue(new Error('Network error'));
+		it('returns error when fetch throws', async () => {
+			mockFetch.mockRejectedValue(new Error('Network error'));
 
 			const result = await fetchBuilderContent('/', {}, 'test-api-key');
 
@@ -104,8 +109,8 @@ describe('builder-utils', () => {
 			});
 		});
 
-		it('returns unknown error when fetch fails with non-Error', async () => {
-			mockFetchOneEntry.mockRejectedValue('Something went wrong');
+		it('returns unknown error when fetch throws non-Error', async () => {
+			mockFetch.mockRejectedValue('Something went wrong');
 
 			const result = await fetchBuilderContent('/', {}, 'test-api-key');
 
@@ -113,6 +118,20 @@ describe('builder-utils', () => {
 				content: undefined,
 				error: 'Unknown error',
 			});
+		});
+
+		it('includes URL path in query parameter', async () => {
+			mockFetch.mockResolvedValue({
+				ok: true,
+				json: async () => ({results: []}),
+			});
+
+			await fetchBuilderContent('/about', {}, 'api-key');
+
+			expect(mockFetch).toHaveBeenCalledWith(
+				expect.stringContaining('query.data.url=%2Fabout'),
+				expect.anything(),
+			);
 		});
 	});
 
