@@ -1,7 +1,6 @@
 'use client';
 
 import {useState, type FormEvent, type ChangeEvent} from 'react';
-import {useRouter} from 'next/navigation';
 import {toast} from 'sonner';
 import {SpinnerIcon, ShieldIcon, PencilIcon, TrashIcon, SendIcon} from '@/components/ui/icons';
 import type {User} from '@/lib/db/schema';
@@ -30,7 +29,6 @@ const emptyForm: FormData = {
 };
 
 export function UsersManager({initialUsers}: UsersManagerProps) {
-	const router = useRouter();
 	const [users, setUsers] = useState<User[]>(initialUsers);
 	const [isCreating, setIsCreating] = useState(false);
 	const [editingId, setEditingId] = useState<string | null>(null);
@@ -101,7 +99,6 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 			}
 
 			handleCancel();
-			router.refresh();
 		} catch {
 			toast.error('Er is een fout opgetreden');
 		} finally {
@@ -127,7 +124,6 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 		setUsers(previous => previous.filter(u => u.id !== deleteUser.id));
 		setDeleteUser(null);
 		toast.success('Gebruiker verwijderd');
-		router.refresh();
 	};
 
 	const handleToggleAdmin = async (user: User) => {
@@ -148,8 +144,6 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 			setUsers(previous => previous.map(u => u.id === user.id ? data.user! : u));
 			toast.success(data.user.isAdmin ? 'Admin rechten toegekend' : 'Admin rechten verwijderd');
 		}
-
-		router.refresh();
 	};
 
 	const handleResendInvitation = async (user: User) => {
@@ -170,8 +164,6 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 			setUsers(previous => previous.map(u => u.id === user.id ? data.user! : u));
 			toast.success('Uitnodiging opnieuw verstuurd');
 		}
-
-		router.refresh();
 	};
 
 	const renderForm = () => (
