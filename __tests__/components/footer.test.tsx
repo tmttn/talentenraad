@@ -10,6 +10,14 @@ jest.mock('@components/ui', () => ({
 	YoutubeIcon: () => <span data-testid='youtube-icon' />,
 }));
 
+// Mock cookie consent
+const mockOpenPreferences = jest.fn();
+jest.mock('@components/cookie-consent', () => ({
+	useCookieConsent: () => ({
+		openPreferences: mockOpenPreferences,
+	}),
+}));
+
 describe('SiteFooter', () => {
 	const mockNavigationGroups = [
 		{

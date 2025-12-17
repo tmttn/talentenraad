@@ -12,6 +12,7 @@ import {
 	type IconProperties,
 } from '@components/ui';
 import {Icicles} from '@components/seasonal-decorations';
+import {useCookieConsent} from '@components/cookie-consent';
 
 type NavigationLink = {
 	text: string;
@@ -92,6 +93,7 @@ export function SiteFooter({
 }: Readonly<SiteFooterProperties>) {
 	const groups = navigationGroups ?? defaultNavigationGroups;
 	const socials = socialLinks ?? defaultSocialLinks;
+	const {openPreferences} = useCookieConsent();
 
 	return (
 		<footer role="contentinfo" className="bg-gray-100">
@@ -166,6 +168,27 @@ export function SiteFooter({
 					<p className="text-gray-500 text-sm">
 						© {new Date().getFullYear()} {copyrightText}
 					</p>
+
+					{/* Legal links and cookie settings */}
+					<div className="flex flex-wrap justify-center gap-4 text-sm">
+						<Link href="/privacybeleid" className="text-gray-500 hover:text-primary transition-colors">
+							Privacybeleid
+						</Link>
+						<Link href="/cookiebeleid" className="text-gray-500 hover:text-primary transition-colors">
+							Cookiebeleid
+						</Link>
+						<Link href="/algemene-voorwaarden" className="text-gray-500 hover:text-primary transition-colors">
+							Algemene Voorwaarden
+						</Link>
+						<button
+							type="button"
+							onClick={openPreferences}
+							className="text-gray-500 hover:text-primary transition-colors"
+						>
+							Cookie-instellingen
+						</button>
+					</div>
+
 					<div className="flex gap-4">
 						{socials.map(social => (
 							<a

@@ -1,10 +1,12 @@
 import {SiteFooterServer} from '@components/layout/site-footer-server';
 import {SeasonalDecorationsServer} from '@components/seasonal-decorations-server';
+import {CookieConsentProvider, CookieBanner} from '@components/cookie-consent';
 
 /**
  * Main Site Layout
  *
  * Layout wrapper that provides:
+ * - Cookie consent management
  * - Seasonal decorations context (wraps all children)
  * - Site footer
  *
@@ -17,9 +19,12 @@ export default function MainSiteLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<SeasonalDecorationsServer>
-			{children}
-			<SiteFooterServer />
-		</SeasonalDecorationsServer>
+		<CookieConsentProvider>
+			<SeasonalDecorationsServer>
+				{children}
+				<SiteFooterServer />
+			</SeasonalDecorationsServer>
+			<CookieBanner />
+		</CookieConsentProvider>
 	);
 }

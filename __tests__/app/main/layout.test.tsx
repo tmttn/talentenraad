@@ -11,6 +11,12 @@ jest.mock('@components/seasonal-decorations-server', () => ({
 	SeasonalDecorationsServer: ({children}: {children: React.ReactNode}) => <>{children}</>,
 }));
 
+// Mock the cookie consent components
+jest.mock('@components/cookie-consent', () => ({
+	CookieConsentProvider: ({children}: {children: React.ReactNode}) => <>{children}</>,
+	CookieBanner: () => null,
+}));
+
 describe('MainSiteLayout', () => {
 	it('renders children', () => {
 		render(
