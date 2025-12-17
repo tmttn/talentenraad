@@ -1,9 +1,19 @@
 'use client';
 
 import {createContext, useContext, type ReactNode} from 'react';
-import type {SeasonalDecorationsConfig} from '@/lib/db';
 
-export type {SeasonalDecorationsConfig};
+// Type defined here to avoid importing from server-only @/lib/db in client component
+export type SeasonalDecorationsConfig = {
+	enabled: boolean;
+	season: 'christmas' | 'easter' | 'halloween' | 'none';
+	decorations: {
+		christmasLights: boolean;
+		snowfall: boolean;
+		icicles: boolean;
+		gingerbreadMan: boolean;
+		christmasBalls: boolean;
+	};
+};
 
 const defaultConfig: SeasonalDecorationsConfig = {
 	enabled: false,
