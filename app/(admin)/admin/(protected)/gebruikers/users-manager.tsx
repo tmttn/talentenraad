@@ -1,13 +1,17 @@
 'use client';
 
-import {useState, type FormEvent, type ChangeEvent} from 'react';
+import {useState, useMemo, type FormEvent, type ChangeEvent} from 'react';
 import {toast} from 'sonner';
-import {Loader2, Shield, Pencil, Trash2, Send} from 'lucide-react';
+import {Loader2, Shield, ShieldOff, Pencil, Trash2, Send, Lock} from 'lucide-react';
 import type {User} from '@/lib/db/schema';
 import {DeleteDialog} from '@/features/admin/delete-dialog';
+import {TableFilters} from '@/features/admin/table-filters';
+import {TablePagination} from '@/features/admin/table-pagination';
+import {SortableHeader, useSorting} from '@/features/admin/sortable-header';
 
 type UsersManagerProps = {
 	initialUsers: User[];
+	protectedEmails: string[];
 };
 
 const inputStyles = [
@@ -28,13 +32,38 @@ const emptyForm: FormData = {
 	isAdmin: true,
 };
 
-export function UsersManager({initialUsers}: UsersManagerProps) {
+const roleOptions = [
+	{value: 'admin', label: 'Administrator'},
+	{value: 'user', label: 'Gebruiker'},
+];
+
+const statusOptions = [
+	{value: 'active', label: 'Actief'},
+	{value: 'invited', label: 'Uitnodiging verstuurd'},
+];
+
+export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps) {
 	const [users, setUsers] = useState<User[]>(initialUsers);
 	const [isCreating, setIsCreating] = useState(false);
 	const [editingId, setEditingId] = useState<string | null>(null);
 	const [formData, setFormData] = useState<FormData>(emptyForm);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [deleteUser, setDeleteUser] = useState<User | null>(null);
+
+	// Filter state
+	const [searchQuery, setSearchQuery] = useState('');
+	const [roleFilter, setRoleFilter] = useState('');
+	const [statusFilter, setStatusFilter] = useState('');
+
+	// Pagination state
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(25);
+
+	// Sort state
+	const {sortKey, sortDirection, handleSort} = useSorting<User>(users, 'createdAt', 'desc');
+
+	// Helper to check if email is protected
+	const isProtectedEmail = (email: string) => protectedEmails.includes(email.toLowerCase());
 
 	const handleEdit = (user: User) => {
 		setEditingId(user.id);
@@ -170,6 +199,110 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 		}
 	};
 
+	// Filter, sort, and paginate users
+	const filteredAndSortedUsers = useMemo(() => {
+		let result = [...users];
+
+		// Apply search filter
+		if (searchQuery) {
+			const query = searchQuery.toLowerCase();
+			result = result.filter(
+				u => (u.name?.toLowerCase().includes(query)) || u.email.toLowerCase().includes(query),
+			);
+		}
+
+		// Apply role filter
+		if (roleFilter) {
+			result = result.filter(u => roleFilter === 'admin' ? u.isAdmin : !u.isAdmin);
+		}
+
+		// Apply status filter
+		if (statusFilter) {
+			result = result.filter(u => {
+				if (statusFilter === 'active') return u.acceptedAt !== null;
+				if (statusFilter === 'invited') return u.invitedAt !== null && u.acceptedAt === null;
+				return true;
+			});
+		}
+
+		// Apply sorting
+		if (sortKey && sortDirection) {
+			result.sort((a, b) => {
+				let comparison = 0;
+				switch (sortKey) {
+					case 'name': {
+						comparison = (a.name ?? '').localeCompare(b.name ?? '');
+						break;
+					}
+
+					case 'email': {
+						comparison = a.email.localeCompare(b.email);
+						break;
+					}
+
+					case 'createdAt': {
+						comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+						break;
+					}
+
+					default: {
+						break;
+					}
+				}
+
+				return sortDirection === 'desc' ? -comparison : comparison;
+			});
+		}
+
+		return result;
+	}, [users, searchQuery, roleFilter, statusFilter, sortKey, sortDirection]);
+
+	// Pagination calculations
+	const totalItems = filteredAndSortedUsers.length;
+	const totalPages = Math.ceil(totalItems / pageSize);
+	const paginatedUsers = useMemo(() => {
+		const start = (currentPage - 1) * pageSize;
+		return filteredAndSortedUsers.slice(start, start + pageSize);
+	}, [filteredAndSortedUsers, currentPage, pageSize]);
+
+	// Reset to page 1 when filters change
+	const handleSearchChange = (value: string) => {
+		setSearchQuery(value);
+		setCurrentPage(1);
+	};
+
+	const handleRoleFilterChange = (value: string) => {
+		setRoleFilter(value);
+		setCurrentPage(1);
+	};
+
+	const handleStatusFilterChange = (value: string) => {
+		setStatusFilter(value);
+		setCurrentPage(1);
+	};
+
+	const handlePageSizeChange = (size: number) => {
+		setPageSize(size);
+		setCurrentPage(1);
+	};
+
+	const filterConfigs = [
+		{
+			key: 'role',
+			label: 'Alle rollen',
+			options: roleOptions,
+			value: roleFilter,
+			onChange: handleRoleFilterChange,
+		},
+		{
+			key: 'status',
+			label: 'Alle statussen',
+			options: statusOptions,
+			value: statusFilter,
+			onChange: handleStatusFilterChange,
+		},
+	];
+
 	const renderForm = () => (
 		<form onSubmit={handleSubmit} className='bg-white rounded-xl shadow-md p-4 sm:p-6 mb-6'>
 			<h2 className='text-lg sm:text-xl font-bold text-gray-800 mb-4'>
@@ -272,16 +405,23 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 
 	return (
 		<div>
-			{!isCreating && !editingId && (
-				<button
-					type='button'
-					onClick={handleCreate}
-					className='mb-6 px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors flex items-center gap-2'
-				>
-					<Send className='w-4 h-4' />
-					Gebruiker uitnodigen
-				</button>
-			)}
+			<TableFilters
+				searchValue={searchQuery}
+				onSearchChange={handleSearchChange}
+				searchPlaceholder='Zoeken op naam of e-mail...'
+				filters={filterConfigs}
+			>
+				{!isCreating && !editingId && (
+					<button
+						type='button'
+						onClick={handleCreate}
+						className='px-4 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors flex items-center gap-2 whitespace-nowrap'
+					>
+						<Send className='w-4 h-4' />
+						Uitnodigen
+					</button>
+				)}
+			</TableFilters>
 
 			{(isCreating || editingId) && renderForm()}
 
@@ -290,14 +430,26 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 					<table className='w-full min-w-[600px]'>
 						<thead className='bg-gray-50 border-b border-gray-200'>
 							<tr>
-								<th className='px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
-									Gebruiker
+								<th className='px-4 sm:px-6 py-3'>
+									<SortableHeader
+										label='Gebruiker'
+										sortKey='name'
+										currentSortKey={sortKey}
+										currentSortDirection={sortDirection}
+										onSort={handleSort}
+									/>
 								</th>
 								<th className='px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
 									Status
 								</th>
-								<th className='px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
-									Aangemaakt
+								<th className='px-4 sm:px-6 py-3'>
+									<SortableHeader
+										label='Aangemaakt'
+										sortKey='createdAt'
+										currentSortKey={sortKey}
+										currentSortDirection={sortDirection}
+										onSort={handleSort}
+									/>
 								</th>
 								<th className='px-4 sm:px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider'>
 									Acties
@@ -305,14 +457,16 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 							</tr>
 						</thead>
 						<tbody className='divide-y divide-gray-200'>
-							{users.length === 0 ? (
+							{paginatedUsers.length === 0 ? (
 								<tr>
 									<td colSpan={4} className='px-4 sm:px-6 py-8 text-center text-gray-500'>
-										Geen gebruikers gevonden
+										{searchQuery || roleFilter || statusFilter
+											? 'Geen gebruikers gevonden met de huidige filters.'
+											: 'Geen gebruikers gevonden.'}
 									</td>
 								</tr>
 							) : (
-								users.map(user => (
+								paginatedUsers.map(user => (
 									<tr key={user.id} className='hover:bg-gray-50'>
 										<td className='px-4 sm:px-6 py-4'>
 											<button
@@ -351,7 +505,15 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 											{formatDate(user.createdAt)}
 										</td>
 										<td className='px-4 sm:px-6 py-4 text-right'>
-											<div className='flex justify-end gap-1'>
+											<div className='flex justify-end items-center gap-1'>
+												{isProtectedEmail(user.email) && (
+													<span
+														title='Beschermd admin e-mail'
+														className='p-2 text-amber-600'
+													>
+														<Lock className='w-5 h-5' />
+													</span>
+												)}
 												{user.invitedAt && !user.acceptedAt && (
 													<button
 														type='button'
@@ -369,10 +531,19 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 													onClick={() => {
 														void handleToggleAdmin(user);
 													}}
-													title={user.isAdmin ? 'Admin rechten verwijderen' : 'Admin maken'}
-													className='p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-300'
+													disabled={isProtectedEmail(user.email) && user.isAdmin}
+													title={isProtectedEmail(user.email) && user.isAdmin
+														? 'Beschermd admin e-mail'
+														: user.isAdmin
+															? 'Admin rechten verwijderen'
+															: 'Admin maken'}
+													className={`p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+														isProtectedEmail(user.email) && user.isAdmin
+															? 'text-gray-300 cursor-not-allowed'
+															: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:ring-gray-300'
+													}`}
 												>
-													<Shield className='w-5 h-5' />
+													{user.isAdmin ? <ShieldOff className='w-5 h-5' /> : <Shield className='w-5 h-5' />}
 												</button>
 												<button
 													type='button'
@@ -389,8 +560,13 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 													onClick={() => {
 														setDeleteUser(user);
 													}}
-													title='Verwijderen'
-													className='p-2 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-300'
+													disabled={isProtectedEmail(user.email)}
+													title={isProtectedEmail(user.email) ? 'Beschermd admin e-mail' : 'Verwijderen'}
+													className={`p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+														isProtectedEmail(user.email)
+															? 'text-gray-300 cursor-not-allowed'
+															: 'text-red-500 hover:text-red-700 hover:bg-red-50 focus:ring-red-300'
+													}`}
 												>
 													<Trash2 className='w-5 h-5' />
 												</button>
@@ -402,6 +578,16 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 						</tbody>
 					</table>
 				</div>
+				{totalItems > 0 && (
+					<TablePagination
+						currentPage={currentPage}
+						totalPages={totalPages}
+						totalItems={totalItems}
+						pageSize={pageSize}
+						onPageChange={setCurrentPage}
+						onPageSizeChange={handlePageSizeChange}
+					/>
+				)}
 			</div>
 
 			{deleteUser && (

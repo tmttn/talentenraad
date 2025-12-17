@@ -108,6 +108,11 @@ export async function PUT(
 			return NextResponse.json({error: 'Cannot remove admin from yourself'}, {status: 400});
 		}
 
+		// Prevent removing admin from protected admin emails
+		if (isAdminEmail(existingUser.email) && body.isAdmin === false) {
+			return NextResponse.json({error: 'Cannot remove admin from protected admin email'}, {status: 400});
+		}
+
 		const [updatedUser] = await db.update(users)
 			.set({
 				name: body.name !== undefined ? body.name : existingUser.name,
@@ -149,6 +154,11 @@ export async function DELETE(
 		// Prevent deleting yourself
 		if (session?.user?.email?.toLowerCase() === existingUser.email) {
 			return NextResponse.json({error: 'Cannot delete yourself'}, {status: 400});
+		}
+
+		// Prevent deleting protected admin emails
+		if (isAdminEmail(existingUser.email)) {
+			return NextResponse.json({error: 'Cannot delete protected admin email'}, {status: 400});
 		}
 
 		await db.delete(users).where(eq(users.id, id));

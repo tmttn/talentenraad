@@ -1,9 +1,11 @@
 'use client';
 
-import {useState, type FormEvent, type ChangeEvent} from 'react';
+import {useState, useMemo, type FormEvent, type ChangeEvent} from 'react';
 import {useRouter} from 'next/navigation';
+import {Plus} from 'lucide-react';
 import type {Announcement, AnnouncementType} from '@/lib/builder-types';
 import {DeleteDialog} from '@/features/admin/delete-dialog';
+import {TableFilters} from '@/features/admin/table-filters';
 
 type AankondigingenManagerProps = {
 	announcements: Announcement[];
@@ -43,6 +45,17 @@ const emptyForm: FormData = {
 	actief: true,
 };
 
+const typeFilterOptions = [
+	{value: 'info', label: 'Info (blauw)'},
+	{value: 'waarschuwing', label: 'Waarschuwing (oranje)'},
+	{value: 'belangrijk', label: 'Belangrijk (rood)'},
+];
+
+const statusFilterOptions = [
+	{value: 'active', label: 'Actief'},
+	{value: 'inactive', label: 'Inactief'},
+];
+
 export function AankondigingenManager({announcements}: AankondigingenManagerProps) {
 	const router = useRouter();
 	const [isCreating, setIsCreating] = useState(false);
@@ -51,6 +64,11 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [deleteItem, setDeleteItem] = useState<Announcement | null>(null);
 	const [error, setError] = useState<string | null>(null);
+
+	// Filter state
+	const [searchQuery, setSearchQuery] = useState('');
+	const [typeFilter, setTypeFilter] = useState('');
+	const [statusFilter, setStatusFilter] = useState('');
 
 	const handleEdit = (announcement: Announcement) => {
 		setEditingId(announcement.id);
@@ -150,6 +168,49 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 
 		router.refresh();
 	};
+
+	// Filter announcements
+	const filteredAnnouncements = useMemo(() => {
+		let result = [...announcements];
+
+		// Apply search filter
+		if (searchQuery) {
+			const query = searchQuery.toLowerCase();
+			result = result.filter(
+				item => item.data.tekst.toLowerCase().includes(query)
+					|| item.data.linkTekst?.toLowerCase().includes(query),
+			);
+		}
+
+		// Apply type filter
+		if (typeFilter) {
+			result = result.filter(item => item.data.type === typeFilter);
+		}
+
+		// Apply status filter
+		if (statusFilter) {
+			result = result.filter(item => statusFilter === 'active' ? item.data.actief : !item.data.actief);
+		}
+
+		return result;
+	}, [announcements, searchQuery, typeFilter, statusFilter]);
+
+	const filterConfigs = [
+		{
+			key: 'type',
+			label: 'Alle types',
+			options: typeFilterOptions,
+			value: typeFilter,
+			onChange: setTypeFilter,
+		},
+		{
+			key: 'status',
+			label: 'Alle statussen',
+			options: statusFilterOptions,
+			value: statusFilter,
+			onChange: setStatusFilter,
+		},
+	];
 
 	const renderForm = () => (
 		<form onSubmit={handleSubmit} className='bg-white rounded-xl shadow-md p-6 mb-6'>
@@ -269,25 +330,35 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 
 	return (
 		<div>
-			{!isCreating && !editingId && (
-				<button
-					type='button'
-					onClick={handleCreate}
-					className='mb-6 px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors'
-				>
-					Nieuwe aankondiging
-				</button>
-			)}
+			<TableFilters
+				searchValue={searchQuery}
+				onSearchChange={setSearchQuery}
+				searchPlaceholder='Zoeken op tekst...'
+				filters={filterConfigs}
+			>
+				{!isCreating && !editingId && (
+					<button
+						type='button'
+						onClick={handleCreate}
+						className='px-4 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors flex items-center gap-2 whitespace-nowrap'
+					>
+						<Plus className='w-4 h-4' />
+						Nieuwe aankondiging
+					</button>
+				)}
+			</TableFilters>
 
 			{(isCreating || editingId) && renderForm()}
 
 			<div className='space-y-4'>
-				{announcements.length === 0 ? (
+				{filteredAnnouncements.length === 0 ? (
 					<div className='bg-white rounded-xl p-8 text-center text-gray-500'>
-						Geen aankondigingen gevonden
+						{searchQuery || typeFilter || statusFilter
+							? 'Geen aankondigingen gevonden met de huidige filters.'
+							: 'Geen aankondigingen gevonden.'}
 					</div>
 				) : (
-					announcements.map(announcement => (
+					filteredAnnouncements.map(announcement => (
 						<div
 							key={announcement.id}
 							className={`bg-white rounded-xl shadow-md p-6 border-l-4 ${

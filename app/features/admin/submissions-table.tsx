@@ -1,11 +1,14 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useMemo} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {toast} from 'sonner';
 import {Eye} from 'lucide-react';
 import type {Submission} from '@/lib/db/index.js';
+import {TableFilters} from './table-filters';
+import {TablePagination} from './table-pagination';
+import {SortableHeader, useSorting, type SortDirection} from './sortable-header';
 
 type SubmissionsTableProperties = {
 	submissions: Submission[];
@@ -20,10 +23,35 @@ const subjectLabels: Record<string, string> = {
 	anders: 'Anders',
 };
 
+const subjectOptions = [
+	{value: 'vraag', label: 'Algemene vraag'},
+	{value: 'activiteit', label: 'Vraag over activiteit'},
+	{value: 'lidmaatschap', label: 'Lid worden'},
+	{value: 'sponsoring', label: 'Sponsoring'},
+	{value: 'anders', label: 'Anders'},
+];
+
+const statusOptions = [
+	{value: 'unread', label: 'Ongelezen'},
+	{value: 'read', label: 'Gelezen'},
+];
+
 export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<SubmissionsTableProperties>) {
 	const router = useRouter();
 	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 	const [isProcessing, setIsProcessing] = useState(false);
+
+	// Filter state
+	const [searchQuery, setSearchQuery] = useState('');
+	const [subjectFilter, setSubjectFilter] = useState('');
+	const [statusFilter, setStatusFilter] = useState('');
+
+	// Pagination state
+	const [currentPage, setCurrentPage] = useState(1);
+	const [pageSize, setPageSize] = useState(25);
+
+	// Sort state
+	const {sortKey, sortDirection, handleSort} = useSorting<Submission>(submissions, 'createdAt', 'desc');
 
 	const formatDate = (date: Date) => new Intl.DateTimeFormat('nl-BE', {
 		day: 'numeric',
@@ -33,9 +61,92 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 		minute: '2-digit',
 	}).format(date);
 
+	// Filter, sort, and paginate submissions
+	const filteredAndSortedSubmissions = useMemo(() => {
+		let result = [...submissions];
+
+		// Apply search filter
+		if (searchQuery) {
+			const query = searchQuery.toLowerCase();
+			result = result.filter(
+				s => s.name.toLowerCase().includes(query) || s.email.toLowerCase().includes(query),
+			);
+		}
+
+		// Apply subject filter
+		if (subjectFilter) {
+			result = result.filter(s => s.subject === subjectFilter);
+		}
+
+		// Apply status filter
+		if (statusFilter) {
+			result = result.filter(s => statusFilter === 'read' ? s.readAt !== null : s.readAt === null);
+		}
+
+		// Apply sorting
+		if (sortKey && sortDirection) {
+			result.sort((a, b) => {
+				let comparison = 0;
+				switch (sortKey) {
+					case 'name': {
+						comparison = a.name.localeCompare(b.name);
+						break;
+					}
+
+					case 'subject': {
+						comparison = a.subject.localeCompare(b.subject);
+						break;
+					}
+
+					case 'createdAt': {
+						comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+						break;
+					}
+
+					default: {
+						break;
+					}
+				}
+
+				return sortDirection === 'desc' ? -comparison : comparison;
+			});
+		}
+
+		return result;
+	}, [submissions, searchQuery, subjectFilter, statusFilter, sortKey, sortDirection]);
+
+	// Pagination calculations
+	const totalItems = filteredAndSortedSubmissions.length;
+	const totalPages = Math.ceil(totalItems / pageSize);
+	const paginatedSubmissions = useMemo(() => {
+		const start = (currentPage - 1) * pageSize;
+		return filteredAndSortedSubmissions.slice(start, start + pageSize);
+	}, [filteredAndSortedSubmissions, currentPage, pageSize]);
+
+	// Reset to page 1 when filters change
+	const handleSearchChange = (value: string) => {
+		setSearchQuery(value);
+		setCurrentPage(1);
+	};
+
+	const handleSubjectFilterChange = (value: string) => {
+		setSubjectFilter(value);
+		setCurrentPage(1);
+	};
+
+	const handleStatusFilterChange = (value: string) => {
+		setStatusFilter(value);
+		setCurrentPage(1);
+	};
+
+	const handlePageSizeChange = (size: number) => {
+		setPageSize(size);
+		setCurrentPage(1);
+	};
+
 	const handleSelectAll = (checked: boolean) => {
 		if (checked) {
-			setSelectedIds(new Set(submissions.map(s => s.id)));
+			setSelectedIds(new Set(paginatedSubmissions.map(s => s.id)));
 		} else {
 			setSelectedIds(new Set());
 		}
@@ -99,8 +210,32 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 		}
 	};
 
+	const filterConfigs = [
+		{
+			key: 'subject',
+			label: 'Alle onderwerpen',
+			options: subjectOptions,
+			value: subjectFilter,
+			onChange: handleSubjectFilterChange,
+		},
+		{
+			key: 'status',
+			label: 'Alle statussen',
+			options: statusOptions,
+			value: statusFilter,
+			onChange: handleStatusFilterChange,
+		},
+	];
+
 	return (
 		<div>
+			<TableFilters
+				searchValue={searchQuery}
+				onSearchChange={handleSearchChange}
+				searchPlaceholder='Zoeken op naam of e-mail...'
+				filters={filterConfigs}
+			/>
+
 			{selectedIds.size > 0 && (
 				<div className='mb-4 p-3 sm:p-4 bg-white rounded-xl shadow-md flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4'>
 					<span className='text-sm text-gray-600 font-medium'>
@@ -159,7 +294,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 								<th className='px-4 sm:px-6 py-4 text-left w-12'>
 									<input
 										type='checkbox'
-										checked={selectedIds.size === submissions.length && submissions.length > 0}
+										checked={selectedIds.size === paginatedSubmissions.length && paginatedSubmissions.length > 0}
 										onChange={event => {
 											handleSelectAll(event.target.checked);
 										}}
@@ -169,14 +304,32 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 								<th className='px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
 									Status
 								</th>
-								<th className='px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-									Van
+								<th className='px-4 sm:px-6 py-4'>
+									<SortableHeader
+										label='Van'
+										sortKey='name'
+										currentSortKey={sortKey}
+										currentSortDirection={sortDirection}
+										onSort={handleSort}
+									/>
 								</th>
-								<th className='px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-									Onderwerp
+								<th className='px-4 sm:px-6 py-4'>
+									<SortableHeader
+										label='Onderwerp'
+										sortKey='subject'
+										currentSortKey={sortKey}
+										currentSortDirection={sortDirection}
+										onSort={handleSort}
+									/>
 								</th>
-								<th className='px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-									Datum
+								<th className='px-4 sm:px-6 py-4'>
+									<SortableHeader
+										label='Datum'
+										sortKey='createdAt'
+										currentSortKey={sortKey}
+										currentSortDirection={sortDirection}
+										onSort={handleSort}
+									/>
 								</th>
 								<th className='px-4 sm:px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider'>
 									Acties
@@ -184,7 +337,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 							</tr>
 						</thead>
 						<tbody className='divide-y divide-gray-200'>
-							{submissions.map(submission => (
+							{paginatedSubmissions.map(submission => (
 								<tr
 									key={submission.id}
 									className={`hover:bg-gray-50 ${submission.readAt ? '' : 'bg-primary/5'}`}
@@ -233,6 +386,23 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 						</tbody>
 					</table>
 				</div>
+				{totalItems > 0 && (
+					<TablePagination
+						currentPage={currentPage}
+						totalPages={totalPages}
+						totalItems={totalItems}
+						pageSize={pageSize}
+						onPageChange={setCurrentPage}
+						onPageSizeChange={handlePageSizeChange}
+					/>
+				)}
+				{totalItems === 0 && (
+					<div className='p-8 text-center text-gray-500'>
+						{searchQuery || subjectFilter || statusFilter
+							? 'Geen berichten gevonden met de huidige filters.'
+							: 'Geen berichten gevonden.'}
+					</div>
+				)}
 			</div>
 		</div>
 	);
