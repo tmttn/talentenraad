@@ -17,6 +17,8 @@ import ChevronRightSvg from './svg/chevron-right.svg';
 import ClockSvg from './svg/clock.svg';
 import EmailSvg from './svg/email.svg';
 import ErrorSvg from './svg/error.svg';
+import ExternalLinkSvg from './svg/external-link.svg';
+import EyeSvg from './svg/eye.svg';
 import FacebookSvg from './svg/facebook.svg';
 import GiftSvg from './svg/gift.svg';
 import LinkedinSvg from './svg/linkedin.svg';
@@ -27,14 +29,17 @@ import LocationSvg from './svg/location.svg';
 import MenuSvg from './svg/menu.svg';
 import MoneySvg from './svg/money.svg';
 import NewsSvg from './svg/news.svg';
+import PencilSvg from './svg/pencil.svg';
 import PhoneSvg from './svg/phone.svg';
 import PinnedSvg from './svg/pinned.svg';
 import QuestionSvg from './svg/question.svg';
 import SchoolSvg from './svg/school.svg';
 import SendSvg from './svg/send.svg';
+import ShieldSvg from './svg/shield.svg';
 import SpinnerSvg from './svg/spinner.svg';
 import StarSvg from './svg/star.svg';
 import SuccessSvg from './svg/success.svg';
+import TrashSvg from './svg/trash.svg';
 import TwitterSvg from './svg/twitter.svg';
 import UserSvg from './svg/user.svg';
 import UsersSvg from './svg/users.svg';
@@ -125,6 +130,13 @@ const LinkedinIcon = createIcon(LinkedinSvg, 'LinkedinIcon');
 const TwitterIcon = createIcon(TwitterSvg, 'TwitterIcon');
 const YoutubeIcon = createIcon(YoutubeSvg, 'YoutubeIcon');
 
+// Admin & Actions
+const EyeIcon = createIcon(EyeSvg, 'EyeIcon');
+const PencilIcon = createIcon(PencilSvg, 'PencilIcon');
+const TrashIcon = createIcon(TrashSvg, 'TrashIcon');
+const ExternalLinkIcon = createIcon(ExternalLinkSvg, 'ExternalLinkIcon');
+const ShieldIcon = createIcon(ShieldSvg, 'ShieldIcon');
+
 // Special icons with additional props
 type BookmarkIconProperties = Omit<IconProperties, 'fill'> & {filled?: boolean};
 
@@ -191,6 +203,12 @@ export {
 	LinkedinIcon,
 	TwitterIcon,
 	YoutubeIcon,
+	// Admin & Actions
+	EyeIcon,
+	PencilIcon,
+	TrashIcon,
+	ExternalLinkIcon,
+	ShieldIcon,
 	// Special
 	BookmarkIcon,
 	// Paths

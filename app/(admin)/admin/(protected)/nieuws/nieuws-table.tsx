@@ -36,9 +36,8 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 		{
 			key: 'data.titel',
 			label: 'Titel',
-			render: (item: NewsItem) => (
-				<span className='font-medium text-gray-900'>{item.data.titel}</span>
-			),
+			isTitle: true,
+			render: (item: NewsItem) => item.data.titel,
 		},
 		{
 			key: 'data.datum',

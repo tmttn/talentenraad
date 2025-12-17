@@ -43,9 +43,8 @@ export function ActiviteitenTable({activities}: ActiviteitenTableProps) {
 		{
 			key: 'data.titel',
 			label: 'Titel',
-			render: (item: Activity) => (
-				<span className='font-medium text-gray-900'>{item.data.titel}</span>
-			),
+			isTitle: true,
+			render: (item: Activity) => item.data.titel,
 		},
 		{
 			key: 'data.datum',

@@ -2,6 +2,7 @@
 
 import {useState, type FormEvent, type ChangeEvent} from 'react';
 import {useRouter} from 'next/navigation';
+import {SpinnerIcon, ErrorIcon, ShieldIcon, PencilIcon, TrashIcon} from '@/components/ui/icons';
 import type {User} from '@/lib/db/schema';
 import {DeleteDialog} from '@/features/admin/delete-dialog';
 
@@ -14,15 +15,6 @@ const inputStyles = [
 	'focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none',
 	'transition-colors duration-200 text-base',
 ].join(' ');
-
-function Spinner() {
-	return (
-		<svg className='animate-spin h-4 w-4' xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24'>
-			<circle className='opacity-25' cx='12' cy='12' r='10' stroke='currentColor' strokeWidth='4' />
-			<path className='opacity-75' fill='currentColor' d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z' />
-		</svg>
-	);
-}
 
 type FormData = {
 	email: string;
@@ -164,9 +156,7 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 
 			{error && (
 				<div className='mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 flex items-start gap-3'>
-					<svg className='w-5 h-5 text-red-500 flex-shrink-0 mt-0.5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-						<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
-					</svg>
+					<ErrorIcon size='md' className='text-red-500 flex-shrink-0 mt-0.5' />
 					<span>{error}</span>
 				</div>
 			)}
@@ -243,7 +233,7 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 				>
 					{isSubmitting ? (
 						<>
-							<Spinner />
+							<SpinnerIcon size='sm' className='animate-spin' />
 							Bezig...
 						</>
 					) : (
@@ -310,10 +300,16 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 								users.map(user => (
 									<tr key={user.id} className='hover:bg-gray-50'>
 										<td className='px-4 sm:px-6 py-4'>
-											<div>
-												<p className='font-medium text-gray-900'>{user.name ?? '-'}</p>
+											<button
+												type='button'
+												onClick={() => {
+													handleEdit(user);
+												}}
+												className='text-left group'
+											>
+												<p className='font-medium text-gray-900 group-hover:text-primary transition-colors'>{user.name ?? '-'}</p>
 												<p className='text-sm text-gray-500 break-all'>{user.email}</p>
-											</div>
+											</button>
 										</td>
 										<td className='px-4 sm:px-6 py-4'>
 											<span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap ${
@@ -328,33 +324,36 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 											{formatDate(user.createdAt)}
 										</td>
 										<td className='px-4 sm:px-6 py-4 text-right'>
-											<div className='flex justify-end gap-2 flex-wrap'>
+											<div className='flex justify-end gap-1'>
 												<button
 													type='button'
 													onClick={() => {
-														handleToggleAdmin(user);
+														void handleToggleAdmin(user);
 													}}
-													className='text-sm text-gray-600 hover:text-gray-800 font-medium whitespace-nowrap'
+													title={user.isAdmin ? 'Admin rechten verwijderen' : 'Admin maken'}
+													className='p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-300'
 												>
-													{user.isAdmin ? 'Geen admin' : 'Maak admin'}
+													<ShieldIcon size='md' />
 												</button>
 												<button
 													type='button'
 													onClick={() => {
 														handleEdit(user);
 													}}
-													className='text-sm text-primary hover:text-primary-hover font-medium'
+													title='Bewerken'
+													className='p-2 rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/30'
 												>
-													Bewerk
+													<PencilIcon size='md' />
 												</button>
 												<button
 													type='button'
 													onClick={() => {
 														setDeleteUser(user);
 													}}
-													className='text-sm text-red-600 hover:text-red-800 font-medium'
+													title='Verwijderen'
+													className='p-2 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-300'
 												>
-													Verwijder
+													<TrashIcon size='md' />
 												</button>
 											</div>
 										</td>

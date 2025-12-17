@@ -1,7 +1,9 @@
 'use client';
 
 import {useState} from 'react';
+import Link from 'next/link';
 import {useRouter} from 'next/navigation';
+import {EyeIcon} from '@/components/ui/icons';
 import type {Submission} from '@/lib/db/index.js';
 
 type SubmissionsTableProperties = {
@@ -185,8 +187,13 @@ export function SubmissionsTable({submissions}: Readonly<SubmissionsTablePropert
 											: <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary'>Nieuw</span>}
 									</td>
 									<td className='px-4 sm:px-6 py-4'>
-										<p className='font-medium text-gray-800'>{submission.name}</p>
-										<p className='text-sm text-gray-500'>{submission.email}</p>
+										<Link
+											href={`/admin/submissions/${submission.id}`}
+											className='block group'
+										>
+											<p className='font-medium text-gray-800 group-hover:text-primary transition-colors'>{submission.name}</p>
+											<p className='text-sm text-gray-500'>{submission.email}</p>
+										</Link>
 									</td>
 									<td className='px-4 sm:px-6 py-4 text-sm text-gray-600'>
 										{subjectLabels[submission.subject] ?? submission.subject}
@@ -195,12 +202,13 @@ export function SubmissionsTable({submissions}: Readonly<SubmissionsTablePropert
 										{formatDate(submission.createdAt)}
 									</td>
 									<td className='px-4 sm:px-6 py-4 text-right'>
-										<a
+										<Link
 											href={`/admin/submissions/${submission.id}`}
-											className='text-primary hover:text-primary-hover font-medium text-sm'
+											className='inline-flex p-2 text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg transition-colors'
+											title='Bekijken'
 										>
-											Bekijken
-										</a>
+											<EyeIcon size='md' />
+										</Link>
 									</td>
 								</tr>
 							))}

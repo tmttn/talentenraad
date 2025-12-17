@@ -2,12 +2,14 @@
 
 import {useState} from 'react';
 import Link from 'next/link';
+import {ExternalLinkIcon, PencilIcon, TrashIcon} from '@/components/ui/icons';
 import {DeleteDialog} from './delete-dialog';
 
 type Column<T> = {
 	key: keyof T | string;
 	label: string;
 	render?: (item: T) => React.ReactNode;
+	isTitle?: boolean;
 };
 
 type ContentTableProps<T extends {id: string}> = {
@@ -31,6 +33,53 @@ function getNestedValue<T>(item: T, key: string): unknown {
 	}
 
 	return value;
+}
+
+function IconButton({
+	onClick,
+	href,
+	target,
+	title,
+	variant,
+	children,
+}: {
+	onClick?: () => void;
+	href?: string;
+	target?: string;
+	title: string;
+	variant: 'default' | 'primary' | 'danger';
+	children: React.ReactNode;
+}) {
+	const baseClasses = 'p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1';
+	const variantClasses = {
+		default: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:ring-gray-300',
+		primary: 'text-primary hover:text-primary-hover hover:bg-primary/10 focus:ring-primary/30',
+		danger: 'text-red-500 hover:text-red-700 hover:bg-red-50 focus:ring-red-300',
+	};
+
+	if (href) {
+		return (
+			<Link
+				href={href}
+				target={target}
+				className={`${baseClasses} ${variantClasses[variant]}`}
+				title={title}
+			>
+				{children}
+			</Link>
+		);
+	}
+
+	return (
+		<button
+			type='button'
+			onClick={onClick}
+			className={`${baseClasses} ${variantClasses[variant]}`}
+			title={title}
+		>
+			{children}
+		</button>
+	);
 }
 
 export function ContentTable<T extends {id: string}>({
@@ -82,39 +131,54 @@ export function ContentTable<T extends {id: string}>({
 							{items.map(item => (
 								<tr key={item.id} className='hover:bg-gray-50'>
 									{columns.map(column => (
-										<td key={String(column.key)} className='px-4 sm:px-6 py-4 whitespace-nowrap'>
-											{column.render
-												? column.render(item)
-												: String(getNestedValue(item, String(column.key)) ?? '')}
+										<td key={String(column.key)} className='px-4 sm:px-6 py-4'>
+											{column.isTitle ? (
+												<Link
+													href={editPath(item)}
+													className='text-gray-900 hover:text-primary font-medium transition-colors'
+												>
+													{column.render
+														? column.render(item)
+														: String(getNestedValue(item, String(column.key)) ?? '')}
+												</Link>
+											) : (
+												<span className='whitespace-nowrap'>
+													{column.render
+														? column.render(item)
+														: String(getNestedValue(item, String(column.key)) ?? '')}
+												</span>
+											)}
 										</td>
 									))}
 									<td className='px-4 sm:px-6 py-4 whitespace-nowrap text-right'>
-										<div className='flex justify-end gap-2'>
+										<div className='flex justify-end gap-1'>
 											{viewPath && (
-												<Link
+												<IconButton
 													href={viewPath(item)}
 													target='_blank'
-													className='text-gray-600 hover:text-gray-800 text-sm font-medium'
+													title='Bekijk op website'
+													variant='default'
 												>
-													Bekijk
-												</Link>
+													<ExternalLinkIcon size='md' />
+												</IconButton>
 											)}
-											<Link
+											<IconButton
 												href={editPath(item)}
-												className='text-primary hover:text-primary-hover text-sm font-medium'
+												title='Bewerken'
+												variant='primary'
 											>
-												Bewerk
-											</Link>
+												<PencilIcon size='md' />
+											</IconButton>
 											{onDelete && (
-												<button
-													type='button'
+												<IconButton
 													onClick={() => {
 														setDeleteItem(item);
 													}}
-													className='text-red-600 hover:text-red-800 text-sm font-medium'
+													title='Verwijderen'
+													variant='danger'
 												>
-													Verwijder
-												</button>
+													<TrashIcon size='md' />
+												</IconButton>
 											)}
 										</div>
 									</td>
