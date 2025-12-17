@@ -5,11 +5,12 @@ import {useRouter} from 'next/navigation';
 import {toast} from 'sonner';
 import {Loader2, AlertCircle} from 'lucide-react';
 import {RichTextEditor} from './rich-text-editor';
+import {ImagePicker} from './image-picker';
 
 export type FieldDefinition = {
 	name: string;
 	label: string;
-	type: 'text' | 'textarea' | 'richtext' | 'date' | 'select' | 'url' | 'boolean' | 'number';
+	type: 'text' | 'textarea' | 'richtext' | 'date' | 'select' | 'url' | 'boolean' | 'number' | 'image';
 	required?: boolean;
 	placeholder?: string;
 	options?: Array<{value: string; label: string}>;
@@ -192,6 +193,17 @@ export function ContentForm({
 						placeholder={field.placeholder}
 						required={field.required}
 						className={inputStyles}
+					/>
+				);
+			}
+
+			case 'image': {
+				return (
+					<ImagePicker
+						value={String(value ?? '')}
+						onChange={newValue => {
+							handleChange(field.name, newValue);
+						}}
 					/>
 				);
 			}

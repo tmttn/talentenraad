@@ -48,10 +48,9 @@ const activityFields: FieldDefinition[] = [
 	},
 	{
 		name: 'afbeelding',
-		label: 'Afbeelding URL',
-		type: 'url',
-		placeholder: 'https://...',
-		helpText: 'Plak hier de URL van een afbeelding',
+		label: 'Afbeelding',
+		type: 'image',
+		helpText: 'Kies een afbeelding uit de bibliotheek',
 	},
 	{
 		name: 'vastgepind',
