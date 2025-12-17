@@ -54,6 +54,7 @@ const defaultNavigationGroups: NavigationGroup[] = [
 		links: [
 			{url: '/over-ons', text: 'Het Team'},
 			{url: '/contact', text: 'Contact'},
+			{url: '/admin/login', text: 'Inloggen'},
 		],
 	},
 	{
