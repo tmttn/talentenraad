@@ -32,8 +32,8 @@ const activityFields: FieldDefinition[] = [
 	{
 		name: 'beschrijving',
 		label: 'Beschrijving',
-		type: 'textarea',
-		placeholder: 'Korte beschrijving van de activiteit',
+		type: 'richtext',
+		placeholder: 'Beschrijving van de activiteit',
 	},
 	{
 		name: 'categorie',
