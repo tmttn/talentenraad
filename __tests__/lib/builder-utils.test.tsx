@@ -120,7 +120,7 @@ describe('builder-utils', () => {
 			});
 		});
 
-		it('includes URL path in query parameter', async () => {
+		it('includes URL path in userAttributes parameter', async () => {
 			mockFetch.mockResolvedValue({
 				ok: true,
 				json: async () => ({results: []}),
@@ -129,7 +129,7 @@ describe('builder-utils', () => {
 			await fetchBuilderContent('/about', {}, 'api-key');
 
 			expect(mockFetch).toHaveBeenCalledWith(
-				expect.stringContaining('query.data.url=%2Fabout'),
+				expect.stringContaining('userAttributes.urlPath=%2Fabout'),
 				expect.anything(),
 			);
 		});

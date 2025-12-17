@@ -61,6 +61,7 @@ type FetchBuilderContentResult = {
 
 /**
  * Fetch Builder.io content for a given URL path
+ * Uses userAttributes.urlPath to match against Builder.io's targeting query
  */
 export async function fetchBuilderContent(
 	urlPath: string,
@@ -68,10 +69,10 @@ export async function fetchBuilderContent(
 	apiKey: string,
 ): Promise<FetchBuilderContentResult> {
 	try {
-		// Use direct API call with URL query for accurate page matching
+		// Use direct API call with userAttributes.urlPath for targeting-based page matching
 		const url = new URL('https://cdn.builder.io/api/v3/content/page');
 		url.searchParams.set('apiKey', apiKey);
-		url.searchParams.set('query.data.url', urlPath);
+		url.searchParams.set('userAttributes.urlPath', urlPath);
 		url.searchParams.set('limit', '1');
 		url.searchParams.set('cachebust', 'true');
 
