@@ -2,6 +2,7 @@
 
 import {useState, type FormEvent, type ChangeEvent} from 'react';
 import {useRouter} from 'next/navigation';
+import {RichTextEditor} from './rich-text-editor';
 
 export type FieldDefinition = {
 	name: string;
@@ -99,8 +100,7 @@ export function ContentForm({
 				);
 			}
 
-			case 'textarea':
-			case 'richtext': {
+			case 'textarea': {
 				return (
 					<textarea
 						id={field.name}
@@ -110,8 +110,20 @@ export function ContentForm({
 						}}
 						placeholder={field.placeholder}
 						required={field.required}
-						rows={field.type === 'richtext' ? 10 : 4}
+						rows={4}
 						className={`${inputStyles} resize-y min-h-[100px]`}
+					/>
+				);
+			}
+
+			case 'richtext': {
+				return (
+					<RichTextEditor
+						value={String(value ?? '')}
+						onChange={newValue => {
+							handleChange(field.name, newValue);
+						}}
+						placeholder={field.placeholder}
 					/>
 				);
 			}
