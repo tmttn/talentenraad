@@ -3,6 +3,7 @@
 import {useState} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
+import {toast} from 'sonner';
 import {EyeIcon} from '@/components/ui/icons';
 import type {Submission} from '@/lib/db/index.js';
 
@@ -51,6 +52,17 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 		setSelectedIds(newIds);
 	};
 
+	const getActionSuccessMessage = (action: string, count: number): string => {
+		const messages: Record<string, string> = {
+			markRead: `${count} bericht(en) gemarkeerd als gelezen`,
+			markUnread: `${count} bericht(en) gemarkeerd als ongelezen`,
+			archive: `${count} bericht(en) gearchiveerd`,
+			unarchive: `${count} bericht(en) teruggezet`,
+			delete: `${count} bericht(en) verwijderd`,
+		};
+		return messages[action] ?? 'Actie voltooid';
+	};
+
 	const handleBulkAction = async (action: 'markRead' | 'markUnread' | 'archive' | 'unarchive' | 'delete') => {
 		if (selectedIds.size === 0) {
 			return;
@@ -74,9 +86,14 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 			});
 
 			if (response.ok) {
+				toast.success(getActionSuccessMessage(action, selectedIds.size));
 				setSelectedIds(new Set());
 				router.refresh();
+			} else {
+				toast.error('Er is iets misgegaan');
 			}
+		} catch {
+			toast.error('Er is iets misgegaan');
 		} finally {
 			setIsProcessing(false);
 		}

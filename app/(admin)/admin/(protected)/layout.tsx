@@ -1,5 +1,6 @@
 import {redirect} from 'next/navigation';
 import {eq} from 'drizzle-orm';
+import {Toaster} from 'sonner';
 import {auth0, isAdminEmail} from '@/lib/auth0';
 import {db, users} from '@/lib/db';
 import {AdminSidebar} from '@/features/admin/admin-sidebar';
@@ -69,6 +70,7 @@ export default async function AdminProtectedLayout({
 
 	return (
 		<div className='min-h-screen bg-gray-50 flex'>
+			<Toaster position='top-right' richColors closeButton />
 			<SessionValidator />
 			<AdminSidebar user={{
 				name: session.user.name,

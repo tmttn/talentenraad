@@ -2,7 +2,8 @@
 
 import {useState, type FormEvent, type ChangeEvent} from 'react';
 import {useRouter} from 'next/navigation';
-import {SpinnerIcon, ErrorIcon, ShieldIcon, PencilIcon, TrashIcon, SendIcon} from '@/components/ui/icons';
+import {toast} from 'sonner';
+import {SpinnerIcon, ShieldIcon, PencilIcon, TrashIcon, SendIcon} from '@/components/ui/icons';
 import type {User} from '@/lib/db/schema';
 import {DeleteDialog} from '@/features/admin/delete-dialog';
 
@@ -36,7 +37,6 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 	const [formData, setFormData] = useState<FormData>(emptyForm);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [deleteUser, setDeleteUser] = useState<User | null>(null);
-	const [error, setError] = useState<string | null>(null);
 
 	const handleEdit = (user: User) => {
 		setEditingId(user.id);
@@ -58,17 +58,16 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 		setIsCreating(false);
 		setEditingId(null);
 		setFormData(emptyForm);
-		setError(null);
 	};
 
 	const handleSubmit = async (event: FormEvent) => {
 		event.preventDefault();
 		setIsSubmitting(true);
-		setError(null);
 
 		try {
 			if (!formData.email.trim()) {
-				throw new Error('E-mail is verplicht');
+				toast.error('E-mail is verplicht');
+				return;
 			}
 
 			const url = editingId
@@ -88,20 +87,23 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 			const data = await response.json() as {error?: string; user?: User};
 
 			if (!response.ok) {
-				throw new Error(data.error ?? 'Opslaan mislukt');
+				toast.error(data.error ?? 'Opslaan mislukt');
+				return;
 			}
-
-			handleCancel();
-			router.refresh();
 
 			// Update local state
 			if (editingId && data.user) {
 				setUsers(previous => previous.map(u => u.id === editingId ? data.user! : u));
+				toast.success('Gebruiker bijgewerkt');
 			} else if (data.user) {
 				setUsers(previous => [data.user!, ...previous]);
+				toast.success('Uitnodiging verstuurd');
 			}
-		} catch (submitError) {
-			setError(submitError instanceof Error ? submitError.message : 'Er is een fout opgetreden');
+
+			handleCancel();
+			router.refresh();
+		} catch {
+			toast.error('Er is een fout opgetreden');
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -117,13 +119,14 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 		const data = await response.json() as {error?: string};
 
 		if (!response.ok) {
-			setError(data.error ?? 'Verwijderen mislukt');
+			toast.error(data.error ?? 'Verwijderen mislukt');
 			setDeleteUser(null);
 			return;
 		}
 
 		setUsers(previous => previous.filter(u => u.id !== deleteUser.id));
 		setDeleteUser(null);
+		toast.success('Gebruiker verwijderd');
 		router.refresh();
 	};
 
@@ -137,12 +140,13 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 		const data = await response.json() as {error?: string; user?: User};
 
 		if (!response.ok) {
-			setError(data.error ?? 'Status wijzigen mislukt');
+			toast.error(data.error ?? 'Status wijzigen mislukt');
 			return;
 		}
 
 		if (data.user) {
 			setUsers(previous => previous.map(u => u.id === user.id ? data.user! : u));
+			toast.success(data.user.isAdmin ? 'Admin rechten toegekend' : 'Admin rechten verwijderd');
 		}
 
 		router.refresh();
@@ -158,12 +162,13 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 		const data = await response.json() as {error?: string; user?: User};
 
 		if (!response.ok) {
-			setError(data.error ?? 'Uitnodiging opnieuw versturen mislukt');
+			toast.error(data.error ?? 'Uitnodiging opnieuw versturen mislukt');
 			return;
 		}
 
 		if (data.user) {
 			setUsers(previous => previous.map(u => u.id === user.id ? data.user! : u));
+			toast.success('Uitnodiging opnieuw verstuurd');
 		}
 
 		router.refresh();
@@ -174,13 +179,6 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 			<h2 className='text-lg sm:text-xl font-bold text-gray-800 mb-4'>
 				{editingId ? 'Gebruiker bewerken' : 'Gebruiker uitnodigen'}
 			</h2>
-
-			{error && (
-				<div className='mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 flex items-start gap-3'>
-					<ErrorIcon size='md' className='text-red-500 flex-shrink-0 mt-0.5' />
-					<span>{error}</span>
-				</div>
-			)}
 
 			<div className='space-y-4'>
 				<div>
@@ -290,12 +288,6 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 			)}
 
 			{(isCreating || editingId) && renderForm()}
-
-			{error && !isCreating && !editingId && (
-				<div className='mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800'>
-					{error}
-				</div>
-			)}
 
 			<div className='bg-white rounded-xl shadow-md overflow-hidden'>
 				<div className='overflow-x-auto'>
