@@ -2,6 +2,7 @@
 
 import {useState, type ChangeEvent} from 'react';
 import {useRouter} from 'next/navigation';
+import {toast} from 'sonner';
 import type {SeasonalDecorationsConfig} from '@/lib/db';
 
 type DecoratiesManagerProps = {
@@ -35,7 +36,6 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 	const router = useRouter();
 	const [config, setConfig] = useState<SeasonalDecorationsConfig>(initialConfig);
 	const [isSubmitting, setIsSubmitting] = useState(false);
-	const [message, setMessage] = useState<{type: 'success' | 'error'; text: string} | null>(null);
 
 	const handleToggleEnabled = (event: ChangeEvent<HTMLInputElement>) => {
 		setConfig(prev => ({...prev, enabled: event.target.checked}));
@@ -79,7 +79,6 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 
 	const handleSave = async () => {
 		setIsSubmitting(true);
-		setMessage(null);
 
 		try {
 			const response = await fetch('/api/admin/settings/seasonal-decorations', {
@@ -92,10 +91,10 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 				throw new Error('Opslaan mislukt');
 			}
 
-			setMessage({type: 'success', text: 'Instellingen opgeslagen!'});
+			toast.success('Instellingen opgeslagen!');
 			router.refresh();
 		} catch {
-			setMessage({type: 'error', text: 'Er is een fout opgetreden bij het opslaan'});
+			toast.error('Er is een fout opgetreden bij het opslaan');
 		} finally {
 			setIsSubmitting(false);
 		}
@@ -202,17 +201,6 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 					</div>
 				</div>
 			</div>
-
-			{/* Message */}
-			{message && (
-				<div className={`p-4 rounded-lg ${
-					message.type === 'success'
-						? 'bg-green-50 border border-green-200 text-green-800'
-						: 'bg-red-50 border border-red-200 text-red-800'
-				}`}>
-					{message.text}
-				</div>
-			)}
 
 			{/* Save button */}
 			<div className='flex justify-end'>
