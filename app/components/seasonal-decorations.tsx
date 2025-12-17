@@ -5,14 +5,20 @@ import {useSeasonalDecorations} from './seasonal-decorations-context';
 
 // CSS styles for animations
 const seasonalStyles = `
-	/* Christmas light twinkling */
-	@keyframes twinkle {
-		0%, 100% { opacity: 1; filter: brightness(1.2); }
-		50% { opacity: 0.6; filter: brightness(0.8); }
+	/* Christmas light glowing */
+	@keyframes glow-pulse {
+		0%, 100% {
+			filter: brightness(1) saturate(1.2);
+			transform: scale(1);
+		}
+		50% {
+			filter: brightness(1.4) saturate(1.5);
+			transform: scale(1.05);
+		}
 	}
 
-	.christmas-light-bulb {
-		animation: twinkle 1s ease-in-out infinite;
+	.christmas-bulb {
+		animation: glow-pulse 2s ease-in-out infinite;
 	}
 
 	/* Snowflake falling */
@@ -29,21 +35,22 @@ const seasonalStyles = `
 		animation: snowfall linear infinite;
 	}
 
-	/* Icicle shimmer */
-	@keyframes icicle-shimmer {
-		0%, 100% { opacity: 0.9; }
-		50% { opacity: 1; }
+	/* Icicle drip effect */
+	@keyframes drip {
+		0%, 90%, 100% { opacity: 0; transform: translateY(0); }
+		92% { opacity: 0.8; transform: translateY(0); }
+		99% { opacity: 0; transform: translateY(8px); }
 	}
 
-	.icicle {
-		animation: icicle-shimmer 3s ease-in-out infinite;
+	.icicle-drip {
+		animation: drip 4s ease-in-out infinite;
 	}
 
 	/* Respect reduced motion preference */
 	@media (prefers-reduced-motion: reduce) {
-		.christmas-light-bulb,
+		.christmas-bulb,
 		.snowflake,
-		.icicle {
+		.icicle-drip {
 			animation: none !important;
 		}
 
@@ -53,67 +60,69 @@ const seasonalStyles = `
 	}
 `;
 
-// Color definitions for Christmas lights
-const lightColors = [
-	{base: '#e63946', light: '#ff6b6b', dark: '#9d0208', glow: '#ff0000'}, // Red
-	{base: '#2a9d8f', light: '#40dfcf', dark: '#1a6359', glow: '#00ff88'}, // Green
-	{base: '#f4a261', light: '#ffd166', dark: '#e76f51', glow: '#ffcc00'}, // Orange/Gold
-	{base: '#457b9d', light: '#70b8db', dark: '#1d3557', glow: '#00aaff'}, // Blue
-	{base: '#9b5de5', light: '#c77dff', dark: '#7209b7', glow: '#cc66ff'}, // Purple
-	{base: '#00b4d8', light: '#48cae4', dark: '#0077b6', glow: '#00ddff'}, // Cyan
+// Realistic Christmas light colors (like real C9 bulbs)
+const bulbColors = [
+	{bg: '#ff1a1a', glow: '#ff0000', shadow: '#cc0000'}, // Red
+	{bg: '#00cc00', glow: '#00ff00', shadow: '#009900'}, // Green
+	{bg: '#ffcc00', glow: '#ffdd00', shadow: '#cc9900'}, // Gold/Yellow
+	{bg: '#0066ff', glow: '#0088ff', shadow: '#0044cc'}, // Blue
+	{bg: '#ff6600', glow: '#ff8800', shadow: '#cc4400'}, // Orange
+	{bg: '#cc00cc', glow: '#ff00ff', shadow: '#990099'}, // Purple
 ];
 
 /**
- * Single Christmas light bulb SVG component
+ * Realistic CSS-based Christmas light bulb
  */
-function LightBulb({color, delay}: {color: typeof lightColors[0]; delay: number}) {
+function RealisticBulb({color, delay, isLow}: {color: typeof bulbColors[0]; delay: number; isLow: boolean}) {
 	return (
 		<div
-			className='christmas-light-bulb relative'
-			style={{
-				animationDelay: `${delay}s`,
-				width: '20px',
-				height: '36px',
-			}}
+			className='relative flex flex-col items-center'
+			style={{marginTop: isLow ? '8px' : '0'}}
 		>
-			{/* Glow effect */}
+			{/* Wire connection */}
 			<div
-				className='absolute rounded-full'
+				className='w-[2px] bg-[#1a1a1a]'
+				style={{height: isLow ? '12px' : '4px'}}
+			/>
+			{/* Socket/cap */}
+			<div
+				className='w-[10px] h-[6px] rounded-t-sm'
 				style={{
-					width: '30px',
-					height: '30px',
-					top: '10px',
-					left: '-5px',
-					background: `radial-gradient(circle, ${color.glow}66 0%, transparent 70%)`,
-					filter: 'blur(4px)',
+					background: 'linear-gradient(180deg, #4a4a4a 0%, #2a2a2a 50%, #1a1a1a 100%)',
+					boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.2)',
 				}}
 			/>
-			<svg viewBox='0 0 20 36' className='w-full h-full relative z-10'>
-				{/* Socket */}
-				<rect x='6' y='0' width='8' height='5' fill='#2a2a2a' rx='1' />
-				<rect x='7' y='1' width='6' height='1' fill='#3a3a3a' />
-				<rect x='7' y='3' width='6' height='1' fill='#3a3a3a' />
-
-				{/* Bulb body */}
-				<ellipse cx='10' cy='20' rx='9' ry='14' fill={color.base} />
-				<ellipse cx='10' cy='20' rx='9' ry='14' fill='url(#bulbShine)' />
-
-				{/* Inner glow */}
-				<ellipse cx='10' cy='20' rx='5' ry='9' fill={color.light} opacity='0.5' />
-
-				{/* Glass highlight */}
-				<ellipse cx='7' cy='15' rx='2' ry='4' fill='white' opacity='0.5' />
-				<ellipse cx='6' cy='13' rx='1' ry='1.5' fill='white' opacity='0.7' />
-
-				{/* Shared gradient definition */}
-				<defs>
-					<linearGradient id='bulbShine' x1='0%' y1='0%' x2='100%' y2='100%'>
-						<stop offset='0%' stopColor='white' stopOpacity='0.3' />
-						<stop offset='50%' stopColor='white' stopOpacity='0' />
-						<stop offset='100%' stopColor='black' stopOpacity='0.2' />
-					</linearGradient>
-				</defs>
-			</svg>
+			{/* Bulb */}
+			<div
+				className='christmas-bulb relative'
+				style={{
+					animationDelay: `${delay}s`,
+					width: '14px',
+					height: '18px',
+					borderRadius: '50% 50% 50% 50% / 40% 40% 60% 60%',
+					background: `radial-gradient(ellipse 60% 50% at 30% 30%, white 0%, ${color.bg} 40%, ${color.shadow} 100%)`,
+					boxShadow: `
+						0 0 10px 3px ${color.glow}88,
+						0 0 20px 6px ${color.glow}44,
+						0 0 30px 10px ${color.glow}22,
+						inset 0 -3px 6px ${color.shadow}88,
+						inset 2px 2px 4px rgba(255,255,255,0.5)
+					`,
+				}}
+			>
+				{/* Glass reflection */}
+				<div
+					className='absolute'
+					style={{
+						top: '3px',
+						left: '3px',
+						width: '4px',
+						height: '6px',
+						borderRadius: '50%',
+						background: 'linear-gradient(135deg, rgba(255,255,255,0.8) 0%, transparent 100%)',
+					}}
+				/>
+			</div>
 		</div>
 	);
 }
@@ -126,10 +135,10 @@ export function ChristmasLights() {
 	const config = useSeasonalDecorations();
 
 	const lights = useMemo(() => {
-		return Array.from({length: 24}, (_, index) => ({
+		return Array.from({length: 30}, (_, index) => ({
 			id: index,
-			color: lightColors[index % lightColors.length],
-			delay: index * 0.12,
+			color: bulbColors[index % bulbColors.length],
+			delay: (index * 0.15) % 2,
 			isLow: index % 2 === 1,
 		}));
 	}, []);
@@ -138,33 +147,36 @@ export function ChristmasLights() {
 
 	return (
 		<div className='w-full overflow-hidden pointer-events-none' aria-hidden='true'>
-			{/* Wire */}
-			<div className='relative w-full h-14'>
-				{/* SVG wire that spans full width */}
-				<svg
-					className='absolute top-0 left-0 w-full h-4'
-					viewBox='0 0 100 10'
-					preserveAspectRatio='none'
-				>
-					<path
-						d='M0,3 Q2.08,8 4.16,3 Q6.25,8 8.33,3 Q10.41,8 12.5,3 Q14.58,8 16.66,3 Q18.75,8 20.83,3 Q22.91,8 25,3 Q27.08,8 29.16,3 Q31.25,8 33.33,3 Q35.41,8 37.5,3 Q39.58,8 41.66,3 Q43.75,8 45.83,3 Q47.91,8 50,3 Q52.08,8 54.16,3 Q56.25,8 58.33,3 Q60.41,8 62.5,3 Q64.58,8 66.66,3 Q68.75,8 70.83,3 Q72.91,8 75,3 Q77.08,8 79.16,3 Q81.25,8 83.33,3 Q85.41,8 87.5,3 Q89.58,8 91.66,3 Q93.75,8 95.83,3 Q97.91,8 100,3'
-						fill='none'
-						stroke='#1a3a1a'
-						strokeWidth='0.8'
-					/>
-				</svg>
+			<div className='relative w-full' style={{height: '50px'}}>
+				{/* Main wire - sagging effect with CSS */}
+				<div
+					className='absolute top-0 left-0 w-full'
+					style={{
+						height: '20px',
+						background: `
+							repeating-linear-gradient(
+								90deg,
+								transparent 0px,
+								transparent 3.2%,
+								#1a1a1a 3.2%,
+								#1a1a1a 3.4%,
+								transparent 3.4%
+							)
+						`,
+						maskImage: 'linear-gradient(180deg, black 2px, transparent 2px)',
+						WebkitMaskImage: 'linear-gradient(180deg, black 2px, transparent 2px)',
+					}}
+				/>
 
-				{/* Light bulbs positioned with flexbox */}
-				<div className='absolute top-1 left-0 w-full flex justify-around px-2'>
+				{/* Light bulbs */}
+				<div className='absolute top-0 left-0 w-full flex justify-around px-1'>
 					{lights.map(light => (
-						<div
+						<RealisticBulb
 							key={light.id}
-							style={{
-								marginTop: light.isLow ? '12px' : '0px',
-							}}
-						>
-							<LightBulb color={light.color} delay={light.delay} />
-						</div>
+							color={light.color}
+							delay={light.delay}
+							isLow={light.isLow}
+						/>
 					))}
 				</div>
 			</div>
@@ -173,52 +185,54 @@ export function ChristmasLights() {
 }
 
 /**
- * Single icicle SVG component
+ * Realistic CSS-based icicle
  */
-function Icicle({height, delay}: {height: number; delay: number}) {
+function RealisticIcicle({height, delay}: {height: number; delay: number}) {
 	return (
-		<div
-			className='icicle'
-			style={{
-				animationDelay: `${delay}s`,
-				width: '12px',
-				height: `${height}px`,
-			}}
-		>
-			<svg viewBox='0 0 12 60' preserveAspectRatio='xMidYMin meet' className='w-full h-full'>
-				<defs>
-					<linearGradient id={`iceGrad-${delay}`} x1='0%' y1='0%' x2='0%' y2='100%'>
-						<stop offset='0%' stopColor='#e8f4fc' stopOpacity='0.95' />
-						<stop offset='40%' stopColor='#c5e3f6' stopOpacity='0.85' />
-						<stop offset='80%' stopColor='#a8d4f0' stopOpacity='0.7' />
-						<stop offset='100%' stopColor='#8bc5eb' stopOpacity='0.4' />
-					</linearGradient>
-					<linearGradient id={`iceShine-${delay}`} x1='0%' y1='0%' x2='100%' y2='0%'>
-						<stop offset='0%' stopColor='white' stopOpacity='0.1' />
-						<stop offset='30%' stopColor='white' stopOpacity='0.5' />
-						<stop offset='50%' stopColor='white' stopOpacity='0.2' />
-						<stop offset='100%' stopColor='white' stopOpacity='0' />
-					</linearGradient>
-				</defs>
-
-				{/* Main icicle body */}
-				<path
-					d='M1,0 L11,0 L10,8 Q9.5,20 8,32 Q7,44 6,55 Q5,44 4,32 Q2.5,20 2,8 Z'
-					fill={`url(#iceGrad-${delay})`}
-				/>
-
-				{/* Shine/highlight */}
-				<path
-					d='M2,2 L4,2 Q3.5,15 3,30 Q2.5,15 2,2 Z'
-					fill={`url(#iceShine-${delay})`}
-				/>
-
-				{/* Bright spot at top */}
-				<ellipse cx='3' cy='4' rx='1' ry='2' fill='white' opacity='0.6' />
-
-				{/* Water droplet */}
-				<ellipse cx='6' cy='57' rx='1.5' ry='2' fill='#a8d4f0' opacity='0.7' />
-			</svg>
+		<div className='relative' style={{width: '8px', height: `${height}px`}}>
+			{/* Main icicle body */}
+			<div
+				className='absolute inset-0'
+				style={{
+					background: `linear-gradient(
+						180deg,
+						rgba(220, 240, 255, 0.95) 0%,
+						rgba(180, 220, 250, 0.85) 20%,
+						rgba(150, 200, 245, 0.7) 50%,
+						rgba(120, 180, 240, 0.5) 80%,
+						rgba(100, 170, 235, 0.2) 100%
+					)`,
+					clipPath: 'polygon(20% 0%, 80% 0%, 70% 30%, 60% 60%, 50% 100%, 40% 60%, 30% 30%)',
+					filter: 'drop-shadow(0 2px 4px rgba(100, 150, 200, 0.3))',
+				}}
+			/>
+			{/* Shine/highlight */}
+			<div
+				className='absolute'
+				style={{
+					top: '5%',
+					left: '25%',
+					width: '30%',
+					height: '40%',
+					background: 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0) 100%)',
+					clipPath: 'polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%)',
+					borderRadius: '2px',
+				}}
+			/>
+			{/* Water droplet at tip */}
+			<div
+				className='icicle-drip absolute'
+				style={{
+					animationDelay: `${delay}s`,
+					bottom: '-4px',
+					left: '50%',
+					transform: 'translateX(-50%)',
+					width: '4px',
+					height: '5px',
+					borderRadius: '50% 50% 50% 50% / 30% 30% 70% 70%',
+					background: 'radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.9), rgba(150,200,240,0.6))',
+				}}
+			/>
 		</div>
 	);
 }
@@ -230,41 +244,33 @@ function Icicle({height, delay}: {height: number; delay: number}) {
 export function Icicles() {
 	const config = useSeasonalDecorations();
 
-	// Varied icicle heights for natural look
-	const iciclePattern = useMemo(() => [
-		{height: 40, delay: 0},
-		{height: 55, delay: 0.1},
-		{height: 35, delay: 0.2},
-		{height: 65, delay: 0.15},
-		{height: 45, delay: 0.25},
-		{height: 30, delay: 0.3},
-		{height: 70, delay: 0.05},
-		{height: 50, delay: 0.35},
-		{height: 38, delay: 0.12},
-		{height: 60, delay: 0.22},
-		{height: 42, delay: 0.18},
-		{height: 55, delay: 0.28},
-		{height: 35, delay: 0.08},
-		{height: 68, delay: 0.32},
-		{height: 48, delay: 0.02},
-		{height: 40, delay: 0.2},
-		{height: 58, delay: 0.14},
-		{height: 32, delay: 0.26},
-		{height: 62, delay: 0.1},
-		{height: 44, delay: 0.22},
-	], []);
+	// Varied icicle heights for natural look - more variation
+	const iciclePattern = useMemo(() => {
+		const heights = [25, 40, 20, 50, 30, 18, 55, 35, 22, 45, 28, 38, 15, 52, 32, 42, 24, 48, 26, 36, 20, 44, 30, 50, 22, 38, 28, 46, 34, 40];
+		return heights.map((height, index) => ({
+			height,
+			delay: (index * 0.3) % 4,
+		}));
+	}, []);
 
 	if (!config.enabled || !config.decorations.icicles) return null;
 
 	return (
 		<div className='w-full overflow-hidden pointer-events-none' aria-hidden='true'>
-			{/* Snow/frost base */}
-			<div className='w-full h-1 bg-gradient-to-b from-blue-50/90 to-blue-100/50' />
+			{/* Snow/frost accumulation at top */}
+			<div
+				className='w-full'
+				style={{
+					height: '6px',
+					background: 'linear-gradient(180deg, rgba(240,248,255,0.95) 0%, rgba(220,235,250,0.8) 60%, rgba(200,225,245,0.4) 100%)',
+					boxShadow: '0 2px 4px rgba(150,180,210,0.2)',
+				}}
+			/>
 
 			{/* Icicles container */}
-			<div className='w-full flex justify-around items-start px-1' style={{marginTop: '-2px'}}>
+			<div className='w-full flex justify-around items-start' style={{marginTop: '-2px', gap: '2px'}}>
 				{iciclePattern.map((icicle, index) => (
-					<Icicle key={index} height={icicle.height} delay={icicle.delay} />
+					<RealisticIcicle key={index} height={icicle.height} delay={icicle.delay} />
 				))}
 			</div>
 		</div>
