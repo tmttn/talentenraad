@@ -49,15 +49,5 @@ export type NewSubmission = typeof submissions.$inferInsert;
 export type SiteSetting = typeof siteSettings.$inferSelect;
 export type NewSiteSetting = typeof siteSettings.$inferInsert;
 
-// Seasonal decorations configuration type
-export type SeasonalDecorationsConfig = {
-	enabled: boolean;
-	season: 'christmas' | 'easter' | 'halloween' | 'none';
-	decorations: {
-		christmasLights: boolean;
-		snowfall: boolean;
-		icicles: boolean;
-		gingerbreadMan: boolean;
-		christmasBalls: boolean;
-	};
-};
+// Re-export shared types for convenience
+export type {SeasonalDecorationsConfig} from '../types';

@@ -9,9 +9,6 @@ export type {AnimatedButtonProperties} from './animated-button';
 export {Card} from './card';
 export type {CardProperties} from './card';
 
-export {Section} from './section';
-export type {SectionProperties} from './section';
-
 // Badge components
 export {DateBadge, formatDateParts} from './date-badge';
 export type {DateBadgeProperties} from './date-badge';

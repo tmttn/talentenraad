@@ -83,8 +83,6 @@
       "proxy.ts",
       "app/components/**",
       "app/api/**",
-      "app/activiteiten/**",
-      "app/nieuws/**",
       "app/lib/**",
       "app/(admin)/**",
       "app/features/admin/**",

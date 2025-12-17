@@ -121,15 +121,5 @@ export function SeasonalStyles() {
 	return <style dangerouslySetInnerHTML={{__html: seasonalStyles}} />;
 }
 
-// Default configuration export
-export const defaultSeasonalConfig = {
-	enabled: false,
-	season: 'christmas' as const,
-	decorations: {
-		christmasLights: true,
-		snowfall: true,
-		icicles: true,
-		gingerbreadMan: true,
-		christmasBalls: true,
-	},
-};
+// Re-export from shared types for backwards compatibility
+export {defaultSeasonalConfig} from '@/lib/types';
