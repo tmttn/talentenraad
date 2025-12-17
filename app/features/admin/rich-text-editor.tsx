@@ -280,6 +280,171 @@ function convertToHtml(text: string): string {
 		.join('');
 }
 
+// Format HTML with proper indentation
+function formatHtml(html: string): string {
+	const selfClosingTags = new Set(['br', 'hr', 'img', 'input', 'meta', 'link']);
+	let result = '';
+	let indent = 0;
+	const tab = '  ';
+
+	// Remove existing whitespace between tags
+	const cleanHtml = html.replaceAll(/>\s+</g, '><').trim();
+
+	// Split by tags while keeping them
+	const tokens = cleanHtml.split(/(<[^>]+>)/g).filter(Boolean);
+
+	for (const token of tokens) {
+		if (token.startsWith('</')) {
+			// Closing tag - decrease indent first
+			indent = Math.max(0, indent - 1);
+			result += `${tab.repeat(indent)}${token}\n`;
+		} else if (token.startsWith('<')) {
+			// Opening tag or self-closing
+			const tagMatch = /<(\w+)/.exec(token);
+			const tagName = tagMatch?.[1]?.toLowerCase() ?? '';
+			const isSelfClosing = selfClosingTags.has(tagName) || token.endsWith('/>');
+
+			result += `${tab.repeat(indent)}${token}\n`;
+
+			if (!isSelfClosing) {
+				indent++;
+			}
+		} else if (token.trim()) {
+			// Text content
+			result += `${tab.repeat(indent)}${token.trim()}\n`;
+		}
+	}
+
+	return result.trim();
+}
+
+// Syntax highlight HTML - returns JSX-safe highlighted segments
+function highlightHtml(html: string): React.ReactNode[] {
+	const result: React.ReactNode[] = [];
+	let key = 0;
+
+	// Process line by line to maintain structure
+	const lines = html.split('\n');
+
+	for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+		const line = lines[lineIndex];
+		let lastIndex = 0;
+
+		// Match tags, attributes, and strings
+		const tagRegex = /(<\/?)([\w-]+)((?:\s+[\w-]+(?:=(?:"[^"]*"|'[^']*'|[^\s>]*))?)*)\s*(\/?>)/g;
+		let match;
+
+		while ((match = tagRegex.exec(line)) !== null) {
+			// Add text before the tag
+			if (match.index > lastIndex) {
+				result.push(<span key={key++} className='text-gray-800'>{line.slice(lastIndex, match.index)}</span>);
+			}
+
+			const [, bracket, tagName, attributes, closingBracket] = match;
+
+			// Opening bracket
+			result.push(<span key={key++} className='text-gray-500'>{bracket}</span>);
+
+			// Tag name
+			result.push(<span key={key++} className='text-rose-600'>{tagName}</span>);
+
+			// Attributes
+			if (attributes) {
+				const attrRegex = /([\w-]+)(=)("[^"]*"|'[^']*'|[^\s>]*)?/g;
+				let attrMatch;
+				let attrLastIndex = 0;
+				const attrString = attributes;
+
+				while ((attrMatch = attrRegex.exec(attrString)) !== null) {
+					// Whitespace before attribute
+					if (attrMatch.index > attrLastIndex) {
+						result.push(<span key={key++}>{attrString.slice(attrLastIndex, attrMatch.index)}</span>);
+					}
+
+					const [, attrName, equals, attrValue] = attrMatch;
+
+					// Attribute name
+					result.push(<span key={key++} className='text-amber-600'>{attrName}</span>);
+					// Equals sign
+					result.push(<span key={key++} className='text-gray-500'>{equals}</span>);
+					// Attribute value
+					if (attrValue) {
+						result.push(<span key={key++} className='text-emerald-600'>{attrValue}</span>);
+					}
+
+					attrLastIndex = attrMatch.index + attrMatch[0].length;
+				}
+
+				// Remaining whitespace
+				if (attrLastIndex < attrString.length) {
+					result.push(<span key={key++}>{attrString.slice(attrLastIndex)}</span>);
+				}
+			}
+
+			// Closing bracket
+			result.push(<span key={key++} className='text-gray-500'>{closingBracket}</span>);
+
+			lastIndex = match.index + match[0].length;
+		}
+
+		// Add remaining text after last tag
+		if (lastIndex < line.length) {
+			result.push(<span key={key++} className='text-gray-800'>{line.slice(lastIndex)}</span>);
+		}
+
+		// Add newline (except for last line)
+		if (lineIndex < lines.length - 1) {
+			result.push('\n');
+		}
+	}
+
+	return result;
+}
+
+type HtmlEditorProps = {
+	value: string;
+	onChange: (value: string) => void;
+	placeholder?: string;
+};
+
+function HtmlEditor({value, onChange, placeholder}: HtmlEditorProps) {
+	const textareaRef = useRef<HTMLTextAreaElement>(null);
+	const preRef = useRef<HTMLPreElement>(null);
+
+	// Sync scroll between textarea and highlighted pre
+	const handleScroll = () => {
+		if (textareaRef.current && preRef.current) {
+			preRef.current.scrollTop = textareaRef.current.scrollTop;
+			preRef.current.scrollLeft = textareaRef.current.scrollLeft;
+		}
+	};
+
+	return (
+		<div className='relative min-h-[200px] bg-gray-900 rounded-b-lg overflow-hidden'>
+			{/* Highlighted backdrop */}
+			<pre
+				ref={preRef}
+				className='absolute inset-0 px-3 sm:px-4 py-3 font-mono text-sm leading-relaxed overflow-auto pointer-events-none whitespace-pre-wrap break-words'
+				aria-hidden='true'
+			>
+				<code>{highlightHtml(value)}</code>
+			</pre>
+			{/* Transparent textarea for editing */}
+			<textarea
+				ref={textareaRef}
+				value={value}
+				onChange={event => {
+					onChange(event.target.value);
+				}}
+				onScroll={handleScroll}
+				placeholder={placeholder}
+				spellCheck={false}
+				className='relative w-full min-h-[200px] px-3 sm:px-4 py-3 font-mono text-sm leading-relaxed bg-transparent text-transparent caret-white focus:outline-none resize-y placeholder:text-gray-500'
+			/>
+		</div>
+	);
+}
+
 export function RichTextEditor({value, onChange, placeholder}: RichTextEditorProps) {
 	const [isHtmlMode, setIsHtmlMode] = useState(false);
 	const [htmlValue, setHtmlValue] = useState('');
@@ -320,12 +485,14 @@ export function RichTextEditor({value, onChange, placeholder}: RichTextEditorPro
 
 		if (isHtmlMode && editor) {
 			// Switching from HTML mode to visual mode - update editor with edited HTML
-			editor.commands.setContent(htmlValue);
-			onChange(htmlValue);
+			// Remove formatting (newlines/indentation) before setting content
+			const compactHtml = htmlValue.replaceAll(/\n\s*/g, '');
+			editor.commands.setContent(compactHtml);
+			onChange(compactHtml);
 		} else if (editor) {
-			// Switching to HTML mode - capture current editor content
+			// Switching to HTML mode - capture and format current editor content
 			const currentHtml = editor.getHTML();
-			setHtmlValue(currentHtml);
+			setHtmlValue(formatHtml(currentHtml));
 		}
 
 		setIsHtmlMode(!isHtmlMode);
@@ -336,19 +503,14 @@ export function RichTextEditor({value, onChange, placeholder}: RichTextEditorPro
 		}, 0);
 	};
 
-	const handleHtmlChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setHtmlValue(event.target.value);
-	};
-
 	return (
 		<div className='border-2 border-gray-300 rounded-lg bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/30 transition-colors'>
 			<Toolbar editor={editor} isHtmlMode={isHtmlMode} onToggleHtmlMode={handleToggleHtmlMode} />
 			{isHtmlMode ? (
-				<textarea
+				<HtmlEditor
 					value={htmlValue}
-					onChange={handleHtmlChange}
+					onChange={setHtmlValue}
 					placeholder={placeholder}
-					className='w-full min-h-[200px] px-3 sm:px-4 py-3 font-mono text-sm focus:outline-none resize-y'
 				/>
 			) : (
 				<>
