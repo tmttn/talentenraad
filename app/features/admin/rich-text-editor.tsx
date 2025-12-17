@@ -1,5 +1,6 @@
 'use client';
 
+import {useState} from 'react';
 import {useEditor, EditorContent, type Editor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -41,7 +42,13 @@ function ToolbarButton({onClick, isActive, disabled, title, children}: ToolbarBu
 	);
 }
 
-function Toolbar({editor}: {editor: Editor | null}) {
+type ToolbarProps = {
+	editor: Editor | null;
+	isHtmlMode: boolean;
+	onToggleHtmlMode: () => void;
+};
+
+function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 	if (!editor) {
 		return null;
 	}
@@ -214,7 +221,7 @@ function Toolbar({editor}: {editor: Editor | null}) {
 				onClick={() => {
 					editor.chain().focus().undo().run();
 				}}
-				disabled={!editor.can().undo()}
+				disabled={!editor.can().undo() || isHtmlMode}
 				title='Ongedaan maken (Ctrl+Z)'
 			>
 				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
@@ -226,12 +233,26 @@ function Toolbar({editor}: {editor: Editor | null}) {
 				onClick={() => {
 					editor.chain().focus().redo().run();
 				}}
-				disabled={!editor.can().redo()}
+				disabled={!editor.can().redo() || isHtmlMode}
 				title='Opnieuw (Ctrl+Y)'
 			>
 				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
 					<path d='M21 7v6h-6' />
 					<path d='M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7' />
+				</svg>
+			</ToolbarButton>
+
+			<div className='w-px h-6 bg-gray-300 mx-1 self-center' />
+
+			{/* HTML Mode Toggle */}
+			<ToolbarButton
+				onClick={onToggleHtmlMode}
+				isActive={isHtmlMode}
+				title={isHtmlMode ? 'Visuele modus' : 'HTML modus'}
+			>
+				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
+					<polyline points='16 18 22 12 16 6' />
+					<polyline points='8 6 2 12 8 18' />
 				</svg>
 			</ToolbarButton>
 		</div>
@@ -260,6 +281,7 @@ function convertToHtml(text: string): string {
 }
 
 export function RichTextEditor({value, onChange, placeholder}: RichTextEditorProps) {
+	const [isHtmlMode, setIsHtmlMode] = useState(false);
 	const htmlContent = convertToHtml(value);
 
 	const editor = useEditor({
@@ -288,15 +310,39 @@ export function RichTextEditor({value, onChange, placeholder}: RichTextEditorPro
 		},
 	});
 
+	const handleToggleHtmlMode = () => {
+		if (isHtmlMode && editor) {
+			// Switching from HTML mode to visual mode - update editor content
+			editor.commands.setContent(value);
+		}
+
+		setIsHtmlMode(!isHtmlMode);
+	};
+
+	const handleHtmlChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+		onChange(event.target.value);
+	};
+
 	return (
 		<div className='border-2 border-gray-300 rounded-lg bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/30 transition-colors'>
-			<Toolbar editor={editor} />
-			{editor?.isEmpty && placeholder && (
-				<div className='absolute px-4 py-3 text-gray-400 pointer-events-none'>
-					{placeholder}
-				</div>
+			<Toolbar editor={editor} isHtmlMode={isHtmlMode} onToggleHtmlMode={handleToggleHtmlMode} />
+			{isHtmlMode ? (
+				<textarea
+					value={value}
+					onChange={handleHtmlChange}
+					placeholder={placeholder}
+					className='w-full min-h-[200px] px-3 sm:px-4 py-3 font-mono text-sm focus:outline-none resize-y'
+				/>
+			) : (
+				<>
+					{editor?.isEmpty && placeholder && (
+						<div className='absolute px-4 py-3 text-gray-400 pointer-events-none'>
+							{placeholder}
+						</div>
+					)}
+					<EditorContent editor={editor} />
+				</>
 			)}
-			<EditorContent editor={editor} />
 		</div>
 	);
 }
