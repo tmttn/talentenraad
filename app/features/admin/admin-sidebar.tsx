@@ -251,7 +251,10 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 			</aside>
 
 			{/* Spacer to push content right of fixed sidebar on desktop */}
-			<div className={`hidden lg:block flex-shrink-0 ${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300`} />
+			<div
+				className='hidden lg:block flex-shrink-0 transition-all duration-300'
+				style={{width: isCollapsed ? '4rem' : '16rem'}}
+			/>
 		</>
 	);
 }
