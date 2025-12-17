@@ -78,7 +78,7 @@
       "commitlint.config.js",
       "eslint.config.mjs",
       "scripts/**",
-      "middleware.ts",
+      "proxy.ts",
       "app/components/**",
       "app/api/**",
       "app/activiteiten/**",
