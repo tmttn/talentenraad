@@ -238,7 +238,30 @@ function Toolbar({editor}: {editor: Editor | null}) {
 	);
 }
 
+// Convert plain text with newlines to HTML paragraphs
+function convertToHtml(text: string): string {
+	// If it already contains HTML tags, return as-is
+	if (/<[a-z][\s\S]*>/i.test(text)) {
+		return text;
+	}
+
+	// Convert plain text with newlines to paragraphs
+	if (!text.trim()) {
+		return '';
+	}
+
+	return text
+		.split(/\n\n+/)
+		.map(paragraph => {
+			const withBreaks = paragraph.replaceAll('\n', '<br>');
+			return `<p>${withBreaks}</p>`;
+		})
+		.join('');
+}
+
 export function RichTextEditor({value, onChange, placeholder}: RichTextEditorProps) {
+	const htmlContent = convertToHtml(value);
+
 	const editor = useEditor({
 		extensions: [
 			StarterKit.configure({
@@ -254,7 +277,7 @@ export function RichTextEditor({value, onChange, placeholder}: RichTextEditorPro
 			}),
 			Underline,
 		],
-		content: value,
+		content: htmlContent,
 		editorProps: {
 			attributes: {
 				class: 'prose prose-sm sm:prose max-w-none focus:outline-none min-h-[200px] px-3 sm:px-4 py-3',
