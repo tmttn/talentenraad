@@ -505,13 +505,13 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 											{formatDate(user.createdAt)}
 										</td>
 										<td className='px-4 sm:px-6 py-4 text-right'>
-											<div className='flex justify-end items-center gap-1'>
+											<div className='flex justify-end items-center gap-1 sm:gap-2'>
 												{isProtectedEmail(user.email) && (
 													<span
 														title='Beschermd admin e-mail'
 														className='p-2 text-amber-600'
 													>
-														<Lock className='w-5 h-5' />
+														<Lock className='w-4 h-4' />
 													</span>
 												)}
 												{user.invitedAt && !user.acceptedAt && (
@@ -521,9 +521,10 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 															void handleResendInvitation(user);
 														}}
 														title='Uitnodiging opnieuw versturen'
-														className='p-2 rounded-lg text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-300'
+														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-300'
 													>
-														<Send className='w-5 h-5' />
+														<Send className='w-4 h-4' />
+														<span className='hidden lg:inline'>Opnieuw</span>
 													</button>
 												)}
 												<button
@@ -537,13 +538,14 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 														: user.isAdmin
 															? 'Admin rechten verwijderen'
 															: 'Admin maken'}
-													className={`p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+													className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
 														isProtectedEmail(user.email) && user.isAdmin
 															? 'text-gray-300 cursor-not-allowed'
 															: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:ring-gray-300'
 													}`}
 												>
-													{user.isAdmin ? <ShieldOff className='w-5 h-5' /> : <Shield className='w-5 h-5' />}
+													{user.isAdmin ? <ShieldOff className='w-4 h-4' /> : <Shield className='w-4 h-4' />}
+													<span className='hidden lg:inline'>{user.isAdmin ? 'Verwijder admin' : 'Maak admin'}</span>
 												</button>
 												<button
 													type='button'
@@ -551,9 +553,10 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 														handleEdit(user);
 													}}
 													title='Bewerken'
-													className='p-2 rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/30'
+													className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/30'
 												>
-													<Pencil className='w-5 h-5' />
+													<Pencil className='w-4 h-4' />
+													<span className='hidden lg:inline'>Bewerken</span>
 												</button>
 												<button
 													type='button'
@@ -562,13 +565,14 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 													}}
 													disabled={isProtectedEmail(user.email)}
 													title={isProtectedEmail(user.email) ? 'Beschermd admin e-mail' : 'Verwijderen'}
-													className={`p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+													className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
 														isProtectedEmail(user.email)
 															? 'text-gray-300 cursor-not-allowed'
 															: 'text-red-500 hover:text-red-700 hover:bg-red-50 focus:ring-red-300'
 													}`}
 												>
-													<Trash2 className='w-5 h-5' />
+													<Trash2 className='w-4 h-4' />
+													<span className='hidden lg:inline'>Verwijderen</span>
 												</button>
 											</div>
 										</td>

@@ -4,7 +4,7 @@ import {useState, useMemo} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {toast} from 'sonner';
-import {Eye} from 'lucide-react';
+import {Eye, CheckCircle, Circle, Archive, ArchiveRestore, Trash2} from 'lucide-react';
 import type {Submission} from '@/lib/db/index.js';
 import {TableFilters} from './table-filters';
 import {TablePagination} from './table-pagination';
@@ -248,8 +248,9 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 							onClick={() => {
 								void handleBulkAction('markRead');
 							}}
-							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50'
+							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
 						>
+							<CheckCircle className='w-4 h-4' />
 							Gelezen
 						</button>
 						<button
@@ -258,8 +259,9 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 							onClick={() => {
 								void handleBulkAction('markUnread');
 							}}
-							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50'
+							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
 						>
+							<Circle className='w-4 h-4' />
 							Ongelezen
 						</button>
 						<button
@@ -268,8 +270,9 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 							onClick={() => {
 								void handleBulkAction(isArchiveView ? 'unarchive' : 'archive');
 							}}
-							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50'
+							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
 						>
+							{isArchiveView ? <ArchiveRestore className='w-4 h-4' /> : <Archive className='w-4 h-4' />}
 							{isArchiveView ? 'Terugzetten' : 'Archiveren'}
 						</button>
 						<button
@@ -278,8 +281,9 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 							onClick={() => {
 								void handleBulkAction('delete');
 							}}
-							className='px-3 py-2 text-sm bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors disabled:opacity-50'
+							className='px-3 py-2 text-sm bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
 						>
+							<Trash2 className='w-4 h-4' />
 							Verwijderen
 						</button>
 					</div>
@@ -375,10 +379,10 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 									<td className='px-4 sm:px-6 py-4 text-right'>
 										<Link
 											href={`/admin/submissions/${submission.id}`}
-											className='inline-flex p-2 text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg transition-colors'
-											title='Bekijken'
+											className='inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg transition-colors'
 										>
-											<Eye className='w-5 h-5' />
+											<Eye className='w-4 h-4' />
+											<span className='hidden sm:inline'>Bekijken</span>
 										</Link>
 									</td>
 								</tr>

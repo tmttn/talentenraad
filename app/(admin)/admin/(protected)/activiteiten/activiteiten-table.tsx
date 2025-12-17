@@ -271,21 +271,23 @@ export function ActiviteitenTable({activities}: ActiviteitenTableProps) {
 											</span>
 										</td>
 										<td className='px-4 sm:px-6 py-4 whitespace-nowrap text-right'>
-											<div className='flex justify-end gap-1'>
+											<div className='flex justify-end gap-1 sm:gap-2'>
 												<Link
 													href={`/activiteiten/${generateSlug(item.data.titel)}`}
 													target='_blank'
 													title='Bekijk op website'
-													className='p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors'
+													className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors'
 												>
-													<ExternalLink className='w-5 h-5' />
+													<ExternalLink className='w-4 h-4' />
+													<span className='hidden lg:inline'>Bekijken</span>
 												</Link>
 												<Link
 													href={`/admin/activiteiten/${item.id}`}
 													title='Bewerken'
-													className='p-2 rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
+													className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
 												>
-													<Pencil className='w-5 h-5' />
+													<Pencil className='w-4 h-4' />
+													<span className='hidden lg:inline'>Bewerken</span>
 												</Link>
 												<button
 													type='button'
@@ -293,9 +295,10 @@ export function ActiviteitenTable({activities}: ActiviteitenTableProps) {
 														setDeleteItem(item);
 													}}
 													title='Verwijderen'
-													className='p-2 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors'
+													className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors'
 												>
-													<Trash2 className='w-5 h-5' />
+													<Trash2 className='w-4 h-4' />
+													<span className='hidden lg:inline'>Verwijderen</span>
 												</button>
 											</div>
 										</td>

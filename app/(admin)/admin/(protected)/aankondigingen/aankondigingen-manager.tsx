@@ -2,7 +2,7 @@
 
 import {useState, useMemo, type FormEvent, type ChangeEvent} from 'react';
 import {useRouter} from 'next/navigation';
-import {Plus} from 'lucide-react';
+import {Plus, Power, PowerOff, Pencil, Trash2} from 'lucide-react';
 import type {Announcement, AnnouncementType} from '@/lib/builder-types';
 import {DeleteDialog} from '@/features/admin/delete-dialog';
 import {TableFilters} from '@/features/admin/table-filters';
@@ -388,33 +388,39 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 										</span>
 									</div>
 								</div>
-								<div className='flex gap-2'>
+								<div className='flex gap-1 sm:gap-2'>
 									<button
 										type='button'
 										onClick={() => {
 											handleToggleActive(announcement);
 										}}
-										className='text-sm text-gray-600 hover:text-gray-800 font-medium'
+										title={announcement.data.actief ? 'Deactiveer' : 'Activeer'}
+										className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors'
 									>
-										{announcement.data.actief ? 'Deactiveer' : 'Activeer'}
+										{announcement.data.actief ? <PowerOff className='w-4 h-4' /> : <Power className='w-4 h-4' />}
+										<span className='hidden lg:inline'>{announcement.data.actief ? 'Deactiveer' : 'Activeer'}</span>
 									</button>
 									<button
 										type='button'
 										onClick={() => {
 											handleEdit(announcement);
 										}}
-										className='text-sm text-primary hover:text-primary-hover font-medium'
+										title='Bewerken'
+										className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
 									>
-										Bewerk
+										<Pencil className='w-4 h-4' />
+										<span className='hidden lg:inline'>Bewerk</span>
 									</button>
 									<button
 										type='button'
 										onClick={() => {
 											setDeleteItem(announcement);
 										}}
-										className='text-sm text-red-600 hover:text-red-800 font-medium'
+										title='Verwijderen'
+										className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors'
 									>
-										Verwijder
+										<Trash2 className='w-4 h-4' />
+										<span className='hidden lg:inline'>Verwijder</span>
 									</button>
 								</div>
 							</div>
