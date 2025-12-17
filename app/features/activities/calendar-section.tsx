@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
+import {Calendar, Clock, ChevronRight} from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 
 // eslint-disable-next-line n/prefer-global/process
@@ -118,9 +119,7 @@ function CalendarSection({
 	if (events.length === 0) {
 		return (
 			<div className='text-center py-12 bg-gray-100 rounded-2xl'>
-				<svg xmlns='http://www.w3.org/2000/svg' className='h-12 w-12 mx-auto text-gray-400 mb-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-					<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z' />
-				</svg>
+				<Calendar className='h-12 w-12 mx-auto text-gray-400 mb-4' aria-hidden='true' />
 				<p className='text-gray-500'>Geen activiteiten gepland</p>
 			</div>
 		);
@@ -146,16 +145,12 @@ function CalendarSection({
 								<h3 className='font-bold text-gray-800 group-hover:text-primary transition-colors'>{event.title}</h3>
 								{event.time && (
 									<p className='text-sm text-gray-500 flex items-center gap-1'>
-										<svg xmlns='http://www.w3.org/2000/svg' className='h-4 w-4' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-											<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
-										</svg>
+										<Clock className='h-4 w-4' aria-hidden='true' />
 										{event.time}
 									</p>
 								)}
 							</div>
-							<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-gray-400 group-hover:text-primary transition-colors' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-							</svg>
+							<ChevronRight className='h-6 w-6 text-gray-400 group-hover:text-primary transition-colors' aria-hidden='true' />
 						</a>
 					);
 				})}

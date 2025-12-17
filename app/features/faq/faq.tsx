@@ -3,7 +3,7 @@
 import {
 	useEffect, useState, useRef, useCallback, type KeyboardEvent,
 } from 'react';
-import {questionPath} from '@components/ui/icons';
+import {ChevronDown, HelpCircle} from 'lucide-react';
 
 const faqButtonClassName = [
 	'faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4',
@@ -202,16 +202,7 @@ function Faq() {
 		return (
 			<div className='max-w-4xl mx-auto px-6 text-center py-16 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-dashed border-gray-200'>
 				<div className='w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center'>
-					<svg
-						xmlns='http://www.w3.org/2000/svg'
-						className='h-10 w-10 text-primary'
-						fill='none'
-						viewBox='0 0 24 24'
-						stroke='currentColor'
-						aria-hidden='true'
-					>
-						<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d={questionPath} />
-					</svg>
+					<HelpCircle className='h-10 w-10 text-primary' aria-hidden='true' />
 				</div>
 				<p className='text-gray-500'>Geen veelgestelde vragen gevonden</p>
 			</div>
@@ -257,16 +248,10 @@ function Faq() {
 							id={`faq-button-${index}`}
 						>
 							<span className='font-semibold text-gray-900'>{faq.data.vraag}</span>
-							<svg
-								xmlns='http://www.w3.org/2000/svg'
+							<ChevronDown
 								className={`faq-chevron h-5 w-5 text-primary flex-shrink-0 ${openIndex === index ? 'open' : ''}`}
-								fill='none'
-								viewBox='0 0 24 24'
-								stroke='currentColor'
 								aria-hidden='true'
-							>
-								<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
-							</svg>
+							/>
 						</button>
 						<div
 							id={`faq-answer-${index}`}

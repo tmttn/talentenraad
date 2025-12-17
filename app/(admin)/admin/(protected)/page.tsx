@@ -1,62 +1,26 @@
 import {count, isNotNull, isNull, desc} from 'drizzle-orm';
 import Link from 'next/link';
 import {
-	EmailIcon,
-	CalendarIcon,
-	ClockIcon,
-	LocationIcon,
-	StarIcon,
-	UsersIcon,
-	NewsIcon,
-	ArrowRightIcon,
-	WarningIcon,
-	SuccessIcon,
-	InfoIcon,
-} from '@/components/ui/icons';
+	Inbox,
+	Mail,
+	Plus,
+	Calendar,
+	Newspaper,
+	Megaphone,
+	ArrowRight,
+	Clock,
+	MapPin,
+	Star,
+	AlertCircle,
+	Info,
+	FileText,
+	Users,
+	Zap,
+	Sparkles,
+} from 'lucide-react';
 import {db, submissions} from '@/lib/db';
 import {listContent} from '@/lib/builder-admin';
 import type {Activity as ActivityType, NewsItem, Announcement} from '@/lib/builder-types';
-
-// Inline SVG icon component for icons not in the icon library
-function InboxIcon({className}: {readonly className?: string}) {
-	return (
-		<svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4' />
-		</svg>
-	);
-}
-
-function PlusIcon({className}: {readonly className?: string}) {
-	return (
-		<svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 4v16m8-8H4' />
-		</svg>
-	);
-}
-
-function MegaphoneIcon({className}: {readonly className?: string}) {
-	return (
-		<svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z' />
-		</svg>
-	);
-}
-
-function FileTextIcon({className}: {readonly className?: string}) {
-	return (
-		<svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
-		</svg>
-	);
-}
-
-function ActivityIcon({className}: {readonly className?: string}) {
-	return (
-		<svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M13 10V3L4 14h7v7l9-11h-7z' />
-		</svg>
-	);
-}
 
 function getGreeting(): string {
 	const hour = new Date().getHours();
@@ -101,15 +65,15 @@ function getAnnouncementTypeColor(type: string): string {
 function AnnouncementIcon({type}: {readonly type: string}) {
 	switch (type) {
 		case 'belangrijk': {
-			return <WarningIcon size='sm' />;
+			return <AlertCircle className='w-4 h-4' />;
 		}
 
 		case 'waarschuwing': {
-			return <WarningIcon size='sm' />;
+			return <AlertCircle className='w-4 h-4' />;
 		}
 
 		default: {
-			return <InfoIcon size='sm' />;
+			return <Info className='w-4 h-4' />;
 		}
 	}
 }
@@ -203,7 +167,7 @@ export default async function AdminDashboardPage() {
 			{/* Quick Create Buttons */}
 			<div className='bg-white p-4 sm:p-5 rounded-xl shadow-md'>
 				<h2 className='text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2'>
-					<PlusIcon className='w-4 h-4' />
+					<Plus className='w-4 h-4' />
 					Snel aanmaken
 				</h2>
 				<div className='flex flex-wrap gap-2'>
@@ -211,21 +175,21 @@ export default async function AdminDashboardPage() {
 						href='/admin/nieuws/new'
 						className='inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary font-medium rounded-lg hover:bg-primary/20 transition-colors text-sm'
 					>
-						<NewsIcon size='sm' />
+						<Newspaper className='w-4 h-4' />
 						Nieuwsbericht
 					</Link>
 					<Link
 						href='/admin/activiteiten/new'
 						className='inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 font-medium rounded-lg hover:bg-green-200 transition-colors text-sm'
 					>
-						<CalendarIcon size='sm' />
+						<Calendar className='w-4 h-4' />
 						Activiteit
 					</Link>
 					<Link
 						href='/admin/aankondigingen'
 						className='inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-700 font-medium rounded-lg hover:bg-yellow-200 transition-colors text-sm'
 					>
-						<MegaphoneIcon className='w-4 h-4' />
+						<Megaphone className='w-4 h-4' />
 						Aankondiging
 					</Link>
 				</div>
@@ -235,7 +199,7 @@ export default async function AdminDashboardPage() {
 			<div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4'>
 				<Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
-						<InboxIcon className='w-5 h-5 text-gray-400 group-hover:text-primary transition-colors' />
+						<Inbox className='w-5 h-5 text-gray-400 group-hover:text-primary transition-colors' />
 						<span className='text-xs text-gray-400'>totaal</span>
 					</div>
 					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{totalResult.count}</p>
@@ -243,7 +207,7 @@ export default async function AdminDashboardPage() {
 				</Link>
 				<Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
-						<EmailIcon size='md' className='text-primary' />
+						<Mail className='w-5 h-5 text-primary' />
 						{unreadResult.count > 0 && (
 							<span className='bg-primary text-white text-xs px-2 py-0.5 rounded-full'>nieuw</span>
 						)}
@@ -253,14 +217,14 @@ export default async function AdminDashboardPage() {
 				</Link>
 				<Link href='/admin/nieuws' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
-						<NewsIcon size='md' className='text-gray-400 group-hover:text-blue-500 transition-colors' />
+						<Newspaper className='w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors' />
 					</div>
 					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{news.length > 0 ? news.length : '0'}</p>
 					<p className='text-xs text-gray-500 mt-1'>Nieuwsberichten</p>
 				</Link>
 				<Link href='/admin/activiteiten' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
-						<CalendarIcon size='md' className='text-gray-400 group-hover:text-green-500 transition-colors' />
+						<Calendar className='w-5 h-5 text-gray-400 group-hover:text-green-500 transition-colors' />
 					</div>
 					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{activities.length > 0 ? activities.length : '0'}</p>
 					<p className='text-xs text-gray-500 mt-1'>Activiteiten</p>
@@ -273,12 +237,12 @@ export default async function AdminDashboardPage() {
 				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
 					<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
 						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
-							<EmailIcon size='sm' className='text-primary' />
+							<Mail className='w-4 h-4 text-primary' />
 							Recente berichten
 						</h2>
 						<Link href='/admin/submissions' className='text-primary text-sm hover:underline flex items-center gap-1'>
 							Alles bekijken
-							<ArrowRightIcon size='xs' />
+							<ArrowRight className='w-3 h-3' />
 						</Link>
 					</div>
 					<div className='divide-y divide-gray-50'>
@@ -321,12 +285,12 @@ export default async function AdminDashboardPage() {
 				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
 					<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
 						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
-							<CalendarIcon size='sm' className='text-green-500' />
+							<Calendar className='w-4 h-4 text-green-500' />
 							Komende activiteiten
 						</h2>
 						<Link href='/admin/activiteiten' className='text-primary text-sm hover:underline flex items-center gap-1'>
 							Alles bekijken
-							<ArrowRightIcon size='xs' />
+							<ArrowRight className='w-3 h-3' />
 						</Link>
 					</div>
 					<div className='divide-y divide-gray-50'>
@@ -345,7 +309,7 @@ export default async function AdminDashboardPage() {
 										<div className='flex-1 min-w-0'>
 											<div className='flex items-center gap-2'>
 												{activity.data.vastgepind && (
-													<StarIcon size='xs' className='text-yellow-500 fill-yellow-500 flex-shrink-0' />
+													<Star className='w-3 h-3 text-yellow-500 fill-yellow-500 flex-shrink-0' />
 												)}
 												<span className='font-medium text-gray-800 truncate text-sm'>
 													{activity.data.titel}
@@ -356,13 +320,13 @@ export default async function AdminDashboardPage() {
 											</div>
 											<div className='flex items-center gap-3 mt-1 text-xs text-gray-500'>
 												<span className='flex items-center gap-1'>
-													<ClockIcon size='xs' />
+													<Clock className='w-3 h-3' />
 													{formatDate(activity.data.datum)}
 													{activity.data.tijd && ` om ${activity.data.tijd}`}
 												</span>
 												{activity.data.locatie && (
 													<span className='flex items-center gap-1 truncate'>
-														<LocationIcon size='xs' />
+														<MapPin className='w-3 h-3' />
 														{activity.data.locatie}
 													</span>
 												)}
@@ -384,12 +348,12 @@ export default async function AdminDashboardPage() {
 				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
 					<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
 						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
-							<NewsIcon size='sm' className='text-blue-500' />
+							<Newspaper className='w-4 h-4 text-blue-500' />
 							Laatste nieuws
 						</h2>
 						<Link href='/admin/nieuws' className='text-primary text-sm hover:underline flex items-center gap-1'>
 							Alles bekijken
-							<ArrowRightIcon size='xs' />
+							<ArrowRight className='w-3 h-3' />
 						</Link>
 					</div>
 					<div className='divide-y divide-gray-50'>
@@ -408,7 +372,7 @@ export default async function AdminDashboardPage() {
 										<div className='flex-1 min-w-0'>
 											<div className='flex items-center gap-2'>
 												{item.data.vastgepind && (
-													<StarIcon size='xs' className='text-yellow-500 fill-yellow-500 flex-shrink-0' />
+													<Star className='w-3 h-3 text-yellow-500 fill-yellow-500 flex-shrink-0' />
 												)}
 												<span className='font-medium text-gray-800 truncate text-sm'>
 													{item.data.titel}
@@ -439,7 +403,7 @@ export default async function AdminDashboardPage() {
 				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
 					<div className='p-4 sm:p-5 border-b border-gray-100'>
 						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
-							<ActivityIcon className='w-4 h-4 text-purple-500' />
+							<Zap className='w-4 h-4 text-purple-500' />
 							Snelle links
 						</h2>
 					</div>
@@ -449,7 +413,7 @@ export default async function AdminDashboardPage() {
 							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
 						>
 							<div className='w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center'>
-								<FileTextIcon className='w-5 h-5 text-primary' />
+								<FileText className='w-5 h-5 text-primary' />
 							</div>
 							<div>
 								<p className='font-medium text-gray-800 text-sm'>Berichten</p>
@@ -461,7 +425,7 @@ export default async function AdminDashboardPage() {
 							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
 						>
 							<div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center'>
-								<UsersIcon size='md' className='text-blue-600' />
+								<Users className='w-5 h-5 text-blue-600' />
 							</div>
 							<div>
 								<p className='font-medium text-gray-800 text-sm'>Gebruikers</p>
@@ -473,7 +437,7 @@ export default async function AdminDashboardPage() {
 							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
 						>
 							<div className='w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center'>
-								<span className='text-lg'>✨</span>
+								<Sparkles className='w-5 h-5 text-pink-500' />
 							</div>
 							<div>
 								<p className='font-medium text-gray-800 text-sm'>Decoraties</p>
@@ -487,7 +451,7 @@ export default async function AdminDashboardPage() {
 							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
 						>
 							<div className='w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center'>
-								<ArrowRightIcon size='md' className='text-green-600' />
+								<ArrowRight className='w-5 h-5 text-green-600' />
 							</div>
 							<div>
 								<p className='font-medium text-gray-800 text-sm'>Website</p>

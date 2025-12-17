@@ -4,7 +4,7 @@ import {useState} from 'react';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {toast} from 'sonner';
-import {EyeIcon} from '@/components/ui/icons';
+import {Eye} from 'lucide-react';
 import type {Submission} from '@/lib/db/index.js';
 
 type SubmissionsTableProperties = {
@@ -225,7 +225,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 											className='inline-flex p-2 text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg transition-colors'
 											title='Bekijken'
 										>
-											<EyeIcon size='md' />
+											<Eye className='w-5 h-5' />
 										</Link>
 									</td>
 								</tr>

@@ -3,14 +3,7 @@
 import type {ComponentType} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-	FacebookIcon,
-	InstagramIcon,
-	LinkedinIcon,
-	TwitterIcon,
-	YoutubeIcon,
-	type IconProperties,
-} from '@components/ui';
+import {Facebook, Instagram, Linkedin, Twitter, Youtube, type LucideProps} from 'lucide-react';
 import {Icicles} from '@components/seasonal-decorations';
 import {useCookieConsent} from '@components/cookie-consent';
 
@@ -74,12 +67,12 @@ const defaultSocialLinks: SocialLink[] = [
 	{platform: 'instagram', url: 'https://instagram.com/talentenhuis'},
 ];
 
-const socialIconComponents: Record<string, ComponentType<IconProperties>> = {
-	facebook: FacebookIcon,
-	instagram: InstagramIcon,
-	linkedin: LinkedinIcon,
-	twitter: TwitterIcon,
-	youtube: YoutubeIcon,
+const socialIconComponents: Record<string, ComponentType<LucideProps>> = {
+	facebook: Facebook,
+	instagram: Instagram,
+	linkedin: Linkedin,
+	twitter: Twitter,
+	youtube: Youtube,
 };
 
 export function SiteFooter({
@@ -190,21 +183,21 @@ export function SiteFooter({
 					</div>
 
 					<div className="flex gap-4">
-						{socials.map(social => (
-							<a
-								key={social.platform}
-								href={social.url}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="text-gray-400 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded transition-colors"
-								aria-label={`${social.platform} (opent in nieuw venster)`}
-							>
-								{(() => {
-									const IconComponent = socialIconComponents[social.platform];
-									return IconComponent ? <IconComponent size='md' /> : null;
-								})()}
-							</a>
-						))}
+						{socials.map(social => {
+							const IconComponent = socialIconComponents[social.platform];
+							return (
+								<a
+									key={social.platform}
+									href={social.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="text-gray-400 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded transition-colors"
+									aria-label={`${social.platform} (opent in nieuw venster)`}
+								>
+									{IconComponent && <IconComponent className='w-5 h-5' />}
+								</a>
+							);
+						})}
 					</div>
 				</div>
 			</div>

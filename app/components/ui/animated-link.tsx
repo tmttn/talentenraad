@@ -1,6 +1,7 @@
 'use client';
 
 import type {ReactNode} from 'react';
+import {ArrowRight, ArrowLeft} from 'lucide-react';
 
 // CSS for link arrow animations
 const linkStyles = `
@@ -57,44 +58,8 @@ function AnimatedLink({
 	className = '',
 	external = false,
 }: Readonly<AnimatedLinkProperties>) {
-	const rightArrow = (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`animated-link-arrow ${arrowSizes[size]} flex-shrink-0`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-		</svg>
-	);
-
-	const leftArrow = (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`animated-link-arrow ${arrowSizes[size]} flex-shrink-0`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M7 16l-4-4m0 0l4-4m-4 4h18' />
-		</svg>
-	);
-
-	const chevronRight = (
-		<svg
-			xmlns='http://www.w3.org/2000/svg'
-			className={`animated-link-arrow ${arrowSizes[size]} flex-shrink-0`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M9 5l7 7-7 7' />
-		</svg>
-	);
+	const rightArrow = <ArrowRight className={`animated-link-arrow ${arrowSizes[size]} flex-shrink-0`} aria-hidden='true' />;
+	const leftArrow = <ArrowLeft className={`animated-link-arrow ${arrowSizes[size]} flex-shrink-0`} aria-hidden='true' />;
 
 	const arrow = arrowDirection === 'left' ? leftArrow : rightArrow;
 

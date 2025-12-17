@@ -1,5 +1,7 @@
 'use client';
 
+import {ArrowRight} from 'lucide-react';
+
 // CSS for button arrow animations
 const buttonStyles = `
 	.cta-button {
@@ -49,18 +51,6 @@ export function CtaButton({
 	size = 'md',
 	showArrow = true,
 }: Readonly<CtaButtonProperties>) {
-	const arrow = (
-		<svg
-			className={`cta-button-arrow ${arrowSizes[size]} flex-shrink-0`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-		</svg>
-	);
-
 	const baseClasses = `cta-button inline-flex items-center justify-center font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantStyles[variant]} ${sizeStyles[size]}`;
 
 	return (
@@ -68,7 +58,7 @@ export function CtaButton({
 			<style dangerouslySetInnerHTML={{__html: buttonStyles}} />
 			<a href={href} className={baseClasses}>
 				{text}
-				{showArrow && arrow}
+				{showArrow && <ArrowRight className={`cta-button-arrow ${arrowSizes[size]} flex-shrink-0`} aria-hidden='true' />}
 			</a>
 		</>
 	);

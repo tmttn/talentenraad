@@ -3,8 +3,12 @@
 import {useState, useRef} from 'react';
 import {useEditor, EditorContent, type Editor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
+import TiptapLink from '@tiptap/extension-link';
 import Underline from '@tiptap/extension-underline';
+import {
+	Bold, Italic, Underline as UnderlineIcon, Strikethrough, List, ListOrdered,
+	Quote, Link, Unlink, Undo, Redo, Code,
+} from 'lucide-react';
 
 type RichTextEditorProps = {
 	value: string;
@@ -71,10 +75,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				isActive={editor.isActive('bold')}
 				title='Vet (Ctrl+B)'
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2.5'>
-					<path d='M6 4h8a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z' />
-					<path d='M6 12h9a4 4 0 0 1 4 4 4 4 0 0 1-4 4H6z' />
-				</svg>
+				<Bold className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 			<ToolbarButton
 				onClick={() => {
@@ -83,11 +84,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				isActive={editor.isActive('italic')}
 				title='Cursief (Ctrl+I)'
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-					<line x1='19' y1='4' x2='10' y2='4' />
-					<line x1='14' y1='20' x2='5' y2='20' />
-					<line x1='15' y1='4' x2='9' y2='20' />
-				</svg>
+				<Italic className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 			<ToolbarButton
 				onClick={() => {
@@ -96,10 +93,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				isActive={editor.isActive('underline')}
 				title='Onderstrepen (Ctrl+U)'
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-					<path d='M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3' />
-					<line x1='4' y1='21' x2='20' y2='21' />
-				</svg>
+				<UnderlineIcon className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 			<ToolbarButton
 				onClick={() => {
@@ -108,11 +102,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				isActive={editor.isActive('strike')}
 				title='Doorhalen'
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-					<line x1='4' y1='12' x2='20' y2='12' />
-					<path d='M17.5 7.5c-.7-1.3-2.2-2.5-5.5-2.5C8 5 5.5 7.5 7 10c.8 1.3 2.6 2 5 2' />
-					<path d='M6.5 16.5c.7 1.3 2.2 2.5 5.5 2.5 4 0 6.5-2.5 5-5-.8-1.3-2.6-2-5-2' />
-				</svg>
+				<Strikethrough className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 
 			<div className='w-px h-6 bg-gray-300 mx-1 self-center' />
@@ -147,14 +137,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				isActive={editor.isActive('bulletList')}
 				title='Opsomming'
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-					<line x1='9' y1='6' x2='20' y2='6' />
-					<line x1='9' y1='12' x2='20' y2='12' />
-					<line x1='9' y1='18' x2='20' y2='18' />
-					<circle cx='5' cy='6' r='1' fill='currentColor' />
-					<circle cx='5' cy='12' r='1' fill='currentColor' />
-					<circle cx='5' cy='18' r='1' fill='currentColor' />
-				</svg>
+				<List className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 			<ToolbarButton
 				onClick={() => {
@@ -163,14 +146,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				isActive={editor.isActive('orderedList')}
 				title='Genummerde lijst'
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-					<line x1='10' y1='6' x2='20' y2='6' />
-					<line x1='10' y1='12' x2='20' y2='12' />
-					<line x1='10' y1='18' x2='20' y2='18' />
-					<text x='4' y='8' className='text-[10px]' fill='currentColor' stroke='none'>1</text>
-					<text x='4' y='14' className='text-[10px]' fill='currentColor' stroke='none'>2</text>
-					<text x='4' y='20' className='text-[10px]' fill='currentColor' stroke='none'>3</text>
-				</svg>
+				<ListOrdered className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 
 			<div className='w-px h-6 bg-gray-300 mx-1 self-center' />
@@ -183,9 +159,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				isActive={editor.isActive('blockquote')}
 				title='Citaat'
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='currentColor'>
-					<path d='M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 01-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z' />
-				</svg>
+				<Quote className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 
 			{/* Link */}
@@ -194,10 +168,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				isActive={editor.isActive('link')}
 				title='Link toevoegen'
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-					<path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71' />
-					<path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71' />
-				</svg>
+				<Link className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 			{editor.isActive('link') && (
 				<ToolbarButton
@@ -206,11 +177,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 					}}
 					title='Link verwijderen'
 				>
-					<svg className='w-4 h-4 sm:w-5 sm:h-5 text-red-500' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-						<path d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71' />
-						<path d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71' />
-						<line x1='4' y1='4' x2='20' y2='20' />
-					</svg>
+					<Unlink className='w-4 h-4 sm:w-5 sm:h-5 text-red-500' />
 				</ToolbarButton>
 			)}
 
@@ -224,10 +191,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				disabled={!editor.can().undo() || isHtmlMode}
 				title='Ongedaan maken (Ctrl+Z)'
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-					<path d='M3 7v6h6' />
-					<path d='M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13' />
-				</svg>
+				<Undo className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 			<ToolbarButton
 				onClick={() => {
@@ -236,10 +200,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				disabled={!editor.can().redo() || isHtmlMode}
 				title='Opnieuw (Ctrl+Y)'
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-					<path d='M21 7v6h-6' />
-					<path d='M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7' />
-				</svg>
+				<Redo className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 
 			<div className='w-px h-6 bg-gray-300 mx-1 self-center' />
@@ -250,10 +211,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 				isActive={isHtmlMode}
 				title={isHtmlMode ? 'Visuele modus' : 'HTML modus'}
 			>
-				<svg className='w-4 h-4 sm:w-5 sm:h-5' viewBox='0 0 24 24' fill='none' stroke='currentColor' strokeWidth='2'>
-					<polyline points='16 18 22 12 16 6' />
-					<polyline points='8 6 2 12 8 18' />
-				</svg>
+				<Code className='w-4 h-4 sm:w-5 sm:h-5' />
 			</ToolbarButton>
 		</div>
 	);
@@ -458,7 +416,7 @@ export function RichTextEditor({value, onChange, placeholder}: RichTextEditorPro
 					levels: [2, 3],
 				},
 			}),
-			Link.configure({
+			TiptapLink.configure({
 				openOnClick: false,
 				HTMLAttributes: {
 					class: 'text-primary underline',

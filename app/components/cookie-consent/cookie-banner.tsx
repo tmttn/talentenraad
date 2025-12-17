@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import {Cookie} from 'lucide-react';
 import {useCookieConsent} from './cookie-consent-context';
 
 export function CookieBanner() {
@@ -20,9 +21,7 @@ export function CookieBanner() {
 						<div className='flex-1'>
 							<div className='flex items-start gap-3'>
 								<div className='p-2 bg-primary/10 rounded-full flex-shrink-0'>
-									<svg className='w-5 h-5 text-primary' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-										<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' />
-									</svg>
+									<Cookie className='w-5 h-5 text-primary' />
 								</div>
 								<div>
 									<h2 id='cookie-banner-title' className='font-bold text-gray-800'>

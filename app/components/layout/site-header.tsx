@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {usePathname} from 'next/navigation';
 import {useEffect, useRef, useState} from 'react';
-import {MenuIcon, XIcon} from '@components/ui';
+import {Menu, X} from 'lucide-react';
 import {ChristmasLights} from '@components/seasonal-decorations';
 
 type NavigationLink = {
@@ -112,8 +112,8 @@ export function SiteHeader({
 						}}
 					>
 						{isMenuOpen
-							? <XIcon size='lg' className='transition-transform duration-200' />
-							: <MenuIcon size='lg' className='transition-transform duration-200' />}
+							? <X className='w-6 h-6 transition-transform duration-200' />
+							: <Menu className='w-6 h-6 transition-transform duration-200' />}
 					</button>
 				</div>
 

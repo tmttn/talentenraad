@@ -2,6 +2,7 @@
 
 import {useState, type ChangeEvent} from 'react';
 import {toast} from 'sonner';
+import {Info} from 'lucide-react';
 import type {SeasonalDecorationsConfig} from '@/lib/db';
 
 type DecoratiesManagerProps = {
@@ -186,9 +187,7 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 			{/* Preview info */}
 			<div className='bg-blue-50 border border-blue-200 rounded-xl p-4'>
 				<div className='flex gap-3'>
-					<svg className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
-						<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z' />
-					</svg>
+					<Info className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
 					<div>
 						<p className='text-blue-800 font-medium'>Let op</p>
 						<p className='text-blue-700 text-sm'>

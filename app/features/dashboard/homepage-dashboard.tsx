@@ -1,8 +1,8 @@
 'use client';
 
 import {useEffect, useState} from 'react';
+import {Calendar, Newspaper, Bookmark} from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
-import {CalendarIcon, NewsIcon} from '@components/ui/icons';
 
 type Activiteit = {
 	id: string;
@@ -167,7 +167,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 					<div className='bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col'>
 						<div className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 px-6 py-3'>
 							<h3 className='text-white font-semibold flex items-center gap-2'>
-								<CalendarIcon className='h-5 w-5' />
+								<Calendar className='h-5 w-5' />
 								Komende Activiteiten
 							</h3>
 						</div>
@@ -190,9 +190,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 														<h4 className='font-semibold text-gray-800 group-hover:text-primary transition-colors text-sm truncate'>
 															{activiteit.data.titel}
 															{activiteit.data.vastgepind && (
-																<svg xmlns='http://www.w3.org/2000/svg' className='inline-block ml-1 h-3 w-3 text-primary' viewBox='0 0 20 20' fill='currentColor' aria-label='Vastgepind'>
-																	<path d='M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z' />
-																</svg>
+																<Bookmark className='inline-block ml-1 h-3 w-3 text-primary fill-primary' aria-label='Vastgepind' />
 															)}
 														</h4>
 														<div className='flex items-center gap-2 text-xs text-gray-500'>
@@ -232,7 +230,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 					<div className='bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col'>
 						<div className='bg-gradient-to-r from-brand-secondary-400 to-brand-secondary-500 px-6 py-3'>
 							<h3 className='text-white font-semibold flex items-center gap-2'>
-								<NewsIcon className='h-5 w-5' />
+								<Newspaper className='h-5 w-5' />
 								Laatste Nieuws
 							</h3>
 						</div>
@@ -252,9 +250,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 															<h4 className='font-semibold text-gray-800 group-hover:text-secondary transition-colors text-sm truncate'>
 																{nieuws.data.titel}
 																{nieuws.data.vastgepind && (
-																	<svg xmlns='http://www.w3.org/2000/svg' className='inline-block ml-1 h-3 w-3 text-secondary' viewBox='0 0 20 20' fill='currentColor' aria-label='Vastgepind'>
-																		<path d='M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z' />
-																	</svg>
+																	<Bookmark className='inline-block ml-1 h-3 w-3 text-secondary fill-secondary' aria-label='Vastgepind' />
 																)}
 															</h4>
 															<p className='text-xs text-gray-500 mt-0.5'>{formatFullDate(nieuws.data.datum)}</p>

@@ -2,7 +2,7 @@
 
 import {useState} from 'react';
 import Link from 'next/link';
-import {ExternalLinkIcon, PencilIcon, TrashIcon} from '@/components/ui/icons';
+import {ExternalLink, Pencil, Trash2} from 'lucide-react';
 import {DeleteDialog} from './delete-dialog';
 
 type Column<T> = {
@@ -159,7 +159,7 @@ export function ContentTable<T extends {id: string}>({
 													title='Bekijk op website'
 													variant='default'
 												>
-													<ExternalLinkIcon size='md' />
+													<ExternalLink className='w-5 h-5' />
 												</IconButton>
 											)}
 											<IconButton
@@ -167,7 +167,7 @@ export function ContentTable<T extends {id: string}>({
 												title='Bewerken'
 												variant='primary'
 											>
-												<PencilIcon size='md' />
+												<Pencil className='w-5 h-5' />
 											</IconButton>
 											{onDelete && (
 												<IconButton
@@ -177,7 +177,7 @@ export function ContentTable<T extends {id: string}>({
 													title='Verwijderen'
 													variant='danger'
 												>
-													<TrashIcon size='md' />
+													<Trash2 className='w-5 h-5' />
 												</IconButton>
 											)}
 										</div>

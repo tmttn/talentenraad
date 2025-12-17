@@ -1,6 +1,7 @@
 'use client';
 
 import type {ReactNode} from 'react';
+import {ArrowRight} from 'lucide-react';
 
 // CSS for button arrow animations
 const buttonStyles = `
@@ -61,17 +62,7 @@ function AnimatedButton({
 	disabled = false,
 	onClick,
 }: Readonly<AnimatedButtonProperties>) {
-	const arrow = (
-		<svg
-			className={`animated-button-arrow ${arrowSizes[size]} flex-shrink-0`}
-			fill='none'
-			viewBox='0 0 24 24'
-			stroke='currentColor'
-			aria-hidden='true'
-		>
-			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M17 8l4 4m0 0l-4 4m4-4H3' />
-		</svg>
-	);
+	const arrow = <ArrowRight className={`animated-button-arrow ${arrowSizes[size]} flex-shrink-0`} aria-hidden='true' />;
 
 	const baseClasses = `animated-button inline-flex items-center justify-center font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles[variant]} ${sizeStyles[size]} ${fullWidth ? 'w-full' : ''} ${className}`;
 

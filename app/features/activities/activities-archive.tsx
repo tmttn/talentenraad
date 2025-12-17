@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useState} from 'react';
+import {Archive, ChevronDown} from 'lucide-react';
 
 type Activity = {
 	id: string;
@@ -133,9 +134,7 @@ function ActivitiesArchive({
 					aria-controls='archief-content'
 				>
 					<div className='flex items-center gap-3'>
-						<svg xmlns='http://www.w3.org/2000/svg' className='h-6 w-6 text-gray-400' fill='none' viewBox='0 0 24 24' stroke='currentColor' aria-hidden='true'>
-							<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4' />
-						</svg>
+						<Archive className='h-6 w-6 text-gray-400' aria-hidden='true' />
 						<span id='archief-title' className='text-2xl font-bold text-gray-800'>
 							Archief
 						</span>
@@ -143,16 +142,10 @@ function ActivitiesArchive({
 							({activities.length} activiteiten)
 						</span>
 					</div>
-					<svg
-						xmlns='http://www.w3.org/2000/svg'
+					<ChevronDown
 						className={`h-6 w-6 text-gray-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
-						fill='none'
-						viewBox='0 0 24 24'
-						stroke='currentColor'
 						aria-hidden='true'
-					>
-						<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M19 9l-7 7-7-7' />
-					</svg>
+					/>
 				</button>
 
 				<div

@@ -2,7 +2,7 @@
 
 import {useRouter} from 'next/navigation';
 import {toast} from 'sonner';
-import {StarIcon} from '@/components/ui/icons';
+import {Star} from 'lucide-react';
 import {ContentTable} from '@/features/admin/content-table';
 import type {Activity} from '@/lib/builder-types';
 
@@ -75,9 +75,8 @@ export function ActiviteitenTable({activities}: ActiviteitenTableProps) {
 			key: 'data.vastgepind',
 			label: 'Vastgepind',
 			render: (item: Activity) => (
-				<StarIcon
-					size='md'
-					className={item.data.vastgepind ? 'text-yellow-500' : 'text-gray-300'}
+				<Star
+					className={`w-5 h-5 ${item.data.vastgepind ? 'text-yellow-500 fill-yellow-500' : 'text-gray-300'}`}
 				/>
 			),
 		},

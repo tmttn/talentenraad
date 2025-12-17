@@ -2,7 +2,7 @@
 
 import {useState, type FormEvent, type ChangeEvent} from 'react';
 import {toast} from 'sonner';
-import {SpinnerIcon, ShieldIcon, PencilIcon, TrashIcon, SendIcon} from '@/components/ui/icons';
+import {Loader2, Shield, Pencil, Trash2, Send} from 'lucide-react';
 import type {User} from '@/lib/db/schema';
 import {DeleteDialog} from '@/features/admin/delete-dialog';
 
@@ -248,14 +248,14 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 				>
 					{isSubmitting ? (
 						<>
-							<SpinnerIcon size='sm' className='animate-spin' />
+							<Loader2 className='w-4 h-4 animate-spin' />
 							Bezig...
 						</>
 					) : editingId ? (
 						'Opslaan'
 					) : (
 						<>
-							<SendIcon size='sm' />
+							<Send className='w-4 h-4' />
 							Uitnodigen
 						</>
 					)}
@@ -278,7 +278,7 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 					onClick={handleCreate}
 					className='mb-6 px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors flex items-center gap-2'
 				>
-					<SendIcon size='sm' />
+					<Send className='w-4 h-4' />
 					Gebruiker uitnodigen
 				</button>
 			)}
@@ -361,7 +361,7 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 														title='Uitnodiging opnieuw versturen'
 														className='p-2 rounded-lg text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-300'
 													>
-														<SendIcon size='md' />
+														<Send className='w-5 h-5' />
 													</button>
 												)}
 												<button
@@ -372,7 +372,7 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 													title={user.isAdmin ? 'Admin rechten verwijderen' : 'Admin maken'}
 													className='p-2 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-300'
 												>
-													<ShieldIcon size='md' />
+													<Shield className='w-5 h-5' />
 												</button>
 												<button
 													type='button'
@@ -382,7 +382,7 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 													title='Bewerken'
 													className='p-2 rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/30'
 												>
-													<PencilIcon size='md' />
+													<Pencil className='w-5 h-5' />
 												</button>
 												<button
 													type='button'
@@ -392,7 +392,7 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 													title='Verwijderen'
 													className='p-2 rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-300'
 												>
-													<TrashIcon size='md' />
+													<Trash2 className='w-5 h-5' />
 												</button>
 											</div>
 										</td>
