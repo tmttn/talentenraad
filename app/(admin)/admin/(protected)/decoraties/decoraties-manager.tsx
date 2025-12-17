@@ -1,7 +1,6 @@
 'use client';
 
 import {useState, type ChangeEvent} from 'react';
-import {useRouter} from 'next/navigation';
 import {toast} from 'sonner';
 import type {SeasonalDecorationsConfig} from '@/lib/db';
 
@@ -33,7 +32,6 @@ const decorationLabels: Record<keyof SeasonalDecorationsConfig['decorations'], {
 };
 
 export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
-	const router = useRouter();
 	const [config, setConfig] = useState<SeasonalDecorationsConfig>(initialConfig);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -92,7 +90,6 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 			}
 
 			toast.success('Instellingen opgeslagen!');
-			router.refresh();
 		} catch {
 			toast.error('Er is een fout opgetreden bij het opslaan');
 		} finally {
@@ -171,7 +168,7 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 									handleToggleDecoration(key);
 								}}
 								disabled={!config.enabled}
-								className='mt-1 w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary disabled:cursor-not-allowed'
+								className='mt-1 w-5 h-5 accent-pink-500 border-gray-300 rounded focus:ring-pink-500 disabled:cursor-not-allowed'
 							/>
 							<div>
 								<span className='block font-medium text-gray-800'>
