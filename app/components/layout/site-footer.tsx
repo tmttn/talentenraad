@@ -1,16 +1,13 @@
 'use client';
 
-import type {ComponentType} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {
-	Facebook, // eslint-disable-line @typescript-eslint/no-deprecated -- Brand icons needed for social links
-	Instagram, // eslint-disable-line @typescript-eslint/no-deprecated -- Brand icons needed for social links
-	Linkedin,
-	Twitter,
-	Youtube,
-	type LucideProps,
-} from 'lucide-react';
+	siFacebook,
+	siInstagram,
+	siX,
+	siYoutube,
+} from 'simple-icons';
 import {Icicles} from '@components/seasonal-decorations';
 import {useCookieConsent} from '@components/cookie-consent';
 
@@ -74,12 +71,25 @@ const defaultSocialLinks: SocialLink[] = [
 	{platform: 'instagram', url: 'https://instagram.com/talentenhuis'},
 ];
 
-const socialIconComponents: Record<string, ComponentType<LucideProps>> = {
-	facebook: Facebook,
-	instagram: Instagram,
-	linkedin: Linkedin,
-	twitter: Twitter,
-	youtube: Youtube,
+type SimpleIcon = {
+	title: string;
+	slug: string;
+	path: string;
+};
+
+// LinkedIn SVG path (not available in simple-icons)
+const linkedinIcon: SimpleIcon = {
+	title: 'LinkedIn',
+	slug: 'linkedin',
+	path: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z',
+};
+
+const socialIcons: Record<string, SimpleIcon> = {
+	facebook: siFacebook,
+	instagram: siInstagram,
+	linkedin: linkedinIcon,
+	twitter: siX, // X (formerly Twitter)
+	youtube: siYoutube,
 };
 
 export function SiteFooter({
@@ -191,7 +201,7 @@ export function SiteFooter({
 
 					<div className="flex gap-4">
 						{socials.map(social => {
-							const IconComponent = socialIconComponents[social.platform];
+							const icon = socialIcons[social.platform];
 							return (
 								<a
 									key={social.platform}
@@ -201,7 +211,16 @@ export function SiteFooter({
 									className="text-gray-400 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded transition-colors"
 									aria-label={`${social.platform} (opent in nieuw venster)`}
 								>
-									{IconComponent && <IconComponent className='w-5 h-5' />}
+									{icon && (
+										<svg
+											role="img"
+											viewBox="0 0 24 24"
+											className="w-5 h-5 fill-current"
+											aria-hidden="true"
+										>
+											<path d={icon.path} />
+										</svg>
+									)}
 								</a>
 							);
 						})}
