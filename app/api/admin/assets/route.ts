@@ -17,9 +17,15 @@ type BuilderAsset = {
 
 type GraphQLResponse = {
 	data?: {
-		files?: BuilderAsset[];
+		assets?: BuilderAsset[];
 	};
 	errors?: Array<{message: string}>;
+};
+
+type QueryAssetsInput = {
+	limit?: number;
+	offset?: number;
+	query?: Record<string, unknown>;
 };
 
 export async function GET(request: NextRequest) {
@@ -35,21 +41,28 @@ export async function GET(request: NextRequest) {
 
 	const searchParams = request.nextUrl.searchParams;
 	const search = searchParams.get('search') ?? '';
-	const limit = Number.parseInt(searchParams.get('limit') ?? '50', 10);
+	const limit = Number.parseInt(searchParams.get('limit') ?? '100', 10);
 
 	try {
 		// Use Builder.io GraphQL API to fetch assets
 		const query = `
-			query GetFiles($limit: Int, $search: String) {
-				files(limit: $limit, search: $search) {
+			query GetAssets($input: QueryAssetsInput) {
+				assets(input: $input) {
 					id
 					name
 					url
-					meta
-					createdDate
 				}
 			}
 		`;
+
+		const input: QueryAssetsInput = {limit};
+
+		// Add search filter if provided
+		if (search) {
+			input.query = {
+				name: {$regex: search, $options: 'i'},
+			};
+		}
 
 		const response = await fetch('https://builder.io/api/v2/admin', {
 			method: 'POST',
@@ -59,7 +72,7 @@ export async function GET(request: NextRequest) {
 			},
 			body: JSON.stringify({
 				query,
-				variables: {limit, search: search || undefined},
+				variables: {input},
 			}),
 		});
 
@@ -73,12 +86,7 @@ export async function GET(request: NextRequest) {
 			throw new Error(result.errors[0]?.message ?? 'GraphQL error');
 		}
 
-		// Filter to only return images
-		const assets = (result.data?.files ?? []).filter(asset => {
-			const isImage = asset.meta?.kind === 'image'
-				|| asset.url?.match(/\.(jpg|jpeg|png|gif|webp|svg)$/i);
-			return isImage;
-		});
+		const assets = result.data?.assets ?? [];
 
 		return NextResponse.json({assets});
 	} catch (error) {
