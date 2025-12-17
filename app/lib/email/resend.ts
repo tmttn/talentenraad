@@ -42,7 +42,7 @@ export async function sendInvitationEmail(data: InvitationEmailData) {
 	const greeting = data.name ? `Beste ${data.name}` : 'Beste';
 
 	await getResendClient().emails.send({
-		from: 'Talentenraad <noreply@send.notifications.talentenraad.be>',
+		from: 'Talentenraad <noreply@notifications.talentenraad.be>',
 		to: data.email,
 		subject: 'Uitnodiging voor Talentenraad Admin',
 		html: `
@@ -73,7 +73,7 @@ export async function sendContactNotification(data: ContactNotificationData) {
 	const subjectLabel = subjectLabels[data.subject] ?? data.subject;
 
 	await getResendClient().emails.send({
-		from: 'Talentenraad <noreply@send.notifications.talentenraad.be>',
+		from: 'Talentenraad <noreply@notifications.talentenraad.be>',
 		to: adminEmail,
 		subject: `Nieuw contactbericht: ${subjectLabel}`,
 		html: `
