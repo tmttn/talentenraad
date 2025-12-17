@@ -2,6 +2,7 @@ import {type NextRequest, NextResponse} from 'next/server';
 import {auth0, isAdminEmail} from '@/lib/auth0';
 import {db, users} from '@/lib/db';
 import {eq} from 'drizzle-orm';
+import {sendInvitationEmail} from '@/lib/email/resend';
 
 export async function GET() {
 	const session = await auth0.getSession();
@@ -78,6 +79,15 @@ export async function POST(request: NextRequest) {
 			isAdmin: body.isAdmin ?? false,
 			invitedAt: new Date(),
 		}).returning();
+
+		// Send invitation email (non-blocking)
+		sendInvitationEmail({
+			email: newUser.email,
+			name: newUser.name ?? undefined,
+			inviterName: session.user.name ?? session.user.email ?? undefined,
+		}).catch(error => {
+			console.error('Failed to send invitation email:', error);
+		});
 
 		return NextResponse.json({success: true, user: newUser});
 	} catch (error) {

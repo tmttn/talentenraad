@@ -2,6 +2,7 @@ import {type NextRequest, NextResponse} from 'next/server';
 import {auth0, isAdminEmail} from '@/lib/auth0';
 import {db, users} from '@/lib/db';
 import {eq} from 'drizzle-orm';
+import {sendInvitationEmail} from '@/lib/email/resend';
 
 type RouteContext = {
 	params: Promise<{id: string}>;
@@ -85,7 +86,15 @@ export async function PUT(
 				.where(eq(users.id, id))
 				.returning();
 
-			// TODO: Send actual invitation email here
+			// Send invitation email (non-blocking)
+			sendInvitationEmail({
+				email: updatedUser.email,
+				name: updatedUser.name ?? undefined,
+				inviterName: session?.user?.name ?? session?.user?.email ?? undefined,
+			}).catch(error => {
+				console.error('Failed to send invitation email:', error);
+			});
+
 			return NextResponse.json({success: true, user: updatedUser});
 		}
 
