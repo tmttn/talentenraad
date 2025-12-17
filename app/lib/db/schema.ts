@@ -3,6 +3,7 @@ import {
 	text,
 	timestamp,
 	uuid,
+	boolean,
 } from 'drizzle-orm/pg-core';
 
 // Users table for admin access
@@ -11,6 +12,7 @@ export const users = pgTable('users', {
 	email: text('email').notNull().unique(),
 	name: text('name'),
 	auth0Id: text('auth0_id').unique(),
+	isAdmin: boolean('is_admin').default(false).notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

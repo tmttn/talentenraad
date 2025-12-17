@@ -18,6 +18,7 @@ const navItems = [
 	{href: '/admin/activiteiten', label: 'Activiteiten'},
 	{href: '/admin/nieuws', label: 'Nieuws'},
 	{href: '/admin/aankondigingen', label: 'Aankondigingen'},
+	{href: '/admin/gebruikers', label: 'Gebruikers'},
 ];
 
 export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
