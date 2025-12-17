@@ -80,14 +80,21 @@ export async function POST(request: NextRequest) {
 			invitedAt: new Date(),
 		}).returning();
 
-		// Send invitation email (non-blocking)
-		sendInvitationEmail({
-			email: newUser.email,
-			name: newUser.name ?? undefined,
-			inviterName: session.user.name ?? session.user.email ?? undefined,
-		}).catch(error => {
+		// Send invitation email
+		try {
+			await sendInvitationEmail({
+				email: newUser.email,
+				name: newUser.name ?? undefined,
+				inviterName: session.user.name ?? session.user.email ?? undefined,
+			});
+		} catch (error) {
 			console.error('Failed to send invitation email:', error);
-		});
+			return NextResponse.json({
+				success: true,
+				user: newUser,
+				warning: 'Gebruiker aangemaakt maar uitnodigingsmail kon niet worden verstuurd. Controleer de Resend configuratie.',
+			});
+		}
 
 		return NextResponse.json({success: true, user: newUser});
 	} catch (error) {

@@ -82,7 +82,7 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 				body: JSON.stringify(body),
 			});
 
-			const data = await response.json() as {error?: string; user?: User};
+			const data = await response.json() as {error?: string; user?: User; warning?: string};
 
 			if (!response.ok) {
 				toast.error(data.error ?? 'Opslaan mislukt');
@@ -95,7 +95,11 @@ export function UsersManager({initialUsers}: UsersManagerProps) {
 				toast.success('Gebruiker bijgewerkt');
 			} else if (data.user) {
 				setUsers(previous => [data.user!, ...previous]);
-				toast.success('Uitnodiging verstuurd');
+				if (data.warning) {
+					toast.warning(data.warning);
+				} else {
+					toast.success('Uitnodiging verstuurd');
+				}
 			}
 
 			handleCancel();

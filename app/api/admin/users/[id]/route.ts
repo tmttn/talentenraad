@@ -86,14 +86,19 @@ export async function PUT(
 				.where(eq(users.id, id))
 				.returning();
 
-			// Send invitation email (non-blocking)
-			sendInvitationEmail({
-				email: updatedUser.email,
-				name: updatedUser.name ?? undefined,
-				inviterName: session?.user?.name ?? session?.user?.email ?? undefined,
-			}).catch(error => {
+			// Send invitation email
+			try {
+				await sendInvitationEmail({
+					email: updatedUser.email,
+					name: updatedUser.name ?? undefined,
+					inviterName: session?.user?.name ?? session?.user?.email ?? undefined,
+				});
+			} catch (error) {
 				console.error('Failed to send invitation email:', error);
-			});
+				return NextResponse.json({
+					error: 'Uitnodigingsmail kon niet worden verstuurd. Controleer de Resend configuratie.',
+				}, {status: 500});
+			}
 
 			return NextResponse.json({success: true, user: updatedUser});
 		}
