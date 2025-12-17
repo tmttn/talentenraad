@@ -1,6 +1,8 @@
 'use client';
 
 import {useRouter} from 'next/navigation';
+import {toast} from 'sonner';
+import {StarIcon} from '@/components/ui/icons';
 import {ContentTable} from '@/features/admin/content-table';
 import type {NewsItem} from '@/lib/builder-types';
 
@@ -26,9 +28,11 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 		});
 
 		if (!response.ok) {
+			toast.error('Verwijderen mislukt');
 			throw new Error('Verwijderen mislukt');
 		}
 
+		toast.success('Nieuwsbericht verwijderd');
 		router.refresh();
 	};
 
@@ -64,9 +68,10 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 			key: 'data.vastgepind',
 			label: 'Vastgepind',
 			render: (item: NewsItem) => (
-				<span className={item.data.vastgepind ? 'text-primary' : 'text-gray-400'}>
-					{item.data.vastgepind ? '&#9733;' : '&#9734;'}
-				</span>
+				<StarIcon
+					size='md'
+					className={item.data.vastgepind ? 'text-yellow-500' : 'text-gray-300'}
+				/>
 			),
 		},
 		{
