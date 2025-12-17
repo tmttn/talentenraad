@@ -5,9 +5,9 @@ const WRITE_BASE_URL = 'https://builder.io/api/v1/write';
 const builderPrivateKey = process.env.BUILDER_PRIVATE_KEY ?? '';
 
 const pageIds = [
-	'01fffa31cab24a269c57b02130f51caf', // Privacybeleid
-	'3baea1df01ee4b07bd63e9be5c53dea8', // Cookiebeleid
-	'3965830aa043403d962f6c548c53727c', // Algemene Voorwaarden
+	'e61943c13c8c47fab834df89e82e473b', // Privacybeleid
+	'72c297aa0eeb49cb99f32c4bf63cea68', // Cookiebeleid
+	'5c61c39ccaff40a9b10d111a34f343d1', // Algemene Voorwaarden
 ];
 
 async function deletePage(id: string): Promise<void> {
