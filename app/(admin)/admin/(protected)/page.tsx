@@ -1,7 +1,141 @@
-import {count, isNotNull, isNull} from 'drizzle-orm';
+import {count, isNotNull, isNull, desc} from 'drizzle-orm';
+import Link from 'next/link';
+import {
+	EmailIcon,
+	CalendarIcon,
+	ClockIcon,
+	LocationIcon,
+	StarIcon,
+	UsersIcon,
+	NewsIcon,
+	ArrowRightIcon,
+	WarningIcon,
+	SuccessIcon,
+	InfoIcon,
+} from '@/components/ui/icons';
 import {db, submissions} from '@/lib/db';
+import {listContent} from '@/lib/builder-admin';
+import type {Activity as ActivityType, NewsItem, Announcement} from '@/lib/builder-types';
+
+// Inline SVG icon component for icons not in the icon library
+function InboxIcon({className}: {readonly className?: string}) {
+	return (
+		<svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4' />
+		</svg>
+	);
+}
+
+function PlusIcon({className}: {readonly className?: string}) {
+	return (
+		<svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={2} d='M12 4v16m8-8H4' />
+		</svg>
+	);
+}
+
+function MegaphoneIcon({className}: {readonly className?: string}) {
+	return (
+		<svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z' />
+		</svg>
+	);
+}
+
+function FileTextIcon({className}: {readonly className?: string}) {
+	return (
+		<svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' />
+		</svg>
+	);
+}
+
+function ActivityIcon({className}: {readonly className?: string}) {
+	return (
+		<svg className={className} fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+			<path strokeLinecap='round' strokeLinejoin='round' strokeWidth={1.5} d='M13 10V3L4 14h7v7l9-11h-7z' />
+		</svg>
+	);
+}
+
+function getGreeting(): string {
+	const hour = new Date().getHours();
+	if (hour < 12) return 'Goedemorgen';
+	if (hour < 18) return 'Goedemiddag';
+	return 'Goedenavond';
+}
+
+function formatDate(dateString: string): string {
+	const date = new Date(dateString);
+	return date.toLocaleDateString('nl-BE', {
+		day: 'numeric',
+		month: 'short',
+	});
+}
+
+function formatDateTime(date: Date): string {
+	return date.toLocaleDateString('nl-BE', {
+		day: 'numeric',
+		month: 'short',
+		hour: '2-digit',
+		minute: '2-digit',
+	});
+}
+
+function getAnnouncementTypeColor(type: string): string {
+	switch (type) {
+		case 'belangrijk': {
+			return 'bg-red-100 text-red-800 border-red-200';
+		}
+
+		case 'waarschuwing': {
+			return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+		}
+
+		default: {
+			return 'bg-blue-100 text-blue-800 border-blue-200';
+		}
+	}
+}
+
+function AnnouncementIcon({type}: {readonly type: string}) {
+	switch (type) {
+		case 'belangrijk': {
+			return <WarningIcon size='sm' />;
+		}
+
+		case 'waarschuwing': {
+			return <WarningIcon size='sm' />;
+		}
+
+		default: {
+			return <InfoIcon size='sm' />;
+		}
+	}
+}
+
+function getCategoryColor(category: string): string {
+	switch (category) {
+		case 'feest': {
+			return 'bg-pink-100 text-pink-800';
+		}
+
+		case 'activiteit': {
+			return 'bg-green-100 text-green-800';
+		}
+
+		case 'nieuws': {
+			return 'bg-blue-100 text-blue-800';
+		}
+
+		default: {
+			return 'bg-gray-100 text-gray-800';
+		}
+	}
+}
 
 export default async function AdminDashboardPage() {
+	// Fetch submission stats
 	const [totalResult] = await db.select({count: count()}).from(submissions);
 	const [unreadResult] = await db.select({count: count()})
 		.from(submissions)
@@ -10,41 +144,357 @@ export default async function AdminDashboardPage() {
 		.from(submissions)
 		.where(isNotNull(submissions.archivedAt));
 
+	// Fetch recent unread submissions
+	const recentSubmissions = await db.select()
+		.from(submissions)
+		.where(isNull(submissions.archivedAt))
+		.orderBy(desc(submissions.createdAt))
+		.limit(5);
+
+	// Fetch latest content from Builder.io
+	let activities: ActivityType[] = [];
+	let news: NewsItem[] = [];
+	let announcements: Announcement[] = [];
+
+	try {
+		const [activitiesData, newsData, announcementsData] = await Promise.all([
+			listContent('activiteit'),
+			listContent('nieuws'),
+			listContent('aankondiging'),
+		]);
+		activities = activitiesData.slice(0, 5);
+		news = newsData.slice(0, 5);
+		announcements = announcementsData.filter(a => a.data.actief);
+	} catch {
+		// Silently handle Builder.io errors - dashboard will still work
+	}
+
+	const greeting = getGreeting();
+
 	return (
-		<div>
-			<h1 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-6 sm:mb-8'>Dashboard</h1>
-			<div className='grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6'>
-				<div className='bg-white p-5 sm:p-6 rounded-xl shadow-md'>
-					<h2 className='text-sm font-medium text-gray-500 mb-2'>Totaal berichten</h2>
-					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{totalResult.count}</p>
+		<div className='space-y-6 sm:space-y-8'>
+			{/* Header with greeting */}
+			<div>
+				<h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>{greeting}!</h1>
+				<p className='text-gray-500 mt-1'>Hier is een overzicht van je website.</p>
+			</div>
+
+			{/* Active Announcements Alert */}
+			{announcements.length > 0 && (
+				<div className='space-y-2'>
+					{announcements.map(announcement => (
+						<div
+							key={announcement.id}
+							className={`p-3 rounded-lg border flex items-center gap-3 ${getAnnouncementTypeColor(announcement.data.type)}`}
+						>
+							<AnnouncementIcon type={announcement.data.type} />
+							<span className='flex-1 text-sm font-medium'>{announcement.data.tekst}</span>
+							<Link
+								href='/admin/aankondigingen'
+								className='text-xs underline hover:no-underline'
+							>
+								Beheren
+							</Link>
+						</div>
+					))}
 				</div>
-				<div className='bg-white p-5 sm:p-6 rounded-xl shadow-md'>
-					<h2 className='text-sm font-medium text-gray-500 mb-2'>Ongelezen</h2>
-					<p className='text-2xl sm:text-3xl font-bold text-primary'>{unreadResult.count}</p>
-				</div>
-				<div className='bg-white p-5 sm:p-6 rounded-xl shadow-md'>
-					<h2 className='text-sm font-medium text-gray-500 mb-2'>Gearchiveerd</h2>
-					<p className='text-2xl sm:text-3xl font-bold text-gray-400'>{archivedResult.count}</p>
+			)}
+
+			{/* Quick Create Buttons */}
+			<div className='bg-white p-4 sm:p-5 rounded-xl shadow-md'>
+				<h2 className='text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2'>
+					<PlusIcon className='w-4 h-4' />
+					Snel aanmaken
+				</h2>
+				<div className='flex flex-wrap gap-2'>
+					<Link
+						href='/admin/nieuws/new'
+						className='inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary font-medium rounded-lg hover:bg-primary/20 transition-colors text-sm'
+					>
+						<NewsIcon size='sm' />
+						Nieuwsbericht
+					</Link>
+					<Link
+						href='/admin/activiteiten/new'
+						className='inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 font-medium rounded-lg hover:bg-green-200 transition-colors text-sm'
+					>
+						<CalendarIcon size='sm' />
+						Activiteit
+					</Link>
+					<Link
+						href='/admin/aankondigingen'
+						className='inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-700 font-medium rounded-lg hover:bg-yellow-200 transition-colors text-sm'
+					>
+						<MegaphoneIcon className='w-4 h-4' />
+						Aankondiging
+					</Link>
 				</div>
 			</div>
 
-			<div className='mt-8 sm:mt-12'>
-				<h2 className='text-lg sm:text-xl font-bold text-gray-800 mb-4'>Snelle acties</h2>
-				<div className='flex flex-col sm:flex-row gap-3 sm:gap-4'>
-					<a
-						href='/admin/submissions'
-						className='px-5 sm:px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors text-center'
-					>
-						Bekijk berichten
-					</a>
-					<a
-						href='/'
-						target='_blank'
-						rel='noopener noreferrer'
-						className='px-5 sm:px-6 py-3 bg-white text-gray-700 font-medium rounded-xl border border-gray-300 hover:bg-gray-50 transition-colors text-center'
-					>
-						Bekijk website
-					</a>
+			{/* Statistics Cards */}
+			<div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4'>
+				<Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
+					<div className='flex items-center justify-between mb-2'>
+						<InboxIcon className='w-5 h-5 text-gray-400 group-hover:text-primary transition-colors' />
+						<span className='text-xs text-gray-400'>totaal</span>
+					</div>
+					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{totalResult.count}</p>
+					<p className='text-xs text-gray-500 mt-1'>Berichten</p>
+				</Link>
+				<Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
+					<div className='flex items-center justify-between mb-2'>
+						<EmailIcon size='md' className='text-primary' />
+						{unreadResult.count > 0 && (
+							<span className='bg-primary text-white text-xs px-2 py-0.5 rounded-full'>nieuw</span>
+						)}
+					</div>
+					<p className='text-2xl sm:text-3xl font-bold text-primary'>{unreadResult.count}</p>
+					<p className='text-xs text-gray-500 mt-1'>Ongelezen</p>
+				</Link>
+				<Link href='/admin/nieuws' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
+					<div className='flex items-center justify-between mb-2'>
+						<NewsIcon size='md' className='text-gray-400 group-hover:text-blue-500 transition-colors' />
+					</div>
+					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{news.length > 0 ? news.length : '0'}</p>
+					<p className='text-xs text-gray-500 mt-1'>Nieuwsberichten</p>
+				</Link>
+				<Link href='/admin/activiteiten' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
+					<div className='flex items-center justify-between mb-2'>
+						<CalendarIcon size='md' className='text-gray-400 group-hover:text-green-500 transition-colors' />
+					</div>
+					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{activities.length > 0 ? activities.length : '0'}</p>
+					<p className='text-xs text-gray-500 mt-1'>Activiteiten</p>
+				</Link>
+			</div>
+
+			{/* Content Lists Grid */}
+			<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
+				{/* Recent Submissions */}
+				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+					<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
+						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
+							<EmailIcon size='sm' className='text-primary' />
+							Recente berichten
+						</h2>
+						<Link href='/admin/submissions' className='text-primary text-sm hover:underline flex items-center gap-1'>
+							Alles bekijken
+							<ArrowRightIcon size='xs' />
+						</Link>
+					</div>
+					<div className='divide-y divide-gray-50'>
+						{recentSubmissions.length === 0 ? (
+							<div className='p-4 text-center text-gray-400 text-sm'>
+								Geen berichten
+							</div>
+						) : (
+							recentSubmissions.map(submission => (
+								<Link
+									key={submission.id}
+									href={`/admin/submissions/${submission.id}`}
+									className={`block p-3 sm:p-4 hover:bg-gray-50 transition-colors ${!submission.readAt ? 'bg-primary/5' : ''}`}
+								>
+									<div className='flex items-start justify-between gap-2'>
+										<div className='flex-1 min-w-0'>
+											<div className='flex items-center gap-2'>
+												{!submission.readAt && (
+													<span className='w-2 h-2 bg-primary rounded-full flex-shrink-0' />
+												)}
+												<span className='font-medium text-gray-800 truncate text-sm'>
+													{submission.name}
+												</span>
+											</div>
+											<p className='text-xs text-gray-500 mt-0.5 truncate'>
+												{submission.subject} - {submission.message.slice(0, 50)}...
+											</p>
+										</div>
+										<span className='text-xs text-gray-400 whitespace-nowrap'>
+											{formatDateTime(submission.createdAt)}
+										</span>
+									</div>
+								</Link>
+							))
+						)}
+					</div>
+				</div>
+
+				{/* Upcoming Activities */}
+				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+					<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
+						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
+							<CalendarIcon size='sm' className='text-green-500' />
+							Komende activiteiten
+						</h2>
+						<Link href='/admin/activiteiten' className='text-primary text-sm hover:underline flex items-center gap-1'>
+							Alles bekijken
+							<ArrowRightIcon size='xs' />
+						</Link>
+					</div>
+					<div className='divide-y divide-gray-50'>
+						{activities.length === 0 ? (
+							<div className='p-4 text-center text-gray-400 text-sm'>
+								Geen activiteiten
+							</div>
+						) : (
+							activities.map(activity => (
+								<Link
+									key={activity.id}
+									href={`/admin/activiteiten/${activity.id}`}
+									className='block p-3 sm:p-4 hover:bg-gray-50 transition-colors'
+								>
+									<div className='flex items-start justify-between gap-2'>
+										<div className='flex-1 min-w-0'>
+											<div className='flex items-center gap-2'>
+												{activity.data.vastgepind && (
+													<StarIcon size='xs' className='text-yellow-500 fill-yellow-500 flex-shrink-0' />
+												)}
+												<span className='font-medium text-gray-800 truncate text-sm'>
+													{activity.data.titel}
+												</span>
+												<span className={`text-xs px-2 py-0.5 rounded-full ${getCategoryColor(activity.data.categorie)}`}>
+													{activity.data.categorie}
+												</span>
+											</div>
+											<div className='flex items-center gap-3 mt-1 text-xs text-gray-500'>
+												<span className='flex items-center gap-1'>
+													<ClockIcon size='xs' />
+													{formatDate(activity.data.datum)}
+													{activity.data.tijd && ` om ${activity.data.tijd}`}
+												</span>
+												{activity.data.locatie && (
+													<span className='flex items-center gap-1 truncate'>
+														<LocationIcon size='xs' />
+														{activity.data.locatie}
+													</span>
+												)}
+											</div>
+										</div>
+										{activity.published !== 'published' && (
+											<span className='text-xs px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full'>
+												concept
+											</span>
+										)}
+									</div>
+								</Link>
+							))
+						)}
+					</div>
+				</div>
+
+				{/* Latest News */}
+				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+					<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
+						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
+							<NewsIcon size='sm' className='text-blue-500' />
+							Laatste nieuws
+						</h2>
+						<Link href='/admin/nieuws' className='text-primary text-sm hover:underline flex items-center gap-1'>
+							Alles bekijken
+							<ArrowRightIcon size='xs' />
+						</Link>
+					</div>
+					<div className='divide-y divide-gray-50'>
+						{news.length === 0 ? (
+							<div className='p-4 text-center text-gray-400 text-sm'>
+								Geen nieuwsberichten
+							</div>
+						) : (
+							news.map(item => (
+								<Link
+									key={item.id}
+									href={`/admin/nieuws/${item.id}`}
+									className='block p-3 sm:p-4 hover:bg-gray-50 transition-colors'
+								>
+									<div className='flex items-start justify-between gap-2'>
+										<div className='flex-1 min-w-0'>
+											<div className='flex items-center gap-2'>
+												{item.data.vastgepind && (
+													<StarIcon size='xs' className='text-yellow-500 fill-yellow-500 flex-shrink-0' />
+												)}
+												<span className='font-medium text-gray-800 truncate text-sm'>
+													{item.data.titel}
+												</span>
+											</div>
+											<p className='text-xs text-gray-500 mt-0.5 truncate'>
+												{item.data.samenvatting}
+											</p>
+										</div>
+										<div className='flex items-center gap-2'>
+											{item.published !== 'published' && (
+												<span className='text-xs px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full'>
+													concept
+												</span>
+											)}
+											<span className='text-xs text-gray-400 whitespace-nowrap'>
+												{formatDate(item.data.datum)}
+											</span>
+										</div>
+									</div>
+								</Link>
+							))
+						)}
+					</div>
+				</div>
+
+				{/* Quick Links */}
+				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+					<div className='p-4 sm:p-5 border-b border-gray-100'>
+						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
+							<ActivityIcon className='w-4 h-4 text-purple-500' />
+							Snelle links
+						</h2>
+					</div>
+					<div className='p-3 sm:p-4 grid grid-cols-2 gap-2'>
+						<Link
+							href='/admin/submissions'
+							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+						>
+							<div className='w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center'>
+								<FileTextIcon className='w-5 h-5 text-primary' />
+							</div>
+							<div>
+								<p className='font-medium text-gray-800 text-sm'>Berichten</p>
+								<p className='text-xs text-gray-500'>Inbox beheren</p>
+							</div>
+						</Link>
+						<Link
+							href='/admin/gebruikers'
+							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+						>
+							<div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center'>
+								<UsersIcon size='md' className='text-blue-600' />
+							</div>
+							<div>
+								<p className='font-medium text-gray-800 text-sm'>Gebruikers</p>
+								<p className='text-xs text-gray-500'>Beheerders</p>
+							</div>
+						</Link>
+						<Link
+							href='/admin/decoraties'
+							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+						>
+							<div className='w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center'>
+								<span className='text-lg'>✨</span>
+							</div>
+							<div>
+								<p className='font-medium text-gray-800 text-sm'>Decoraties</p>
+								<p className='text-xs text-gray-500'>Seizoensversiering</p>
+							</div>
+						</Link>
+						<Link
+							href='/'
+							target='_blank'
+							rel='noopener noreferrer'
+							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+						>
+							<div className='w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center'>
+								<ArrowRightIcon size='md' className='text-green-600' />
+							</div>
+							<div>
+								<p className='font-medium text-gray-800 text-sm'>Website</p>
+								<p className='text-xs text-gray-500'>Bekijk live site</p>
+							</div>
+						</Link>
+					</div>
 				</div>
 			</div>
 		</div>
