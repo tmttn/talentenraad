@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth} from '@/lib/auth/config';
+import {auth0, isAdminEmail} from '@/lib/auth0';
 import {db, submissions} from '@/lib/db';
 import {inArray} from 'drizzle-orm';
 
@@ -9,11 +9,16 @@ type BulkActionRequest = {
 };
 
 export async function PATCH(request: NextRequest) {
-	const session = await auth();
+	const session = await auth0.getSession();
 
 	// Check authentication
 	if (!session?.user) {
 		return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+	}
+
+	// Check admin access
+	if (!isAdminEmail(session.user.email)) {
+		return NextResponse.json({error: 'Forbidden'}, {status: 403});
 	}
 
 	try {

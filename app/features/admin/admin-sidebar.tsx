@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import {usePathname} from 'next/navigation';
-import {signOut} from 'next-auth/react';
 
 type AdminSidebarProperties = {
 	user: {
@@ -27,10 +26,6 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 		}
 
 		return pathname.startsWith(href);
-	};
-
-	const handleSignOut = async () => {
-		await signOut({callbackUrl: '/'});
 	};
 
 	return (
@@ -81,15 +76,12 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 						<p className='text-gray-500 text-xs truncate'>{user.email}</p>
 					</div>
 				</div>
-				<button
-					type='button'
-					onClick={() => {
-						void handleSignOut();
-					}}
-					className='w-full px-4 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors text-left'
+				<a
+					href='/auth/logout'
+					className='block w-full px-4 py-2 text-sm text-gray-600 hover:text-primary hover:bg-gray-100 rounded-lg transition-colors text-left'
 				>
 					Uitloggen
-				</button>
+				</a>
 			</div>
 		</aside>
 	);
