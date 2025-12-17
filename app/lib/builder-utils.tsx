@@ -75,6 +75,9 @@ export async function fetchBuilderContent(
 			userAttributes: {
 				urlPath,
 			},
+			query: {
+				'data.url': urlPath,
+			},
 			cacheSeconds: 0,
 			staleCacheSeconds: 0,
 			fetchOptions: {
