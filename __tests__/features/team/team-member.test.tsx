@@ -59,7 +59,7 @@ describe('TeamMember', () => {
 		it('applies default color for unknown role', () => {
 			render(<TeamMember {...defaultProps} role='Custom Role' />);
 			const roleTag = screen.getByText('Custom Role');
-			expect(roleTag).toHaveClass('bg-primary/10', 'text-primary');
+			expect(roleTag).toHaveClass('bg-primary/10', 'text-primary-text');
 		});
 	});
 

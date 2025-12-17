@@ -202,7 +202,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 									<td className='px-4 sm:px-6 py-4'>
 										{submission.readAt
 											? <span className='text-gray-400 text-sm'>Gelezen</span>
-											: <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary'>Nieuw</span>}
+											: <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary-text'>Nieuw</span>}
 									</td>
 									<td className='px-4 sm:px-6 py-4'>
 										<Link

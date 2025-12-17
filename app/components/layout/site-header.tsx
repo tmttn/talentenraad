@@ -136,7 +136,7 @@ export function SiteHeader({
 								}}
 								className={`block py-3 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-focus focus:ring-inset ${
 									pathname === item.url
-										? 'bg-primary/10 text-primary'
+										? 'bg-primary/10 text-primary-text'
 										: 'text-gray-600 hover:bg-gray-50 hover:text-primary'
 								}`}
 								style={{

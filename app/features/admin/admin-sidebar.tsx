@@ -143,7 +143,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 									title={isCollapsed ? item.label : undefined}
 									className={`flex items-center gap-3 ${isCollapsed ? 'lg:justify-center lg:px-2' : 'px-4'} py-3 rounded-lg transition-colors ${
 										isActive(item.href)
-											? 'bg-primary/10 text-pink-700 font-medium'
+											? 'bg-primary/10 text-primary-text font-medium'
 											: 'text-gray-600 hover:bg-gray-100'
 									}`}
 								>

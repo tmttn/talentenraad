@@ -32,6 +32,7 @@
 	/* Primary (main brand actions) */
 	--color-primary: #ea247b;
 	--color-primary-hover: #c4105f;
+	--color-primary-text: #be185d; /* Darker primary for text on light backgrounds (WCAG AA compliant) */
 
 	/* Secondary (news, activities) */
 	--color-secondary: #afbd43;

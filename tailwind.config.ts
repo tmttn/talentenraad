@@ -9,6 +9,9 @@ const config: Config = {
 			fontFamily: {
 				sans: ['system-ui'],
 			},
+			colors: {
+				'primary-text': 'var(--color-primary-text)',
+			},
 		},
 	},
 	plugins: [

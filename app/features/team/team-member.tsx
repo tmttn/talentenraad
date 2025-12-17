@@ -32,7 +32,7 @@ function TeamMember({
 		Secretaris: 'bg-secondary text-white',
 		Penningmeester: 'bg-accent text-white',
 		Lid: 'bg-gray-200 text-gray-700',
-		default: 'bg-primary/10 text-primary',
+		default: 'bg-primary/10 text-primary-text',
 	};
 
 	const getRoleColor = (memberRole: string) => roleColors[memberRole] || roleColors.default;

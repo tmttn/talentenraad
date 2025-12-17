@@ -51,7 +51,7 @@ function Icon({name}: Readonly<{name: IconType}>) {
 const variantStyles = {
 	default: {
 		card: 'bg-white',
-		iconBg: 'bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white',
+		iconBg: 'bg-primary/10 text-primary-text group-hover:bg-primary group-hover:text-white',
 		title: 'text-gray-800',
 		description: 'text-gray-600',
 	},

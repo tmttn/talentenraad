@@ -45,7 +45,7 @@ export function SubmissionsPageClient({
 					{inboxSubmissions.length > 0 && (
 						<span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
 							activeTab === 'inbox'
-								? 'bg-primary/10 text-primary'
+								? 'bg-primary/10 text-primary-text'
 								: 'bg-gray-200 text-gray-600'
 						}`}>
 							{inboxSubmissions.length}

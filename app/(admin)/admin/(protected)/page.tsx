@@ -173,7 +173,7 @@ export default async function AdminDashboardPage() {
 				<div className='flex flex-wrap gap-2'>
 					<Link
 						href='/admin/nieuws/new'
-						className='inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary font-medium rounded-lg hover:bg-primary/20 transition-colors text-sm'
+						className='inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary-text font-medium rounded-lg hover:bg-primary/20 transition-colors text-sm'
 					>
 						<Newspaper className='w-4 h-4' />
 						Nieuwsbericht
@@ -240,7 +240,7 @@ export default async function AdminDashboardPage() {
 							<Mail className='w-4 h-4 text-primary' />
 							Recente berichten
 						</h2>
-						<Link href='/admin/submissions' className='text-pink-700 text-sm hover:underline flex items-center gap-1'>
+						<Link href='/admin/submissions' className='text-primary-text text-sm hover:underline flex items-center gap-1'>
 							Alles bekijken
 							<ArrowRight className='w-3 h-3' />
 						</Link>
@@ -288,7 +288,7 @@ export default async function AdminDashboardPage() {
 							<Calendar className='w-4 h-4 text-green-500' />
 							Komende activiteiten
 						</h2>
-						<Link href='/admin/activiteiten' className='text-pink-700 text-sm hover:underline flex items-center gap-1'>
+						<Link href='/admin/activiteiten' className='text-primary-text text-sm hover:underline flex items-center gap-1'>
 							Alles bekijken
 							<ArrowRight className='w-3 h-3' />
 						</Link>
@@ -351,7 +351,7 @@ export default async function AdminDashboardPage() {
 							<Newspaper className='w-4 h-4 text-blue-500' />
 							Laatste nieuws
 						</h2>
-						<Link href='/admin/nieuws' className='text-pink-700 text-sm hover:underline flex items-center gap-1'>
+						<Link href='/admin/nieuws' className='text-primary-text text-sm hover:underline flex items-center gap-1'>
 							Alles bekijken
 							<ArrowRight className='w-3 h-3' />
 						</Link>

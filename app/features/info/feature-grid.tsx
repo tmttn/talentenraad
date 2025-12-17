@@ -57,7 +57,7 @@ function FeatureGrid({
 					key={index}
 					className='bg-white rounded-2xl p-6 md:p-8 shadow-sm hover:shadow-md transition-shadow'
 				>
-					<div className='w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-4'>
+					<div className='w-12 h-12 rounded-xl bg-primary/10 text-primary-text flex items-center justify-center mb-4'>
 						<FeatureIcon name={feature.icon} />
 					</div>
 					<h3 className='text-lg md:text-xl font-bold text-gray-900 mb-2'>
