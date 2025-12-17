@@ -7,9 +7,7 @@ import {
 	type ChangeEvent,
 } from 'react';
 import {useSearchParams} from 'next/navigation';
-import {
-	SuccessIcon, ErrorIcon, SendIcon, SpinnerIcon,
-} from '@components/ui/icons';
+import {CheckCircle, XCircle, Send, Loader2} from 'lucide-react';
 import {useRecaptcha} from './use-recaptcha';
 
 const submitButtonClassName = [
@@ -199,7 +197,7 @@ function SuccessMessage() {
 		<section className='py-16 px-6 bg-gray-50'>
 			<div className='max-w-2xl mx-auto text-center'>
 				<div className='bg-success-600 text-white p-8 rounded-2xl' role='alert'>
-					<SuccessIcon className='h-16 w-16 mx-auto mb-4' />
+					<CheckCircle className='h-16 w-16 mx-auto mb-4' aria-hidden='true' />
 					<h3 className='text-2xl font-bold mb-2'>Bedankt voor uw bericht!</h3>
 					<p>We nemen zo snel mogelijk contact met u op.</p>
 				</div>
@@ -213,7 +211,7 @@ function GeneralErrorMessage({message}: {message: string}) {
 	return (
 		<div className='mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-lg' role='alert'>
 			<p className='text-red-800 font-medium flex items-center gap-2'>
-				<ErrorIcon className='h-5 w-5' />
+				<XCircle className='h-5 w-5' aria-hidden='true' />
 				{message}
 			</p>
 		</div>
@@ -231,14 +229,14 @@ function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
 			{isSubmitting
 				? (
 					<>
-						<SpinnerIcon className='animate-spin h-5 w-5' />
+						<Loader2 className='animate-spin h-5 w-5' aria-hidden='true' />
 						<span>Verzenden...</span>
 					</>
 				)
 				: (
 					<>
 						<span>Verstuur bericht</span>
-						<SendIcon className='h-5 w-5' />
+						<Send className='h-5 w-5' aria-hidden='true' />
 					</>
 				)}
 		</button>

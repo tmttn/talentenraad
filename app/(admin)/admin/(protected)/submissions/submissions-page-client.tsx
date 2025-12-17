@@ -3,7 +3,7 @@
 import {useState} from 'react';
 import type {Submission} from '@/lib/db/index.js';
 import {SubmissionsTable} from '@/features/admin/submissions-table';
-import {EmailIcon} from '@/components/ui/icons';
+import {Mail} from 'lucide-react';
 
 type SubmissionsPageClientProps = {
 	inboxSubmissions: Submission[];
@@ -78,7 +78,7 @@ export function SubmissionsPageClient({
 				<SubmissionsTable submissions={submissions} isArchiveView={isArchiveView} />
 			) : (
 				<div className='bg-white rounded-xl shadow-md p-8 sm:p-12 text-center'>
-					<EmailIcon size='xl' className='mx-auto text-gray-300 mb-4 !h-12 !w-12' />
+					<Mail className='mx-auto text-gray-300 mb-4 h-12 w-12' aria-hidden='true' />
 					<p className='text-gray-500 text-base sm:text-lg'>
 						{isArchiveView
 							? 'Geen gearchiveerde berichten.'

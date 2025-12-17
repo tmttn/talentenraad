@@ -1,22 +1,21 @@
 'use client';
 
-import type {ComponentType} from 'react';
 import {
-	AnimatedLink,
-	HeartIcon,
-	UserIcon,
-	CalendarIcon,
-	StarIcon,
-	GiftIcon,
-	SchoolIcon,
-	MoneyIcon,
-	ChatIcon,
-	UsersIcon,
-	EmailIcon,
-	LocationIcon,
-	PhoneIcon,
-	type IconProperties,
-} from '@components/ui';
+	Heart,
+	User,
+	Calendar,
+	Star,
+	Gift,
+	GraduationCap,
+	DollarSign,
+	MessageCircle,
+	Users,
+	Mail,
+	MapPin,
+	Phone,
+	type LucideIcon,
+} from 'lucide-react';
+import {AnimatedLink} from '@components/ui';
 
 type IconType = 'heart' | 'users' | 'calendar' | 'star' | 'gift' | 'school' | 'money' | 'chat' | 'team' | 'email' | 'location' | 'phone';
 
@@ -29,24 +28,24 @@ type InfoCardProperties = {
 	variant?: 'default' | 'primary' | 'secondary' | 'accent' | 'gradient';
 };
 
-const iconComponents: Record<IconType, ComponentType<IconProperties>> = {
-	heart: HeartIcon,
-	users: UserIcon,
-	calendar: CalendarIcon,
-	star: StarIcon,
-	gift: GiftIcon,
-	school: SchoolIcon,
-	money: MoneyIcon,
-	chat: ChatIcon,
-	team: UsersIcon,
-	email: EmailIcon,
-	location: LocationIcon,
-	phone: PhoneIcon,
+const iconComponents: Record<IconType, LucideIcon> = {
+	heart: Heart,
+	users: User,
+	calendar: Calendar,
+	star: Star,
+	gift: Gift,
+	school: GraduationCap,
+	money: DollarSign,
+	chat: MessageCircle,
+	team: Users,
+	email: Mail,
+	location: MapPin,
+	phone: Phone,
 };
 
 function Icon({name}: Readonly<{name: IconType}>) {
 	const IconComponent = iconComponents[name];
-	return <IconComponent size='xl' />;
+	return <IconComponent className='h-8 w-8' aria-hidden='true' />;
 }
 
 const variantStyles = {

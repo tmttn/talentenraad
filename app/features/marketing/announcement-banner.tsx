@@ -2,11 +2,11 @@
 
 import {useEffect, useState} from 'react';
 import {
-	InfoIcon,
-	WarningIcon,
-	StarIcon,
-	XIcon,
-} from '@components/ui';
+	Info,
+	AlertTriangle,
+	Star,
+	X,
+} from 'lucide-react';
 
 type Announcement = {
 	id: string;
@@ -61,15 +61,15 @@ export function AnnouncementBanner() {
 	const typeStyles = {
 		info: {
 			bg: 'bg-info-600',
-			icon: <InfoIcon size='md' />,
+			icon: <Info className='h-5 w-5' aria-hidden='true' />,
 		},
 		waarschuwing: {
 			bg: 'bg-warning-500',
-			icon: <WarningIcon size='md' />,
+			icon: <AlertTriangle className='h-5 w-5' aria-hidden='true' />,
 		},
 		belangrijk: {
 			bg: 'bg-primary',
-			icon: <StarIcon size='md' />,
+			icon: <Star className='h-5 w-5' aria-hidden='true' />,
 		},
 	};
 
@@ -100,7 +100,7 @@ export function AnnouncementBanner() {
 					className='flex-shrink-0 p-1 rounded hover:bg-white/20 transition-colors'
 					aria-label='Aankondiging sluiten'
 				>
-					<XIcon size='md' />
+					<X className='h-5 w-5' aria-hidden='true' />
 				</button>
 			</div>
 		</div>

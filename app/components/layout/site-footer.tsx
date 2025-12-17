@@ -3,7 +3,14 @@
 import type {ComponentType} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {Facebook, Instagram, Linkedin, Twitter, Youtube, type LucideProps} from 'lucide-react';
+import {
+	Facebook, // eslint-disable-line @typescript-eslint/no-deprecated -- Brand icons needed for social links
+	Instagram, // eslint-disable-line @typescript-eslint/no-deprecated -- Brand icons needed for social links
+	Linkedin,
+	Twitter,
+	Youtube,
+	type LucideProps,
+} from 'lucide-react';
 import {Icicles} from '@components/seasonal-decorations';
 import {useCookieConsent} from '@components/cookie-consent';
 

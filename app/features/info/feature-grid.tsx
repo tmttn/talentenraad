@@ -1,16 +1,15 @@
 'use client';
 
-import type {ComponentType} from 'react';
 import {
-	AnimatedLink,
-	CalendarIcon,
-	HeartIcon,
-	UsersIcon,
-	StarIcon,
-	MoneyIcon,
-	GiftIcon,
-	type IconProperties,
-} from '@components/ui';
+	Calendar,
+	Heart,
+	Users,
+	Star,
+	DollarSign,
+	Gift,
+	type LucideIcon,
+} from 'lucide-react';
+import {AnimatedLink} from '@components/ui';
 
 type FeatureItem = {
 	icon: string;
@@ -24,18 +23,18 @@ type FeatureGridProperties = {
 	columns?: 2 | 3;
 };
 
-const iconComponents: Record<string, ComponentType<IconProperties>> = {
-	calendar: CalendarIcon,
-	heart: HeartIcon,
-	users: UsersIcon,
-	star: StarIcon,
-	money: MoneyIcon,
-	gift: GiftIcon,
+const iconComponents: Record<string, LucideIcon> = {
+	calendar: Calendar,
+	heart: Heart,
+	users: Users,
+	star: Star,
+	money: DollarSign,
+	gift: Gift,
 };
 
 function FeatureIcon({name}: Readonly<{name: string}>) {
 	const IconComponent = iconComponents[name] ?? iconComponents.star;
-	return <IconComponent size='lg' />;
+	return <IconComponent className='h-6 w-6' aria-hidden='true' />;
 }
 
 function FeatureGrid({

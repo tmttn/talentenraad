@@ -2,12 +2,12 @@
 
 import {useEffect, useState} from 'react';
 import {
-	AnimatedLink,
-	LocationIcon,
-	ClockIcon,
-	CalendarIcon,
-	BookmarkIcon,
-} from '@components/ui';
+	MapPin,
+	Clock,
+	Calendar,
+	Bookmark,
+} from 'lucide-react';
+import {AnimatedLink} from '@components/ui';
 
 const articleClassName = [
 	'flex items-start gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow',
@@ -179,19 +179,19 @@ function ActivitiesList({
 													{activity.data.titel}
 													{activity.data.vastgepind && (
 														<span className='text-primary' aria-label='Vastgepind'>
-															<BookmarkIcon size='sm' filled />
+															<Bookmark className='h-4 w-4 fill-current' aria-hidden='true' />
 														</span>
 													)}
 												</h3>
 												{activity.data.tijd && (
 													<p className='text-sm text-gray-500 flex items-center gap-1'>
-														<ClockIcon size='sm' />
+														<Clock className='h-4 w-4' aria-hidden='true' />
 														{activity.data.tijd}
 													</p>
 												)}
 												{showLocation && activity.data.locatie && (
 													<p className='text-sm text-gray-500 flex items-center gap-1 mt-1'>
-														<LocationIcon size='sm' />
+														<MapPin className='h-4 w-4' aria-hidden='true' />
 														{activity.data.locatie}
 													</p>
 												)}
@@ -226,7 +226,7 @@ function ActivitiesList({
 					: (
 						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-gray-200'>
 							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-sm text-primary'>
-								<CalendarIcon size='xl' className='!h-10 !w-10' />
+								<Calendar className='h-10 w-10' aria-hidden='true' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-800 mb-2'>Nog geen activiteiten gepland</h3>
 							<p className='text-gray-500 max-w-sm mx-auto mb-6'>

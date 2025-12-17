@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import {EmailIcon} from '@components/ui/icons';
+import {Mail} from 'lucide-react';
 
 type TeamMemberProperties = {
 	name: string;
@@ -98,7 +98,7 @@ function TeamMember({
 							href={`mailto:${email}`}
 							className='inline-flex items-center gap-2 mt-3 text-primary hover:underline'
 						>
-							<EmailIcon className='h-4 w-4' />
+							<Mail className='h-4 w-4' aria-hidden='true' />
 							{email}
 						</a>
 					)}
@@ -145,7 +145,7 @@ function TeamMember({
 						href={`mailto:${email}`}
 						className='inline-flex items-center gap-2 mt-4 text-gray-500 hover:text-primary transition-colors text-sm'
 					>
-						<EmailIcon className='h-4 w-4' />
+						<Mail className='h-4 w-4' aria-hidden='true' />
 						{email}
 					</a>
 				)}

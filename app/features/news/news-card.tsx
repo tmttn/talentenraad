@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import {linkStyles, ClockIcon, ArrowRightIcon} from '@components/ui';
+import {Clock, ArrowRight} from 'lucide-react';
+import {linkStyles} from '@components/ui';
 
 type NewsCardProperties = {
 	title: string;
@@ -41,7 +42,7 @@ function NewsCard({
 				)}
 				<div className='p-6'>
 					<time className='text-sm text-gray-500 flex items-center gap-2'>
-						<ClockIcon size='sm' />
+						<Clock className='h-4 w-4' aria-hidden='true' />
 						{date}
 					</time>
 					<h3 className='text-xl font-bold text-gray-800 mt-2 group-hover:text-primary transition-colors'>
@@ -53,7 +54,7 @@ function NewsCard({
 					{link && (
 						<span className='animated-link inline-flex items-center gap-1 mt-4 text-primary font-semibold' aria-hidden='true'>
 							Lees meer
-							<ArrowRightIcon size='sm' className='animated-link-arrow' />
+							<ArrowRight className='h-4 w-4 animated-link-arrow' aria-hidden='true' />
 						</span>
 					)}
 				</div>

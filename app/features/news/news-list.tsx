@@ -2,14 +2,12 @@
 
 import {useEffect, useState} from 'react';
 import {
-	linkStyles,
-	CalendarIcon,
-	PinnedIcon,
-	NewsIcon,
-	ArrowRightIcon,
-	FacebookIcon,
-	InstagramIcon,
-} from '@components/ui';
+	Calendar,
+	Pin,
+	Newspaper,
+	ArrowRight,
+} from 'lucide-react';
+import {linkStyles} from '@components/ui';
 
 const articleListClassName = [
 	'bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow group overflow-hidden',
@@ -183,7 +181,7 @@ function NewsList({
 										)}
 										<div className={layout === 'grid' ? 'p-5' : ''}>
 											<div className='flex items-center gap-2 text-sm text-gray-500 mb-2'>
-												<CalendarIcon size='sm' />
+												<Calendar className='h-4 w-4' aria-hidden='true' />
 												{formatDate(item.data.datum)}
 											</div>
 											<h3 className={[
@@ -194,7 +192,7 @@ function NewsList({
 												{item.data.titel}
 												{item.data.vastgepind && (
 													<span className='text-primary flex-shrink-0' aria-label='Vastgepind'>
-														<PinnedIcon size='md' />
+														<Pin className='h-5 w-5' aria-hidden='true' />
 													</span>
 												)}
 											</h3>
@@ -206,7 +204,7 @@ function NewsList({
 												aria-hidden='true'
 											>
 												Lees meer
-												<ArrowRightIcon size='sm' className='animated-link-arrow' />
+												<ArrowRight className='h-4 w-4 animated-link-arrow' aria-hidden='true' />
 											</span>
 										</div>
 									</article>
@@ -217,7 +215,7 @@ function NewsList({
 					: (
 						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-gray-200'>
 							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-sm text-primary'>
-								<NewsIcon size='xl' className='!h-10 !w-10' />
+								<Newspaper className='h-10 w-10' aria-hidden='true' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-800 mb-2'>Nog geen nieuwsberichten</h3>
 							<p className='text-gray-500 max-w-sm mx-auto mb-6'>
@@ -231,8 +229,8 @@ function NewsList({
 									className={socialLinkClassName}
 									aria-label='Facebook (opent in nieuw venster)'
 								>
-									<FacebookIcon size='md' />
 									Facebook
+									<ArrowRight className='h-4 w-4' aria-hidden='true' />
 								</a>
 								<a
 									href='https://instagram.com/talentenhuis'
@@ -241,8 +239,8 @@ function NewsList({
 									className={socialLinkClassName}
 									aria-label='Instagram (opent in nieuw venster)'
 								>
-									<InstagramIcon size='md' />
 									Instagram
+									<ArrowRight className='h-4 w-4' aria-hidden='true' />
 								</a>
 							</div>
 						</div>

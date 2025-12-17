@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import {CalendarIcon, LocationIcon} from '@components/ui';
+import {Calendar, MapPin} from 'lucide-react';
 
 type EventCardProperties = {
 	title: string;
@@ -36,7 +36,7 @@ function EventCard({
 			)}
 			<div className='card-body'>
 				<div className='flex items-center gap-2 text-sm text-primary font-semibold mb-2'>
-					<CalendarIcon size='md' />
+					<Calendar className='h-5 w-5' aria-hidden='true' />
 					<span>{date}</span>
 					{time && (
 						<>
@@ -48,7 +48,7 @@ function EventCard({
 				<h3 className='card-title text-gray-800'>{title}</h3>
 				{location && (
 					<div className='flex items-center gap-2 text-sm text-gray-500'>
-						<LocationIcon size='sm' />
+						<MapPin className='h-4 w-4' aria-hidden='true' />
 						<span>{location}</span>
 					</div>
 				)}
