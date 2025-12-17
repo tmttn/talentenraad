@@ -241,7 +241,7 @@ function Toolbar({editor}: {editor: Editor | null}) {
 // Convert plain text with newlines to HTML paragraphs
 function convertToHtml(text: string): string {
 	// If it already contains HTML tags, return as-is
-	if (/<[a-z][\s\S]*>/i.test(text)) {
+	if (/<\/?[a-z][^>]*>/i.test(text)) {
 		return text;
 	}
 
