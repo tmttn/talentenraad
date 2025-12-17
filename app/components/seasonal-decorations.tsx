@@ -53,15 +53,70 @@ const seasonalStyles = `
 	}
 `;
 
-// Color definitions for Christmas lights with gradients
+// Color definitions for Christmas lights
 const lightColors = [
-	{base: '#ff2020', light: '#ff6060', dark: '#cc0000', glow: '#ff0000'}, // Red
-	{base: '#20cc20', light: '#60ff60', dark: '#008800', glow: '#00ff00'}, // Green
-	{base: '#ffcc00', light: '#ffee66', dark: '#cc9900', glow: '#ffff00'}, // Yellow/Gold
-	{base: '#2060ff', light: '#60a0ff', dark: '#0040cc', glow: '#0066ff'}, // Blue
-	{base: '#ff40ff', light: '#ff80ff', dark: '#cc00cc', glow: '#ff00ff'}, // Magenta
-	{base: '#00cccc', light: '#60ffff', dark: '#008888', glow: '#00ffff'}, // Cyan
+	{base: '#e63946', light: '#ff6b6b', dark: '#9d0208', glow: '#ff0000'}, // Red
+	{base: '#2a9d8f', light: '#40dfcf', dark: '#1a6359', glow: '#00ff88'}, // Green
+	{base: '#f4a261', light: '#ffd166', dark: '#e76f51', glow: '#ffcc00'}, // Orange/Gold
+	{base: '#457b9d', light: '#70b8db', dark: '#1d3557', glow: '#00aaff'}, // Blue
+	{base: '#9b5de5', light: '#c77dff', dark: '#7209b7', glow: '#cc66ff'}, // Purple
+	{base: '#00b4d8', light: '#48cae4', dark: '#0077b6', glow: '#00ddff'}, // Cyan
 ];
+
+/**
+ * Single Christmas light bulb SVG component
+ */
+function LightBulb({color, delay}: {color: typeof lightColors[0]; delay: number}) {
+	return (
+		<div
+			className='christmas-light-bulb relative'
+			style={{
+				animationDelay: `${delay}s`,
+				width: '20px',
+				height: '36px',
+			}}
+		>
+			{/* Glow effect */}
+			<div
+				className='absolute rounded-full'
+				style={{
+					width: '30px',
+					height: '30px',
+					top: '10px',
+					left: '-5px',
+					background: `radial-gradient(circle, ${color.glow}66 0%, transparent 70%)`,
+					filter: 'blur(4px)',
+				}}
+			/>
+			<svg viewBox='0 0 20 36' className='w-full h-full relative z-10'>
+				{/* Socket */}
+				<rect x='6' y='0' width='8' height='5' fill='#2a2a2a' rx='1' />
+				<rect x='7' y='1' width='6' height='1' fill='#3a3a3a' />
+				<rect x='7' y='3' width='6' height='1' fill='#3a3a3a' />
+
+				{/* Bulb body */}
+				<ellipse cx='10' cy='20' rx='9' ry='14' fill={color.base} />
+				<ellipse cx='10' cy='20' rx='9' ry='14' fill='url(#bulbShine)' />
+
+				{/* Inner glow */}
+				<ellipse cx='10' cy='20' rx='5' ry='9' fill={color.light} opacity='0.5' />
+
+				{/* Glass highlight */}
+				<ellipse cx='7' cy='15' rx='2' ry='4' fill='white' opacity='0.5' />
+				<ellipse cx='6' cy='13' rx='1' ry='1.5' fill='white' opacity='0.7' />
+
+				{/* Shared gradient definition */}
+				<defs>
+					<linearGradient id='bulbShine' x1='0%' y1='0%' x2='100%' y2='100%'>
+						<stop offset='0%' stopColor='white' stopOpacity='0.3' />
+						<stop offset='50%' stopColor='white' stopOpacity='0' />
+						<stop offset='100%' stopColor='black' stopOpacity='0.2' />
+					</linearGradient>
+				</defs>
+			</svg>
+		</div>
+	);
+}
 
 /**
  * Christmas lights that hang below a component (e.g., header)
@@ -71,12 +126,11 @@ export function ChristmasLights() {
 	const config = useSeasonalDecorations();
 
 	const lights = useMemo(() => {
-		return Array.from({length: 20}, (_, index) => ({
+		return Array.from({length: 24}, (_, index) => ({
 			id: index,
-			colors: lightColors[index % lightColors.length],
-			delay: index * 0.15,
-			// Slight random variation for organic look
-			sway: (index % 3) - 1,
+			color: lightColors[index % lightColors.length],
+			delay: index * 0.12,
+			isLow: index % 2 === 1,
 		}));
 	}, []);
 
@@ -84,130 +138,86 @@ export function ChristmasLights() {
 
 	return (
 		<div className='w-full overflow-hidden pointer-events-none' aria-hidden='true'>
-			<svg viewBox='0 0 1000 60' preserveAspectRatio='none' className='w-full h-10 md:h-14'>
-				<defs>
-					{/* Define gradients for each light color */}
-					{lightColors.map((color, index) => (
-						<radialGradient key={`bulb-grad-${index}`} id={`bulb-gradient-${index}`} cx='30%' cy='30%' r='70%'>
-							<stop offset='0%' stopColor={color.light} stopOpacity='1' />
-							<stop offset='50%' stopColor={color.base} stopOpacity='1' />
-							<stop offset='100%' stopColor={color.dark} stopOpacity='1' />
-						</radialGradient>
+			{/* Wire */}
+			<div className='relative w-full h-14'>
+				{/* SVG wire that spans full width */}
+				<svg
+					className='absolute top-0 left-0 w-full h-4'
+					viewBox='0 0 100 10'
+					preserveAspectRatio='none'
+				>
+					<path
+						d='M0,3 Q2.08,8 4.16,3 Q6.25,8 8.33,3 Q10.41,8 12.5,3 Q14.58,8 16.66,3 Q18.75,8 20.83,3 Q22.91,8 25,3 Q27.08,8 29.16,3 Q31.25,8 33.33,3 Q35.41,8 37.5,3 Q39.58,8 41.66,3 Q43.75,8 45.83,3 Q47.91,8 50,3 Q52.08,8 54.16,3 Q56.25,8 58.33,3 Q60.41,8 62.5,3 Q64.58,8 66.66,3 Q68.75,8 70.83,3 Q72.91,8 75,3 Q77.08,8 79.16,3 Q81.25,8 83.33,3 Q85.41,8 87.5,3 Q89.58,8 91.66,3 Q93.75,8 95.83,3 Q97.91,8 100,3'
+						fill='none'
+						stroke='#1a3a1a'
+						strokeWidth='0.8'
+					/>
+				</svg>
+
+				{/* Light bulbs positioned with flexbox */}
+				<div className='absolute top-1 left-0 w-full flex justify-around px-2'>
+					{lights.map(light => (
+						<div
+							key={light.id}
+							style={{
+								marginTop: light.isLow ? '12px' : '0px',
+							}}
+						>
+							<LightBulb color={light.color} delay={light.delay} />
+						</div>
 					))}
-					{/* Glass highlight reflection */}
-					<linearGradient id='bulb-highlight' x1='0%' y1='0%' x2='100%' y2='100%'>
-						<stop offset='0%' stopColor='white' stopOpacity='0.7' />
-						<stop offset='50%' stopColor='white' stopOpacity='0.1' />
+				</div>
+			</div>
+		</div>
+	);
+}
+
+/**
+ * Single icicle SVG component
+ */
+function Icicle({height, delay}: {height: number; delay: number}) {
+	return (
+		<div
+			className='icicle'
+			style={{
+				animationDelay: `${delay}s`,
+				width: '12px',
+				height: `${height}px`,
+			}}
+		>
+			<svg viewBox='0 0 12 60' preserveAspectRatio='xMidYMin meet' className='w-full h-full'>
+				<defs>
+					<linearGradient id={`iceGrad-${delay}`} x1='0%' y1='0%' x2='0%' y2='100%'>
+						<stop offset='0%' stopColor='#e8f4fc' stopOpacity='0.95' />
+						<stop offset='40%' stopColor='#c5e3f6' stopOpacity='0.85' />
+						<stop offset='80%' stopColor='#a8d4f0' stopOpacity='0.7' />
+						<stop offset='100%' stopColor='#8bc5eb' stopOpacity='0.4' />
+					</linearGradient>
+					<linearGradient id={`iceShine-${delay}`} x1='0%' y1='0%' x2='100%' y2='0%'>
+						<stop offset='0%' stopColor='white' stopOpacity='0.1' />
+						<stop offset='30%' stopColor='white' stopOpacity='0.5' />
+						<stop offset='50%' stopColor='white' stopOpacity='0.2' />
 						<stop offset='100%' stopColor='white' stopOpacity='0' />
-					</linearGradient>
-					{/* Socket gradient */}
-					<linearGradient id='socket-gradient' x1='0%' y1='0%' x2='100%' y2='100%'>
-						<stop offset='0%' stopColor='#4a4a4a' />
-						<stop offset='50%' stopColor='#2a2a2a' />
-						<stop offset='100%' stopColor='#1a1a1a' />
-					</linearGradient>
-					{/* Wire texture */}
-					<linearGradient id='wire-gradient' x1='0%' y1='0%' x2='0%' y2='100%'>
-						<stop offset='0%' stopColor='#1a3a1a' />
-						<stop offset='50%' stopColor='#0d1f0d' />
-						<stop offset='100%' stopColor='#1a3a1a' />
 					</linearGradient>
 				</defs>
 
-				{/* Main wire - thicker with more detail */}
+				{/* Main icicle body */}
 				<path
-					d='M-10,8 Q25,22 50,8 Q75,22 100,8 Q125,22 150,8 Q175,22 200,8 Q225,22 250,8 Q275,22 300,8 Q325,22 350,8 Q375,22 400,8 Q425,22 450,8 Q475,22 500,8 Q525,22 550,8 Q575,22 600,8 Q625,22 650,8 Q675,22 700,8 Q725,22 750,8 Q775,22 800,8 Q825,22 850,8 Q875,22 900,8 Q925,22 950,8 Q975,22 1010,8'
-					fill='none'
-					stroke='url(#wire-gradient)'
-					strokeWidth='3'
-					strokeLinecap='round'
-				/>
-				{/* Wire highlight */}
-				<path
-					d='M-10,7 Q25,21 50,7 Q75,21 100,7 Q125,21 150,7 Q175,21 200,7 Q225,21 250,7 Q275,21 300,7 Q325,21 350,7 Q375,21 400,7 Q425,21 450,7 Q475,21 500,7 Q525,21 550,7 Q575,21 600,7 Q625,21 650,7 Q675,21 700,7 Q725,21 750,7 Q775,21 800,7 Q825,21 850,7 Q875,21 900,7 Q925,21 950,7 Q975,21 1010,7'
-					fill='none'
-					stroke='#2a4a2a'
-					strokeWidth='1'
-					strokeLinecap='round'
-					opacity='0.5'
+					d='M1,0 L11,0 L10,8 Q9.5,20 8,32 Q7,44 6,55 Q5,44 4,32 Q2.5,20 2,8 Z'
+					fill={`url(#iceGrad-${delay})`}
 				/>
 
-				{/* Light bulbs */}
-				{lights.map(light => {
-					const x = (light.id + 0.5) * 50;
-					const wireY = light.id % 2 === 0 ? 8 : 22;
-					const colorIndex = light.id % lightColors.length;
-					return (
-						<g key={light.id} className='christmas-light-bulb' style={{animationDelay: `${light.delay}s`}}>
-							{/* Glow effect */}
-							<ellipse
-								cx={x}
-								cy={wireY + 22}
-								rx='14'
-								ry='18'
-								fill={light.colors.glow}
-								opacity='0.3'
-								style={{filter: 'blur(6px)'}}
-							/>
+				{/* Shine/highlight */}
+				<path
+					d='M2,2 L4,2 Q3.5,15 3,30 Q2.5,15 2,2 Z'
+					fill={`url(#iceShine-${delay})`}
+				/>
 
-							{/* Socket base (screw part) */}
-							<rect
-								x={x - 4}
-								y={wireY}
-								width='8'
-								height='6'
-								fill='url(#socket-gradient)'
-								rx='1'
-							/>
-							{/* Socket ridges */}
-							<line x1={x - 3} y1={wireY + 1.5} x2={x + 3} y2={wireY + 1.5} stroke='#3a3a3a' strokeWidth='0.5' />
-							<line x1={x - 3} y1={wireY + 3} x2={x + 3} y2={wireY + 3} stroke='#3a3a3a' strokeWidth='0.5' />
-							<line x1={x - 3} y1={wireY + 4.5} x2={x + 3} y2={wireY + 4.5} stroke='#3a3a3a' strokeWidth='0.5' />
+				{/* Bright spot at top */}
+				<ellipse cx='3' cy='4' rx='1' ry='2' fill='white' opacity='0.6' />
 
-							{/* Socket collar */}
-							<ellipse cx={x} cy={wireY + 6} rx='5' ry='2' fill='#2a2a2a' />
-
-							{/* Bulb body - vintage C9 style */}
-							<path
-								d={`M${x - 6},${wireY + 8}
-									Q${x - 8},${wireY + 15} ${x - 7},${wireY + 24}
-									Q${x - 5},${wireY + 34} ${x},${wireY + 38}
-									Q${x + 5},${wireY + 34} ${x + 7},${wireY + 24}
-									Q${x + 8},${wireY + 15} ${x + 6},${wireY + 8} Z`}
-								fill={`url(#bulb-gradient-${colorIndex})`}
-							/>
-
-							{/* Inner glow */}
-							<ellipse
-								cx={x}
-								cy={wireY + 22}
-								rx='4'
-								ry='10'
-								fill={light.colors.light}
-								opacity='0.5'
-							/>
-
-							{/* Glass highlight - left side */}
-							<path
-								d={`M${x - 4},${wireY + 10}
-									Q${x - 6},${wireY + 18} ${x - 5},${wireY + 26}
-									Q${x - 3},${wireY + 18} ${x - 3},${wireY + 12} Z`}
-								fill='white'
-								opacity='0.4'
-							/>
-
-							{/* Small specular highlight */}
-							<ellipse
-								cx={x - 2}
-								cy={wireY + 12}
-								rx='1.5'
-								ry='2'
-								fill='white'
-								opacity='0.6'
-							/>
-						</g>
-					);
-				})}
+				{/* Water droplet */}
+				<ellipse cx='6' cy='57' rx='1.5' ry='2' fill='#a8d4f0' opacity='0.7' />
 			</svg>
 		</div>
 	);
@@ -220,158 +230,43 @@ export function ChristmasLights() {
 export function Icicles() {
 	const config = useSeasonalDecorations();
 
-	// Generate icicles with deterministic "randomness" based on index
-	const icicles = useMemo(() => {
-		const baseIcicles = [
-			{width: 10, height: 45, offset: 0},
-			{width: 6, height: 28, offset: 0.3},
-			{width: 14, height: 60, offset: 0.1},
-			{width: 8, height: 35, offset: 0.2},
-			{width: 12, height: 52, offset: 0.15},
-			{width: 5, height: 22, offset: 0.25},
-			{width: 16, height: 70, offset: 0.05},
-			{width: 7, height: 30, offset: 0.35},
-			{width: 11, height: 48, offset: 0.12},
-			{width: 9, height: 38, offset: 0.22},
-			{width: 13, height: 55, offset: 0.08},
-			{width: 6, height: 25, offset: 0.28},
-			{width: 15, height: 65, offset: 0.02},
-			{width: 8, height: 32, offset: 0.18},
-			{width: 10, height: 42, offset: 0.32},
-		];
-		return baseIcicles.map((ice, index) => ({
-			...ice,
-			id: index,
-			x: (index + 0.5) * (100 / baseIcicles.length),
-			delay: index * 0.15,
-		}));
-	}, []);
+	// Varied icicle heights for natural look
+	const iciclePattern = useMemo(() => [
+		{height: 40, delay: 0},
+		{height: 55, delay: 0.1},
+		{height: 35, delay: 0.2},
+		{height: 65, delay: 0.15},
+		{height: 45, delay: 0.25},
+		{height: 30, delay: 0.3},
+		{height: 70, delay: 0.05},
+		{height: 50, delay: 0.35},
+		{height: 38, delay: 0.12},
+		{height: 60, delay: 0.22},
+		{height: 42, delay: 0.18},
+		{height: 55, delay: 0.28},
+		{height: 35, delay: 0.08},
+		{height: 68, delay: 0.32},
+		{height: 48, delay: 0.02},
+		{height: 40, delay: 0.2},
+		{height: 58, delay: 0.14},
+		{height: 32, delay: 0.26},
+		{height: 62, delay: 0.1},
+		{height: 44, delay: 0.22},
+	], []);
 
 	if (!config.enabled || !config.decorations.icicles) return null;
 
 	return (
 		<div className='w-full overflow-hidden pointer-events-none' aria-hidden='true'>
-			<svg viewBox='0 0 1000 80' preserveAspectRatio='none' className='w-full h-14 md:h-20'>
-				<defs>
-					{/* Ice gradient - main body */}
-					<linearGradient id='icicle-body-gradient' x1='0%' y1='0%' x2='100%' y2='0%'>
-						<stop offset='0%' stopColor='rgba(220,235,250,0.9)' />
-						<stop offset='30%' stopColor='rgba(200,225,250,0.95)' />
-						<stop offset='50%' stopColor='rgba(180,215,245,0.85)' />
-						<stop offset='70%' stopColor='rgba(200,225,250,0.95)' />
-						<stop offset='100%' stopColor='rgba(220,235,250,0.9)' />
-					</linearGradient>
+			{/* Snow/frost base */}
+			<div className='w-full h-1 bg-gradient-to-b from-blue-50/90 to-blue-100/50' />
 
-					{/* Ice gradient - vertical fade */}
-					<linearGradient id='icicle-fade-gradient' x1='0%' y1='0%' x2='0%' y2='100%'>
-						<stop offset='0%' stopColor='rgba(230,240,255,1)' />
-						<stop offset='20%' stopColor='rgba(200,225,250,0.95)' />
-						<stop offset='60%' stopColor='rgba(170,210,245,0.85)' />
-						<stop offset='85%' stopColor='rgba(150,200,240,0.7)' />
-						<stop offset='100%' stopColor='rgba(140,195,240,0.4)' />
-					</linearGradient>
-
-					{/* Highlight gradient for glossy effect */}
-					<linearGradient id='icicle-highlight' x1='0%' y1='0%' x2='100%' y2='0%'>
-						<stop offset='0%' stopColor='rgba(255,255,255,0)' />
-						<stop offset='20%' stopColor='rgba(255,255,255,0.6)' />
-						<stop offset='35%' stopColor='rgba(255,255,255,0.2)' />
-						<stop offset='100%' stopColor='rgba(255,255,255,0)' />
-					</linearGradient>
-
-					{/* Inner refraction effect */}
-					<linearGradient id='icicle-inner' x1='0%' y1='0%' x2='100%' y2='100%'>
-						<stop offset='0%' stopColor='rgba(255,255,255,0.3)' />
-						<stop offset='50%' stopColor='rgba(200,230,255,0.2)' />
-						<stop offset='100%' stopColor='rgba(180,220,250,0.1)' />
-					</linearGradient>
-
-					{/* Filter for subtle glow */}
-					<filter id='icicle-glow' x='-20%' y='-20%' width='140%' height='140%'>
-						<feGaussianBlur stdDeviation='1' result='blur' />
-						<feComposite in='SourceGraphic' in2='blur' operator='over' />
-					</filter>
-				</defs>
-
-				{/* Snow/frost base at top */}
-				<rect x='0' y='0' width='1000' height='4' fill='rgba(245,250,255,0.9)' />
-				<rect x='0' y='4' width='1000' height='2' fill='rgba(230,240,250,0.7)' />
-
-				{/* Individual icicles */}
-				{icicles.map(icicle => {
-					const x = icicle.x * 10; // Convert percentage to viewBox coordinates
-					const w = icicle.width;
-					const h = icicle.height;
-					const halfW = w / 2;
-
-					// Create organic icicle shape with slight curves
-					const bodyPath = `
-						M${x - halfW},0
-						L${x + halfW},0
-						L${x + halfW * 0.9},${h * 0.1}
-						Q${x + halfW * 0.85},${h * 0.3} ${x + halfW * 0.7},${h * 0.5}
-						Q${x + halfW * 0.5},${h * 0.7} ${x + halfW * 0.25},${h * 0.85}
-						Q${x + halfW * 0.1},${h * 0.95} ${x},${h}
-						Q${x - halfW * 0.1},${h * 0.95} ${x - halfW * 0.25},${h * 0.85}
-						Q${x - halfW * 0.5},${h * 0.7} ${x - halfW * 0.7},${h * 0.5}
-						Q${x - halfW * 0.85},${h * 0.3} ${x - halfW * 0.9},${h * 0.1}
-						Z
-					`;
-
-					// Highlight path (left side reflection)
-					const highlightPath = `
-						M${x - halfW * 0.6},${h * 0.05}
-						Q${x - halfW * 0.7},${h * 0.2} ${x - halfW * 0.5},${h * 0.4}
-						Q${x - halfW * 0.3},${h * 0.6} ${x - halfW * 0.15},${h * 0.75}
-						L${x - halfW * 0.3},${h * 0.6}
-						Q${x - halfW * 0.45},${h * 0.35} ${x - halfW * 0.4},${h * 0.15}
-						Z
-					`;
-
-					return (
-						<g key={icicle.id} className='icicle' style={{animationDelay: `${icicle.delay}s`}} filter='url(#icicle-glow)'>
-							{/* Main icicle body */}
-							<path d={bodyPath} fill='url(#icicle-fade-gradient)' />
-
-							{/* Horizontal gradient overlay */}
-							<path d={bodyPath} fill='url(#icicle-body-gradient)' opacity='0.5' />
-
-							{/* Left edge highlight (light reflection) */}
-							<path d={highlightPath} fill='url(#icicle-highlight)' />
-
-							{/* Small bright highlight at top left */}
-							<ellipse
-								cx={x - halfW * 0.4}
-								cy={h * 0.08}
-								rx={w * 0.08}
-								ry={h * 0.03}
-								fill='white'
-								opacity='0.7'
-							/>
-
-							{/* Inner refraction line */}
-							<line
-								x1={x + halfW * 0.2}
-								y1={h * 0.15}
-								x2={x + halfW * 0.05}
-								y2={h * 0.7}
-								stroke='rgba(255,255,255,0.3)'
-								strokeWidth='0.8'
-								strokeLinecap='round'
-							/>
-
-							{/* Water droplet at tip */}
-							<ellipse
-								cx={x}
-								cy={h - 1}
-								rx={w * 0.06}
-								ry={h * 0.02}
-								fill='rgba(180,220,255,0.6)'
-							/>
-						</g>
-					);
-				})}
-			</svg>
+			{/* Icicles container */}
+			<div className='w-full flex justify-around items-start px-1' style={{marginTop: '-2px'}}>
+				{iciclePattern.map((icicle, index) => (
+					<Icicle key={index} height={icicle.height} delay={icicle.delay} />
+				))}
+			</div>
 		</div>
 	);
 }
