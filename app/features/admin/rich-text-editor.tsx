@@ -277,6 +277,7 @@ function formatHtml(html: string): string {
 }
 
 // Syntax highlight HTML - returns JSX-safe highlighted segments
+// Uses light colors for dark background (bg-gray-900)
 function highlightHtml(html: string): React.ReactNode[] {
 	const result: React.ReactNode[] = [];
 	let key = 0;
@@ -293,18 +294,18 @@ function highlightHtml(html: string): React.ReactNode[] {
 		let match;
 
 		while ((match = tagRegex.exec(line)) !== null) {
-			// Add text before the tag
+			// Add text before the tag (light color for dark bg)
 			if (match.index > lastIndex) {
-				result.push(<span key={key++} className='text-gray-800'>{line.slice(lastIndex, match.index)}</span>);
+				result.push(<span key={key++} className='text-gray-100'>{line.slice(lastIndex, match.index)}</span>);
 			}
 
 			const [, bracket, tagName, attributes, closingBracket] = match;
 
 			// Opening bracket
-			result.push(<span key={key++} className='text-gray-500'>{bracket}</span>);
+			result.push(<span key={key++} className='text-gray-400'>{bracket}</span>);
 
 			// Tag name
-			result.push(<span key={key++} className='text-rose-600'>{tagName}</span>);
+			result.push(<span key={key++} className='text-rose-400'>{tagName}</span>);
 
 			// Attributes
 			if (attributes) {
@@ -316,18 +317,18 @@ function highlightHtml(html: string): React.ReactNode[] {
 				while ((attrMatch = attrRegex.exec(attrString)) !== null) {
 					// Whitespace before attribute
 					if (attrMatch.index > attrLastIndex) {
-						result.push(<span key={key++}>{attrString.slice(attrLastIndex, attrMatch.index)}</span>);
+						result.push(<span key={key++} className='text-gray-100'>{attrString.slice(attrLastIndex, attrMatch.index)}</span>);
 					}
 
 					const [, attrName, equals, attrValue] = attrMatch;
 
 					// Attribute name
-					result.push(<span key={key++} className='text-amber-600'>{attrName}</span>);
+					result.push(<span key={key++} className='text-amber-400'>{attrName}</span>);
 					// Equals sign
-					result.push(<span key={key++} className='text-gray-500'>{equals}</span>);
+					result.push(<span key={key++} className='text-gray-400'>{equals}</span>);
 					// Attribute value
 					if (attrValue) {
-						result.push(<span key={key++} className='text-emerald-600'>{attrValue}</span>);
+						result.push(<span key={key++} className='text-emerald-400'>{attrValue}</span>);
 					}
 
 					attrLastIndex = attrMatch.index + attrMatch[0].length;
@@ -335,19 +336,19 @@ function highlightHtml(html: string): React.ReactNode[] {
 
 				// Remaining whitespace
 				if (attrLastIndex < attrString.length) {
-					result.push(<span key={key++}>{attrString.slice(attrLastIndex)}</span>);
+					result.push(<span key={key++} className='text-gray-100'>{attrString.slice(attrLastIndex)}</span>);
 				}
 			}
 
 			// Closing bracket
-			result.push(<span key={key++} className='text-gray-500'>{closingBracket}</span>);
+			result.push(<span key={key++} className='text-gray-400'>{closingBracket}</span>);
 
 			lastIndex = match.index + match[0].length;
 		}
 
-		// Add remaining text after last tag
+		// Add remaining text after last tag (light color for dark bg)
 		if (lastIndex < line.length) {
-			result.push(<span key={key++} className='text-gray-800'>{line.slice(lastIndex)}</span>);
+			result.push(<span key={key++} className='text-gray-100'>{line.slice(lastIndex)}</span>);
 		}
 
 		// Add newline (except for last line)
