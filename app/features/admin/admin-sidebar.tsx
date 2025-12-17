@@ -240,15 +240,18 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 			{/* Sidebar */}
 			<aside
 				className={`
-					fixed lg:static inset-y-0 left-0 z-50
+					fixed inset-y-0 left-0 z-50
 					w-72 ${isCollapsed ? 'lg:w-16' : 'lg:w-64'} bg-white border-r border-gray-200
-					flex flex-col min-h-screen
+					flex flex-col
 					transform transition-all duration-300 ease-in-out
 					${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
 				`}
 			>
 				{sidebarContent}
 			</aside>
+
+			{/* Spacer to push content right of fixed sidebar on desktop */}
+			<div className={`hidden lg:block flex-shrink-0 ${isCollapsed ? 'w-16' : 'w-64'} transition-all duration-300`} />
 		</>
 	);
 }
