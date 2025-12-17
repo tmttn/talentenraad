@@ -9,6 +9,8 @@ import type {Submission} from '@/lib/db/index.js';
 import {TableFilters} from './table-filters';
 import {TablePagination} from './table-pagination';
 import {SortableHeader, useSorting, type SortDirection} from './sortable-header';
+import {ViewModeToggle} from './view-mode-toggle';
+import {useViewMode} from './use-view-mode';
 
 type SubmissionsTableProperties = {
 	submissions: Submission[];
@@ -40,6 +42,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 	const router = useRouter();
 	const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 	const [isProcessing, setIsProcessing] = useState(false);
+	const {viewMode, setViewMode} = useViewMode();
 
 	// Filter state
 	const [searchQuery, setSearchQuery] = useState('');
@@ -234,7 +237,9 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 				onSearchChange={handleSearchChange}
 				searchPlaceholder='Zoeken op naam of e-mail...'
 				filters={filterConfigs}
-			/>
+			>
+				<ViewModeToggle mode={viewMode} onChange={setViewMode} />
+			</TableFilters>
 
 			{selectedIds.size > 0 && (
 				<div className='mb-4 p-3 sm:p-4 bg-white rounded-xl shadow-md flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4'>
@@ -290,124 +295,199 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 				</div>
 			)}
 
-			<div className='bg-white rounded-xl shadow-md overflow-hidden'>
-				<div className='overflow-x-auto'>
-					<table className='w-full min-w-[700px]'>
-						<thead className='bg-gray-50 border-b border-gray-200'>
-							<tr>
-								<th className='px-4 sm:px-6 py-4 text-left w-12'>
-									<input
-										type='checkbox'
-										checked={selectedIds.size === paginatedSubmissions.length && paginatedSubmissions.length > 0}
-										onChange={event => {
-											handleSelectAll(event.target.checked);
-										}}
-										className='rounded border-gray-300 text-primary focus:ring-primary w-4 h-4'
-									/>
-								</th>
-								<th className='px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-									Status
-								</th>
-								<th className='px-4 sm:px-6 py-4'>
-									<SortableHeader
-										label='Van'
-										sortKey='name'
-										currentSortKey={sortKey}
-										currentSortDirection={sortDirection}
-										onSort={handleSort}
-									/>
-								</th>
-								<th className='px-4 sm:px-6 py-4'>
-									<SortableHeader
-										label='Onderwerp'
-										sortKey='subject'
-										currentSortKey={sortKey}
-										currentSortDirection={sortDirection}
-										onSort={handleSort}
-									/>
-								</th>
-								<th className='px-4 sm:px-6 py-4'>
-									<SortableHeader
-										label='Datum'
-										sortKey='createdAt'
-										currentSortKey={sortKey}
-										currentSortDirection={sortDirection}
-										onSort={handleSort}
-									/>
-								</th>
-								<th className='px-4 sm:px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider'>
-									Acties
-								</th>
-							</tr>
-						</thead>
-						<tbody className='divide-y divide-gray-200'>
+			{viewMode === 'table' ? (
+				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+					<div className='overflow-x-auto'>
+						<table className='w-full min-w-[700px]'>
+							<thead className='bg-gray-50 border-b border-gray-200'>
+								<tr>
+									<th className='px-4 sm:px-6 py-4 text-left w-12'>
+										<input
+											type='checkbox'
+											checked={selectedIds.size === paginatedSubmissions.length && paginatedSubmissions.length > 0}
+											onChange={event => {
+												handleSelectAll(event.target.checked);
+											}}
+											className='rounded border-gray-300 text-primary focus:ring-primary w-4 h-4'
+										/>
+									</th>
+									<th className='px-4 sm:px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+										Status
+									</th>
+									<th className='px-4 sm:px-6 py-4'>
+										<SortableHeader
+											label='Van'
+											sortKey='name'
+											currentSortKey={sortKey}
+											currentSortDirection={sortDirection}
+											onSort={handleSort}
+										/>
+									</th>
+									<th className='px-4 sm:px-6 py-4'>
+										<SortableHeader
+											label='Onderwerp'
+											sortKey='subject'
+											currentSortKey={sortKey}
+											currentSortDirection={sortDirection}
+											onSort={handleSort}
+										/>
+									</th>
+									<th className='px-4 sm:px-6 py-4'>
+										<SortableHeader
+											label='Datum'
+											sortKey='createdAt'
+											currentSortKey={sortKey}
+											currentSortDirection={sortDirection}
+											onSort={handleSort}
+										/>
+									</th>
+									<th className='px-4 sm:px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider'>
+										Acties
+									</th>
+								</tr>
+							</thead>
+							<tbody className='divide-y divide-gray-200'>
+								{paginatedSubmissions.map(submission => (
+									<tr
+										key={submission.id}
+										className={`hover:bg-gray-50 ${submission.readAt ? '' : 'bg-primary/5'}`}
+									>
+										<td className='px-4 sm:px-6 py-4'>
+											<input
+												type='checkbox'
+												checked={selectedIds.has(submission.id)}
+												onChange={event => {
+													handleSelect(submission.id, event.target.checked);
+												}}
+												className='rounded border-gray-300 text-primary focus:ring-primary w-4 h-4'
+											/>
+										</td>
+										<td className='px-4 sm:px-6 py-4'>
+											{submission.readAt
+												? <span className='text-gray-400 text-sm'>Gelezen</span>
+												: <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary-text'>Nieuw</span>}
+										</td>
+										<td className='px-4 sm:px-6 py-4'>
+											<Link
+												href={`/admin/submissions/${submission.id}`}
+												className='block group'
+											>
+												<p className='font-medium text-gray-800 group-hover:text-primary transition-colors'>{submission.name}</p>
+												<p className='text-sm text-gray-500'>{submission.email}</p>
+											</Link>
+										</td>
+										<td className='px-4 sm:px-6 py-4 text-sm text-gray-600'>
+											{subjectLabels[submission.subject] ?? submission.subject}
+										</td>
+										<td className='px-4 sm:px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
+											{formatDate(submission.createdAt)}
+										</td>
+										<td className='px-4 sm:px-6 py-4 text-right'>
+											<Link
+												href={`/admin/submissions/${submission.id}`}
+												className='inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg transition-colors'
+											>
+												<Eye className='w-4 h-4' />
+												<span className='hidden sm:inline'>Bekijken</span>
+											</Link>
+										</td>
+									</tr>
+								))}
+							</tbody>
+						</table>
+					</div>
+					{totalItems > 0 && (
+						<TablePagination
+							currentPage={currentPage}
+							totalPages={totalPages}
+							totalItems={totalItems}
+							pageSize={pageSize}
+							onPageChange={setCurrentPage}
+							onPageSizeChange={handlePageSizeChange}
+						/>
+					)}
+					{totalItems === 0 && (
+						<div className='p-8 text-center text-gray-500'>
+							{searchQuery || subjectFilter || statusFilter
+								? 'Geen berichten gevonden met de huidige filters.'
+								: 'Geen berichten gevonden.'}
+						</div>
+					)}
+				</div>
+			) : (
+				<div>
+					{totalItems === 0 ? (
+						<div className='bg-white rounded-xl shadow-md p-8 text-center text-gray-500'>
+							{searchQuery || subjectFilter || statusFilter
+								? 'Geen berichten gevonden met de huidige filters.'
+								: 'Geen berichten gevonden.'}
+						</div>
+					) : (
+						<div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
 							{paginatedSubmissions.map(submission => (
-								<tr
+								<div
 									key={submission.id}
-									className={`hover:bg-gray-50 ${submission.readAt ? '' : 'bg-primary/5'}`}
+									className={`bg-white rounded-xl shadow-md p-4 ${submission.readAt ? '' : 'ring-2 ring-primary/20'}`}
 								>
-									<td className='px-4 sm:px-6 py-4'>
+									<div className='flex items-start gap-3 mb-3'>
 										<input
 											type='checkbox'
 											checked={selectedIds.has(submission.id)}
 											onChange={event => {
 												handleSelect(submission.id, event.target.checked);
 											}}
-											className='rounded border-gray-300 text-primary focus:ring-primary w-4 h-4'
+											className='rounded border-gray-300 text-primary focus:ring-primary w-4 h-4 mt-1'
 										/>
-									</td>
-									<td className='px-4 sm:px-6 py-4'>
-										{submission.readAt
-											? <span className='text-gray-400 text-sm'>Gelezen</span>
-											: <span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary-text'>Nieuw</span>}
-									</td>
-									<td className='px-4 sm:px-6 py-4'>
-										<Link
-											href={`/admin/submissions/${submission.id}`}
-											className='block group'
-										>
-											<p className='font-medium text-gray-800 group-hover:text-primary transition-colors'>{submission.name}</p>
-											<p className='text-sm text-gray-500'>{submission.email}</p>
-										</Link>
-									</td>
-									<td className='px-4 sm:px-6 py-4 text-sm text-gray-600'>
-										{subjectLabels[submission.subject] ?? submission.subject}
-									</td>
-									<td className='px-4 sm:px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
+										<div className='flex-1 min-w-0'>
+											<Link
+												href={`/admin/submissions/${submission.id}`}
+												className='block group'
+											>
+												<p className='font-medium text-gray-800 group-hover:text-primary transition-colors truncate'>{submission.name}</p>
+												<p className='text-sm text-gray-500 truncate'>{submission.email}</p>
+											</Link>
+										</div>
+										{!submission.readAt && (
+											<span className='inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary-text shrink-0'>
+												Nieuw
+											</span>
+										)}
+									</div>
+									<div className='flex flex-wrap gap-2 mb-3'>
+										<span className='px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded'>
+											{subjectLabels[submission.subject] ?? submission.subject}
+										</span>
+									</div>
+									<p className='text-sm text-gray-500 mb-3'>
 										{formatDate(submission.createdAt)}
-									</td>
-									<td className='px-4 sm:px-6 py-4 text-right'>
+									</p>
+									<div className='border-t border-gray-100 pt-3'>
 										<Link
 											href={`/admin/submissions/${submission.id}`}
-											className='inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg transition-colors'
+											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg transition-colors'
 										>
 											<Eye className='w-4 h-4' />
-											<span className='hidden sm:inline'>Bekijken</span>
+											<span>Bekijken</span>
 										</Link>
-									</td>
-								</tr>
+									</div>
+								</div>
 							))}
-						</tbody>
-					</table>
+						</div>
+					)}
+					{totalItems > 0 && (
+						<div className='mt-4 bg-white rounded-xl shadow-md overflow-hidden'>
+							<TablePagination
+								currentPage={currentPage}
+								totalPages={totalPages}
+								totalItems={totalItems}
+								pageSize={pageSize}
+								onPageChange={setCurrentPage}
+								onPageSizeChange={handlePageSizeChange}
+							/>
+						</div>
+					)}
 				</div>
-				{totalItems > 0 && (
-					<TablePagination
-						currentPage={currentPage}
-						totalPages={totalPages}
-						totalItems={totalItems}
-						pageSize={pageSize}
-						onPageChange={setCurrentPage}
-						onPageSizeChange={handlePageSizeChange}
-					/>
-				)}
-				{totalItems === 0 && (
-					<div className='p-8 text-center text-gray-500'>
-						{searchQuery || subjectFilter || statusFilter
-							? 'Geen berichten gevonden met de huidige filters.'
-							: 'Geen berichten gevonden.'}
-					</div>
-				)}
-			</div>
+			)}
 		</div>
 	);
 }

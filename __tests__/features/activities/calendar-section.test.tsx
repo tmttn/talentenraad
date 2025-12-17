@@ -17,13 +17,10 @@ import {CalendarSectionInfo} from '../../../app/features/activities/calendar-sec
 const CalendarSection = CalendarSectionInfo.component;
 
 describe('CalendarSection', () => {
-	const futureDate = new Date();
-	futureDate.setDate(futureDate.getDate() + 7);
-	const futureDateString = futureDate.toISOString().split('T')[0];
-
-	const futureDate2 = new Date();
-	futureDate2.setDate(futureDate2.getDate() + 14);
-	const futureDate2String = futureDate2.toISOString().split('T')[0];
+	// Use fixed date strings to avoid timezone issues
+	const futureDateString = '2025-06-15';
+	const futureDateDay = 15;
+	const futureDate2String = '2025-06-22';
 
 	const mockActivities = [
 		{
@@ -181,8 +178,7 @@ describe('CalendarSection', () => {
 		});
 
 		// Check that the day number is displayed
-		const dayNumber = futureDate.getDate();
-		expect(screen.getByText(String(dayNumber))).toBeInTheDocument();
+		expect(screen.getByText(String(futureDateDay))).toBeInTheDocument();
 	});
 
 	it('only fetches once on mount', async () => {

@@ -8,6 +8,8 @@ import {DeleteDialog} from '@/features/admin/delete-dialog';
 import {TableFilters} from '@/features/admin/table-filters';
 import {TablePagination} from '@/features/admin/table-pagination';
 import {SortableHeader, useSorting} from '@/features/admin/sortable-header';
+import {ViewModeToggle} from '@/features/admin/view-mode-toggle';
+import {useViewMode} from '@/features/admin/use-view-mode';
 
 type UsersManagerProps = {
 	initialUsers: User[];
@@ -49,6 +51,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 	const [formData, setFormData] = useState<FormData>(emptyForm);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [deleteUser, setDeleteUser] = useState<User | null>(null);
+	const {viewMode, setViewMode} = useViewMode();
 
 	// Filter state
 	const [searchQuery, setSearchQuery] = useState('');
@@ -411,6 +414,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 				searchPlaceholder='Zoeken op naam of e-mail...'
 				filters={filterConfigs}
 			>
+				<ViewModeToggle mode={viewMode} onChange={setViewMode} />
 				{!isCreating && !editingId && (
 					<button
 						type='button'
@@ -425,174 +429,306 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 
 			{(isCreating || editingId) && renderForm()}
 
-			<div className='bg-white rounded-xl shadow-md overflow-hidden'>
-				<div className='overflow-x-auto'>
-					<table className='w-full min-w-[600px]'>
-						<thead className='bg-gray-50 border-b border-gray-200'>
-							<tr>
-								<th className='px-4 sm:px-6 py-3'>
-									<SortableHeader
-										label='Gebruiker'
-										sortKey='name'
-										currentSortKey={sortKey}
-										currentSortDirection={sortDirection}
-										onSort={handleSort}
-									/>
-								</th>
-								<th className='px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
-									Status
-								</th>
-								<th className='px-4 sm:px-6 py-3'>
-									<SortableHeader
-										label='Aangemaakt'
-										sortKey='createdAt'
-										currentSortKey={sortKey}
-										currentSortDirection={sortDirection}
-										onSort={handleSort}
-									/>
-								</th>
-								<th className='px-4 sm:px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider'>
-									Acties
-								</th>
-							</tr>
-						</thead>
-						<tbody className='divide-y divide-gray-200'>
-							{paginatedUsers.length === 0 ? (
+			{viewMode === 'table' ? (
+				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+					<div className='overflow-x-auto'>
+						<table className='w-full min-w-[600px]'>
+							<thead className='bg-gray-50 border-b border-gray-200'>
 								<tr>
-									<td colSpan={4} className='px-4 sm:px-6 py-8 text-center text-gray-500'>
-										{searchQuery || roleFilter || statusFilter
-											? 'Geen gebruikers gevonden met de huidige filters.'
-											: 'Geen gebruikers gevonden.'}
-									</td>
+									<th className='px-4 sm:px-6 py-3'>
+										<SortableHeader
+											label='Gebruiker'
+											sortKey='name'
+											currentSortKey={sortKey}
+											currentSortDirection={sortDirection}
+											onSort={handleSort}
+										/>
+									</th>
+									<th className='px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
+										Status
+									</th>
+									<th className='px-4 sm:px-6 py-3'>
+										<SortableHeader
+											label='Aangemaakt'
+											sortKey='createdAt'
+											currentSortKey={sortKey}
+											currentSortDirection={sortDirection}
+											onSort={handleSort}
+										/>
+									</th>
+									<th className='px-4 sm:px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider'>
+										Acties
+									</th>
 								</tr>
-							) : (
-								paginatedUsers.map(user => (
-									<tr key={user.id} className='hover:bg-gray-50'>
-										<td className='px-4 sm:px-6 py-4'>
-											<button
-												type='button'
-												onClick={() => {
-													handleEdit(user);
-												}}
-												className='text-left group'
-											>
-												<p className='font-medium text-gray-900 group-hover:text-primary transition-colors'>{user.name ?? '-'}</p>
-												<p className='text-sm text-gray-500 break-all'>{user.email}</p>
-											</button>
+							</thead>
+							<tbody className='divide-y divide-gray-200'>
+								{paginatedUsers.length === 0 ? (
+									<tr>
+										<td colSpan={4} className='px-4 sm:px-6 py-8 text-center text-gray-500'>
+											{searchQuery || roleFilter || statusFilter
+												? 'Geen gebruikers gevonden met de huidige filters.'
+												: 'Geen gebruikers gevonden.'}
 										</td>
-										<td className='px-4 sm:px-6 py-4'>
-											<div className='flex flex-col gap-1'>
-												<span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit ${
-													user.isAdmin
-														? 'bg-green-100 text-green-800'
-														: 'bg-gray-100 text-gray-600'
-												}`}>
-													{user.isAdmin ? 'Administrator' : 'Gebruiker'}
-												</span>
-												{user.invitedAt && !user.acceptedAt && (
-													<span className='px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit bg-amber-100 text-amber-800'>
-														Uitnodiging verstuurd
-													</span>
-												)}
-												{user.acceptedAt && (
-													<span className='px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit bg-blue-100 text-blue-800'>
-														Actief
-													</span>
-												)}
-											</div>
-										</td>
-										<td className='px-4 sm:px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
-											{formatDate(user.createdAt)}
-										</td>
-										<td className='px-4 sm:px-6 py-4 text-right'>
-											<div className='flex justify-end items-center gap-1 sm:gap-2'>
-												{isProtectedEmail(user.email) && (
-													<span
-														title='Beschermd admin e-mail'
-														className='p-2 text-amber-600'
-													>
-														<Lock className='w-4 h-4' />
-													</span>
-												)}
-												{user.invitedAt && !user.acceptedAt && (
-													<button
-														type='button'
-														onClick={() => {
-															void handleResendInvitation(user);
-														}}
-														title='Uitnodiging opnieuw versturen'
-														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-300'
-													>
-														<Send className='w-4 h-4' />
-														<span className='hidden lg:inline'>Opnieuw</span>
-													</button>
-												)}
-												<button
-													type='button'
-													onClick={() => {
-														void handleToggleAdmin(user);
-													}}
-													disabled={isProtectedEmail(user.email) && user.isAdmin}
-													title={isProtectedEmail(user.email) && user.isAdmin
-														? 'Beschermd admin e-mail'
-														: user.isAdmin
-															? 'Admin rechten verwijderen'
-															: 'Admin maken'}
-													className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
-														isProtectedEmail(user.email) && user.isAdmin
-															? 'text-gray-300 cursor-not-allowed'
-															: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:ring-gray-300'
-													}`}
-												>
-													{user.isAdmin ? <ShieldOff className='w-4 h-4' /> : <Shield className='w-4 h-4' />}
-													<span className='hidden lg:inline'>{user.isAdmin ? 'Verwijder admin' : 'Maak admin'}</span>
-												</button>
+									</tr>
+								) : (
+									paginatedUsers.map(user => (
+										<tr key={user.id} className='hover:bg-gray-50'>
+											<td className='px-4 sm:px-6 py-4'>
 												<button
 													type='button'
 													onClick={() => {
 														handleEdit(user);
 													}}
-													title='Bewerken'
-													className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/30'
+													className='text-left group'
 												>
-													<Pencil className='w-4 h-4' />
-													<span className='hidden lg:inline'>Bewerken</span>
+													<p className='font-medium text-gray-900 group-hover:text-primary transition-colors'>{user.name ?? '-'}</p>
+													<p className='text-sm text-gray-500 break-all'>{user.email}</p>
 												</button>
-												<button
-													type='button'
-													onClick={() => {
-														setDeleteUser(user);
-													}}
-													disabled={isProtectedEmail(user.email)}
-													title={isProtectedEmail(user.email) ? 'Beschermd admin e-mail' : 'Verwijderen'}
-													className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
-														isProtectedEmail(user.email)
-															? 'text-gray-300 cursor-not-allowed'
-															: 'text-red-500 hover:text-red-700 hover:bg-red-50 focus:ring-red-300'
-													}`}
-												>
-													<Trash2 className='w-4 h-4' />
-													<span className='hidden lg:inline'>Verwijderen</span>
-												</button>
-											</div>
-										</td>
-									</tr>
-								))
-							)}
-						</tbody>
-					</table>
+											</td>
+											<td className='px-4 sm:px-6 py-4'>
+												<div className='flex flex-col gap-1'>
+													<span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit ${
+														user.isAdmin
+															? 'bg-green-100 text-green-800'
+															: 'bg-gray-100 text-gray-600'
+													}`}>
+														{user.isAdmin ? 'Administrator' : 'Gebruiker'}
+													</span>
+													{user.invitedAt && !user.acceptedAt && (
+														<span className='px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit bg-amber-100 text-amber-800'>
+															Uitnodiging verstuurd
+														</span>
+													)}
+													{user.acceptedAt && (
+														<span className='px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit bg-blue-100 text-blue-800'>
+															Actief
+														</span>
+													)}
+												</div>
+											</td>
+											<td className='px-4 sm:px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
+												{formatDate(user.createdAt)}
+											</td>
+											<td className='px-4 sm:px-6 py-4 text-right'>
+												<div className='flex justify-end items-center gap-1 sm:gap-2'>
+													{isProtectedEmail(user.email) && (
+														<span
+															title='Beschermd admin e-mail'
+															className='p-2 text-amber-600'
+														>
+															<Lock className='w-4 h-4' />
+														</span>
+													)}
+													{user.invitedAt && !user.acceptedAt && (
+														<button
+															type='button'
+															onClick={() => {
+																void handleResendInvitation(user);
+															}}
+															title='Uitnodiging opnieuw versturen'
+															className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-300'
+														>
+															<Send className='w-4 h-4' />
+															<span className='hidden lg:inline'>Opnieuw</span>
+														</button>
+													)}
+													<button
+														type='button'
+														onClick={() => {
+															void handleToggleAdmin(user);
+														}}
+														disabled={isProtectedEmail(user.email) && user.isAdmin}
+														title={isProtectedEmail(user.email) && user.isAdmin
+															? 'Beschermd admin e-mail'
+															: user.isAdmin
+																? 'Admin rechten verwijderen'
+																: 'Admin maken'}
+														className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+															isProtectedEmail(user.email) && user.isAdmin
+																? 'text-gray-300 cursor-not-allowed'
+																: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:ring-gray-300'
+														}`}
+													>
+														{user.isAdmin ? <ShieldOff className='w-4 h-4' /> : <Shield className='w-4 h-4' />}
+														<span className='hidden lg:inline'>{user.isAdmin ? 'Verwijder admin' : 'Maak admin'}</span>
+													</button>
+													<button
+														type='button'
+														onClick={() => {
+															handleEdit(user);
+														}}
+														title='Bewerken'
+														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/30'
+													>
+														<Pencil className='w-4 h-4' />
+														<span className='hidden lg:inline'>Bewerken</span>
+													</button>
+													<button
+														type='button'
+														onClick={() => {
+															setDeleteUser(user);
+														}}
+														disabled={isProtectedEmail(user.email)}
+														title={isProtectedEmail(user.email) ? 'Beschermd admin e-mail' : 'Verwijderen'}
+														className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+															isProtectedEmail(user.email)
+																? 'text-gray-300 cursor-not-allowed'
+																: 'text-red-500 hover:text-red-700 hover:bg-red-50 focus:ring-red-300'
+														}`}
+													>
+														<Trash2 className='w-4 h-4' />
+														<span className='hidden lg:inline'>Verwijderen</span>
+													</button>
+												</div>
+											</td>
+										</tr>
+									))
+								)}
+							</tbody>
+						</table>
+					</div>
+					{totalItems > 0 && (
+						<TablePagination
+							currentPage={currentPage}
+							totalPages={totalPages}
+							totalItems={totalItems}
+							pageSize={pageSize}
+							onPageChange={setCurrentPage}
+							onPageSizeChange={handlePageSizeChange}
+						/>
+					)}
 				</div>
-				{totalItems > 0 && (
-					<TablePagination
-						currentPage={currentPage}
-						totalPages={totalPages}
-						totalItems={totalItems}
-						pageSize={pageSize}
-						onPageChange={setCurrentPage}
-						onPageSizeChange={handlePageSizeChange}
-					/>
-				)}
-			</div>
+			) : (
+				<div>
+					{paginatedUsers.length === 0 ? (
+						<div className='bg-white rounded-xl shadow-md p-8 text-center text-gray-500'>
+							{searchQuery || roleFilter || statusFilter
+								? 'Geen gebruikers gevonden met de huidige filters.'
+								: 'Geen gebruikers gevonden.'}
+						</div>
+					) : (
+						<div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
+							{paginatedUsers.map(user => (
+								<div key={user.id} className='bg-white rounded-xl shadow-md p-4'>
+									<div className='flex items-start justify-between gap-2 mb-3'>
+										<button
+											type='button'
+											onClick={() => {
+												handleEdit(user);
+											}}
+											className='text-left group min-w-0'
+										>
+											<p className='font-medium text-gray-900 group-hover:text-primary transition-colors truncate'>{user.name ?? '-'}</p>
+											<p className='text-sm text-gray-500 break-all'>{user.email}</p>
+										</button>
+										{isProtectedEmail(user.email) && (
+											<span title='Beschermd admin e-mail' className='text-amber-600 shrink-0'>
+												<Lock className='w-4 h-4' />
+											</span>
+										)}
+									</div>
+									<p className='text-sm text-gray-500 mb-3'>
+										{formatDate(user.createdAt)}
+									</p>
+									<div className='flex flex-wrap gap-2 mb-4'>
+										<span className={`px-2 py-1 text-xs font-medium rounded ${
+											user.isAdmin
+												? 'bg-green-100 text-green-800'
+												: 'bg-gray-100 text-gray-600'
+										}`}>
+											{user.isAdmin ? 'Administrator' : 'Gebruiker'}
+										</span>
+										{user.invitedAt && !user.acceptedAt && (
+											<span className='px-2 py-1 text-xs font-medium rounded bg-amber-100 text-amber-800'>
+												Uitnodiging verstuurd
+											</span>
+										)}
+										{user.acceptedAt && (
+											<span className='px-2 py-1 text-xs font-medium rounded bg-blue-100 text-blue-800'>
+												Actief
+											</span>
+										)}
+									</div>
+									<div className='flex flex-wrap gap-1 border-t border-gray-100 pt-3'>
+										{user.invitedAt && !user.acceptedAt && (
+											<button
+												type='button'
+												onClick={() => {
+													void handleResendInvitation(user);
+												}}
+												title='Uitnodiging opnieuw versturen'
+												className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors'
+											>
+												<Send className='w-4 h-4' />
+												<span>Opnieuw</span>
+											</button>
+										)}
+										<button
+											type='button'
+											onClick={() => {
+												void handleToggleAdmin(user);
+											}}
+											disabled={isProtectedEmail(user.email) && user.isAdmin}
+											title={isProtectedEmail(user.email) && user.isAdmin
+												? 'Beschermd admin e-mail'
+												: user.isAdmin
+													? 'Admin rechten verwijderen'
+													: 'Admin maken'}
+											className={`inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg transition-colors ${
+												isProtectedEmail(user.email) && user.isAdmin
+													? 'text-gray-300 cursor-not-allowed'
+													: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
+											}`}
+										>
+											{user.isAdmin ? <ShieldOff className='w-4 h-4' /> : <Shield className='w-4 h-4' />}
+											<span>{user.isAdmin ? 'Verwijder admin' : 'Maak admin'}</span>
+										</button>
+										<button
+											type='button'
+											onClick={() => {
+												handleEdit(user);
+											}}
+											title='Bewerken'
+											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
+										>
+											<Pencil className='w-4 h-4' />
+											<span>Bewerken</span>
+										</button>
+										<button
+											type='button'
+											onClick={() => {
+												setDeleteUser(user);
+											}}
+											disabled={isProtectedEmail(user.email)}
+											title={isProtectedEmail(user.email) ? 'Beschermd admin e-mail' : 'Verwijderen'}
+											className={`inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg transition-colors ${
+												isProtectedEmail(user.email)
+													? 'text-gray-300 cursor-not-allowed'
+													: 'text-red-500 hover:text-red-700 hover:bg-red-50'
+											}`}
+										>
+											<Trash2 className='w-4 h-4' />
+											<span>Verwijderen</span>
+										</button>
+									</div>
+								</div>
+							))}
+						</div>
+					)}
+					{totalItems > 0 && (
+						<div className='mt-4 bg-white rounded-xl shadow-md overflow-hidden'>
+							<TablePagination
+								currentPage={currentPage}
+								totalPages={totalPages}
+								totalItems={totalItems}
+								pageSize={pageSize}
+								onPageChange={setCurrentPage}
+								onPageSizeChange={handlePageSizeChange}
+							/>
+						</div>
+					)}
+				</div>
+			)}
 
 			{deleteUser && (
 				<DeleteDialog
