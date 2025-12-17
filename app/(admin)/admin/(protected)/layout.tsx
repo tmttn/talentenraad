@@ -3,6 +3,7 @@ import {eq} from 'drizzle-orm';
 import {auth0, isAdminEmail} from '@/lib/auth0';
 import {db, users} from '@/lib/db';
 import {AdminSidebar} from '@/features/admin/admin-sidebar';
+import {SessionValidator} from '@/features/admin/session-validator';
 
 async function ensureUserInDatabase(email: string, name: string | undefined, auth0Id: string): Promise<boolean> {
 	const isEnvAdmin = isAdminEmail(email);
@@ -68,13 +69,16 @@ export default async function AdminProtectedLayout({
 
 	return (
 		<div className='min-h-screen bg-gray-50 flex'>
+			<SessionValidator />
 			<AdminSidebar user={{
 				name: session.user.name,
 				email: session.user.email,
 				image: session.user.picture,
 			}} />
-			<main id='main-content' className='flex-1 p-8 overflow-auto'>
-				{children}
+			<main id='main-content' className='flex-1 overflow-auto pt-16 lg:pt-0'>
+				<div className='p-4 sm:p-6 lg:p-8'>
+					{children}
+				</div>
 			</main>
 		</div>
 	);
