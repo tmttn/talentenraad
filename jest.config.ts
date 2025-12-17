@@ -22,30 +22,16 @@ const customJestConfig: Config = {
 		// Exclude index/barrel files (just re-exports)
 		'!app/components/index.ts',
 		'!app/components/ui/index.ts',
-		// Exclude API routes (require different testing approach)
+		// Exclude API routes (require integration testing with real HTTP)
 		'!app/api/**',
-		// Exclude admin route group (requires auth testing)
+		// Exclude admin route group (requires Auth0 session mocking)
 		'!app/\\(admin\\)/**',
-		// Exclude database layer (requires DB mocking)
+		// Exclude database layer (requires real DB connection)
 		'!app/lib/db/**',
-		// Exclude auth config (requires complex mocking)
-		'!app/lib/auth/**',
-		'!app/lib/auth0.ts',
-		// Exclude email service (external service)
+		// Exclude email service (sends real emails)
 		'!app/lib/email/**',
-		// Exclude admin features (requires auth)
+		// Exclude admin features (requires Auth0 session)
 		'!app/features/admin/**',
-		// Exclude Builder.io admin SDK (external service)
-		'!app/lib/builder-admin.ts',
-		// Exclude reCAPTCHA server validation (external service)
-		'!app/lib/recaptcha.ts',
-		// Exclude shared types (no logic to test)
-		'!app/lib/types.ts',
-		// Exclude server components that fetch data (require integration tests)
-		'!app/components/layout/site-header-server.tsx',
-		'!app/components/layout/site-footer-server.tsx',
-		'!app/components/layout/page-with-announcements.tsx',
-		'!app/components/seasonal-decorations-server.tsx',
 	],
 	coverageThreshold: {
 		global: {
