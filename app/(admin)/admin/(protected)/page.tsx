@@ -199,8 +199,8 @@ export default async function AdminDashboardPage() {
 			<div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4'>
 				<Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
-						<Inbox className='w-5 h-5 text-gray-400 group-hover:text-primary transition-colors' />
-						<span className='text-xs text-gray-400'>totaal</span>
+						<Inbox className='w-5 h-5 text-gray-500 group-hover:text-primary transition-colors' />
+						<span className='text-xs text-gray-500'>totaal</span>
 					</div>
 					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{totalResult.count}</p>
 					<p className='text-xs text-gray-500 mt-1'>Berichten</p>
@@ -217,14 +217,14 @@ export default async function AdminDashboardPage() {
 				</Link>
 				<Link href='/admin/nieuws' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
-						<Newspaper className='w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors' />
+						<Newspaper className='w-5 h-5 text-gray-500 group-hover:text-blue-500 transition-colors' />
 					</div>
 					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{news.length > 0 ? news.length : '0'}</p>
 					<p className='text-xs text-gray-500 mt-1'>Nieuwsberichten</p>
 				</Link>
 				<Link href='/admin/activiteiten' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
-						<Calendar className='w-5 h-5 text-gray-400 group-hover:text-green-500 transition-colors' />
+						<Calendar className='w-5 h-5 text-gray-500 group-hover:text-green-500 transition-colors' />
 					</div>
 					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{activities.length > 0 ? activities.length : '0'}</p>
 					<p className='text-xs text-gray-500 mt-1'>Activiteiten</p>
@@ -240,14 +240,14 @@ export default async function AdminDashboardPage() {
 							<Mail className='w-4 h-4 text-primary' />
 							Recente berichten
 						</h2>
-						<Link href='/admin/submissions' className='text-primary text-sm hover:underline flex items-center gap-1'>
+						<Link href='/admin/submissions' className='text-pink-700 text-sm hover:underline flex items-center gap-1'>
 							Alles bekijken
 							<ArrowRight className='w-3 h-3' />
 						</Link>
 					</div>
 					<div className='divide-y divide-gray-50'>
 						{recentSubmissions.length === 0 ? (
-							<div className='p-4 text-center text-gray-400 text-sm'>
+							<div className='p-4 text-center text-gray-500 text-sm'>
 								Geen berichten
 							</div>
 						) : (
@@ -271,7 +271,7 @@ export default async function AdminDashboardPage() {
 												{submission.subject} - {submission.message.slice(0, 50)}...
 											</p>
 										</div>
-										<span className='text-xs text-gray-400 whitespace-nowrap'>
+										<span className='text-xs text-gray-500 whitespace-nowrap'>
 											{formatDateTime(submission.createdAt)}
 										</span>
 									</div>
@@ -288,14 +288,14 @@ export default async function AdminDashboardPage() {
 							<Calendar className='w-4 h-4 text-green-500' />
 							Komende activiteiten
 						</h2>
-						<Link href='/admin/activiteiten' className='text-primary text-sm hover:underline flex items-center gap-1'>
+						<Link href='/admin/activiteiten' className='text-pink-700 text-sm hover:underline flex items-center gap-1'>
 							Alles bekijken
 							<ArrowRight className='w-3 h-3' />
 						</Link>
 					</div>
 					<div className='divide-y divide-gray-50'>
 						{activities.length === 0 ? (
-							<div className='p-4 text-center text-gray-400 text-sm'>
+							<div className='p-4 text-center text-gray-500 text-sm'>
 								Geen activiteiten
 							</div>
 						) : (
@@ -351,14 +351,14 @@ export default async function AdminDashboardPage() {
 							<Newspaper className='w-4 h-4 text-blue-500' />
 							Laatste nieuws
 						</h2>
-						<Link href='/admin/nieuws' className='text-primary text-sm hover:underline flex items-center gap-1'>
+						<Link href='/admin/nieuws' className='text-pink-700 text-sm hover:underline flex items-center gap-1'>
 							Alles bekijken
 							<ArrowRight className='w-3 h-3' />
 						</Link>
 					</div>
 					<div className='divide-y divide-gray-50'>
 						{news.length === 0 ? (
-							<div className='p-4 text-center text-gray-400 text-sm'>
+							<div className='p-4 text-center text-gray-500 text-sm'>
 								Geen nieuwsberichten
 							</div>
 						) : (
@@ -388,7 +388,7 @@ export default async function AdminDashboardPage() {
 													concept
 												</span>
 											)}
-											<span className='text-xs text-gray-400 whitespace-nowrap'>
+											<span className='text-xs text-gray-500 whitespace-nowrap'>
 												{formatDate(item.data.datum)}
 											</span>
 										</div>
