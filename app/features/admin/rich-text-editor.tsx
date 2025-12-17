@@ -1,6 +1,6 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useRef} from 'react';
 import {useEditor, EditorContent, type Editor} from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -282,6 +282,8 @@ function convertToHtml(text: string): string {
 
 export function RichTextEditor({value, onChange, placeholder}: RichTextEditorProps) {
 	const [isHtmlMode, setIsHtmlMode] = useState(false);
+	const [htmlValue, setHtmlValue] = useState('');
+	const isTogglingRef = useRef(false);
 	const htmlContent = convertToHtml(value);
 
 	const editor = useEditor({
@@ -306,21 +308,36 @@ export function RichTextEditor({value, onChange, placeholder}: RichTextEditorPro
 			},
 		},
 		onUpdate: ({editor: currentEditor}) => {
-			onChange(currentEditor.getHTML());
+			// Don't update during toggle to prevent loops
+			if (!isTogglingRef.current) {
+				onChange(currentEditor.getHTML());
+			}
 		},
 	});
 
 	const handleToggleHtmlMode = () => {
+		isTogglingRef.current = true;
+
 		if (isHtmlMode && editor) {
-			// Switching from HTML mode to visual mode - update editor content
-			editor.commands.setContent(value);
+			// Switching from HTML mode to visual mode - update editor with edited HTML
+			editor.commands.setContent(htmlValue);
+			onChange(htmlValue);
+		} else if (editor) {
+			// Switching to HTML mode - capture current editor content
+			const currentHtml = editor.getHTML();
+			setHtmlValue(currentHtml);
 		}
 
 		setIsHtmlMode(!isHtmlMode);
+
+		// Reset toggle flag after state updates
+		setTimeout(() => {
+			isTogglingRef.current = false;
+		}, 0);
 	};
 
 	const handleHtmlChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-		onChange(event.target.value);
+		setHtmlValue(event.target.value);
 	};
 
 	return (
@@ -328,7 +345,7 @@ export function RichTextEditor({value, onChange, placeholder}: RichTextEditorPro
 			<Toolbar editor={editor} isHtmlMode={isHtmlMode} onToggleHtmlMode={handleToggleHtmlMode} />
 			{isHtmlMode ? (
 				<textarea
-					value={value}
+					value={htmlValue}
 					onChange={handleHtmlChange}
 					placeholder={placeholder}
 					className='w-full min-h-[200px] px-3 sm:px-4 py-3 font-mono text-sm focus:outline-none resize-y'
