@@ -18,7 +18,7 @@ type FooterData = {
 		links: Array<{text: string; url: string}>;
 	}>;
 	socialLinks?: Array<{
-		platform: 'facebook' | 'instagram' | 'twitter' | 'youtube' | 'linkedin';
+		platform: 'facebook' | 'instagram' | 'twitter' | 'youtube';
 		url: string;
 	}>;
 	copyrightText?: string;
