@@ -94,6 +94,13 @@ module.exports = nextConfig;
 
 // eslint-disable-next-line unicorn/prefer-module
 const {withSentryConfig} = require('@sentry/nextjs');
+// eslint-disable-next-line unicorn/prefer-module
+const packageJson = require('./package.json');
+
+// Expose version to client
+nextConfig.env = {
+	NEXT_PUBLIC_APP_VERSION: packageJson.version,
+};
 
 // eslint-disable-next-line unicorn/prefer-module
 module.exports = withSentryConfig(

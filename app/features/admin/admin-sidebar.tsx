@@ -155,16 +155,20 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 					})}
 				</ul>
 			</nav>
-			{/* Collapse toggle button - only on desktop */}
-			<div className='hidden lg:flex p-2 border-t border-gray-200 justify-center'>
+			{/* Collapse toggle button and version - only on desktop */}
+			<div className='hidden lg:flex p-2 border-t border-gray-200 justify-between items-center'>
+				{!isCollapsed && (
+					<span className='text-xs text-gray-400 pl-2'>v{process.env.NEXT_PUBLIC_APP_VERSION}</span>
+				)}
 				<button
 					type='button'
 					onClick={toggleCollapsed}
 					title={isCollapsed ? 'Uitklappen' : 'Inklappen'}
-					className='p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors'
+					className={`p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors ${isCollapsed ? 'mx-auto' : ''}`}
 				>
 					{isCollapsed ? <ChevronRight className='w-5 h-5' /> : <ChevronLeft className='w-5 h-5' />}
 				</button>
+				{!isCollapsed && <div className='w-8' />}
 			</div>
 			<div className={`${isCollapsed ? 'lg:p-2' : 'p-4'} border-t border-gray-200`}>
 				<div className={`flex items-center gap-3 ${isCollapsed ? 'lg:justify-center' : ''} mb-4`}>

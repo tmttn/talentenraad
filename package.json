@@ -1,6 +1,6 @@
 {
-  "name": "builder-app",
-  "version": "0.1.0",
+  "name": "talentenraad",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_OPTIONS='--no-node-snapshot --trace-deprecation' next dev",
