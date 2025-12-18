@@ -6,6 +6,95 @@
    ============================================ */
 
 @theme {
+	/* ============================================
+	   SPACING TOKENS
+	   ============================================ */
+
+	/* Section padding (vertical) */
+	--spacing-section-sm: 3rem;     /* 48px */
+	--spacing-section-md: 5rem;     /* 80px */
+	--spacing-section-lg: 7rem;     /* 112px */
+
+	/* Component padding */
+	--spacing-component-xs: 0.5rem;  /* 8px */
+	--spacing-component-sm: 1rem;    /* 16px */
+	--spacing-component-md: 1.5rem;  /* 24px */
+	--spacing-component-lg: 2rem;    /* 32px */
+
+	/* Gap spacing */
+	--spacing-gap-xs: 0.5rem;   /* 8px */
+	--spacing-gap-sm: 1rem;     /* 16px */
+	--spacing-gap-md: 1.5rem;   /* 24px */
+	--spacing-gap-lg: 2rem;     /* 32px */
+	--spacing-gap-xl: 3rem;     /* 48px */
+
+	/* Inline spacing */
+	--spacing-inline-xs: 0.25rem;  /* 4px */
+	--spacing-inline-sm: 0.5rem;   /* 8px */
+	--spacing-inline-md: 0.75rem;  /* 12px */
+	--spacing-inline-lg: 1rem;     /* 16px */
+
+	/* ============================================
+	   SHADOW TOKENS
+	   ============================================ */
+
+	--shadow-none: none;
+	--shadow-subtle: 0 1px 2px rgba(0, 0, 0, 0.05);
+	--shadow-base: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+	--shadow-elevated: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+	--shadow-floating: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+	--shadow-high: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+	--shadow-overlay: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+	--shadow-input-focus: 0 0 0 3px rgba(212, 23, 105, 0.15);
+
+	/* ============================================
+	   RADIUS TOKENS
+	   ============================================ */
+
+	--radius-none: 0;
+	--radius-sm: 0.125rem;   /* 2px */
+	--radius-default: 0.25rem;  /* 4px */
+	--radius-md: 0.375rem;   /* 6px */
+	--radius-lg: 0.5rem;     /* 8px */
+	--radius-xl: 0.75rem;    /* 12px */
+	--radius-2xl: 1rem;      /* 16px */
+	--radius-3xl: 1.5rem;    /* 24px */
+	--radius-full: 9999px;
+
+	/* Semantic radius */
+	--radius-button: var(--radius-lg);
+	--radius-card: var(--radius-xl);
+	--radius-input: var(--radius-md);
+	--radius-badge: var(--radius-full);
+	--radius-modal: var(--radius-2xl);
+	--radius-tooltip: var(--radius-md);
+	--radius-dropdown: var(--radius-lg);
+
+	/* ============================================
+	   TRANSITION TOKENS
+	   ============================================ */
+
+	/* Durations */
+	--duration-instant: 0ms;
+	--duration-fast: 150ms;
+	--duration-base: 200ms;
+	--duration-slow: 300ms;
+	--duration-slower: 500ms;
+
+	/* Easings */
+	--easing-default: ease;
+	--easing-linear: linear;
+	--easing-in: ease-in;
+	--easing-out: ease-out;
+	--easing-in-out: ease-in-out;
+	--easing-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+
+	/* Transition presets */
+	--transition-fast: 150ms ease;
+	--transition-base: 200ms ease;
+	--transition-slow: 300ms ease;
+	--transition-smooth: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+
 	/* ----------------------------------------
 	   BRAND TOKENS - Semantic color shades
 	   ---------------------------------------- */
