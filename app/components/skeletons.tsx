@@ -3,6 +3,9 @@
  * Use with Next.js loading.tsx files for non-blocking page renders
  */
 
+// eslint-disable-next-line import-x/extensions
+import {gradients} from '@/styles/tokens';
+
 type SkeletonWrapperProperties = {
 	label: string;
 	children: React.ReactNode;
@@ -165,34 +168,140 @@ export function DetailPageSkeleton() {
 	);
 }
 
-// Public page hero section
-export function HeroSkeleton() {
+// Public page hero section - matches Hero component with gradient background
+export function HeroSkeleton({size = 'medium'}: {size?: 'compact' | 'small' | 'medium' | 'large'}) {
+	const sizeClasses = {
+		compact: 'py-12 md:py-16',
+		small: 'py-16 md:py-20',
+		medium: 'py-20 md:py-28',
+		large: 'py-28 md:py-36',
+	};
+
 	return (
-		<div className='py-16 px-6 animate-pulse'>
-			<div className='max-w-4xl mx-auto text-center'>
-				<div className='h-10 bg-gray-200 rounded w-3/4 mx-auto mb-4' />
-				<div className='h-6 bg-gray-200 rounded w-1/2 mx-auto mb-8' />
-				<div className='h-12 bg-gray-200 rounded w-40 mx-auto' />
+		<section
+			className={`relative overflow-hidden ${sizeClasses[size]}`}
+			style={{background: gradients.primary}}
+		>
+			{/* Decorative elements matching Hero */}
+			<div className='absolute inset-0 overflow-hidden pointer-events-none' aria-hidden='true'>
+				<div className='absolute -top-24 -right-24 w-96 h-96 bg-white/5 rounded-full' />
+				<div className='absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-white/5 rounded-full' />
+			</div>
+			{/* Content skeleton */}
+			<div className='relative z-10 max-w-4xl mx-auto px-6 text-center animate-pulse'>
+				<div className='h-10 md:h-12 bg-white/20 rounded w-3/4 mx-auto mb-4' />
+				<div className='h-5 md:h-6 bg-white/15 rounded w-1/2 mx-auto mb-8' />
+				<div className='h-12 bg-white/20 rounded-lg w-40 mx-auto' />
+			</div>
+		</section>
+	);
+}
+
+// InfoCard skeleton - matches centered card with icon, title, description
+export function InfoCardSkeleton() {
+	return (
+		<div className='p-8 bg-white shadow-md text-center animate-pulse'>
+			{/* Icon circle */}
+			<div className='w-16 h-16 bg-gray-200 rounded-full mx-auto mb-6' />
+			{/* Title */}
+			<div className='h-6 bg-gray-200 rounded w-2/3 mx-auto mb-3' />
+			{/* Description - 2 lines */}
+			<div className='space-y-2'>
+				<div className='h-4 bg-gray-200 rounded w-full' />
+				<div className='h-4 bg-gray-200 rounded w-4/5 mx-auto' />
+			</div>
+			{/* Optional link */}
+			<div className='h-8 bg-gray-200 rounded w-24 mx-auto mt-4' />
+		</div>
+	);
+}
+
+// InfoCard grid skeleton - shows multiple InfoCards in a grid
+export function InfoCardGridSkeleton({cards = 3}: {cards?: number}) {
+	return (
+		<div className='py-12 px-6'>
+			<div className='max-w-6xl mx-auto'>
+				<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+					{Array.from({length: cards}).map((_, index) => (
+						<InfoCardSkeleton key={index} />
+					))}
+				</div>
 			</div>
 		</div>
 	);
 }
 
-// Public page sections
-export function SectionsSkeleton({count = 3}: {count?: number}) {
+// HomepageDashboard skeleton - matches 2-column layout with colored headers
+export function HomepageDashboardSkeleton() {
 	return (
-		<div className='space-y-16 py-8 animate-pulse'>
+		<section className='py-12 px-6 bg-gray-50' aria-busy='true' aria-label='Dashboard wordt geladen'>
+			<div className='max-w-6xl mx-auto'>
+				<div className='grid md:grid-cols-2 gap-6 animate-pulse'>
+					{/* Activiteiten card */}
+					<div className='bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col'>
+						<div className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 px-6 py-3'>
+							<div className='h-5 bg-white/30 rounded w-40' />
+						</div>
+						<div className='p-4 flex-grow'>
+							<div className='space-y-3'>
+								{[1, 2, 3].map(i => (
+									<div key={i} className='flex items-center gap-3 p-2'>
+										<div className='w-12 h-12 bg-gray-200 rounded-lg' />
+										<div className='flex-grow'>
+											<div className='h-4 bg-gray-200 rounded w-3/4 mb-1' />
+											<div className='h-3 bg-gray-200 rounded w-1/2' />
+										</div>
+										<div className='h-5 bg-gray-200 rounded-full w-16' />
+									</div>
+								))}
+							</div>
+						</div>
+						<div className='px-6 pb-4 border-t border-gray-100 pt-3'>
+							<div className='h-8 bg-gray-200 rounded w-40' />
+						</div>
+					</div>
+
+					{/* Nieuws card */}
+					<div className='bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col'>
+						<div className='bg-gradient-to-r from-brand-secondary-400 to-brand-secondary-500 px-6 py-3'>
+							<div className='h-5 bg-white/30 rounded w-32' />
+						</div>
+						<div className='p-4 flex-grow'>
+							<div className='space-y-3'>
+								{[1, 2, 3].map(i => (
+									<div key={i} className='p-2'>
+										<div className='h-4 bg-gray-200 rounded w-3/4 mb-1' />
+										<div className='h-3 bg-gray-200 rounded w-1/3 mb-2' />
+										<div className='h-3 bg-gray-200 rounded w-full' />
+									</div>
+								))}
+							</div>
+						</div>
+						<div className='px-6 pb-4 border-t border-gray-100 pt-3'>
+							<div className='h-8 bg-gray-200 rounded w-36' />
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	);
+}
+
+// Generic section skeleton for Builder pages
+export function SectionsSkeleton({count = 2}: {count?: number}) {
+	return (
+		<div className='space-y-12 py-8 animate-pulse'>
 			{Array.from({length: count}).map((_, index) => (
-				<div key={index} className='px-6'>
-					<div className='max-w-4xl mx-auto'>
-						<div className='h-8 bg-gray-200 rounded w-64 mx-auto mb-4' />
-						<div className='h-4 bg-gray-200 rounded w-48 mx-auto mb-8' />
+				<div key={index} className='py-12 px-6'>
+					<div className='max-w-6xl mx-auto'>
+						{/* Section could be InfoCards, text, or other content */}
 						<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
 							{[1, 2, 3].map(i => (
-								<div key={i} className='bg-white rounded-xl shadow-md p-6'>
-									<div className='h-32 bg-gray-200 rounded mb-4' />
-									<div className='h-5 bg-gray-200 rounded w-3/4 mb-2' />
-									<div className='h-4 bg-gray-200 rounded w-full' />
+								<div key={i} className='p-8 bg-white shadow-md text-center'>
+									<div className='w-16 h-16 bg-gray-200 rounded-full mx-auto mb-6' />
+									<div className='h-6 bg-gray-200 rounded w-2/3 mx-auto mb-3' />
+									<div className='h-4 bg-gray-200 rounded w-full mb-2' />
+									<div className='h-4 bg-gray-200 rounded w-4/5 mx-auto' />
 								</div>
 							))}
 						</div>
@@ -347,12 +456,13 @@ export function DashboardSkeleton() {
 	);
 }
 
-// Full page loading for public site
+// Full page loading for public site - matches typical homepage structure
 export function PublicPageSkeleton() {
 	return (
 		<SkeletonWrapper label='Pagina wordt geladen'>
 			<HeroSkeleton />
-			<SectionsSkeleton count={2} />
+			<InfoCardGridSkeleton cards={3} />
+			<HomepageDashboardSkeleton />
 		</SkeletonWrapper>
 	);
 }
