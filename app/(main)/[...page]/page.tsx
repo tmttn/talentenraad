@@ -37,6 +37,12 @@ export async function generateMetadata({params, searchParams}: PageProperties): 
 	}
 
 	const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
+
+	// Return minimal metadata for 404 pages - the not-found boundary handles the rest
+	if (!canShowBuilderContent(content, searchParameters)) {
+		notFound();
+	}
+
 	const seoData = extractSeoData(content);
 
 	// Generate a readable title from the URL if no SEO title is set
