@@ -15,6 +15,7 @@ import {
 	ZoomOut,
 	Download,
 	Maximize2,
+	Loader2,
 } from 'lucide-react';
 
 type GalleryImage = {
@@ -25,8 +26,22 @@ type GalleryImage = {
 	height?: number;
 };
 
+type BuilderAsset = {
+	id: string;
+	name: string;
+	url: string;
+	meta?: {
+		width?: number;
+		height?: number;
+		alt?: string;
+	};
+};
+
+// eslint-disable-next-line n/prefer-global/process
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
+
 type PhotoGalleryProperties = {
-	images: GalleryImage[];
+	folderPath?: string;
 	layout?: 'grid' | 'masonry';
 	columns?: 2 | 3 | 4;
 	gap?: 'sm' | 'md' | 'lg';
@@ -374,7 +389,7 @@ function GalleryItem({
 }
 
 function PhotoGallery({
-	images = [],
+	folderPath,
 	layout = 'grid',
 	columns = 3,
 	gap = 'md',
@@ -386,6 +401,9 @@ function PhotoGallery({
 	aspectRatio = 'square',
 	hoverEffect = 'zoom',
 }: Readonly<PhotoGalleryProperties>) {
+	const [images, setImages] = useState<GalleryImage[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState<string | undefined>(undefined);
 	const [lightboxOpen, setLightboxOpen] = useState(false);
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [isZoomed, setIsZoomed] = useState(false);
@@ -395,6 +413,55 @@ function PhotoGallery({
 	const thumbnailsRef = useRef<HTMLDivElement>(null);
 
 	const minSwipeDistance = 50;
+
+	// Fetch images from Builder.io folder
+	useEffect(() => {
+		if (!folderPath) {
+			setImages([]);
+			return;
+		}
+
+		const fetchImages = async () => {
+			setLoading(true);
+			setError(undefined);
+
+			try {
+				if (!builderApiKey) {
+					throw new Error('Builder API key not configured');
+				}
+
+				// Fetch assets from the specified folder
+				const url = `https://cdn.builder.io/api/v1/assets?apiKey=${builderApiKey}&query.folder=${encodeURIComponent(folderPath)}&limit=100`;
+				const response = await fetch(url);
+
+				if (!response.ok) {
+					throw new Error('Failed to fetch images');
+				}
+
+				const data = await response.json() as {results: BuilderAsset[]};
+				const assets = data.results ?? [];
+
+				// Filter for image files and convert to GalleryImage format
+				const galleryImages: GalleryImage[] = assets
+					.filter(asset => /\.(jpe?g|png|gif|webp|avif)$/i.test(asset.name))
+					.map(asset => ({
+						src: asset.url,
+						alt: asset.meta?.alt ?? asset.name.replace(/\.[^.]+$/, ''),
+						width: asset.meta?.width,
+						height: asset.meta?.height,
+					}));
+
+				setImages(galleryImages);
+			} catch {
+				setError('Kon afbeeldingen niet laden');
+				setImages([]);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		void fetchImages();
+	}, [folderPath]);
 
 	const openLightbox = useCallback((index: number) => {
 		if (!enableLightbox) {
@@ -517,10 +584,35 @@ function PhotoGallery({
 		setLoadedImages(previous => new Set(previous).add(index));
 	}, []);
 
-	if (!images || images.length === 0) {
+	if (loading) {
+		return (
+			<div className='flex items-center justify-center py-12 text-gray-500'>
+				<Loader2 className='w-8 h-8 animate-spin mr-2' />
+				<span>Afbeeldingen laden...</span>
+			</div>
+		);
+	}
+
+	if (error) {
+		return (
+			<div className='text-center py-12 text-red-500'>
+				{error}
+			</div>
+		);
+	}
+
+	if (!folderPath) {
 		return (
 			<div className='text-center py-12 text-gray-500'>
-				Geen afbeeldingen om weer te geven
+				Selecteer een map in de instellingen
+			</div>
+		);
+	}
+
+	if (images.length === 0) {
+		return (
+			<div className='text-center py-12 text-gray-500'>
+				Geen afbeeldingen gevonden in deze map
 			</div>
 		);
 	}
@@ -575,30 +667,10 @@ export const PhotoGalleryInfo = {
 	image: 'https://cdn.builder.io/api/v1/image/assets%2Fpwgjf0RoYWbdnJSbpBAjXNRMe9F2%2Ffb27a7c790324294af8be1c35fe30f4d',
 	inputs: [
 		{
-			name: 'images',
-			type: 'list',
+			name: 'folderPath',
+			type: 'string',
 			required: true,
-			subFields: [
-				{
-					name: 'src',
-					type: 'file',
-					allowedFileTypes: ['jpeg', 'jpg', 'png', 'gif', 'webp'],
-					required: true,
-					helperText: 'Upload een afbeelding',
-				},
-				{
-					name: 'alt',
-					type: 'string',
-					helperText: 'Alt tekst voor toegankelijkheid',
-				},
-				{
-					name: 'caption',
-					type: 'string',
-					helperText: 'Optioneel bijschrift',
-				},
-			],
-			defaultValue: [],
-			helperText: 'Voeg afbeeldingen toe aan de galerij',
+			helperText: 'Mapnaam in de Builder.io asset bibliotheek (bijv. "galerij/fotos")',
 		},
 		{
 			name: 'layout',
