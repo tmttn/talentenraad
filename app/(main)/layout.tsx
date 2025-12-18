@@ -1,7 +1,5 @@
-import {Suspense} from 'react';
 import {SiteFooterServer} from '@components/layout/site-footer-server';
 import {CookieConsentProvider, CookieBanner} from '@components/cookie-consent';
-import {SiteFooterSkeleton} from '@components/skeletons';
 import {
 	SeasonalDecorationsProvider,
 	defaultSeasonalConfig,
@@ -50,9 +48,8 @@ export default function MainSiteLayout({
 		<CookieConsentProvider>
 			<SafeSeasonalDecorations>
 				{children}
-				<Suspense fallback={<SiteFooterSkeleton />}>
-					<SiteFooterServer />
-				</Suspense>
+				{/* No Suspense here - streaming before page validation causes 500 instead of 404 */}
+				<SiteFooterServer />
 			</SafeSeasonalDecorations>
 			<CookieBanner />
 		</CookieConsentProvider>
