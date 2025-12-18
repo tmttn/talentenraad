@@ -1,0 +1,358 @@
+/**
+ * Reusable skeleton components for loading states
+ * Use with Next.js loading.tsx files for non-blocking page renders
+ */
+
+type SkeletonWrapperProperties = {
+	label: string;
+	children: React.ReactNode;
+};
+
+function SkeletonWrapper({label, children}: Readonly<SkeletonWrapperProperties>) {
+	return (
+		<div aria-busy='true' aria-label={label}>
+			{children}
+			<span className='sr-only' role='status' aria-live='polite'>
+				Bezig met laden...
+			</span>
+		</div>
+	);
+}
+
+// Page header with title and optional action button
+export function PageHeaderSkeleton({showButton = true}: {showButton?: boolean}) {
+	return (
+		<div className='flex justify-between items-center mb-8 animate-pulse'>
+			<div className='h-9 bg-gray-200 rounded w-48' />
+			{showButton && <div className='h-12 bg-gray-200 rounded w-36' />}
+		</div>
+	);
+}
+
+// Table with configurable row count
+export function TableSkeleton({rows = 5}: {rows?: number}) {
+	return (
+		<div className='bg-white rounded-xl shadow-md overflow-hidden animate-pulse'>
+			{/* Search/filter bar */}
+			<div className='p-4 border-b border-gray-200 flex flex-wrap gap-4'>
+				<div className='h-10 bg-gray-200 rounded w-64' />
+				<div className='h-10 bg-gray-200 rounded w-40' />
+			</div>
+			{/* Table rows */}
+			<div className='divide-y divide-gray-100'>
+				{Array.from({length: rows}).map((_, index) => (
+					<div key={index} className='px-6 py-4'>
+						<div className='flex items-center gap-4'>
+							<div className='h-4 bg-gray-200 rounded w-4' />
+							<div className='h-4 bg-gray-200 rounded flex-1 max-w-xs' />
+							<div className='h-4 bg-gray-200 rounded w-24' />
+							<div className='h-6 bg-gray-200 rounded-full w-16' />
+							<div className='h-8 bg-gray-200 rounded w-20 ml-auto' />
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+// Grid of cards
+export function CardGridSkeleton({cards = 3}: {cards?: number}) {
+	return (
+		<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse'>
+			{Array.from({length: cards}).map((_, index) => (
+				<div key={index} className='bg-white rounded-xl shadow-md p-5'>
+					<div className='h-5 bg-gray-200 rounded w-3/4 mb-3' />
+					<div className='h-4 bg-gray-200 rounded w-1/2 mb-4' />
+					<div className='flex gap-2'>
+						<div className='h-8 bg-gray-200 rounded flex-1' />
+						<div className='h-8 bg-gray-200 rounded w-8' />
+					</div>
+				</div>
+			))}
+		</div>
+	);
+}
+
+// Form fields
+export function FormSkeleton({fields = 5}: {fields?: number}) {
+	return (
+		<div className='bg-white rounded-xl shadow-md p-6 max-w-2xl animate-pulse'>
+			<div className='space-y-6'>
+				{Array.from({length: fields}).map((_, index) => (
+					<div key={index}>
+						<div className='h-4 bg-gray-200 rounded w-24 mb-2' />
+						<div className='h-10 bg-gray-200 rounded w-full' />
+					</div>
+				))}
+				{/* Rich text editor placeholder */}
+				<div>
+					<div className='h-4 bg-gray-200 rounded w-24 mb-2' />
+					<div className='h-48 bg-gray-200 rounded w-full' />
+				</div>
+				{/* Submit button */}
+				<div className='flex gap-3 pt-4'>
+					<div className='h-12 bg-gray-200 rounded w-32' />
+					<div className='h-12 bg-gray-200 rounded w-24' />
+				</div>
+			</div>
+		</div>
+	);
+}
+
+// Dashboard statistics cards
+export function StatsCardsSkeleton({count = 4}: {count?: number}) {
+	return (
+		<div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 animate-pulse'>
+			{Array.from({length: count}).map((_, index) => (
+				<div key={index} className='bg-white p-4 sm:p-5 rounded-xl shadow-md'>
+					<div className='flex items-center justify-between mb-2'>
+						<div className='w-5 h-5 bg-gray-200 rounded' />
+						<div className='h-4 bg-gray-200 rounded w-12' />
+					</div>
+					<div className='h-8 bg-gray-200 rounded w-12 mb-1' />
+					<div className='h-3 bg-gray-200 rounded w-16' />
+				</div>
+			))}
+		</div>
+	);
+}
+
+// Content list (for dashboard sections)
+export function ContentListSkeleton({items = 3}: {items?: number}) {
+	return (
+		<div className='bg-white rounded-xl shadow-md overflow-hidden animate-pulse'>
+			<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
+				<div className='h-5 bg-gray-200 rounded w-40' />
+				<div className='h-4 bg-gray-200 rounded w-24' />
+			</div>
+			<div className='divide-y divide-gray-50'>
+				{Array.from({length: items}).map((_, index) => (
+					<div key={index} className='p-3 sm:p-4'>
+						<div className='flex items-start justify-between gap-2'>
+							<div className='flex-1'>
+								<div className='h-4 bg-gray-200 rounded w-3/4 mb-2' />
+								<div className='h-3 bg-gray-200 rounded w-1/2' />
+							</div>
+							<div className='h-4 bg-gray-200 rounded w-16' />
+						</div>
+					</div>
+				))}
+			</div>
+		</div>
+	);
+}
+
+// Back link + detail content
+export function DetailPageSkeleton() {
+	return (
+		<div className='animate-pulse'>
+			{/* Back link */}
+			<div className='h-5 bg-gray-200 rounded w-32 mb-6' />
+			{/* Content card */}
+			<div className='bg-white rounded-xl shadow-md p-6'>
+				<div className='h-7 bg-gray-200 rounded w-2/3 mb-4' />
+				<div className='space-y-3'>
+					<div className='h-4 bg-gray-200 rounded w-full' />
+					<div className='h-4 bg-gray-200 rounded w-full' />
+					<div className='h-4 bg-gray-200 rounded w-3/4' />
+				</div>
+				<div className='mt-6 pt-4 border-t border-gray-100'>
+					<div className='h-4 bg-gray-200 rounded w-48' />
+				</div>
+			</div>
+		</div>
+	);
+}
+
+// Public page hero section
+export function HeroSkeleton() {
+	return (
+		<div className='py-16 px-6 animate-pulse'>
+			<div className='max-w-4xl mx-auto text-center'>
+				<div className='h-10 bg-gray-200 rounded w-3/4 mx-auto mb-4' />
+				<div className='h-6 bg-gray-200 rounded w-1/2 mx-auto mb-8' />
+				<div className='h-12 bg-gray-200 rounded w-40 mx-auto' />
+			</div>
+		</div>
+	);
+}
+
+// Public page sections
+export function SectionsSkeleton({count = 3}: {count?: number}) {
+	return (
+		<div className='space-y-16 py-8 animate-pulse'>
+			{Array.from({length: count}).map((_, index) => (
+				<div key={index} className='px-6'>
+					<div className='max-w-4xl mx-auto'>
+						<div className='h-8 bg-gray-200 rounded w-64 mx-auto mb-4' />
+						<div className='h-4 bg-gray-200 rounded w-48 mx-auto mb-8' />
+						<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+							{[1, 2, 3].map(i => (
+								<div key={i} className='bg-white rounded-xl shadow-md p-6'>
+									<div className='h-32 bg-gray-200 rounded mb-4' />
+									<div className='h-5 bg-gray-200 rounded w-3/4 mb-2' />
+									<div className='h-4 bg-gray-200 rounded w-full' />
+								</div>
+							))}
+						</div>
+					</div>
+				</div>
+			))}
+		</div>
+	);
+}
+
+// Article/News detail page
+export function ArticleSkeleton() {
+	return (
+		<SkeletonWrapper label='Artikel wordt geladen'>
+			<div className='py-16 px-6 animate-pulse'>
+				<article className='max-w-3xl mx-auto'>
+					{/* Header */}
+					<div className='h-10 bg-gray-200 rounded w-3/4 mb-4' />
+					<div className='flex gap-4 mb-8'>
+						<div className='h-4 bg-gray-200 rounded w-32' />
+						<div className='h-4 bg-gray-200 rounded w-24' />
+					</div>
+					{/* Featured image */}
+					<div className='h-64 bg-gray-200 rounded-xl mb-8' />
+					{/* Content */}
+					<div className='space-y-4'>
+						<div className='h-4 bg-gray-200 rounded w-full' />
+						<div className='h-4 bg-gray-200 rounded w-full' />
+						<div className='h-4 bg-gray-200 rounded w-3/4' />
+						<div className='h-4 bg-gray-200 rounded w-full' />
+						<div className='h-4 bg-gray-200 rounded w-5/6' />
+					</div>
+				</article>
+			</div>
+		</SkeletonWrapper>
+	);
+}
+
+// Activity detail page
+export function ActivityDetailSkeleton() {
+	return (
+		<SkeletonWrapper label='Activiteit wordt geladen'>
+			<div className='py-16 px-6 animate-pulse'>
+				<div className='max-w-4xl mx-auto'>
+					{/* Header */}
+					<div className='h-10 bg-gray-200 rounded w-2/3 mb-4' />
+					{/* Meta info */}
+					<div className='flex flex-wrap gap-4 mb-8'>
+						<div className='h-6 bg-gray-200 rounded w-32' />
+						<div className='h-6 bg-gray-200 rounded w-24' />
+						<div className='h-6 bg-gray-200 rounded w-40' />
+					</div>
+					{/* Image */}
+					<div className='h-80 bg-gray-200 rounded-xl mb-8' />
+					{/* Content */}
+					<div className='space-y-4'>
+						<div className='h-4 bg-gray-200 rounded w-full' />
+						<div className='h-4 bg-gray-200 rounded w-full' />
+						<div className='h-4 bg-gray-200 rounded w-2/3' />
+					</div>
+				</div>
+			</div>
+		</SkeletonWrapper>
+	);
+}
+
+// Submissions with tabs
+export function SubmissionsPageSkeleton() {
+	return (
+		<div className='animate-pulse'>
+			<PageHeaderSkeleton showButton={false} />
+			{/* Tabs */}
+			<div className='flex gap-4 mb-6'>
+				<div className='h-10 bg-gray-200 rounded w-32' />
+				<div className='h-10 bg-gray-200 rounded w-32' />
+			</div>
+			{/* Bulk actions */}
+			<div className='flex gap-2 mb-4'>
+				<div className='h-9 bg-gray-200 rounded w-28' />
+				<div className='h-9 bg-gray-200 rounded w-28' />
+				<div className='h-9 bg-gray-200 rounded w-28' />
+			</div>
+			<TableSkeleton rows={8} />
+		</div>
+	);
+}
+
+// Settings/Decorations page
+export function SettingsSkeleton() {
+	return (
+		<div className='animate-pulse'>
+			<PageHeaderSkeleton showButton={false} />
+			<div className='bg-white rounded-xl shadow-md p-6 max-w-xl'>
+				<div className='space-y-6'>
+					{/* Toggle */}
+					<div className='flex items-center justify-between'>
+						<div>
+							<div className='h-5 bg-gray-200 rounded w-40 mb-1' />
+							<div className='h-4 bg-gray-200 rounded w-64' />
+						</div>
+						<div className='h-6 bg-gray-200 rounded-full w-12' />
+					</div>
+					{/* Date inputs */}
+					<div className='grid grid-cols-2 gap-4'>
+						<div>
+							<div className='h-4 bg-gray-200 rounded w-24 mb-2' />
+							<div className='h-10 bg-gray-200 rounded w-full' />
+						</div>
+						<div>
+							<div className='h-4 bg-gray-200 rounded w-24 mb-2' />
+							<div className='h-10 bg-gray-200 rounded w-full' />
+						</div>
+					</div>
+					{/* Submit */}
+					<div className='h-10 bg-gray-200 rounded w-32' />
+				</div>
+			</div>
+		</div>
+	);
+}
+
+// Dashboard skeleton (combines multiple sections)
+export function DashboardSkeleton() {
+	return (
+		<SkeletonWrapper label='Dashboard wordt geladen'>
+			<div className='space-y-6 sm:space-y-8 animate-pulse'>
+				{/* Header */}
+				<div>
+					<div className='h-8 bg-gray-200 rounded w-48 mb-2' />
+					<div className='h-4 bg-gray-200 rounded w-64' />
+				</div>
+				{/* Quick create */}
+				<div className='bg-white p-4 sm:p-5 rounded-xl shadow-md'>
+					<div className='h-4 bg-gray-200 rounded w-32 mb-3' />
+					<div className='flex flex-wrap gap-2'>
+						<div className='h-10 bg-gray-200 rounded w-32' />
+						<div className='h-10 bg-gray-200 rounded w-28' />
+						<div className='h-10 bg-gray-200 rounded w-32' />
+					</div>
+				</div>
+				{/* Stats */}
+				<StatsCardsSkeleton />
+				{/* Content lists */}
+				<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
+					<ContentListSkeleton items={5} />
+					<ContentListSkeleton items={5} />
+					<ContentListSkeleton items={5} />
+					<ContentListSkeleton items={4} />
+				</div>
+			</div>
+		</SkeletonWrapper>
+	);
+}
+
+// Full page loading for public site
+export function PublicPageSkeleton() {
+	return (
+		<SkeletonWrapper label='Pagina wordt geladen'>
+			<HeroSkeleton />
+			<SectionsSkeleton count={2} />
+		</SkeletonWrapper>
+	);
+}
