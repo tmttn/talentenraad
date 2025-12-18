@@ -38,9 +38,14 @@ export async function generateMetadata({params, searchParams}: PageProperties): 
 
 	const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
 
-	// Return minimal metadata for 404 pages - the not-found boundary handles the rest
+	// Return minimal metadata for 404 pages - don't call notFound() here
+	// The Page component will handle the actual 404 response
+	// Calling notFound() in both generateMetadata and Page causes RSC stream errors
 	if (!canShowBuilderContent(content, searchParameters)) {
-		notFound();
+		return {
+			title: 'Pagina niet gevonden',
+			robots: {index: false, follow: false},
+		};
 	}
 
 	const seoData = extractSeoData(content);
