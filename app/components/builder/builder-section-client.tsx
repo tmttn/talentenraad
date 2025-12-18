@@ -23,6 +23,7 @@ import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
 import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
 import {CtaButtonInfo} from '@components/ui/cta-button';
 import {TypographyInfo} from '@components/ui/typography';
+import {PhotoGalleryInfo} from '@features/gallery/photo-gallery';
 
 // All custom components available for sections
 const customComponents = [
@@ -49,6 +50,7 @@ const customComponents = [
 	UnifiedCtaInfo,
 	CtaButtonInfo,
 	TypographyInfo,
+	PhotoGalleryInfo,
 ];
 
 type BuilderSectionClientProperties = {
