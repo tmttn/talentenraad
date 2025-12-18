@@ -347,7 +347,7 @@ export function ErrorPage({
 				</div>
 
 				{/* Error code - subtle */}
-				<p className='text-sm font-mono text-gray-400 mb-2'>Foutcode {code}</p>
+				<p className='text-sm font-mono text-gray-600 mb-2'>Foutcode {code}</p>
 
 				{/* Title */}
 				<h1 className='text-3xl md:text-4xl font-bold text-gray-900 mb-4'>{title}</h1>
@@ -492,7 +492,7 @@ export function AdminErrorPage({
 				<div className='mb-6 text-6xl'>
 					{code === '500' ? '🤖' : code === '404' ? '🔍' : code === '403' ? '🔒' : '⚠️'}
 				</div>
-				<p className='text-sm font-mono text-gray-400 mb-2'>Fout {code}</p>
+				<p className='text-sm font-mono text-gray-600 mb-2'>Fout {code}</p>
 				<h1 className='text-xl font-bold text-gray-900 mb-2'>{title}</h1>
 				<p className='text-gray-600 mb-6'>{description}</p>
 

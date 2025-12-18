@@ -147,11 +147,49 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 		return (
 			<section className='py-12 px-6 bg-gray-50' aria-busy='true' aria-label='Dashboard wordt geladen'>
 				<div className='max-w-6xl mx-auto'>
-					<div className='animate-pulse'>
-						<div className='h-8 bg-gray-200 rounded w-48 mx-auto mb-4' />
-						<div className='grid md:grid-cols-2 gap-6 mt-8'>
-							<div className='bg-white rounded-2xl p-6 h-64' />
-							<div className='bg-white rounded-2xl p-6 h-64' />
+					<div className='grid md:grid-cols-2 gap-6'>
+						{/* Activities skeleton - matches loaded structure */}
+						<div className='bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col'>
+							<div className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 px-6 py-3'>
+								<div className='h-5 bg-white/30 rounded w-40 animate-pulse' />
+							</div>
+							<div className='p-4 flex-grow'>
+								<div className='space-y-3 animate-pulse'>
+									{[1, 2, 3].map(i => (
+										<div key={i} className='flex items-center gap-3 p-2'>
+											<div className='w-12 h-12 bg-gray-200 rounded-lg' />
+											<div className='flex-grow'>
+												<div className='h-4 bg-gray-200 rounded w-3/4 mb-2' />
+												<div className='h-3 bg-gray-100 rounded w-1/2' />
+											</div>
+										</div>
+									))}
+								</div>
+							</div>
+							<div className='px-6 pb-4 border-t border-gray-100 pt-3 mt-auto'>
+								<div className='h-4 bg-gray-200 rounded w-40 animate-pulse' />
+							</div>
+						</div>
+
+						{/* News skeleton - matches loaded structure */}
+						<div className='bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col'>
+							<div className='bg-gradient-to-r from-brand-secondary-400 to-brand-secondary-500 px-6 py-3'>
+								<div className='h-5 bg-white/30 rounded w-32 animate-pulse' />
+							</div>
+							<div className='p-4 flex-grow'>
+								<div className='space-y-3 animate-pulse'>
+									{[1, 2, 3].map(i => (
+										<div key={i} className='p-2'>
+											<div className='h-4 bg-gray-200 rounded w-3/4 mb-2' />
+											<div className='h-3 bg-gray-100 rounded w-1/3 mb-2' />
+											<div className='h-3 bg-gray-100 rounded w-full' />
+										</div>
+									))}
+								</div>
+							</div>
+							<div className='px-6 pb-4 border-t border-gray-100 pt-3 mt-auto'>
+								<div className='h-4 bg-gray-200 rounded w-36 animate-pulse' />
+							</div>
 						</div>
 					</div>
 				</div>
@@ -193,7 +231,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 																<Bookmark className='inline-block ml-1 h-3 w-3 text-primary fill-primary' aria-label='Vastgepind' />
 															)}
 														</h4>
-														<div className='flex items-center gap-2 text-xs text-gray-500'>
+														<div className='flex items-center gap-2 text-xs text-gray-600'>
 															{activiteit.data.tijd && <span>{activiteit.data.tijd}</span>}
 															{activiteit.data.tijd && activiteit.data.locatie && <span>•</span>}
 															{activiteit.data.locatie && <span className='truncate'>{activiteit.data.locatie}</span>}
@@ -215,7 +253,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 								)
 								: (
 									<div className='text-center py-6'>
-										<p className='text-gray-500 text-sm'>Geen activiteiten gepland</p>
+										<p className='text-gray-600 text-sm'>Geen activiteiten gepland</p>
 									</div>
 								)}
 						</div>
@@ -253,7 +291,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 																	<Bookmark className='inline-block ml-1 h-3 w-3 text-secondary fill-secondary' aria-label='Vastgepind' />
 																)}
 															</h4>
-															<p className='text-xs text-gray-500 mt-0.5'>{formatFullDate(nieuws.data.datum)}</p>
+															<p className='text-xs text-gray-600 mt-0.5'>{formatFullDate(nieuws.data.datum)}</p>
 														</div>
 													</div>
 													<p className='text-xs text-gray-600 mt-1 line-clamp-2'>
@@ -266,7 +304,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 								)
 								: (
 									<div className='text-center py-6'>
-										<p className='text-gray-500 text-sm'>Nog geen nieuws</p>
+										<p className='text-gray-600 text-sm'>Nog geen nieuws</p>
 									</div>
 								)}
 						</div>

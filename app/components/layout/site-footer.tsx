@@ -118,7 +118,7 @@ export function SiteFooter({
 							{tagline}
 						</p>
 						{address && (
-							<div className="mt-4 text-sm text-gray-500">
+							<div className="mt-4 text-sm text-gray-700">
 								{address.street && <p>{address.street}</p>}
 								{address.city && <p>{address.city}</p>}
 							</div>
@@ -167,25 +167,25 @@ export function SiteFooter({
 
 				{/* Bottom bar */}
 				<div className="border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-					<p className="text-gray-500 text-sm">
+					<p className="text-gray-700 text-sm">
 						© {new Date().getFullYear()} {copyrightText}
 					</p>
 
 					{/* Legal links and cookie settings */}
 					<div className="flex flex-wrap justify-center gap-4 text-sm">
-						<Link href="/privacybeleid" className="text-gray-500 hover:text-primary transition-colors">
+						<Link href="/privacybeleid" className="text-gray-700 hover:text-primary transition-colors">
 							Privacybeleid
 						</Link>
-						<Link href="/cookiebeleid" className="text-gray-500 hover:text-primary transition-colors">
+						<Link href="/cookiebeleid" className="text-gray-700 hover:text-primary transition-colors">
 							Cookiebeleid
 						</Link>
-						<Link href="/algemene-voorwaarden" className="text-gray-500 hover:text-primary transition-colors">
+						<Link href="/algemene-voorwaarden" className="text-gray-700 hover:text-primary transition-colors">
 							Algemene Voorwaarden
 						</Link>
 						<button
 							type="button"
 							onClick={openPreferences}
-							className="text-gray-500 hover:text-primary transition-colors"
+							className="text-gray-700 hover:text-primary transition-colors"
 						>
 							Cookie-instellingen
 						</button>

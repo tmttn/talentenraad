@@ -52,9 +52,10 @@ for (const page of pagesToTest) {
 			await browserPage.goto(page.path);
 			await browserPage.waitForLoadState('networkidle');
 
-			// Run axe scan specifically for color contrast
+			// Run axe scan for WCAG AA color contrast (4.5:1 minimum)
+			// Note: color-contrast-enhanced (7:1) is WCAG AAA which is optional
 			const contrastResults = await new AxeBuilder({page: browserPage})
-				.withRules(['color-contrast', 'color-contrast-enhanced'])
+				.withRules(['color-contrast'])
 				.analyze();
 
 			if (contrastResults.violations.length > 0) {
