@@ -4,6 +4,7 @@ import {
 	useEffect, useState, useRef, useCallback, type KeyboardEvent,
 } from 'react';
 import {ChevronDown, HelpCircle} from 'lucide-react';
+import {Container, Stack} from '@components/ui/layout';
 
 const faqButtonClassName = [
 	'faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4',
@@ -193,27 +194,31 @@ function Faq() {
 
 	if (loading) {
 		return (
-			<div className='max-w-4xl mx-auto px-6 animate-pulse space-y-4'>
-				{[1, 2, 3].map(i => (
-					<div key={i} className='h-16 bg-gray-200 rounded' />
-				))}
-			</div>
+			<Container size='md' className='animate-pulse'>
+				<Stack gap='md'>
+					{[1, 2, 3].map(i => (
+						<div key={i} className='h-16 bg-gray-200 rounded' />
+					))}
+				</Stack>
+			</Container>
 		);
 	}
 
 	if (faqs.length === 0) {
 		return (
-			<div className='max-w-4xl mx-auto px-6 text-center py-section-sm bg-gradient-to-br from-white to-gray-50 rounded-modal border-2 border-dashed border-gray-200'>
-				<div className='w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center'>
-					<HelpCircle className='h-10 w-10 text-primary' aria-hidden='true' />
+			<Container size='md'>
+				<div className='text-center py-section-sm bg-gradient-to-br from-white to-gray-50 rounded-modal border-2 border-dashed border-gray-200'>
+					<div className='w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center'>
+						<HelpCircle className='h-10 w-10 text-primary' aria-hidden='true' />
+					</div>
+					<p className='text-gray-500'>Geen veelgestelde vragen gevonden</p>
 				</div>
-				<p className='text-gray-500'>Geen veelgestelde vragen gevonden</p>
-			</div>
+			</Container>
 		);
 	}
 
 	return (
-		<div className='max-w-4xl mx-auto px-6'>
+		<Container size='md'>
 			<style dangerouslySetInnerHTML={{__html: faqStyles}} />
 			{faqs.length > 0 && (
 				<script
@@ -227,7 +232,7 @@ function Faq() {
 				{statusMessage}
 			</div>
 
-			<div className='space-y-4' role='region' aria-label='Veelgestelde vragen accordeon'>
+			<Stack gap='md' as='div' className='faq-accordion' role='group' aria-label='Veelgestelde vragen accordeon'>
 				{faqs.map((faq, index) => (
 					<div
 						key={faq.id}
@@ -271,8 +276,8 @@ function Faq() {
 						</div>
 					</div>
 				))}
-			</div>
-		</div>
+			</Stack>
+		</Container>
 	);
 }
 

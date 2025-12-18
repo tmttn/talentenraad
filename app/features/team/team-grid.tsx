@@ -1,6 +1,7 @@
 'use client';
 
 import {useEffect, useState} from 'react';
+import {Container, Grid} from '@components/ui/layout';
 
 type TeamMemberData = {
 	name: string;
@@ -94,10 +95,17 @@ function TeamGrid({
 		.toUpperCase()
 		.slice(0, 2);
 
-	const gridColsMap: Record<string, string> = {
-		cols2: 'md:grid-cols-2',
-		cols3: 'md:grid-cols-2 lg:grid-cols-3',
-		cols4: 'md:grid-cols-2 lg:grid-cols-4',
+	// Map columns prop to responsive Grid props
+	const getGridColsLg = (cols: number): 2 | 3 | 4 => {
+		if (cols === 2) {
+			return 2;
+		}
+
+		if (cols === 4) {
+			return 4;
+		}
+
+		return 3;
 	};
 
 	const avatarColors = [
@@ -110,8 +118,8 @@ function TeamGrid({
 
 	if (loading) {
 		return (
-			<div className='max-w-6xl mx-auto px-6 animate-pulse'>
-				<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-8`}>
+			<Container size='xl' className='animate-pulse'>
+				<Grid cols={1} colsMd={2} colsLg={getGridColsLg(columns)} gap='lg'>
 					{[1, 2, 3].map(i => (
 						<div key={i} className='text-center'>
 							<div className='w-32 h-32 rounded-full bg-gray-200 mx-auto mb-4' />
@@ -119,50 +127,52 @@ function TeamGrid({
 							<div className='h-4 bg-gray-200 rounded w-24 mx-auto' />
 						</div>
 					))}
-				</div>
-			</div>
+				</Grid>
+			</Container>
 		);
 	}
 
 	if (teamMembers.length === 0) {
 		return (
-			<div className='max-w-6xl mx-auto px-6 text-center py-12 text-gray-500'>
+			<Container size='xl' className='text-center py-12 text-gray-500'>
 				Geen teamleden gevonden
-			</div>
+			</Container>
 		);
 	}
 
 	return (
-		<div className={`max-w-6xl mx-auto px-6 grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-8`}>
-			{teamMembers.map((member, index) => (
-				<div key={index} className='text-center group'>
-					<div className='relative mb-5 inline-block'>
-						<div className={[
-							'w-32 h-32 rounded-full bg-gradient-to-br flex items-center justify-center',
-							'shadow-elevated group-hover:shadow-floating transition-shadow',
-							avatarColors[index % avatarColors.length],
-						].join(' ')}>
-							<span className='text-white font-bold text-3xl'>
-								{getInitials(member.name)}
-							</span>
+		<Container size='xl'>
+			<Grid cols={1} colsMd={2} colsLg={getGridColsLg(columns)} gap='lg'>
+				{teamMembers.map((member, index) => (
+					<div key={index} className='text-center group'>
+						<div className='relative mb-5 inline-block'>
+							<div className={[
+								'w-32 h-32 rounded-full bg-gradient-to-br flex items-center justify-center',
+								'shadow-elevated group-hover:shadow-floating transition-shadow',
+								avatarColors[index % avatarColors.length],
+							].join(' ')}>
+								<span className='text-white font-bold text-3xl'>
+									{getInitials(member.name)}
+								</span>
+							</div>
+							<div className='absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-base'>
+								<span className='text-xs font-semibold text-primary'>
+									{member.role}
+								</span>
+							</div>
 						</div>
-						<div className='absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-base'>
-							<span className='text-xs font-semibold text-primary'>
-								{member.role}
-							</span>
-						</div>
+						<h3 className='text-xl font-bold text-gray-900 mt-4'>
+							{member.name}
+						</h3>
+						{showDescription && member.description && (
+							<p className='text-gray-600 text-sm mt-2 max-w-xs mx-auto'>
+								{member.description}
+							</p>
+						)}
 					</div>
-					<h3 className='text-xl font-bold text-gray-900 mt-4'>
-						{member.name}
-					</h3>
-					{showDescription && member.description && (
-						<p className='text-gray-600 text-sm mt-2 max-w-xs mx-auto'>
-							{member.description}
-						</p>
-					)}
-				</div>
-			))}
-		</div>
+				))}
+			</Grid>
+		</Container>
 	);
 }
 

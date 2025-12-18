@@ -1,9 +1,9 @@
-import type {ReactNode} from 'react';
+import type {ReactNode, HTMLAttributes} from 'react';
 
 type StackGap = 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type StackAlign = 'start' | 'center' | 'end' | 'stretch';
 
-type StackProps = {
+export type StackProps = {
 	/** Gap between items */
 	gap?: StackGap;
 	/** Horizontal alignment */
@@ -14,7 +14,7 @@ type StackProps = {
 	children: ReactNode;
 	/** HTML element to render as */
 	as?: 'div' | 'ul' | 'ol' | 'nav' | 'article' | 'section';
-};
+} & Omit<HTMLAttributes<HTMLElement>, 'className' | 'children'>;
 
 const gapClasses: Record<StackGap, string> = {
 	none: 'gap-0',
@@ -47,10 +47,11 @@ export function Stack({
 	className = '',
 	children,
 	as: Component = 'div',
+	...rest
 }: StackProps) {
 	const classes = ['flex flex-col', gapClasses[gap], alignClasses[align], className]
 		.filter(Boolean)
 		.join(' ');
 
-	return <Component className={classes}>{children}</Component>;
+	return <Component className={classes} {...rest}>{children}</Component>;
 }

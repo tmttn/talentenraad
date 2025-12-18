@@ -1,9 +1,9 @@
-import type {ReactNode} from 'react';
+import type {ReactNode, HTMLAttributes} from 'react';
 
 type GridCols = 1 | 2 | 3 | 4 | 5 | 6;
 type GridGap = 'none' | 'sm' | 'md' | 'lg' | 'xl';
 
-type GridProps = {
+export type GridProps = {
 	/** Default columns (mobile) */
 	cols?: GridCols;
 	/** Columns at sm breakpoint (640px) */
@@ -22,7 +22,7 @@ type GridProps = {
 	children: ReactNode;
 	/** HTML element to render as */
 	as?: 'div' | 'ul' | 'ol' | 'section';
-};
+} & Omit<HTMLAttributes<HTMLElement>, 'className' | 'children'>;
 
 const colClasses: Record<GridCols, string> = {
 	1: 'grid-cols-1',
@@ -97,6 +97,7 @@ export function Grid({
 	className = '',
 	children,
 	as: Component = 'div',
+	...rest
 }: GridProps) {
 	const classes = [
 		'grid',
@@ -111,5 +112,5 @@ export function Grid({
 		.filter(Boolean)
 		.join(' ');
 
-	return <Component className={classes}>{children}</Component>;
+	return <Component className={classes} {...rest}>{children}</Component>;
 }

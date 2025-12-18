@@ -8,6 +8,7 @@ import {
 	ArrowRight,
 } from 'lucide-react';
 import {linkStyles} from '@components/ui';
+import {Container, Stack, Grid} from '@components/ui/layout';
 
 const articleListClassName = [
 	'bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow group overflow-hidden',
@@ -136,14 +137,14 @@ function NewsList({
 	if (loading) {
 		return (
 			<section className='py-16 px-6' aria-busy='true' aria-label='Nieuwsberichten worden geladen'>
-				<div className='max-w-4xl mx-auto'>
+				<Container size='md'>
 					<div className='text-center'>
 						<div className='animate-pulse'>
 							<div className='h-8 bg-gray-200 rounded w-64 mx-auto mb-4' />
 							<div className='h-4 bg-gray-200 rounded w-48 mx-auto' />
 						</div>
 					</div>
-				</div>
+				</Container>
 				{/* Screen reader announcement */}
 				<div className='sr-only' role='status' aria-live='polite'>
 					{loadingMessage}
@@ -152,66 +153,97 @@ function NewsList({
 		);
 	}
 
+	const renderGridLayout = () => (
+		<Grid cols={1} colsMd={2} colsLg={3} gap='md' as='div' aria-label='Nieuwsberichten'>
+			{newsItems.map(item => (
+				<a
+					key={item.id}
+					href={`/nieuws/${generateSlug(item.data.titel)}`}
+					className={linkClassName}
+				>
+					<article className={articleGridClassName}>
+						{showImages && item.data.afbeelding && (
+							<div className='relative h-48 overflow-hidden'>
+								<img
+									src={item.data.afbeelding}
+									alt=''
+									className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-slow'
+								/>
+							</div>
+						)}
+						<div className='p-5'>
+							<div className='flex items-center gap-2 text-sm text-gray-500 mb-2'>
+								<Calendar className='h-4 w-4' aria-hidden='true' />
+								{formatDate(item.data.datum)}
+							</div>
+							<h3 className='font-bold text-gray-800 mb-2 flex items-center gap-2 group-hover:text-primary transition-colors text-lg line-clamp-2'>
+								{item.data.titel}
+								{item.data.vastgepind && (
+									<span className='text-primary flex-shrink-0' aria-label='Vastgepind'>
+										<Pin className='h-5 w-5' aria-hidden='true' />
+									</span>
+								)}
+							</h3>
+							<p className='text-gray-600 text-sm line-clamp-2'>
+								{item.data.samenvatting}
+							</p>
+							<span
+								className='animated-link inline-flex items-center gap-1 mt-3 text-primary font-semibold text-sm'
+								aria-hidden='true'
+							>
+								Lees meer
+								<ArrowRight className='h-4 w-4 animated-link-arrow' aria-hidden='true' />
+							</span>
+						</div>
+					</article>
+				</a>
+			))}
+		</Grid>
+	);
+
+	const renderListLayout = () => (
+		<Stack gap='lg' as='div' aria-label='Nieuwsberichten'>
+			{newsItems.map(item => (
+				<a
+					key={item.id}
+					href={`/nieuws/${generateSlug(item.data.titel)}`}
+					className={linkClassName}
+				>
+					<article className={articleListClassName}>
+						<div className='flex items-center gap-2 text-sm text-gray-500 mb-2'>
+							<Calendar className='h-4 w-4' aria-hidden='true' />
+							{formatDate(item.data.datum)}
+						</div>
+						<h3 className='font-bold text-gray-800 mb-2 flex items-center gap-2 group-hover:text-primary transition-colors text-xl'>
+							{item.data.titel}
+							{item.data.vastgepind && (
+								<span className='text-primary flex-shrink-0' aria-label='Vastgepind'>
+									<Pin className='h-5 w-5' aria-hidden='true' />
+								</span>
+							)}
+						</h3>
+						<p className='text-gray-600'>
+							{item.data.samenvatting}
+						</p>
+						<span
+							className='animated-link inline-flex items-center gap-1 mt-3 text-primary font-semibold text-sm'
+							aria-hidden='true'
+						>
+							Lees meer
+							<ArrowRight className='h-4 w-4 animated-link-arrow' aria-hidden='true' />
+						</span>
+					</article>
+				</a>
+			))}
+		</Stack>
+	);
+
 	return (
 		<section className='py-16 px-6'>
 			<style dangerouslySetInnerHTML={{__html: linkStyles}} />
-			<div className='max-w-4xl mx-auto'>
+			<Container size='md'>
 				{newsItems.length > 0
-					? (
-						<div
-							className={layout === 'grid' ? 'grid md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-6'}
-							role='feed'
-							aria-label='Nieuwsberichten'
-						>
-							{newsItems.map(item => (
-								<a
-									key={item.id}
-									href={`/nieuws/${generateSlug(item.data.titel)}`}
-									className={linkClassName}
-								>
-									<article className={layout === 'list' ? articleListClassName : articleGridClassName}>
-										{showImages && item.data.afbeelding && layout === 'grid' && (
-											<div className='relative h-48 overflow-hidden'>
-												<img
-													src={item.data.afbeelding}
-													alt=''
-													className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-slow'
-												/>
-											</div>
-										)}
-										<div className={layout === 'grid' ? 'p-5' : ''}>
-											<div className='flex items-center gap-2 text-sm text-gray-500 mb-2'>
-												<Calendar className='h-4 w-4' aria-hidden='true' />
-												{formatDate(item.data.datum)}
-											</div>
-											<h3 className={[
-												'font-bold text-gray-800 mb-2 flex items-center gap-2',
-												'group-hover:text-primary transition-colors',
-												layout === 'grid' ? 'text-lg line-clamp-2' : 'text-xl',
-											].join(' ')}>
-												{item.data.titel}
-												{item.data.vastgepind && (
-													<span className='text-primary flex-shrink-0' aria-label='Vastgepind'>
-														<Pin className='h-5 w-5' aria-hidden='true' />
-													</span>
-												)}
-											</h3>
-											<p className={`text-gray-600 ${layout === 'grid' ? 'text-sm line-clamp-2' : ''}`}>
-												{item.data.samenvatting}
-											</p>
-											<span
-												className='animated-link inline-flex items-center gap-1 mt-3 text-primary font-semibold text-sm'
-												aria-hidden='true'
-											>
-												Lees meer
-												<ArrowRight className='h-4 w-4 animated-link-arrow' aria-hidden='true' />
-											</span>
-										</div>
-									</article>
-								</a>
-							))}
-						</div>
-					)
+					? (layout === 'grid' ? renderGridLayout() : renderListLayout())
 					: (
 						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-modal border-2 border-dashed border-gray-200'>
 							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-subtle text-primary'>
@@ -245,7 +277,7 @@ function NewsList({
 							</div>
 						</div>
 					)}
-			</div>
+			</Container>
 		</section>
 	);
 }

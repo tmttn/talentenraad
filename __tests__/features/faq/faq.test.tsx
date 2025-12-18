@@ -1,5 +1,16 @@
+import type {ReactNode} from 'react';
 import {render, screen, waitFor, fireEvent} from '@testing-library/react';
 import {FaqInfo} from '../../../app/features/faq/faq';
+
+// Mock the layout components
+jest.mock('@components/ui/layout', () => ({
+	Container: ({children, className}: {children: ReactNode; className?: string}) => (
+		<div className={`container ${className ?? ''}`}>{children}</div>
+	),
+	Stack: ({children, className, gap, as: Component = 'div', ...rest}: {children: ReactNode; className?: string; gap?: string; as?: string; [key: string]: unknown}) => (
+		<Component className={`flex flex-col gap-${gap ?? 'md'} ${className ?? ''}`} {...rest}>{children}</Component>
+	),
+}));
 
 const FAQ = FaqInfo.component;
 
@@ -292,7 +303,8 @@ describe('FAQ', () => {
 			expect(screen.getByText('Question?')).toBeInTheDocument();
 		});
 
-		const accordion = container.querySelector('[role="region"][aria-label="Veelgestelde vragen accordeon"]');
+		// Stack renders with role="group" and aria-label for the accordion container
+		const accordion = container.querySelector('[role="group"][aria-label="Veelgestelde vragen accordeon"]');
 		expect(accordion).toBeInTheDocument();
 
 		const button = screen.getByRole('button');

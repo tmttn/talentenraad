@@ -1,3 +1,4 @@
+import type {ReactNode} from 'react';
 import {render, screen, waitFor} from '@testing-library/react';
 import {NewsListInfo} from '../../../app/features/news/news-list';
 
@@ -10,6 +11,19 @@ jest.mock('../../../app/components/ui', () => ({
 	ArrowRightIcon: () => <svg data-testid='icon-arrow-right' />,
 	FacebookIcon: () => <svg data-testid='icon-facebook' />,
 	InstagramIcon: () => <svg data-testid='icon-instagram' />,
+}));
+
+// Mock the layout components
+jest.mock('@components/ui/layout', () => ({
+	Container: ({children, className}: {children: React.ReactNode; className?: string}) => (
+		<div className={`container ${className ?? ''}`}>{children}</div>
+	),
+	Stack: ({children, className, gap, as: Component = 'div', ...rest}: {children: React.ReactNode; className?: string; gap?: string; as?: string; [key: string]: unknown}) => (
+		<Component className={`flex flex-col gap-${gap ?? 'md'} ${className ?? ''}`} {...rest}>{children}</Component>
+	),
+	Grid: ({children, className, cols, colsMd, colsLg, gap, as: Component = 'div', ...rest}: {children: React.ReactNode; className?: string; cols?: number; colsMd?: number; colsLg?: number; gap?: string; as?: string; [key: string]: unknown}) => (
+		<Component className={`grid grid-cols-${cols ?? 1} gap-${gap ?? 'md'} ${className ?? ''}`} {...rest}>{children}</Component>
+	),
 }));
 
 const NewsList = NewsListInfo.component;
@@ -149,8 +163,9 @@ describe('NewsList', () => {
 			const {container} = render(<NewsList />);
 
 			await waitFor(() => {
-				const feed = container.querySelector('[role="feed"]');
-				expect(feed).toHaveClass('space-y-6');
+				// List layout uses Stack component (flex-col layout)
+				const feed = container.querySelector('[aria-label="Nieuwsberichten"]');
+				expect(feed).toHaveClass('flex', 'flex-col');
 			});
 		});
 
@@ -165,7 +180,8 @@ describe('NewsList', () => {
 			const {container} = render(<NewsList layout='grid' />);
 
 			await waitFor(() => {
-				const feed = container.querySelector('[role="feed"]');
+				// Grid layout uses Grid component
+				const feed = container.querySelector('[aria-label="Nieuwsberichten"]');
 				expect(feed).toHaveClass('grid');
 			});
 		});
