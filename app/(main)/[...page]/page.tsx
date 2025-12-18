@@ -19,8 +19,9 @@ import {
 // eslint-disable-next-line import-x/extensions
 } from '../../lib/seo';
 
-// Enable ISR with fast revalidation for quick content updates
-export const revalidate = 5;
+// Force dynamic rendering to ensure proper 404 status codes
+// ISR (revalidate) was causing issues with notFound() on Vercel
+export const dynamic = 'force-dynamic';
 
 type PageProperties = {
 	params: Promise<{page: string[]}>;

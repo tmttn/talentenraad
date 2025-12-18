@@ -144,9 +144,9 @@ describe('[...page] without API key', () => {
 	});
 });
 
-describe('[...page] revalidate export', () => {
-	it('exports ISR revalidate setting', async () => {
-		const {revalidate} = await import('../../../app/(main)/[...page]/page');
-		expect(revalidate).toBe(5);
+describe('[...page] dynamic export', () => {
+	it('exports force-dynamic setting', async () => {
+		const {dynamic} = await import('../../../app/(main)/[...page]/page');
+		expect(dynamic).toBe('force-dynamic');
 	});
 });
