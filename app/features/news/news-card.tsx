@@ -13,6 +13,14 @@ type NewsCardProperties = {
 	link?: string;
 };
 
+/**
+ * NewsCard component using design tokens
+ * - Border radius: rounded-card
+ * - Shadow: shadow-base → hover:shadow-floating
+ * - Transition: duration-slow (300ms)
+ * - Padding: p-component-md (24px)
+ * - Gap: gap-gap-xs (8px)
+ */
 function NewsCard({
 	title,
 	date,
@@ -24,28 +32,28 @@ function NewsCard({
 	const content = (
 		<>
 			<style dangerouslySetInnerHTML={{__html: linkStyles}} />
-			<article className='group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden'>
+			<article className='group bg-white rounded-card shadow-base hover:shadow-floating transition-all duration-slow overflow-hidden'>
 				{image && (
 					<div className='relative h-52 overflow-hidden'>
 						<Image
 							src={image}
 							alt={title}
 							fill
-							className='object-cover group-hover:scale-105 transition-transform duration-300'
+							className='object-cover group-hover:scale-105 transition-transform duration-slow'
 						/>
 						{category && (
-							<span className='absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full'>
+							<span className='absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-badge'>
 								{category}
 							</span>
 						)}
 					</div>
 				)}
-				<div className='p-6'>
-					<time className='text-sm text-gray-500 flex items-center gap-2'>
+				<div className='p-component-md'>
+					<time className='text-sm text-gray-500 flex items-center gap-gap-xs'>
 						<Clock className='h-4 w-4' aria-hidden='true' />
 						{date}
 					</time>
-					<h3 className='text-xl font-bold text-gray-800 mt-2 group-hover:text-primary transition-colors'>
+					<h3 className='text-xl font-bold text-gray-800 mt-2 group-hover:text-primary transition-colors duration-fast'>
 						{title}
 					</h3>
 					{excerpt && (
@@ -66,7 +74,7 @@ function NewsCard({
 		return (
 			<a
 				href={link}
-				className='block focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 rounded-2xl'
+				className='block focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 rounded-card'
 				aria-label={`${title} - Lees meer`}
 			>
 				{content}

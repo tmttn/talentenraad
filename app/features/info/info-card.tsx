@@ -81,12 +81,22 @@ const variantStyles = {
 	},
 };
 
+/**
+ * Card base styles using design tokens
+ * - Padding: p-component-lg (32px)
+ * - Shadow: shadow-base → hover:shadow-floating
+ * - Transition: duration-slow (300ms)
+ */
 const cardBaseClassName = [
-	'p-8 shadow-md hover:shadow-xl transition-all duration-300',
-	'text-center group relative overflow-hidden',
+	'p-component-lg shadow-base hover:shadow-floating transition-all duration-slow',
+	'rounded-card text-center group relative overflow-hidden',
 ].join(' ');
 
-const iconContainerBase = 'inline-flex items-center justify-center w-16 h-16 rounded-full mb-6 transition-all duration-300';
+/**
+ * Icon container using design tokens
+ * - Transition: duration-slow (300ms)
+ */
+const iconContainerBase = 'inline-flex items-center justify-center w-16 h-16 rounded-full mb-6 transition-all duration-slow';
 
 function InfoCard({
 	title,
