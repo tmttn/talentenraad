@@ -121,7 +121,7 @@ describe('CtaButton', () => {
 		it('has rounded corners', () => {
 			render(<CtaButton />);
 			const link = screen.getByRole('link');
-			expect(link).toHaveClass('rounded-lg');
+			expect(link).toHaveClass('rounded-button');
 		});
 
 		it('has focus ring styles', () => {

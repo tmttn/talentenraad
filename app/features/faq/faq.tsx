@@ -11,12 +11,15 @@ const faqButtonClassName = [
 	'focus-visible:ring-focus focus-visible:ring-offset-2',
 ].join(' ');
 
-// CSS for smooth height animation using CSS Grid trick
+/**
+ * CSS for smooth height animation using CSS Grid trick
+ * Uses design token variables for transitions
+ */
 const faqStyles = `
 	.faq-content-wrapper {
 		display: grid;
 		grid-template-rows: 0fr;
-		transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: grid-template-rows var(--duration-slow) var(--easing-smooth);
 	}
 
 	.faq-content-wrapper.open {
@@ -30,7 +33,7 @@ const faqStyles = `
 	.faq-content-text {
 		opacity: 0;
 		transform: translateY(-8px);
-		transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+		transition: opacity var(--duration-fast) ease-out, transform var(--duration-fast) ease-out;
 	}
 
 	.faq-content-wrapper.open .faq-content-text {
@@ -42,7 +45,7 @@ const faqStyles = `
 	.faq-item {
 		opacity: 0;
 		transform: translateY(16px);
-		animation: faq-item-enter 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+		animation: faq-item-enter 0.4s var(--easing-smooth) forwards;
 	}
 
 	@keyframes faq-item-enter {
@@ -53,7 +56,7 @@ const faqStyles = `
 	}
 
 	.faq-chevron {
-		transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: transform var(--duration-slow) var(--easing-smooth);
 	}
 
 	.faq-chevron.open {
@@ -200,7 +203,7 @@ function Faq() {
 
 	if (faqs.length === 0) {
 		return (
-			<div className='max-w-4xl mx-auto px-6 text-center py-16 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-dashed border-gray-200'>
+			<div className='max-w-4xl mx-auto px-6 text-center py-section-sm bg-gradient-to-br from-white to-gray-50 rounded-modal border-2 border-dashed border-gray-200'>
 				<div className='w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center'>
 					<HelpCircle className='h-10 w-10 text-primary' aria-hidden='true' />
 				</div>
@@ -228,7 +231,7 @@ function Faq() {
 				{faqs.map((faq, index) => (
 					<div
 						key={faq.id}
-						className='faq-item bg-white rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow'
+						className='faq-item bg-white rounded-card shadow-subtle overflow-hidden hover:shadow-base transition-shadow duration-base'
 						style={{animationDelay: `${index * 0.08}s`}}
 					>
 						<button

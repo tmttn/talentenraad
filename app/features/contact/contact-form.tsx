@@ -10,9 +10,15 @@ import {useSearchParams} from 'next/navigation';
 import {CheckCircle, XCircle, Send, Loader2} from 'lucide-react';
 import {useRecaptcha} from './use-recaptcha';
 
+/**
+ * Submit button using design tokens
+ * - Border radius: rounded-card
+ * - Transition: duration-fast
+ * - Gap: gap-gap-xs
+ */
 const submitButtonClassName = [
-	'w-full py-4 px-6 bg-primary-hover hover:bg-brand-primary-700 text-white font-semibold rounded-xl',
-	'transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2',
+	'w-full py-4 px-6 bg-primary-hover hover:bg-brand-primary-700 text-white font-semibold rounded-card',
+	'transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-gap-xs',
 	'focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2',
 ].join(' ');
 
@@ -44,13 +50,17 @@ type ApiResponse = {
 	errors?: FormErrors;
 };
 
-// Shared input styles for accessibility - improved contrast
+/**
+ * Shared input styles using design tokens
+ * - Border radius: rounded-button
+ * - Transition: duration-fast
+ */
 const inputBaseStyles = `
 	w-full px-4 py-3
-	border-2 border-gray-400 rounded-lg
+	border-2 border-gray-400 rounded-button
 	bg-white text-gray-900
 	placeholder:text-gray-500
-	transition-colors duration-200
+	transition-colors duration-fast
 	focus:border-primary-hover focus:ring-2 focus:ring-primary/30 focus:outline-none
 	focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-hover
 	hover:border-gray-500
@@ -191,12 +201,12 @@ const subjectOptions = [
 
 const validSubjectValues = new Set(['vraag', 'activiteit', 'lidmaatschap', 'sponsoring', 'anders']);
 
-// Extracted component for success message
+// Extracted component for success message - uses rounded-modal, p-component-lg tokens
 function SuccessMessage() {
 	return (
-		<section className='py-16 px-6 bg-gray-50'>
+		<section className='py-section-sm px-6 bg-gray-50'>
 			<div className='max-w-2xl mx-auto text-center'>
-				<div className='bg-success-600 text-white p-8 rounded-2xl' role='alert'>
+				<div className='bg-success-600 text-white p-component-lg rounded-modal' role='alert'>
 					<CheckCircle className='h-16 w-16 mx-auto mb-4' aria-hidden='true' />
 					<h3 className='text-2xl font-bold mb-2'>Bedankt voor uw bericht!</h3>
 					<p>We nemen zo snel mogelijk contact met u op.</p>
@@ -206,10 +216,10 @@ function SuccessMessage() {
 	);
 }
 
-// Extracted component for general error message
+// Extracted component for general error message - uses rounded-button token
 function GeneralErrorMessage({message}: {message: string}) {
 	return (
-		<div className='mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-lg' role='alert'>
+		<div className='mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-button' role='alert'>
 			<p className='text-red-800 font-medium flex items-center gap-2'>
 				<XCircle className='h-5 w-5' aria-hidden='true' />
 				{message}
@@ -379,7 +389,7 @@ function ContactFormInner({
 
 			{errors.general && <GeneralErrorMessage message={errors.general} />}
 
-			<form onSubmit={handleSubmit} className='bg-white p-8 rounded-2xl shadow-lg' noValidate>
+			<form onSubmit={handleSubmit} className='bg-white p-component-lg rounded-modal shadow-elevated' noValidate>
 				<div className='grid md:grid-cols-2 gap-6'>
 					<TextField
 						id='name'
@@ -439,30 +449,30 @@ function ContactFormInner({
 	);
 }
 
-// Loading skeleton for Suspense fallback
+// Loading skeleton for Suspense fallback - uses rounded-modal, shadow-elevated, p-component-lg tokens
 function ContactFormSkeleton() {
 	return (
-		<div className='bg-white p-8 rounded-2xl shadow-lg animate-pulse'>
+		<div className='bg-white p-component-lg rounded-modal shadow-elevated animate-pulse'>
 			<div className='grid md:grid-cols-2 gap-6'>
 				<div>
 					<div className='h-4 w-16 bg-gray-200 rounded mb-2' />
-					<div className='h-12 bg-gray-200 rounded-lg' />
+					<div className='h-12 bg-gray-200 rounded-button' />
 				</div>
 				<div>
 					<div className='h-4 w-16 bg-gray-200 rounded mb-2' />
-					<div className='h-12 bg-gray-200 rounded-lg' />
+					<div className='h-12 bg-gray-200 rounded-button' />
 				</div>
 			</div>
 			<div className='mt-6'>
 				<div className='h-4 w-24 bg-gray-200 rounded mb-2' />
-				<div className='h-12 bg-gray-200 rounded-lg' />
+				<div className='h-12 bg-gray-200 rounded-button' />
 			</div>
 			<div className='mt-6'>
 				<div className='h-4 w-16 bg-gray-200 rounded mb-2' />
-				<div className='h-32 bg-gray-200 rounded-lg' />
+				<div className='h-32 bg-gray-200 rounded-button' />
 			</div>
 			<div className='mt-8'>
-				<div className='h-14 bg-gray-200 rounded-xl' />
+				<div className='h-14 bg-gray-200 rounded-card' />
 			</div>
 		</div>
 	);

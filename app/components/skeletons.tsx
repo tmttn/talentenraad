@@ -32,10 +32,10 @@ export function PageHeaderSkeleton({showButton = true}: {showButton?: boolean}) 
 	);
 }
 
-// Table with configurable row count
+// Table with configurable row count - uses rounded-card, shadow-base tokens
 export function TableSkeleton({rows = 5}: {rows?: number}) {
 	return (
-		<div className='bg-white rounded-xl shadow-md overflow-hidden animate-pulse'>
+		<div className='bg-white rounded-card shadow-base overflow-hidden animate-pulse'>
 			{/* Search/filter bar */}
 			<div className='p-4 border-b border-gray-200 flex flex-wrap gap-4'>
 				<div className='h-10 bg-gray-200 rounded w-64' />
@@ -59,12 +59,12 @@ export function TableSkeleton({rows = 5}: {rows?: number}) {
 	);
 }
 
-// Grid of cards
+// Grid of cards - uses rounded-card, shadow-base tokens
 export function CardGridSkeleton({cards = 3}: {cards?: number}) {
 	return (
 		<div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate-pulse'>
 			{Array.from({length: cards}).map((_, index) => (
-				<div key={index} className='bg-white rounded-xl shadow-md p-5'>
+				<div key={index} className='bg-white rounded-card shadow-base p-5'>
 					<div className='h-5 bg-gray-200 rounded w-3/4 mb-3' />
 					<div className='h-4 bg-gray-200 rounded w-1/2 mb-4' />
 					<div className='flex gap-2'>
@@ -77,10 +77,10 @@ export function CardGridSkeleton({cards = 3}: {cards?: number}) {
 	);
 }
 
-// Form fields
+// Form fields - uses rounded-card, shadow-base, p-component-md tokens
 export function FormSkeleton({fields = 5}: {fields?: number}) {
 	return (
-		<div className='bg-white rounded-xl shadow-md p-6 max-w-2xl animate-pulse'>
+		<div className='bg-white rounded-card shadow-base p-component-md max-w-2xl animate-pulse'>
 			<div className='space-y-6'>
 				{Array.from({length: fields}).map((_, index) => (
 					<div key={index}>
@@ -103,12 +103,12 @@ export function FormSkeleton({fields = 5}: {fields?: number}) {
 	);
 }
 
-// Dashboard statistics cards
+// Dashboard statistics cards - uses rounded-card, shadow-base tokens
 export function StatsCardsSkeleton({count = 4}: {count?: number}) {
 	return (
 		<div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 animate-pulse'>
 			{Array.from({length: count}).map((_, index) => (
-				<div key={index} className='bg-white p-4 sm:p-5 rounded-xl shadow-md'>
+				<div key={index} className='bg-white p-4 sm:p-5 rounded-card shadow-base'>
 					<div className='flex items-center justify-between mb-2'>
 						<div className='w-5 h-5 bg-gray-200 rounded' />
 						<div className='h-4 bg-gray-200 rounded w-12' />
@@ -121,10 +121,10 @@ export function StatsCardsSkeleton({count = 4}: {count?: number}) {
 	);
 }
 
-// Content list (for dashboard sections)
+// Content list (for dashboard sections) - uses rounded-card, shadow-base tokens
 export function ContentListSkeleton({items = 3}: {items?: number}) {
 	return (
-		<div className='bg-white rounded-xl shadow-md overflow-hidden animate-pulse'>
+		<div className='bg-white rounded-card shadow-base overflow-hidden animate-pulse'>
 			<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
 				<div className='h-5 bg-gray-200 rounded w-40' />
 				<div className='h-4 bg-gray-200 rounded w-24' />
@@ -146,14 +146,14 @@ export function ContentListSkeleton({items = 3}: {items?: number}) {
 	);
 }
 
-// Back link + detail content
+// Back link + detail content - uses rounded-card, shadow-base, p-component-md tokens
 export function DetailPageSkeleton() {
 	return (
 		<div className='animate-pulse'>
 			{/* Back link */}
 			<div className='h-5 bg-gray-200 rounded w-32 mb-6' />
 			{/* Content card */}
-			<div className='bg-white rounded-xl shadow-md p-6'>
+			<div className='bg-white rounded-card shadow-base p-component-md'>
 				<div className='h-7 bg-gray-200 rounded w-2/3 mb-4' />
 				<div className='space-y-3'>
 					<div className='h-4 bg-gray-200 rounded w-full' />
@@ -197,10 +197,10 @@ export function HeroSkeleton({size = 'medium'}: {size?: 'compact' | 'small' | 'm
 	);
 }
 
-// InfoCard skeleton - matches centered card with icon, title, description
+// InfoCard skeleton - uses rounded-card, shadow-base, p-component-lg tokens
 export function InfoCardSkeleton() {
 	return (
-		<div className='p-8 bg-white shadow-md text-center animate-pulse'>
+		<div className='p-component-lg bg-white rounded-card shadow-base text-center animate-pulse'>
 			{/* Icon circle */}
 			<div className='w-16 h-16 bg-gray-200 rounded-full mx-auto mb-6' />
 			{/* Title */}
@@ -231,14 +231,14 @@ export function InfoCardGridSkeleton({cards = 3}: {cards?: number}) {
 	);
 }
 
-// HomepageDashboard skeleton - matches 2-column layout with colored headers
+// HomepageDashboard skeleton - uses rounded-modal, shadow-subtle tokens
 export function HomepageDashboardSkeleton() {
 	return (
-		<section className='py-12 px-6 bg-gray-50' aria-busy='true' aria-label='Dashboard wordt geladen'>
+		<section className='py-section-sm px-6 bg-gray-50' aria-busy='true' aria-label='Dashboard wordt geladen'>
 			<div className='max-w-6xl mx-auto'>
 				<div className='grid md:grid-cols-2 gap-6 animate-pulse'>
 					{/* Activiteiten card */}
-					<div className='bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col'>
+					<div className='bg-white rounded-modal shadow-subtle overflow-hidden flex flex-col'>
 						<div className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 px-6 py-3'>
 							<div className='h-5 bg-white/30 rounded w-40' />
 						</div>
@@ -262,7 +262,7 @@ export function HomepageDashboardSkeleton() {
 					</div>
 
 					{/* Nieuws card */}
-					<div className='bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col'>
+					<div className='bg-white rounded-modal shadow-subtle overflow-hidden flex flex-col'>
 						<div className='bg-gradient-to-r from-brand-secondary-400 to-brand-secondary-500 px-6 py-3'>
 							<div className='h-5 bg-white/30 rounded w-32' />
 						</div>
@@ -287,17 +287,17 @@ export function HomepageDashboardSkeleton() {
 	);
 }
 
-// Generic section skeleton for Builder pages
+// Generic section skeleton for Builder pages - uses rounded-card, shadow-base, p-component-lg tokens
 export function SectionsSkeleton({count = 2}: {count?: number}) {
 	return (
 		<div className='space-y-12 py-8 animate-pulse'>
 			{Array.from({length: count}).map((_, index) => (
-				<div key={index} className='py-12 px-6'>
+				<div key={index} className='py-section-sm px-6'>
 					<div className='max-w-6xl mx-auto'>
 						{/* Section could be InfoCards, text, or other content */}
 						<div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
 							{[1, 2, 3].map(i => (
-								<div key={i} className='p-8 bg-white shadow-md text-center'>
+								<div key={i} className='p-component-lg bg-white rounded-card shadow-base text-center'>
 									<div className='w-16 h-16 bg-gray-200 rounded-full mx-auto mb-6' />
 									<div className='h-6 bg-gray-200 rounded w-2/3 mx-auto mb-3' />
 									<div className='h-4 bg-gray-200 rounded w-full mb-2' />
@@ -312,11 +312,11 @@ export function SectionsSkeleton({count = 2}: {count?: number}) {
 	);
 }
 
-// Article/News detail page
+// Article/News detail page - uses rounded-card token
 export function ArticleSkeleton() {
 	return (
 		<SkeletonWrapper label='Artikel wordt geladen'>
-			<div className='py-16 px-6 animate-pulse'>
+			<div className='py-section-sm px-6 animate-pulse'>
 				<article className='max-w-3xl mx-auto'>
 					{/* Header */}
 					<div className='h-10 bg-gray-200 rounded w-3/4 mb-4' />
@@ -325,7 +325,7 @@ export function ArticleSkeleton() {
 						<div className='h-4 bg-gray-200 rounded w-24' />
 					</div>
 					{/* Featured image */}
-					<div className='h-64 bg-gray-200 rounded-xl mb-8' />
+					<div className='h-64 bg-gray-200 rounded-card mb-8' />
 					{/* Content */}
 					<div className='space-y-4'>
 						<div className='h-4 bg-gray-200 rounded w-full' />
@@ -340,11 +340,11 @@ export function ArticleSkeleton() {
 	);
 }
 
-// Activity detail page
+// Activity detail page - uses rounded-card token
 export function ActivityDetailSkeleton() {
 	return (
 		<SkeletonWrapper label='Activiteit wordt geladen'>
-			<div className='py-16 px-6 animate-pulse'>
+			<div className='py-section-sm px-6 animate-pulse'>
 				<div className='max-w-4xl mx-auto'>
 					{/* Header */}
 					<div className='h-10 bg-gray-200 rounded w-2/3 mb-4' />
@@ -355,7 +355,7 @@ export function ActivityDetailSkeleton() {
 						<div className='h-6 bg-gray-200 rounded w-40' />
 					</div>
 					{/* Image */}
-					<div className='h-80 bg-gray-200 rounded-xl mb-8' />
+					<div className='h-80 bg-gray-200 rounded-card mb-8' />
 					{/* Content */}
 					<div className='space-y-4'>
 						<div className='h-4 bg-gray-200 rounded w-full' />
@@ -389,12 +389,12 @@ export function SubmissionsPageSkeleton() {
 	);
 }
 
-// Settings/Decorations page
+// Settings/Decorations page - uses rounded-card, shadow-base, p-component-md tokens
 export function SettingsSkeleton() {
 	return (
 		<div className='animate-pulse'>
 			<PageHeaderSkeleton showButton={false} />
-			<div className='bg-white rounded-xl shadow-md p-6 max-w-xl'>
+			<div className='bg-white rounded-card shadow-base p-component-md max-w-xl'>
 				<div className='space-y-6'>
 					{/* Toggle */}
 					<div className='flex items-center justify-between'>

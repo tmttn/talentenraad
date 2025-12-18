@@ -106,7 +106,7 @@ describe('PhotoGallery', () => {
 			const {container} = render(<PhotoGallery folderPath='test-folder' gap='lg' />);
 
 			await waitFor(() => {
-				expect(container.querySelector('.gap-6')).toBeInTheDocument();
+				expect(container.querySelector('.gap-gap-md')).toBeInTheDocument();
 			});
 		});
 

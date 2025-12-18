@@ -13,9 +13,9 @@ export function CookieBanner() {
 
 	return (
 		<div className='fixed inset-x-0 bottom-0 z-50 p-4' role='dialog' aria-modal='true' aria-labelledby='cookie-banner-title'>
-			{/* Banner */}
-			<div className='mx-auto max-w-4xl bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden'>
-				<div className='p-6'>
+			{/* Banner - uses rounded-modal, shadow-overlay, p-component-md tokens */}
+			<div className='mx-auto max-w-4xl bg-white rounded-modal shadow-overlay border border-gray-200 overflow-hidden'>
+				<div className='p-component-md'>
 					<div className='flex flex-col md:flex-row md:items-center gap-4'>
 						{/* Cookie icon and text */}
 						<div className='flex-1'>
@@ -42,14 +42,14 @@ export function CookieBanner() {
 							<button
 								type='button'
 								onClick={rejectAll}
-								className='py-2.5 px-5 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 text-sm'
+								className='py-2.5 px-5 bg-gray-100 text-gray-700 font-medium rounded-card hover:bg-gray-200 transition-colors duration-fast focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 text-sm'
 							>
 								Weigeren
 							</button>
 							<button
 								type='button'
 								onClick={acceptAll}
-								className='py-2.5 px-5 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-sm'
+								className='py-2.5 px-5 bg-primary text-white font-medium rounded-card hover:bg-primary-hover transition-colors duration-fast focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-sm'
 							>
 								Accepteren
 							</button>

@@ -48,19 +48,19 @@ describe('DateBadge', () => {
 		it('applies md size by default', () => {
 			const {container} = render(<DateBadge date='2025-03-15' />);
 			const badge = container.firstChild;
-			expect(badge).toHaveClass('w-16', 'h-16', 'rounded-xl');
+			expect(badge).toHaveClass('w-16', 'h-16', 'rounded-card');
 		});
 
 		it('applies sm size', () => {
 			const {container} = render(<DateBadge date='2025-03-15' size='sm' />);
 			const badge = container.firstChild;
-			expect(badge).toHaveClass('w-12', 'h-12', 'rounded-lg');
+			expect(badge).toHaveClass('w-12', 'h-12', 'rounded-button');
 		});
 
 		it('applies lg size', () => {
 			const {container} = render(<DateBadge date='2025-03-15' size='lg' />);
 			const badge = container.firstChild;
-			expect(badge).toHaveClass('w-20', 'h-20', 'rounded-2xl');
+			expect(badge).toHaveClass('w-20', 'h-20', 'rounded-modal');
 		});
 	});
 

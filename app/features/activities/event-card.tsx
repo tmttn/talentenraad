@@ -22,8 +22,9 @@ function EventCard({
 	image,
 	link,
 }: Readonly<EventCardProperties>) {
+	// Uses shadow-floating → shadow-overlay, duration-slow tokens
 	const content = (
-		<div className='card bg-white shadow-xl hover:shadow-2xl transition-shadow duration-300 overflow-hidden'>
+		<div className='card bg-white rounded-card shadow-floating hover:shadow-overlay transition-shadow duration-slow overflow-hidden'>
 			{image && (
 				<figure className='relative h-48'>
 					<Image
@@ -70,7 +71,7 @@ function EventCard({
 		return (
 			<a
 				href={link}
-				className='block focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 rounded-2xl'
+				className='block focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 rounded-card'
 				aria-label={`${title} - Meer info`}
 			>
 				{content}

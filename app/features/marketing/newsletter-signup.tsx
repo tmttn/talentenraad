@@ -6,15 +6,20 @@ type NewsletterSignupProperties = {
 	buttonText?: string;
 };
 
+/**
+ * Input and button styles using design tokens
+ * - Border radius: rounded-button
+ * - Transition: duration-fast
+ */
 const inputClassName = [
-	'w-full px-4 py-3 rounded-lg border border-gray-300',
+	'w-full px-4 py-3 rounded-button border border-gray-300',
 	'focus:outline-none focus:ring-2 focus:ring-focus focus:border-transparent',
 	'disabled:bg-gray-100 disabled:cursor-not-allowed',
 ].join(' ');
 
 const buttonClassName = [
-	'px-6 py-3 bg-primary text-white font-semibold rounded-lg',
-	'hover:bg-primary-hover transition-colors',
+	'px-6 py-3 bg-primary text-white font-semibold rounded-button',
+	'hover:bg-primary-hover transition-colors duration-fast',
 	'focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2',
 	'disabled:opacity-50 disabled:cursor-not-allowed',
 ].join(' ');

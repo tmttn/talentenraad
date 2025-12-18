@@ -2,14 +2,17 @@
 
 import {ArrowRight} from 'lucide-react';
 
-// CSS for button arrow animations
+/**
+ * CSS for button arrow animations using design tokens
+ * - Transition: duration-base (200ms)
+ */
 const buttonStyles = `
 	.cta-button {
-		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: all var(--duration-base) var(--easing-smooth);
 	}
 
 	.cta-button-arrow {
-		transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: transform var(--duration-base) var(--easing-smooth);
 	}
 
 	.cta-button:hover .cta-button-arrow {
@@ -25,17 +28,25 @@ type CtaButtonProperties = {
 	showArrow?: boolean;
 };
 
+/**
+ * Variant styles using design tokens
+ * - Shadow: shadow-elevated on hover
+ */
 const variantStyles = {
-	primary: 'bg-primary text-white hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/25 focus:ring-primary border border-transparent',
+	primary: 'bg-primary text-white hover:bg-primary-hover hover:shadow-elevated hover:shadow-primary/25 focus:ring-primary border border-transparent',
 	secondary: 'bg-white/10 text-white hover:bg-white/20 border border-white/20 focus:ring-white',
 	outline: 'bg-transparent border-2 border-white text-white hover:bg-white/10 focus:ring-white',
 	white: 'bg-white text-gray-900 hover:bg-gray-100 focus:ring-white border border-transparent',
 };
 
+/**
+ * Size styles using design tokens
+ * - Gap: gap-gap-xs (sm/md), gap-gap-sm (lg)
+ */
 const sizeStyles = {
-	sm: 'py-2 px-4 text-sm gap-2',
-	md: 'py-3 px-6 text-base gap-2',
-	lg: 'py-4 px-8 text-lg gap-3',
+	sm: 'py-2 px-4 text-sm gap-gap-xs',
+	md: 'py-3 px-6 text-base gap-gap-xs',
+	lg: 'py-4 px-8 text-lg gap-gap-sm',
 };
 
 const arrowSizes = {
@@ -51,7 +62,8 @@ export function CtaButton({
 	size = 'md',
 	showArrow = true,
 }: Readonly<CtaButtonProperties>) {
-	const baseClasses = `cta-button inline-flex items-center justify-center font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantStyles[variant]} ${sizeStyles[size]}`;
+	// Uses rounded-button token for consistent border radius
+	const baseClasses = `cta-button inline-flex items-center justify-center font-semibold rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantStyles[variant]} ${sizeStyles[size]}`;
 
 	return (
 		<>

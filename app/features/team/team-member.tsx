@@ -38,8 +38,9 @@ function TeamMember({
 	const getRoleColor = (memberRole: string) => roleColors[memberRole] || roleColors.default;
 
 	if (variant === 'compact') {
+		// Uses rounded-card, shadow-subtle → shadow-base tokens
 		return (
-			<div className='flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow'>
+			<div className='flex items-center gap-4 p-4 bg-white rounded-card shadow-subtle hover:shadow-base transition-shadow duration-base'>
 				<div className='relative w-14 h-14 flex-shrink-0'>
 					{image
 						? (
@@ -67,8 +68,9 @@ function TeamMember({
 	}
 
 	if (variant === 'horizontal') {
+		// Uses rounded-modal, shadow-base → shadow-elevated, p-component-md tokens
 		return (
-			<div className='flex flex-col md:flex-row items-center gap-6 p-6 bg-white rounded-2xl shadow-md hover:shadow-lg transition-shadow'>
+			<div className='flex flex-col md:flex-row items-center gap-6 p-component-md bg-white rounded-modal shadow-base hover:shadow-elevated transition-shadow duration-base'>
 				<div className='relative w-32 h-32 flex-shrink-0'>
 					{image
 						? (
@@ -76,11 +78,11 @@ function TeamMember({
 								src={image}
 								alt={name}
 								fill
-								className='object-cover rounded-2xl'
+								className='object-cover rounded-modal'
 							/>
 						)
 						: (
-							<div className='w-full h-full rounded-2xl bg-gradient-to-br from-brand-primary-500 to-brand-accent-400 flex items-center justify-center'>
+							<div className='w-full h-full rounded-modal bg-gradient-to-br from-brand-primary-500 to-brand-accent-400 flex items-center justify-center'>
 								<span className='text-white font-bold text-3xl'>{getInitials(name)}</span>
 							</div>
 						)}
@@ -107,9 +109,9 @@ function TeamMember({
 		);
 	}
 
-	// Default card variant
+	// Default card variant - uses rounded-modal, shadow-base → shadow-floating, duration-slow tokens
 	return (
-		<div className='group bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden'>
+		<div className='group bg-white rounded-modal shadow-base hover:shadow-floating transition-all duration-slow overflow-hidden'>
 			<div className='relative h-48 bg-gradient-to-br from-brand-primary-500 via-brand-primary-600 to-brand-accent-400 overflow-hidden'>
 				{/* Decorative circles */}
 				<div className='absolute top-0 right-0 w-24 h-24 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2' />
@@ -121,7 +123,7 @@ function TeamMember({
 							src={image}
 							alt={name}
 							fill
-							className='object-cover group-hover:scale-105 transition-transform duration-300'
+							className='object-cover group-hover:scale-105 transition-transform duration-slow'
 						/>
 					)
 					: (
@@ -132,7 +134,7 @@ function TeamMember({
 						</div>
 					)}
 			</div>
-			<div className='p-6 text-center'>
+			<div className='p-component-md text-center'>
 				<span className={`inline-block text-sm px-3 py-1 rounded-full mb-3 ${getRoleColor(role)}`}>
 					{role}
 				</span>
@@ -143,7 +145,7 @@ function TeamMember({
 				{email && (
 					<a
 						href={`mailto:${email}`}
-						className='inline-flex items-center gap-2 mt-4 text-gray-500 hover:text-primary transition-colors text-sm'
+						className='inline-flex items-center gap-2 mt-4 text-gray-500 hover:text-primary transition-colors duration-fast text-sm'
 					>
 						<Mail className='h-4 w-4' aria-hidden='true' />
 						{email}

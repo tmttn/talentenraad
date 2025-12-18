@@ -54,10 +54,13 @@ type PhotoGalleryProperties = {
 	hoverEffect?: 'none' | 'zoom' | 'fade' | 'slide';
 };
 
+/**
+ * Gap classes using design tokens
+ */
 const gapClasses: Record<string, string> = {
-	sm: 'gap-2',
-	md: 'gap-4',
-	lg: 'gap-6',
+	sm: 'gap-gap-xs',
+	md: 'gap-gap-sm',
+	lg: 'gap-gap-md',
 };
 
 const columnClasses: Record<string, string> = {
@@ -182,7 +185,7 @@ function Lightbox({
 						<button
 							type='button'
 							onClick={onToggleZoom}
-							className='p-2 hover:bg-white/10 rounded-lg transition-colors'
+							className='p-2 hover:bg-white/10 rounded-button transition-colors duration-fast'
 							aria-label={isZoomed ? 'Uitzoomen' : 'Inzoomen'}
 						>
 							{isZoomed
@@ -195,7 +198,7 @@ function Lightbox({
 						<button
 							type='button'
 							onClick={handleDownload}
-							className='p-2 hover:bg-white/10 rounded-lg transition-colors'
+							className='p-2 hover:bg-white/10 rounded-button transition-colors duration-fast'
 							aria-label='Download afbeelding'
 						>
 							<Download className='w-5 h-5' strokeWidth={1.5} />
@@ -205,7 +208,7 @@ function Lightbox({
 					<button
 						type='button'
 						onClick={onClose}
-						className='p-2 hover:bg-white/10 rounded-lg transition-colors'
+						className='p-2 hover:bg-white/10 rounded-button transition-colors duration-fast'
 						aria-label='Sluit lightbox'
 					>
 						<X className='w-5 h-5' strokeWidth={1.5} />
@@ -233,7 +236,7 @@ function Lightbox({
 						alt={currentImage.alt ?? `Afbeelding ${currentIndex + 1}`}
 						fill
 						sizes='100vw'
-						className={`object-contain transition-transform duration-300 ${isZoomed ? 'scale-150' : 'scale-100'}`}
+						className={`object-contain transition-transform duration-slow ${isZoomed ? 'scale-150' : 'scale-100'}`}
 						priority
 					/>
 				</div>
@@ -269,7 +272,7 @@ function Lightbox({
 								onClick={() => {
 									onSelectImage(index);
 								}}
-								className={`relative flex-shrink-0 w-16 h-16 rounded overflow-hidden transition-all duration-200 ${getThumbnailClass(index)}`}
+								className={`relative flex-shrink-0 w-16 h-16 rounded overflow-hidden transition-all duration-fast ${getThumbnailClass(index)}`}
 								aria-label={`Ga naar afbeelding ${index + 1}`}
 								aria-current={index === currentIndex ? 'true' : undefined}
 							>
@@ -316,7 +319,7 @@ function GalleryItem({
 	onLoad,
 }: Readonly<GalleryItemProperties>) {
 	const getContainerClasses = () => {
-		const classes = ['group relative overflow-hidden bg-gray-100 rounded-lg'];
+		const classes = ['group relative overflow-hidden bg-gray-100 rounded-button'];
 
 		if (enableLightbox) {
 			classes.push('cursor-pointer');
@@ -362,7 +365,7 @@ function GalleryItem({
 				alt={image.alt ?? `Galerij afbeelding ${index + 1}`}
 				fill
 				sizes='(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw'
-				className={`object-cover transition-all duration-300 ${hoverEffectClasses[hoverEffect]} ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
+				className={`object-cover transition-all duration-slow ${hoverEffectClasses[hoverEffect]} ${isLoaded ? 'opacity-100' : 'opacity-0'}`}
 				onLoad={() => {
 					onLoad(index);
 				}}
@@ -370,9 +373,9 @@ function GalleryItem({
 
 			{/* Hover overlay */}
 			{enableLightbox && (
-				<div className='absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center'>
+				<div className='absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-slow flex items-center justify-center'>
 					<Maximize2
-						className='w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300'
+						className='w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-slow'
 						strokeWidth={1.5}
 					/>
 				</div>
