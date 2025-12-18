@@ -1,8 +1,34 @@
 import {Suspense} from 'react';
 import {SiteFooterServer} from '@components/layout/site-footer-server';
-import {SeasonalDecorationsServer} from '@components/seasonal-decorations-server';
 import {CookieConsentProvider, CookieBanner} from '@components/cookie-consent';
 import {SiteFooterSkeleton} from '@components/skeletons';
+import {
+	SeasonalDecorationsProvider,
+	defaultSeasonalConfig,
+	type SeasonalDecorationsConfig,
+} from '@components/seasonal-decorations-context';
+import {Snowfall, SeasonalStyles} from '@components/seasonal-decorations';
+
+// Dynamically import the server component to prevent build-time errors
+async function SafeSeasonalDecorations({children}: {children: React.ReactNode}) {
+	let config: SeasonalDecorationsConfig = defaultSeasonalConfig;
+
+	try {
+		const {getSeasonalDecorationsConfig} = await import('@components/seasonal-decorations-server');
+		const fetchedConfig: SeasonalDecorationsConfig = await getSeasonalDecorationsConfig();
+		config = fetchedConfig;
+	} catch {
+		// Silently fall back to default config if database is unavailable
+	}
+
+	return (
+		<SeasonalDecorationsProvider config={config}>
+			<SeasonalStyles />
+			<Snowfall />
+			{children}
+		</SeasonalDecorationsProvider>
+	);
+}
 
 /**
  * Main Site Layout
@@ -22,12 +48,12 @@ export default function MainSiteLayout({
 }>) {
 	return (
 		<CookieConsentProvider>
-			<SeasonalDecorationsServer>
+			<SafeSeasonalDecorations>
 				{children}
 				<Suspense fallback={<SiteFooterSkeleton />}>
 					<SiteFooterServer />
 				</Suspense>
-			</SeasonalDecorationsServer>
+			</SafeSeasonalDecorations>
 			<CookieBanner />
 		</CookieConsentProvider>
 	);

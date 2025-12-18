@@ -28,15 +28,22 @@ type PageProperties = {
 	searchParams: Promise<PageSearchParameters>;
 };
 
-export async function generateMetadata({params}: PageProperties): Promise<Metadata> {
+export async function generateMetadata({params, searchParams}: PageProperties): Promise<Metadata> {
 	const parameters = await params;
+	const searchParameters = await searchParams;
 	const urlPath = '/' + (parameters?.page?.join('/') ?? '');
 
 	if (!builderPublicApiKey) {
 		return {title: siteConfig.name};
 	}
 
-	const {content} = await fetchBuilderContent(urlPath, {}, builderPublicApiKey);
+	const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
+
+	// Call notFound() early (in generateMetadata) so the 404 status is set before streaming starts
+	if (!canShowBuilderContent(content, searchParameters)) {
+		notFound();
+	}
+
 	const seoData = extractSeoData(content);
 
 	// Generate a readable title from the URL if no SEO title is set
@@ -66,6 +73,9 @@ export default async function Page(properties: Readonly<PageProperties>) {
 		return <FetchError message={error} />;
 	}
 
+	// Note: notFound() is called in generateMetadata before streaming starts
+	// to ensure the 404 status code is properly set. This check is kept as a
+	// safeguard in case metadata generation is skipped.
 	if (!canShowBuilderContent(content, searchParameters)) {
 		notFound();
 	}
