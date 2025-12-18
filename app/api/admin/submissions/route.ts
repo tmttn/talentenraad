@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, isAdminEmail} from '@/lib/auth0';
+import {auth0, verifyAdmin} from '@/lib/auth0';
 import {db, submissions} from '@/lib/db';
 import {inArray} from 'drizzle-orm';
 
@@ -17,7 +17,7 @@ export async function PATCH(request: NextRequest) {
 	}
 
 	// Check admin access
-	if (!isAdminEmail(session.user.email)) {
+	if (!await verifyAdmin(session.user.email)) {
 		return NextResponse.json({error: 'Forbidden'}, {status: 403});
 	}
 

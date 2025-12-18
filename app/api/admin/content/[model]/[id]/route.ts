@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, isAdminEmail} from '@/lib/auth0';
+import {auth0, verifyAdmin} from '@/lib/auth0';
 import {getContent, updateContent, deleteContent, publishContent, unpublishContent} from '@/lib/builder-admin';
 import type {BuilderModel} from '@/lib/builder-types';
 
@@ -23,7 +23,7 @@ export async function GET(
 		return NextResponse.json({error: 'Unauthorized'}, {status: 401});
 	}
 
-	if (!isAdminEmail(session.user.email)) {
+	if (!await verifyAdmin(session.user.email)) {
 		return NextResponse.json({error: 'Forbidden'}, {status: 403});
 	}
 
@@ -60,7 +60,7 @@ export async function PUT(
 		return NextResponse.json({error: 'Unauthorized'}, {status: 401});
 	}
 
-	if (!isAdminEmail(session.user.email)) {
+	if (!await verifyAdmin(session.user.email)) {
 		return NextResponse.json({error: 'Forbidden'}, {status: 403});
 	}
 
@@ -102,7 +102,7 @@ export async function DELETE(
 		return NextResponse.json({error: 'Unauthorized'}, {status: 401});
 	}
 
-	if (!isAdminEmail(session.user.email)) {
+	if (!await verifyAdmin(session.user.email)) {
 		return NextResponse.json({error: 'Forbidden'}, {status: 403});
 	}
 
@@ -134,7 +134,7 @@ export async function PATCH(
 		return NextResponse.json({error: 'Unauthorized'}, {status: 401});
 	}
 
-	if (!isAdminEmail(session.user.email)) {
+	if (!await verifyAdmin(session.user.email)) {
 		return NextResponse.json({error: 'Forbidden'}, {status: 403});
 	}
 

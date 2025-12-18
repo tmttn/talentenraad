@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, isAdminEmail} from '@/lib/auth0';
+import {auth0, verifyAdmin} from '@/lib/auth0';
 
 const builderPrivateKey = process.env.BUILDER_PRIVATE_KEY ?? '';
 
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
 		return NextResponse.json({error: 'Unauthorized'}, {status: 401});
 	}
 
-	if (!isAdminEmail(session.user.email)) {
+	if (!await verifyAdmin(session.user.email)) {
 		return NextResponse.json({error: 'Forbidden'}, {status: 403});
 	}
 
