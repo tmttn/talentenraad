@@ -3,14 +3,18 @@
 import type {ReactNode} from 'react';
 import {ArrowRight} from 'lucide-react';
 
-// CSS for button arrow animations
+/**
+ * CSS for button arrow animations using design tokens
+ * - Duration: var(--duration-base) = 200ms
+ * - Easing: var(--easing-smooth) = cubic-bezier(0.4, 0, 0.2, 1)
+ */
 const buttonStyles = `
 	.animated-button {
-		transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: all var(--duration-base) var(--easing-smooth);
 	}
 
 	.animated-button-arrow {
-		transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+		transition: transform var(--duration-base) var(--easing-smooth);
 	}
 
 	.animated-button:hover .animated-button-arrow {
@@ -31,17 +35,25 @@ type AnimatedButtonProperties = {
 	onClick?: () => void;
 };
 
+/**
+ * Button variant styles
+ * Uses shadow-elevated token for hover state
+ */
 const variantStyles = {
-	primary: 'bg-primary text-white hover:bg-primary-hover hover:shadow-lg hover:shadow-primary/25 focus:ring-primary',
+	primary: 'bg-primary text-white hover:bg-primary-hover hover:shadow-elevated hover:shadow-primary/25 focus:ring-primary',
 	secondary: 'bg-white/10 text-white hover:bg-white/20 border border-white/20 focus:ring-white',
 	outline: 'bg-transparent border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-primary',
 	ghost: 'bg-transparent text-primary hover:bg-primary/10 focus:ring-primary',
 };
 
+/**
+ * Button size styles using design tokens
+ * - Gap: gap-gap-xs (8px), gap-gap-sm (16px)
+ */
 const sizeStyles = {
-	sm: 'py-2 px-4 text-sm gap-2',
-	md: 'py-3 px-6 text-base gap-2',
-	lg: 'py-4 px-8 text-lg gap-3',
+	sm: 'py-2 px-4 text-sm gap-gap-xs',
+	md: 'py-3 px-6 text-base gap-gap-xs',
+	lg: 'py-4 px-8 text-lg gap-gap-sm',
 };
 
 const arrowSizes = {
@@ -64,7 +76,7 @@ function AnimatedButton({
 }: Readonly<AnimatedButtonProperties>) {
 	const arrow = <ArrowRight className={`animated-button-arrow ${arrowSizes[size]} flex-shrink-0`} aria-hidden='true' />;
 
-	const baseClasses = `animated-button inline-flex items-center justify-center font-semibold rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles[variant]} ${sizeStyles[size]} ${fullWidth ? 'w-full' : ''} ${className}`;
+	const baseClasses = `animated-button inline-flex items-center justify-center font-semibold rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed ${variantStyles[variant]} ${sizeStyles[size]} ${fullWidth ? 'w-full' : ''} ${className}`;
 
 	if (href) {
 		return (
