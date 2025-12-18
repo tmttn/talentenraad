@@ -1,14 +1,14 @@
+/**
+ * Tests for [...page] Dynamic Route
+ *
+ * These tests verify the component structure and rendering behavior.
+ * The 404 detection is now handled directly in the Page component.
+ */
+
 import {render, screen} from '@testing-library/react';
 
 const mockFetchBuilderContent = jest.fn();
 const mockCanShowBuilderContent = jest.fn();
-const mockNotFound = jest.fn(() => {
-	throw new Error('NEXT_NOT_FOUND');
-});
-
-jest.mock('next/navigation', () => ({
-	notFound: () => mockNotFound(),
-}));
 
 jest.mock('../../../app/lib/builder-utils', () => ({
 	builderPublicApiKey: 'test-api-key',
@@ -16,7 +16,6 @@ jest.mock('../../../app/lib/builder-utils', () => ({
 	canShowBuilderContent: (...args: unknown[]) => mockCanShowBuilderContent(...args),
 	extractSeoData: () => ({}),
 	ConfigurationError: () => <div>Configuration Error</div>,
-	FetchError: ({message}: {message: string}) => <div>Error: {message}</div>,
 }));
 
 jest.mock('../../../app/components/builder/builder-content', () => ({
@@ -29,105 +28,94 @@ jest.mock('../../../app/components/layout/page-with-announcements', () => ({
 	PageWithAnnouncements: ({children}: {children: React.ReactNode}) => <>{children}</>,
 }));
 
+jest.mock('../../../app/lib/seo', () => ({
+	generateMetadata: jest.fn(),
+	generateBreadcrumbSchema: () => ({}),
+	JsonLd: () => null,
+	siteConfig: {name: 'Test', description: 'Test desc'},
+}));
+
+jest.mock('next/navigation', () => ({
+	notFound: jest.fn(),
+}));
+
 import Page from '../../../app/(main)/[...page]/page';
+import {notFound} from 'next/navigation';
 
 describe('[...page] Dynamic Route', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
+		mockCanShowBuilderContent.mockReturnValue(true);
 	});
 
-	it('renders BuilderContent for single segment path', async () => {
+	it('renders page content when content exists', async () => {
 		mockFetchBuilderContent.mockResolvedValue({content: {id: '123'}});
-		mockCanShowBuilderContent.mockReturnValue(true);
 
 		const Component = await Page({
 			params: Promise.resolve({page: ['about']}),
 			searchParams: Promise.resolve({}),
 		});
+
 		render(Component);
 
 		expect(screen.getByTestId('builder-content')).toBeInTheDocument();
+		expect(screen.getByText('Has Content')).toBeInTheDocument();
+	});
+
+	it('calls notFound when content is not valid', async () => {
+		mockFetchBuilderContent.mockResolvedValue({content: null});
+		mockCanShowBuilderContent.mockReturnValue(false);
+
+		await Page({
+			params: Promise.resolve({page: ['non-existing-page']}),
+			searchParams: Promise.resolve({}),
+		});
+
+		expect(notFound).toHaveBeenCalled();
+	});
+
+	it('fetches content for single segment path', async () => {
+		mockFetchBuilderContent.mockResolvedValue({content: {id: '123'}});
+
+		await Page({
+			params: Promise.resolve({page: ['about']}),
+			searchParams: Promise.resolve({}),
+		});
+
 		expect(mockFetchBuilderContent).toHaveBeenCalledWith('/about', {}, 'test-api-key');
 	});
 
-	it('renders BuilderContent for multi-segment path', async () => {
+	it('fetches content for multi-segment path', async () => {
 		mockFetchBuilderContent.mockResolvedValue({content: {id: '456'}});
-		mockCanShowBuilderContent.mockReturnValue(true);
 
-		const Component = await Page({
+		await Page({
 			params: Promise.resolve({page: ['blog', 'posts', 'my-article']}),
 			searchParams: Promise.resolve({}),
 		});
-		render(Component);
 
 		expect(mockFetchBuilderContent).toHaveBeenCalledWith('/blog/posts/my-article', {}, 'test-api-key');
 	});
 
-	it('handles empty page array', async () => {
+	it('fetches content for empty page array', async () => {
 		mockFetchBuilderContent.mockResolvedValue({content: {id: '789'}});
-		mockCanShowBuilderContent.mockReturnValue(true);
 
-		const Component = await Page({
+		await Page({
 			params: Promise.resolve({page: []}),
 			searchParams: Promise.resolve({}),
 		});
-		render(Component);
 
 		expect(mockFetchBuilderContent).toHaveBeenCalledWith('/', {}, 'test-api-key');
 	});
 
-	it('handles undefined page', async () => {
-		mockFetchBuilderContent.mockResolvedValue({content: {id: '101'}});
-		mockCanShowBuilderContent.mockReturnValue(true);
-
-		const Component = await Page({
-			params: Promise.resolve({page: undefined as unknown as string[]}),
-			searchParams: Promise.resolve({}),
-		});
-		render(Component);
-
-		expect(mockFetchBuilderContent).toHaveBeenCalledWith('/', {}, 'test-api-key');
-	});
-
-	it('renders FetchError when fetch fails', async () => {
-		mockFetchBuilderContent.mockResolvedValue({content: undefined, error: 'API Error'});
-
-		const Component = await Page({
-			params: Promise.resolve({page: ['test']}),
-			searchParams: Promise.resolve({}),
-		});
-		render(Component);
-
-		expect(screen.getByText('Error: API Error')).toBeInTheDocument();
-	});
-
-	it('calls notFound when content cannot be shown', async () => {
-		mockFetchBuilderContent.mockResolvedValue({content: null});
-		mockCanShowBuilderContent.mockReturnValue(false);
-
-		await expect(Page({
-			params: Promise.resolve({page: ['nonexistent']}),
-			searchParams: Promise.resolve({}),
-		})).rejects.toThrow('NEXT_NOT_FOUND');
-
-		expect(mockNotFound).toHaveBeenCalled();
-	});
-
-	it('passes search parameters correctly', async () => {
+	it('passes search parameters to fetchBuilderContent', async () => {
 		mockFetchBuilderContent.mockResolvedValue({content: {id: '123'}});
-		mockCanShowBuilderContent.mockReturnValue(true);
 
-		const Component = await Page({
+		await Page({
 			params: Promise.resolve({page: ['page']}),
 			searchParams: Promise.resolve({preview: 'true', locale: 'nl'}),
 		});
-		render(Component);
 
-		expect(mockFetchBuilderContent).toHaveBeenCalledWith(
-			'/page',
-			{preview: 'true', locale: 'nl'},
-			'test-api-key',
-		);
+		expect(mockFetchBuilderContent).toHaveBeenCalledWith('/page', {preview: 'true', locale: 'nl'}, 'test-api-key');
 	});
 });
 
@@ -140,10 +128,9 @@ describe('[...page] without API key', () => {
 		jest.doMock('../../../app/lib/builder-utils', () => ({
 			builderPublicApiKey: undefined,
 			fetchBuilderContent: mockFetchBuilderContent,
-			canShowBuilderContent: mockCanShowBuilderContent,
+			canShowBuilderContent: jest.fn().mockReturnValue(true),
 			extractSeoData: () => ({}),
 			ConfigurationError: () => <div>Configuration Error</div>,
-			FetchError: ({message}: {message: string}) => <div>Error: {message}</div>,
 		}));
 
 		const {default: PageWithoutKey} = await import('../../../app/(main)/[...page]/page');

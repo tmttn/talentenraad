@@ -8,7 +8,6 @@ import {
 	canShowBuilderContent,
 	extractSeoData,
 	ConfigurationError,
-	FetchError,
 	type PageSearchParameters,
 // eslint-disable-next-line import-x/extensions
 } from '../../lib/builder-utils';
@@ -67,23 +66,20 @@ export default async function Page(properties: Readonly<PageProperties>) {
 	}
 
 	const searchParameters = await properties.searchParams;
-	const {content, error} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
 
-	if (error) {
-		return <FetchError message={error} />;
-	}
+	// Fetch content before streaming to ensure correct 404 status
+	// (generateMetadata runs in parallel, so we need to check here too)
+	const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
 
-	// Note: notFound() is called in generateMetadata before streaming starts
-	// to ensure the 404 status code is properly set. This check is kept as a
-	// safeguard in case metadata generation is skipped.
 	if (!canShowBuilderContent(content, searchParameters)) {
 		notFound();
 	}
 
 	// Generate breadcrumb schema from URL segments
+	const segments = urlPath.split('/').filter(Boolean);
 	const breadcrumbItems = [{name: 'Home', url: '/'}];
 	let currentPath = '';
-	for (const segment of parameters?.page ?? []) {
+	for (const segment of segments) {
 		currentPath += `/${segment}`;
 		const segmentName = segment.replaceAll('-', ' ').replaceAll(/\b\w/g, char => char.toUpperCase());
 		breadcrumbItems.push({name: segmentName, url: currentPath});

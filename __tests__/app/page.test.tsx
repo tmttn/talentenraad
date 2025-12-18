@@ -1,22 +1,18 @@
+/**
+ * Tests for Home Page
+ *
+ * These tests verify the component structure and rendering behavior.
+ */
+
 import {render, screen} from '@testing-library/react';
 
 const mockFetchBuilderContent = jest.fn();
-const mockCanShowBuilderContent = jest.fn();
-const mockNotFound = jest.fn(() => {
-	throw new Error('NEXT_NOT_FOUND');
-});
-
-jest.mock('next/navigation', () => ({
-	notFound: () => mockNotFound(),
-}));
 
 jest.mock('../../app/lib/builder-utils', () => ({
 	builderPublicApiKey: 'test-api-key',
 	fetchBuilderContent: (...args: unknown[]) => mockFetchBuilderContent(...args),
-	canShowBuilderContent: (...args: unknown[]) => mockCanShowBuilderContent(...args),
 	extractSeoData: () => ({}),
 	ConfigurationError: () => <div>Configuration Error</div>,
-	FetchError: ({message}: {message: string}) => <div>Error: {message}</div>,
 }));
 
 jest.mock('../../app/components/builder/builder-content', () => ({
@@ -36,83 +32,55 @@ describe('Home Page', () => {
 		jest.clearAllMocks();
 	});
 
-	it('renders BuilderContent when content is found', async () => {
+	it('renders page content when content exists', async () => {
 		mockFetchBuilderContent.mockResolvedValue({content: {id: '123'}});
-		mockCanShowBuilderContent.mockReturnValue(true);
 
-		const searchParams = Promise.resolve({});
 		const Component = await Page({
 			params: Promise.resolve({slug: []}),
-			searchParams,
+			searchParams: Promise.resolve({}),
 		});
+
 		render(Component);
 
 		expect(screen.getByTestId('builder-content')).toBeInTheDocument();
-		expect(mockFetchBuilderContent).toHaveBeenCalledWith('/', {}, 'test-api-key');
+		expect(screen.getByText('Has Content')).toBeInTheDocument();
 	});
 
-	it('renders FetchError when fetch fails', async () => {
-		mockFetchBuilderContent.mockResolvedValue({content: undefined, error: 'Network error'});
+	it('fetches content for home page with correct path', async () => {
+		mockFetchBuilderContent.mockResolvedValue({content: {id: '123'}});
 
-		const searchParams = Promise.resolve({});
-		const Component = await Page({
+		await Page({
 			params: Promise.resolve({slug: []}),
-			searchParams,
+			searchParams: Promise.resolve({}),
 		});
-		render(Component);
 
-		expect(screen.getByText('Error: Network error')).toBeInTheDocument();
-	});
-
-	it('calls notFound when content cannot be shown', async () => {
-		mockFetchBuilderContent.mockResolvedValue({content: null});
-		mockCanShowBuilderContent.mockReturnValue(false);
-
-		const searchParams = Promise.resolve({});
-
-		await expect(Page({
-			params: Promise.resolve({slug: []}),
-			searchParams,
-		})).rejects.toThrow('NEXT_NOT_FOUND');
-
-		expect(mockNotFound).toHaveBeenCalled();
+		expect(mockFetchBuilderContent).toHaveBeenCalledWith('/', {}, 'test-api-key');
 	});
 
 	it('passes search parameters to fetchBuilderContent', async () => {
 		mockFetchBuilderContent.mockResolvedValue({content: {id: '123'}});
-		mockCanShowBuilderContent.mockReturnValue(true);
 
-		const searchParams = Promise.resolve({preview: 'true'});
-		const Component = await Page({
+		await Page({
 			params: Promise.resolve({slug: []}),
-			searchParams,
+			searchParams: Promise.resolve({preview: 'true'}),
 		});
-		render(Component);
 
 		expect(mockFetchBuilderContent).toHaveBeenCalledWith('/', {preview: 'true'}, 'test-api-key');
 	});
-});
-
-describe('Home Page without API key', () => {
-	beforeEach(() => {
-		jest.resetModules();
-	});
 
 	it('renders ConfigurationError when API key is missing', async () => {
+		jest.resetModules();
 		jest.doMock('../../app/lib/builder-utils', () => ({
 			builderPublicApiKey: undefined,
 			fetchBuilderContent: mockFetchBuilderContent,
-			canShowBuilderContent: mockCanShowBuilderContent,
 			extractSeoData: () => ({}),
 			ConfigurationError: () => <div>Configuration Error</div>,
-			FetchError: ({message}: {message: string}) => <div>Error: {message}</div>,
 		}));
 
 		const {default: PageWithoutKey} = await import('../../app/(main)/page');
-		const searchParams = Promise.resolve({});
 		const Component = await PageWithoutKey({
 			params: Promise.resolve({slug: []}),
-			searchParams,
+			searchParams: Promise.resolve({}),
 		});
 		render(Component);
 

@@ -1,14 +1,11 @@
 import type {Metadata} from 'next';
-import {notFound} from 'next/navigation';
 import {BuilderContent} from '@components/builder/builder-content';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {
 	builderPublicApiKey,
 	fetchBuilderContent,
-	canShowBuilderContent,
 	extractSeoData,
 	ConfigurationError,
-	FetchError,
 	type PageSearchParameters,
 // eslint-disable-next-line import-x/extensions
 } from '../lib/builder-utils';
@@ -48,22 +45,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Page(properties: Readonly<PageProperties>) {
-	const urlPath = '/';
-
 	if (!builderPublicApiKey) {
 		return <ConfigurationError />;
 	}
 
 	const searchParameters = await properties.searchParams;
-	const {content, error} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
-
-	if (error) {
-		return <FetchError message={error} />;
-	}
-
-	if (!canShowBuilderContent(content, searchParameters)) {
-		notFound();
-	}
+	const {content} = await fetchBuilderContent('/', searchParameters, builderPublicApiKey);
 
 	return (
 		<PageWithAnnouncements content={content ?? undefined}>
