@@ -2,14 +2,21 @@ import {render, screen} from '@testing-library/react';
 
 const mockFetchBuilderContent = jest.fn();
 const mockCanShowBuilderContent = jest.fn();
+const mockNotFound = jest.fn(() => {
+	throw new Error('NEXT_NOT_FOUND');
+});
+
+jest.mock('next/navigation', () => ({
+	notFound: () => mockNotFound(),
+}));
 
 jest.mock('../../app/lib/builder-utils', () => ({
 	builderPublicApiKey: 'test-api-key',
 	fetchBuilderContent: (...args: unknown[]) => mockFetchBuilderContent(...args),
 	canShowBuilderContent: (...args: unknown[]) => mockCanShowBuilderContent(...args),
+	extractSeoData: () => ({}),
 	ConfigurationError: () => <div>Configuration Error</div>,
 	FetchError: ({message}: {message: string}) => <div>Error: {message}</div>,
-	NotFoundContent: () => <div>404 Not Found</div>,
 }));
 
 jest.mock('../../app/components/builder/builder-content', () => ({
@@ -57,18 +64,18 @@ describe('Home Page', () => {
 		expect(screen.getByText('Error: Network error')).toBeInTheDocument();
 	});
 
-	it('renders NotFoundContent when content cannot be shown', async () => {
+	it('calls notFound when content cannot be shown', async () => {
 		mockFetchBuilderContent.mockResolvedValue({content: null});
 		mockCanShowBuilderContent.mockReturnValue(false);
 
 		const searchParams = Promise.resolve({});
-		const Component = await Page({
+
+		await expect(Page({
 			params: Promise.resolve({slug: []}),
 			searchParams,
-		});
-		render(Component);
+		})).rejects.toThrow('NEXT_NOT_FOUND');
 
-		expect(screen.getByText('404 Not Found')).toBeInTheDocument();
+		expect(mockNotFound).toHaveBeenCalled();
 	});
 
 	it('passes search parameters to fetchBuilderContent', async () => {
@@ -96,9 +103,9 @@ describe('Home Page without API key', () => {
 			builderPublicApiKey: undefined,
 			fetchBuilderContent: mockFetchBuilderContent,
 			canShowBuilderContent: mockCanShowBuilderContent,
+			extractSeoData: () => ({}),
 			ConfigurationError: () => <div>Configuration Error</div>,
 			FetchError: ({message}: {message: string}) => <div>Error: {message}</div>,
-			NotFoundContent: () => <div>404 Not Found</div>,
 		}));
 
 		const {default: PageWithoutKey} = await import('../../app/(main)/page');

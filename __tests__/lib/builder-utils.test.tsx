@@ -3,7 +3,6 @@ import {isPreviewing, isEditing} from '@builder.io/sdk-react-nextjs';
 import {
 	ConfigurationError,
 	FetchError,
-	NotFoundContent,
 	fetchBuilderContent,
 	canShowBuilderContent,
 } from '../../app/lib/builder-utils';
@@ -44,15 +43,6 @@ describe('builder-utils', () => {
 			render(<FetchError message={errorMessage} />);
 
 			expect(screen.getByText(errorMessage)).toBeInTheDocument();
-		});
-	});
-
-	describe('NotFoundContent', () => {
-		it('renders 404 message', () => {
-			render(<NotFoundContent />);
-
-			expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('404');
-			expect(screen.getByText('Controleer of de content gepubliceerd is op builder.io')).toBeInTheDocument();
 		});
 	});
 
