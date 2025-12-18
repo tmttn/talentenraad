@@ -58,9 +58,9 @@ export function TableFilters({
 					)}
 				</div>
 
-				{/* Filter dropdowns */}
-				{filters.length > 0 && (
-					<div className='flex flex-wrap gap-3'>
+				{/* Filter dropdowns and additional children */}
+				{(filters.length > 0 || children) && (
+					<div className='flex flex-wrap items-center gap-3'>
 						{filters.map(filter => (
 							<div key={filter.key} className='min-w-[140px]'>
 								<select
@@ -79,11 +79,9 @@ export function TableFilters({
 								</select>
 							</div>
 						))}
+						{children}
 					</div>
 				)}
-
-				{/* Additional children (like action buttons) */}
-				{children}
 			</div>
 		</div>
 	);
