@@ -10,15 +10,15 @@ import {
 import {linkStyles} from '@components/ui';
 
 const articleListClassName = [
-	'bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow group overflow-hidden',
+	'bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow group overflow-hidden',
 	'p-6 border-l-4 border-primary',
 ].join(' ');
 
-const articleGridClassName = 'bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow group overflow-hidden';
+const articleGridClassName = 'bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow group overflow-hidden';
 
 const linkClassName = [
 	'block focus:outline-none focus-visible:ring-2 focus-visible:ring-primary',
-	'focus-visible:ring-offset-2 rounded-xl',
+	'focus-visible:ring-offset-2 rounded-card',
 ].join(' ');
 
 const socialLinkClassName = [
@@ -175,7 +175,7 @@ function NewsList({
 												<img
 													src={item.data.afbeelding}
 													alt=''
-													className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-300'
+													className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-slow'
 												/>
 											</div>
 										)}
@@ -213,8 +213,8 @@ function NewsList({
 						</div>
 					)
 					: (
-						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-gray-200'>
-							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-sm text-primary'>
+						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-modal border-2 border-dashed border-gray-200'>
+							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-subtle text-primary'>
 								<Newspaper className='h-10 w-10' aria-hidden='true' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-800 mb-2'>Nog geen nieuwsberichten</h3>

@@ -31,7 +31,7 @@ export function TableFilters({
 	children,
 }: TableFiltersProps) {
 	return (
-		<div className='bg-white rounded-xl shadow-md p-4 mb-4'>
+		<div className='bg-white rounded-card shadow-base p-4 mb-4'>
 			<div className='flex flex-col lg:flex-row gap-4'>
 				{/* Search input */}
 				<div className='relative flex-1 min-w-0'>
@@ -43,7 +43,7 @@ export function TableFilters({
 							onSearchChange(e.target.value);
 						}}
 						placeholder={searchPlaceholder}
-						className='w-full pl-10 pr-10 py-2.5 border-2 border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none'
+						className='w-full pl-10 pr-10 py-2.5 border-2 border-gray-300 rounded-button focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none'
 					/>
 					{searchValue && (
 						<button
@@ -68,7 +68,7 @@ export function TableFilters({
 									onChange={e => {
 										filter.onChange(e.target.value);
 									}}
-									className='w-full px-3 py-2.5 border-2 border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none bg-white text-gray-700'
+									className='w-full px-3 py-2.5 border-2 border-gray-300 rounded-button focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none bg-white text-gray-700'
 								>
 									<option value=''>{filter.label}</option>
 									{filter.options.map(option => (

@@ -242,7 +242,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 			</TableFilters>
 
 			{selectedIds.size > 0 && (
-				<div className='mb-4 p-3 sm:p-4 bg-white rounded-xl shadow-md flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4'>
+				<div className='mb-4 p-3 sm:p-4 bg-white rounded-card shadow-base flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4'>
 					<span className='text-sm text-gray-600 font-medium'>
 						{selectedIds.size} geselecteerd
 					</span>
@@ -253,7 +253,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 							onClick={() => {
 								void handleBulkAction('markRead');
 							}}
-							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
+							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-button transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
 						>
 							<CheckCircle className='w-4 h-4' />
 							Gelezen
@@ -264,7 +264,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 							onClick={() => {
 								void handleBulkAction('markUnread');
 							}}
-							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
+							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-button transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
 						>
 							<Circle className='w-4 h-4' />
 							Ongelezen
@@ -275,7 +275,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 							onClick={() => {
 								void handleBulkAction(isArchiveView ? 'unarchive' : 'archive');
 							}}
-							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
+							className='px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-button transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
 						>
 							{isArchiveView ? <ArchiveRestore className='w-4 h-4' /> : <Archive className='w-4 h-4' />}
 							{isArchiveView ? 'Terugzetten' : 'Archiveren'}
@@ -286,7 +286,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 							onClick={() => {
 								void handleBulkAction('delete');
 							}}
-							className='px-3 py-2 text-sm bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
+							className='px-3 py-2 text-sm bg-red-100 text-red-700 hover:bg-red-200 rounded-button transition-colors disabled:opacity-50 inline-flex items-center gap-1.5'
 						>
 							<Trash2 className='w-4 h-4' />
 							Verwijderen
@@ -296,7 +296,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 			)}
 
 			{viewMode === 'table' ? (
-				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+				<div className='bg-white rounded-card shadow-base overflow-hidden'>
 					<div className='overflow-x-auto'>
 						<table className='w-full min-w-[700px]'>
 							<thead className='bg-gray-50 border-b border-gray-200'>
@@ -385,7 +385,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 										<td className='px-4 sm:px-6 py-4 text-right'>
 											<Link
 												href={`/admin/submissions/${submission.id}`}
-												className='inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg transition-colors'
+												className='inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-button transition-colors'
 											>
 												<Eye className='w-4 h-4' />
 												<span className='hidden sm:inline'>Bekijken</span>
@@ -417,7 +417,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 			) : (
 				<div>
 					{totalItems === 0 ? (
-						<div className='bg-white rounded-xl shadow-md p-8 text-center text-gray-500'>
+						<div className='bg-white rounded-card shadow-base p-8 text-center text-gray-500'>
 							{searchQuery || subjectFilter || statusFilter
 								? 'Geen berichten gevonden met de huidige filters.'
 								: 'Geen berichten gevonden.'}
@@ -427,7 +427,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 							{paginatedSubmissions.map(submission => (
 								<div
 									key={submission.id}
-									className={`bg-white rounded-xl shadow-md p-4 ${submission.readAt ? '' : 'ring-2 ring-primary/20'}`}
+									className={`bg-white rounded-card shadow-base p-4 ${submission.readAt ? '' : 'ring-2 ring-primary/20'}`}
 								>
 									<div className='flex items-start gap-3 mb-3'>
 										<input
@@ -464,7 +464,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 									<div className='border-t border-gray-100 pt-3'>
 										<Link
 											href={`/admin/submissions/${submission.id}`}
-											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-lg transition-colors'
+											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-button transition-colors'
 										>
 											<Eye className='w-4 h-4' />
 											<span>Bekijken</span>
@@ -475,7 +475,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 						</div>
 					)}
 					{totalItems > 0 && (
-						<div className='mt-4 bg-white rounded-xl shadow-md overflow-hidden'>
+						<div className='mt-4 bg-white rounded-card shadow-base overflow-hidden'>
 							<TablePagination
 								currentPage={currentPage}
 								totalPages={totalPages}

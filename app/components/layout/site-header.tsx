@@ -73,7 +73,7 @@ export function SiteHeader({
 			>
 				Ga naar hoofdinhoud
 			</a>
-			<header role="banner" className="bg-white shadow-sm sticky top-0 z-50">
+			<header role="banner" className="bg-white shadow-subtle sticky top-0 z-50">
 				<div className="max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between">
 					<Link href="/" className="flex items-center gap-4">
 						<Image
@@ -103,7 +103,7 @@ export function SiteHeader({
 					</nav>
 					<button
 						type="button"
-						className="md:hidden p-2 text-gray-600 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded-lg transition-colors"
+						className="md:hidden p-2 text-gray-600 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded-button transition-colors"
 						aria-label={isMenuOpen ? 'Menu sluiten' : 'Menu openen'}
 						aria-expanded={isMenuOpen}
 						aria-controls="mobile-menu"
@@ -112,8 +112,8 @@ export function SiteHeader({
 						}}
 					>
 						{isMenuOpen
-							? <X className='w-6 h-6 transition-transform duration-200' />
-							: <Menu className='w-6 h-6 transition-transform duration-200' />}
+							? <X className='w-6 h-6 transition-transform duration-fast' />
+							: <Menu className='w-6 h-6 transition-transform duration-fast' />}
 					</button>
 				</div>
 
@@ -121,7 +121,7 @@ export function SiteHeader({
 				<nav
 					id="mobile-menu"
 					aria-label="Mobiele navigatie"
-					className={`md:hidden border-t border-gray-100 bg-white overflow-hidden transition-all duration-300 ease-in-out ${
+					className={`md:hidden border-t border-gray-100 bg-white overflow-hidden transition-all duration-slow ease-in-out ${
 						isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
 					}`}
 					aria-hidden={!isMenuOpen}
@@ -134,7 +134,7 @@ export function SiteHeader({
 								onClick={() => {
 									setIsMenuOpen(false);
 								}}
-								className={`block py-3 px-4 rounded-lg font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-focus focus:ring-inset ${
+								className={`block py-3 px-4 rounded-button font-medium transition-all duration-fast focus:outline-none focus:ring-2 focus:ring-focus focus:ring-inset ${
 									pathname === item.url
 										? 'bg-primary/10 text-primary-text'
 										: 'text-gray-600 hover:bg-gray-50 hover:text-primary'

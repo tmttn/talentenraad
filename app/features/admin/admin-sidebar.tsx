@@ -117,7 +117,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 				</div>
 				{/* Collapsed logo - just show T */}
 				{isCollapsed && (
-					<Link href='/admin' className='hidden lg:flex w-10 h-10 rounded-lg bg-primary/10 items-center justify-center mx-auto'>
+					<Link href='/admin' className='hidden lg:flex w-10 h-10 rounded-button bg-primary/10 items-center justify-center mx-auto'>
 						<span className='text-primary font-bold text-lg'>T</span>
 					</Link>
 				)}
@@ -125,7 +125,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 				<button
 					type='button'
 					onClick={() => setIsOpen(false)}
-					className='lg:hidden p-2 -mr-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors'
+					className='lg:hidden p-2 -mr-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-button transition-colors'
 					aria-label='Sluit menu'
 				>
 					<X className='w-6 h-6' />
@@ -141,7 +141,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 									href={item.href}
 									onClick={() => setIsOpen(false)}
 									title={isCollapsed ? item.label : undefined}
-									className={`flex items-center gap-3 ${isCollapsed ? 'lg:justify-center lg:px-2' : 'px-4'} py-3 rounded-lg transition-colors ${
+									className={`flex items-center gap-3 ${isCollapsed ? 'lg:justify-center lg:px-2' : 'px-4'} py-3 rounded-button transition-colors ${
 										isActive(item.href)
 											? 'bg-primary/10 text-primary-text font-medium'
 											: 'text-gray-600 hover:bg-gray-100'
@@ -161,7 +161,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 					type='button'
 					onClick={toggleCollapsed}
 					title={isCollapsed ? 'Uitklappen' : 'Inklappen'}
-					className='p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors'
+					className='p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-button transition-colors'
 				>
 					{isCollapsed ? <ChevronRight className='w-5 h-5' /> : <ChevronLeft className='w-5 h-5' />}
 				</button>
@@ -195,7 +195,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 				<a
 					href='/auth/logout'
 					title={isCollapsed ? 'Uitloggen' : undefined}
-					className={`flex items-center justify-center gap-3 w-full ${isCollapsed ? 'lg:px-2' : 'px-4'} py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors`}
+					className={`flex items-center justify-center gap-3 w-full ${isCollapsed ? 'lg:px-2' : 'px-4'} py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-button transition-colors`}
 				>
 					<LogOut className='w-5 h-5' strokeWidth={1.5} />
 					<span className={isCollapsed ? 'lg:hidden' : ''}>Uitloggen</span>
@@ -214,7 +214,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 				<button
 					type='button'
 					onClick={() => setIsOpen(true)}
-					className='p-2 -ml-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors'
+					className='p-2 -ml-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-button transition-colors'
 					aria-label='Open menu'
 				>
 					<Menu className='w-6 h-6' />
@@ -246,7 +246,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 					fixed inset-y-0 left-0 z-50
 					w-72 ${isCollapsed ? 'lg:w-16' : 'lg:w-64'} bg-white border-r border-gray-200
 					flex flex-col
-					transform transition-all duration-300 ease-in-out
+					transform transition-all duration-slow ease-in-out
 					${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
 				`}
 			>
@@ -255,7 +255,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 
 			{/* Spacer to push content right of fixed sidebar on desktop */}
 			<div
-				className='hidden lg:block flex-shrink-0 transition-all duration-300'
+				className='hidden lg:block flex-shrink-0 transition-all duration-slow'
 				style={{width: isCollapsed ? '4rem' : '16rem'}}
 			/>
 		</>

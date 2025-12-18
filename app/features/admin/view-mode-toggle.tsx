@@ -11,7 +11,7 @@ type ViewModeToggleProps = {
 
 export function ViewModeToggle({mode, onChange}: ViewModeToggleProps) {
 	return (
-		<div className='flex rounded-lg border border-gray-200 overflow-hidden'>
+		<div className='flex rounded-button border border-gray-200 overflow-hidden'>
 			<button
 				type='button'
 				onClick={() => {

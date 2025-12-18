@@ -104,8 +104,8 @@ function CalendarSection({
 		return (
 			<div className='animate-pulse space-y-4'>
 				{Array.from({length: 3}).map((_, i) => (
-					<div key={i} className='flex items-center gap-6 bg-white p-4 rounded-xl shadow-md'>
-						<div className='w-16 h-16 bg-gray-200 rounded-xl' />
+					<div key={i} className='flex items-center gap-6 bg-white p-4 rounded-card shadow-base'>
+						<div className='w-16 h-16 bg-gray-200 rounded-card' />
 						<div className='flex-grow'>
 							<div className='h-5 bg-gray-200 rounded w-48 mb-2' />
 							<div className='h-4 bg-gray-200 rounded w-24' />
@@ -118,7 +118,7 @@ function CalendarSection({
 
 	if (events.length === 0) {
 		return (
-			<div className='text-center py-12 bg-gray-100 rounded-2xl'>
+			<div className='text-center py-12 bg-gray-100 rounded-modal'>
 				<Calendar className='h-12 w-12 mx-auto text-gray-400 mb-4' aria-hidden='true' />
 				<p className='text-gray-500'>Geen activiteiten gepland</p>
 			</div>
@@ -135,9 +135,9 @@ function CalendarSection({
 						<a
 							key={index}
 							href={`/activiteiten/${slug}`}
-							className='flex items-center gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow group'
+							className='flex items-center gap-6 bg-white p-4 rounded-card shadow-base hover:shadow-elevated transition-shadow group'
 						>
-							<div className='flex-shrink-0 w-16 h-16 bg-primary rounded-xl flex flex-col items-center justify-center text-white'>
+							<div className='flex-shrink-0 w-16 h-16 bg-primary rounded-card flex flex-col items-center justify-center text-white'>
 								<span className='text-2xl font-bold leading-none'>{day}</span>
 								<span className='text-xs uppercase'>{month}</span>
 							</div>

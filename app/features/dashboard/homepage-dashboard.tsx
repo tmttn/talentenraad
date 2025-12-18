@@ -149,7 +149,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 				<div className='max-w-6xl mx-auto'>
 					<div className='grid md:grid-cols-2 gap-6'>
 						{/* Activities skeleton - matches loaded structure */}
-						<div className='bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col'>
+						<div className='bg-white rounded-modal shadow-subtle overflow-hidden flex flex-col'>
 							<div className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 px-6 py-3'>
 								<div className='h-5 bg-white/30 rounded w-40 animate-pulse' />
 							</div>
@@ -157,7 +157,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 								<div className='space-y-3 animate-pulse'>
 									{[1, 2, 3].map(i => (
 										<div key={i} className='flex items-center gap-3 p-2'>
-											<div className='w-12 h-12 bg-gray-200 rounded-lg' />
+											<div className='w-12 h-12 bg-gray-200 rounded-button' />
 											<div className='flex-grow'>
 												<div className='h-4 bg-gray-200 rounded w-3/4 mb-2' />
 												<div className='h-3 bg-gray-100 rounded w-1/2' />
@@ -172,7 +172,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 						</div>
 
 						{/* News skeleton - matches loaded structure */}
-						<div className='bg-white rounded-2xl shadow-sm overflow-hidden flex flex-col'>
+						<div className='bg-white rounded-modal shadow-subtle overflow-hidden flex flex-col'>
 							<div className='bg-gradient-to-r from-brand-secondary-400 to-brand-secondary-500 px-6 py-3'>
 								<div className='h-5 bg-white/30 rounded w-32 animate-pulse' />
 							</div>
@@ -202,7 +202,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 			<div className='max-w-6xl mx-auto'>
 				<div className='grid md:grid-cols-2 gap-6'>
 					{/* Komende Activiteiten */}
-					<div className='bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col'>
+					<div className='bg-white rounded-modal shadow-subtle hover:shadow-base transition-shadow overflow-hidden flex flex-col'>
 						<div className='bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 px-6 py-3'>
 							<h3 className='text-white font-semibold flex items-center gap-2'>
 								<Calendar className='h-5 w-5' />
@@ -219,8 +219,8 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 												href={`/activiteiten/${generateSlug(activiteit.data.titel)}`}
 												className='block group'
 											>
-												<div className='flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors'>
-													<div className='flex-shrink-0 w-12 h-12 bg-primary rounded-lg flex flex-col items-center justify-center text-white'>
+												<div className='flex items-center gap-3 p-2 rounded-button hover:bg-gray-50 transition-colors'>
+													<div className='flex-shrink-0 w-12 h-12 bg-primary rounded-button flex flex-col items-center justify-center text-white'>
 														<span className='text-lg font-bold leading-none'>{formatDate(activiteit.data.datum).day}</span>
 														<span className='text-[9px] uppercase'>{formatDate(activiteit.data.datum).month}</span>
 													</div>
@@ -265,7 +265,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 					</div>
 
 					{/* Laatste Nieuws */}
-					<div className='bg-white rounded-2xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col'>
+					<div className='bg-white rounded-modal shadow-subtle hover:shadow-base transition-shadow overflow-hidden flex flex-col'>
 						<div className='bg-gradient-to-r from-brand-secondary-400 to-brand-secondary-500 px-6 py-3'>
 							<h3 className='text-white font-semibold flex items-center gap-2'>
 								<Newspaper className='h-5 w-5' />
@@ -282,7 +282,7 @@ function HomepageDashboard(_properties: Readonly<HomepageDashboardProperties>) {
 												href={`/nieuws/${generateSlug(nieuws.data.titel)}`}
 												className='block group'
 											>
-												<div className='p-2 rounded-lg hover:bg-gray-50 transition-colors'>
+												<div className='p-2 rounded-button hover:bg-gray-50 transition-colors'>
 													<div className='flex items-start justify-between gap-2'>
 														<div className='min-w-0'>
 															<h4 className='font-semibold text-gray-800 group-hover:text-secondary transition-colors text-sm truncate'>

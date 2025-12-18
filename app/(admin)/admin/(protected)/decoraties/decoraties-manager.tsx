@@ -104,7 +104,7 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 	return (
 		<div className='space-y-6'>
 			{/* Main toggle card */}
-			<div className='bg-white rounded-xl shadow-md p-6'>
+			<div className='bg-white rounded-card shadow-base p-6'>
 				<div className='flex items-center justify-between'>
 					<div>
 						<h2 className='text-xl font-bold text-gray-800'>Kerstdecoraties</h2>
@@ -128,7 +128,7 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 			</div>
 
 			{/* Decorations selection */}
-			<div className={`bg-white rounded-xl shadow-md p-6 ${!config.enabled && 'opacity-60'}`}>
+			<div className={`bg-white rounded-card shadow-base p-6 ${!config.enabled && 'opacity-60'}`}>
 				<div className='flex items-center justify-between mb-4'>
 					<h3 className='text-lg font-bold text-gray-800'>Beschikbare decoraties</h3>
 					<div className='flex gap-2'>
@@ -156,7 +156,7 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 					{(Object.keys(decorationLabels) as Array<keyof typeof decorationLabels>).map(key => (
 						<label
 							key={key}
-							className={`flex items-start gap-4 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
+							className={`flex items-start gap-4 p-4 rounded-button border-2 cursor-pointer transition-colors ${
 								config.decorations[key]
 									? 'border-primary bg-primary/5'
 									: 'border-gray-200 hover:border-gray-300'
@@ -185,7 +185,7 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 			</div>
 
 			{/* Preview info */}
-			<div className='bg-blue-50 border border-blue-200 rounded-xl p-4'>
+			<div className='bg-blue-50 border border-blue-200 rounded-card p-4'>
 				<div className='flex gap-3'>
 					<Info className='w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5' />
 					<div>
@@ -204,7 +204,7 @@ export function DecoratiesManager({initialConfig}: DecoratiesManagerProps) {
 					type='button'
 					onClick={handleSave}
 					disabled={isSubmitting}
-					className='px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50'
+					className='px-6 py-3 bg-primary text-white font-medium rounded-card hover:bg-primary-hover transition-colors disabled:opacity-50'
 				>
 					{isSubmitting ? 'Bezig met opslaan...' : 'Instellingen opslaan'}
 				</button>

@@ -10,7 +10,7 @@ import {
 import {AnimatedLink} from '@components/ui';
 
 const articleClassName = [
-	'flex items-start gap-6 bg-white p-4 rounded-xl shadow-md hover:shadow-lg transition-shadow',
+	'flex items-start gap-6 bg-white p-4 rounded-card shadow-base hover:shadow-elevated transition-shadow',
 	'focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 group',
 ].join(' ');
 
@@ -170,7 +170,7 @@ function ActivitiesList({
 											role='listitem'
 											className={articleClassName}
 										>
-											<div className='flex-shrink-0 w-16 h-16 bg-primary rounded-xl flex flex-col items-center justify-center text-white'>
+											<div className='flex-shrink-0 w-16 h-16 bg-primary rounded-card flex flex-col items-center justify-center text-white'>
 												<span className='text-2xl font-bold leading-none'>{day}</span>
 												<span className='text-xs uppercase'>{month}</span>
 											</div>
@@ -224,8 +224,8 @@ function ActivitiesList({
 						</div>
 					)
 					: (
-						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-gray-200'>
-							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-sm text-primary'>
+						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-modal border-2 border-dashed border-gray-200'>
+							<div className='w-20 h-20 mx-auto mb-6 bg-white rounded-full flex items-center justify-center shadow-subtle text-primary'>
 								<Calendar className='h-10 w-10' aria-hidden='true' />
 							</div>
 							<h3 className='text-xl font-bold text-gray-800 mb-2'>Nog geen activiteiten gepland</h3>

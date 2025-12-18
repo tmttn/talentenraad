@@ -143,14 +143,14 @@ function ActivitiesArchive({
 						</span>
 					</div>
 					<ChevronDown
-						className={`h-6 w-6 text-gray-400 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}
+						className={`h-6 w-6 text-gray-400 transition-transform duration-fast ${isExpanded ? 'rotate-180' : ''}`}
 						aria-hidden='true'
 					/>
 				</button>
 
 				<div
 					id='archief-content'
-					className={`transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}
+					className={`transition-all duration-slow overflow-hidden ${isExpanded ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}
 				>
 					{years.map(year => (
 						<div key={year} className='mb-8'>
@@ -165,7 +165,7 @@ function ActivitiesArchive({
 									<a
 										key={activity.id}
 										href={`/activiteiten/${generateSlug(activity.data.titel)}`}
-										className='block bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow group'
+										className='block bg-white p-4 rounded-button shadow-subtle hover:shadow-base transition-shadow group'
 									>
 										<div className='flex items-center justify-between'>
 											<div>

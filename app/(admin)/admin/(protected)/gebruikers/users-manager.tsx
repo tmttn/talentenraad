@@ -17,9 +17,9 @@ type UsersManagerProps = {
 };
 
 const inputStyles = [
-	'w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-gray-300 rounded-lg bg-white text-gray-900',
+	'w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-gray-300 rounded-button bg-white text-gray-900',
 	'focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none',
-	'transition-colors duration-200 text-base',
+	'transition-colors duration-fast text-base',
 ].join(' ');
 
 type FormData = {
@@ -307,7 +307,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 	];
 
 	const renderForm = () => (
-		<form onSubmit={handleSubmit} className='bg-white rounded-xl shadow-md p-4 sm:p-6 mb-6'>
+		<form onSubmit={handleSubmit} className='bg-white rounded-card shadow-base p-4 sm:p-6 mb-6'>
 			<h2 className='text-lg sm:text-xl font-bold text-gray-800 mb-4'>
 				{editingId ? 'Gebruiker bewerken' : 'Gebruiker uitnodigen'}
 			</h2>
@@ -373,14 +373,14 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 					type='button'
 					onClick={handleCancel}
 					disabled={isSubmitting}
-					className='w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50'
+					className='w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-gray-100 text-gray-700 font-medium rounded-card hover:bg-gray-200 transition-colors disabled:opacity-50'
 				>
 					Annuleren
 				</button>
 				<button
 					type='submit'
 					disabled={isSubmitting}
-					className='w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 flex items-center justify-center gap-2'
+					className='w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-primary text-white font-medium rounded-card hover:bg-primary-hover transition-colors disabled:opacity-50 flex items-center justify-center gap-2'
 				>
 					{isSubmitting ? (
 						<>
@@ -419,7 +419,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 					<button
 						type='button'
 						onClick={handleCreate}
-						className='px-4 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors flex items-center gap-2 whitespace-nowrap'
+						className='px-4 py-2.5 bg-primary text-white font-medium rounded-button hover:bg-primary-hover transition-colors flex items-center gap-2 whitespace-nowrap'
 					>
 						<Send className='w-4 h-4' />
 						Uitnodigen
@@ -430,7 +430,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 			{(isCreating || editingId) && renderForm()}
 
 			{viewMode === 'table' ? (
-				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+				<div className='bg-white rounded-card shadow-base overflow-hidden'>
 					<div className='overflow-x-auto'>
 						<table className='w-full min-w-[600px]'>
 							<thead className='bg-gray-50 border-b border-gray-200'>
@@ -526,7 +526,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 																void handleResendInvitation(user);
 															}}
 															title='Uitnodiging opnieuw versturen'
-															className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-300'
+															className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-amber-300'
 														>
 															<Send className='w-4 h-4' />
 															<span className='hidden lg:inline'>Opnieuw</span>
@@ -543,7 +543,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 															: user.isAdmin
 																? 'Admin rechten verwijderen'
 																: 'Admin maken'}
-														className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+														className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
 															isProtectedEmail(user.email) && user.isAdmin
 																? 'text-gray-300 cursor-not-allowed'
 																: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:ring-gray-300'
@@ -558,7 +558,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 															handleEdit(user);
 														}}
 														title='Bewerken'
-														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/30'
+														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary/30'
 													>
 														<Pencil className='w-4 h-4' />
 														<span className='hidden lg:inline'>Bewerken</span>
@@ -570,7 +570,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 														}}
 														disabled={isProtectedEmail(user.email)}
 														title={isProtectedEmail(user.email) ? 'Beschermd admin e-mail' : 'Verwijderen'}
-														className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+														className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
 															isProtectedEmail(user.email)
 																? 'text-gray-300 cursor-not-allowed'
 																: 'text-red-500 hover:text-red-700 hover:bg-red-50 focus:ring-red-300'
@@ -601,7 +601,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 			) : (
 				<div>
 					{paginatedUsers.length === 0 ? (
-						<div className='bg-white rounded-xl shadow-md p-8 text-center text-gray-500'>
+						<div className='bg-white rounded-card shadow-base p-8 text-center text-gray-500'>
 							{searchQuery || roleFilter || statusFilter
 								? 'Geen gebruikers gevonden met de huidige filters.'
 								: 'Geen gebruikers gevonden.'}
@@ -609,7 +609,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 					) : (
 						<div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
 							{paginatedUsers.map(user => (
-								<div key={user.id} className='bg-white rounded-xl shadow-md p-4'>
+								<div key={user.id} className='bg-white rounded-card shadow-base p-4'>
 									<div className='flex items-start justify-between gap-2 mb-3'>
 										<button
 											type='button'
@@ -657,7 +657,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 													void handleResendInvitation(user);
 												}}
 												title='Uitnodiging opnieuw versturen'
-												className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors'
+												className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-button text-amber-600 hover:text-amber-800 hover:bg-amber-50 transition-colors'
 											>
 												<Send className='w-4 h-4' />
 												<span>Opnieuw</span>
@@ -674,7 +674,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 												: user.isAdmin
 													? 'Admin rechten verwijderen'
 													: 'Admin maken'}
-											className={`inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg transition-colors ${
+											className={`inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-button transition-colors ${
 												isProtectedEmail(user.email) && user.isAdmin
 													? 'text-gray-300 cursor-not-allowed'
 													: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
@@ -689,7 +689,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 												handleEdit(user);
 											}}
 											title='Bewerken'
-											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
+											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-button text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
 										>
 											<Pencil className='w-4 h-4' />
 											<span>Bewerken</span>
@@ -701,7 +701,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 											}}
 											disabled={isProtectedEmail(user.email)}
 											title={isProtectedEmail(user.email) ? 'Beschermd admin e-mail' : 'Verwijderen'}
-											className={`inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg transition-colors ${
+											className={`inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-button transition-colors ${
 												isProtectedEmail(user.email)
 													? 'text-gray-300 cursor-not-allowed'
 													: 'text-red-500 hover:text-red-700 hover:bg-red-50'
@@ -716,7 +716,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 						</div>
 					)}
 					{totalItems > 0 && (
-						<div className='mt-4 bg-white rounded-xl shadow-md overflow-hidden'>
+						<div className='mt-4 bg-white rounded-card shadow-base overflow-hidden'>
 							<TablePagination
 								currentPage={currentPage}
 								totalPages={totalPages}

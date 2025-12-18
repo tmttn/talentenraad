@@ -360,7 +360,7 @@ export function ErrorPage({
 					{showHomeButton && (
 						<Link
 							href='/'
-							className='inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-full hover:bg-primary-hover transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-lg shadow-primary/25'
+							className='inline-flex items-center gap-2 px-6 py-3 bg-primary text-white font-semibold rounded-full hover:bg-primary-hover transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 shadow-elevated shadow-primary/25'
 						>
 							<Home className='w-5 h-5' />
 							Naar home
@@ -373,7 +373,7 @@ export function ErrorPage({
 							onClick={() => {
 								window.history.back();
 							}}
-							className='inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-full hover:bg-gray-50 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 border border-gray-200 shadow-sm'
+							className='inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-full hover:bg-gray-50 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 border border-gray-200 shadow-subtle'
 						>
 							<ArrowLeft className='w-5 h-5' />
 							Ga terug
@@ -384,7 +384,7 @@ export function ErrorPage({
 						<button
 							type='button'
 							onClick={onRetry}
-							className='inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-full hover:bg-gray-50 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 border border-gray-200 shadow-sm'
+							className='inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-full hover:bg-gray-50 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 border border-gray-200 shadow-subtle'
 						>
 							<RefreshCw className='w-5 h-5' />
 							Probeer opnieuw
@@ -394,7 +394,7 @@ export function ErrorPage({
 					{showSearchButton && (
 						<Link
 							href='/'
-							className='inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-full hover:bg-gray-50 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 border border-gray-200 shadow-sm'
+							className='inline-flex items-center gap-2 px-6 py-3 bg-white text-gray-700 font-semibold rounded-full hover:bg-gray-50 transition-all hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 border border-gray-200 shadow-subtle'
 						>
 							<Search className='w-5 h-5' />
 							Zoeken
@@ -499,7 +499,7 @@ export function AdminErrorPage({
 				<div className='flex justify-center gap-3'>
 					<Link
 						href='/admin'
-						className='inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-hover transition-colors'
+						className='inline-flex items-center gap-2 px-4 py-2 bg-primary text-white text-sm font-medium rounded-button hover:bg-primary-hover transition-colors'
 					>
 						<Home className='w-4 h-4' />
 						Dashboard
@@ -509,7 +509,7 @@ export function AdminErrorPage({
 						<button
 							type='button'
 							onClick={onRetry}
-							className='inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors'
+							className='inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-button hover:bg-gray-200 transition-colors'
 						>
 							<RefreshCw className='w-4 h-4' />
 							Opnieuw

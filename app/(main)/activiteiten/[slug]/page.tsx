@@ -202,7 +202,7 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 					{/* Header with date badge */}
 					<header className='mb-8'>
 						<div className='flex items-start gap-6'>
-							<div className='flex-shrink-0 w-20 h-20 bg-primary rounded-2xl flex flex-col items-center justify-center text-white shadow-lg'>
+							<div className='flex-shrink-0 w-20 h-20 bg-primary rounded-modal flex flex-col items-center justify-center text-white shadow-elevated'>
 								<span className='text-3xl font-bold leading-none'>{day}</span>
 								<span className='text-sm uppercase'>{month}</span>
 							</div>
@@ -225,7 +225,7 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 					</header>
 
 					{/* Event details card */}
-					<div className='bg-gray-50 rounded-2xl p-6 mb-8'>
+					<div className='bg-gray-50 rounded-modal p-6 mb-8'>
 						<h2 className='text-lg font-bold text-gray-800 mb-4'>Details</h2>
 						<dl className='space-y-4'>
 							<div className='flex items-start gap-3'>
@@ -254,7 +254,7 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 
 					{/* Image */}
 					{item.data.afbeelding && (
-						<div className='mb-8 rounded-2xl overflow-hidden shadow-lg'>
+						<div className='mb-8 rounded-modal overflow-hidden shadow-elevated'>
 							<img
 								src={item.data.afbeelding}
 								alt={item.data.titel}
@@ -273,7 +273,7 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 
 					{/* CTA for future events */}
 					{!isPast && (
-						<div className='mt-8 p-6 bg-gradient-to-r from-primary/10 to-brand-primary-50 rounded-2xl'>
+						<div className='mt-8 p-6 bg-gradient-to-r from-primary/10 to-brand-primary-50 rounded-modal'>
 							<h3 className='font-bold text-gray-800 mb-2'>Vragen over deze activiteit?</h3>
 							<p className='text-gray-600 mb-4'>
 								Neem contact op met de Talentenraad voor meer informatie.

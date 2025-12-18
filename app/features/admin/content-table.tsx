@@ -50,7 +50,7 @@ function IconButton({
 	variant: 'default' | 'primary' | 'danger';
 	children: React.ReactNode;
 }) {
-	const baseClasses = 'p-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1';
+	const baseClasses = 'p-2 rounded-button transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1';
 	const variantClasses = {
 		default: 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:ring-gray-300',
 		primary: 'text-primary hover:text-primary-hover hover:bg-primary/10 focus:ring-primary/30',
@@ -101,7 +101,7 @@ export function ContentTable<T extends {id: string}>({
 
 	if (items.length === 0) {
 		return (
-			<div className='bg-white rounded-xl p-8 text-center text-gray-500'>
+			<div className='bg-white rounded-card p-8 text-center text-gray-500'>
 				{emptyMessage}
 			</div>
 		);
@@ -109,7 +109,7 @@ export function ContentTable<T extends {id: string}>({
 
 	return (
 		<>
-			<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+			<div className='bg-white rounded-card shadow-base overflow-hidden'>
 				<div className='overflow-x-auto'>
 					<table className='w-full min-w-[640px]'>
 						<thead className='bg-gray-50 border-b border-gray-200'>

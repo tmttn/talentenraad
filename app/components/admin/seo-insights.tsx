@@ -136,7 +136,7 @@ export function SeoInsights({
 	const analysis = analyzeSeo({title, description, image, content});
 
 	return (
-		<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+		<div className='bg-white rounded-card shadow-base overflow-hidden'>
 			<div className='p-4 sm:p-5 border-b border-gray-100'>
 				<div className='flex items-center justify-between'>
 					<h3 className='font-semibold text-gray-800 flex items-center gap-2'>
@@ -160,21 +160,21 @@ export function SeoInsights({
 
 				{/* Quick Stats */}
 				<div className='grid grid-cols-3 gap-3'>
-					<div className='text-center p-3 bg-gray-50 rounded-lg'>
+					<div className='text-center p-3 bg-gray-50 rounded-button'>
 						<FileText className='w-5 h-5 mx-auto text-gray-500 mb-1' />
 						<p className='text-xs text-gray-500'>Titel</p>
 						<p className='text-sm font-medium text-gray-800'>
 							{title ? `${title.length} tekens` : 'Ontbreekt'}
 						</p>
 					</div>
-					<div className='text-center p-3 bg-gray-50 rounded-lg'>
+					<div className='text-center p-3 bg-gray-50 rounded-button'>
 						<FileText className='w-5 h-5 mx-auto text-gray-500 mb-1' />
 						<p className='text-xs text-gray-500'>Beschrijving</p>
 						<p className='text-sm font-medium text-gray-800'>
 							{description ? `${description.length} tekens` : 'Ontbreekt'}
 						</p>
 					</div>
-					<div className='text-center p-3 bg-gray-50 rounded-lg'>
+					<div className='text-center p-3 bg-gray-50 rounded-button'>
 						<ImageIcon className='w-5 h-5 mx-auto text-gray-500 mb-1' />
 						<p className='text-xs text-gray-500'>Afbeelding</p>
 						<p className='text-sm font-medium text-gray-800'>
@@ -197,7 +197,7 @@ export function SeoInsights({
 						{analysis.quickWins.map((win, index) => (
 							<div
 								key={index}
-								className='flex items-center justify-between p-2 rounded-lg bg-yellow-50 border border-yellow-200'
+								className='flex items-center justify-between p-2 rounded-button bg-yellow-50 border border-yellow-200'
 							>
 								<span className='text-sm text-gray-700'>{win.action}</span>
 								<span className='text-xs font-medium text-yellow-700 bg-yellow-100 px-2 py-0.5 rounded-full'>
@@ -215,7 +215,7 @@ export function SeoInsights({
 						{analysis.issues.map((issue, index) => (
 							<div
 								key={index}
-								className={`flex items-start gap-2 p-2 rounded-lg border ${getIssueColor(issue.type)}`}
+								className={`flex items-start gap-2 p-2 rounded-button border ${getIssueColor(issue.type)}`}
 							>
 								<IssueIcon type={issue.type} />
 								<span className='text-sm text-gray-700'>{issue.message}</span>
@@ -231,7 +231,7 @@ export function SeoInsights({
 						{analysis.suggestions.map((suggestion, index) => (
 							<div
 								key={index}
-								className='flex items-start gap-2 p-2 rounded-lg bg-blue-50 border border-blue-200'
+								className='flex items-start gap-2 p-2 rounded-button bg-blue-50 border border-blue-200'
 							>
 								<Info className='w-4 h-4 text-blue-500 flex-shrink-0 mt-0.5' />
 								<span className='text-sm text-gray-700'>{suggestion}</span>
@@ -242,7 +242,7 @@ export function SeoInsights({
 
 				{/* All good message */}
 				{analysis.issues.length === 0 && analysis.suggestions.length === 0 && (
-					<div className='flex items-center gap-2 p-3 rounded-lg bg-green-50 border border-green-200'>
+					<div className='flex items-center gap-2 p-3 rounded-button bg-green-50 border border-green-200'>
 						<CheckCircle className='w-5 h-5 text-green-500' />
 						<span className='text-sm text-green-700'>
 							Uitstekend! Alle SEO-vereisten zijn vervuld.
@@ -272,7 +272,7 @@ export function SeoOverviewCard({items, label}: Readonly<SeoOverviewCardProperti
 	const goodItems = analyses.filter(a => a.score >= 80).length;
 
 	return (
-		<div className='bg-white p-4 rounded-xl shadow-md'>
+		<div className='bg-white p-4 rounded-card shadow-base'>
 			<div className='flex items-center justify-between mb-3'>
 				<h4 className='text-sm font-medium text-gray-700'>{label}</h4>
 				<SeoScore score={averageScore} />
@@ -326,7 +326,7 @@ export function SeoAuditPanel({items, maxItems = 5}: Readonly<SeoAuditPanelPrope
 
 	if (analyzedItems.length === 0) {
 		return (
-			<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+			<div className='bg-white rounded-card shadow-base overflow-hidden'>
 				<div className='p-4 sm:p-5 border-b border-gray-100'>
 					<h3 className='font-semibold text-gray-800 flex items-center gap-2'>
 						<Target className='w-4 h-4 text-green-500' />
@@ -343,7 +343,7 @@ export function SeoAuditPanel({items, maxItems = 5}: Readonly<SeoAuditPanelPrope
 	}
 
 	return (
-		<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+		<div className='bg-white rounded-card shadow-base overflow-hidden'>
 			<div className='p-4 sm:p-5 border-b border-gray-100'>
 				<div className='flex items-center justify-between'>
 					<h3 className='font-semibold text-gray-800 flex items-center gap-2'>
@@ -392,7 +392,7 @@ export function SeoAuditPanel({items, maxItems = 5}: Readonly<SeoAuditPanelPrope
 
 							<Link
 								href={`/admin/${item.type}/${item.id}`}
-								className='flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary-text text-sm font-medium rounded-lg hover:bg-primary/20 transition-colors'
+								className='flex-shrink-0 inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary-text text-sm font-medium rounded-button hover:bg-primary/20 transition-colors'
 							>
 								<Edit3 className='w-4 h-4' />
 								Bewerken
@@ -471,7 +471,7 @@ export function SeoIssueBreakdown({items}: Readonly<IssueBreakdownProperties>) {
 	}
 
 	return (
-		<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+		<div className='bg-white rounded-card shadow-base overflow-hidden'>
 			<div className='p-4 sm:p-5 border-b border-gray-100'>
 				<h3 className='font-semibold text-gray-800 flex items-center gap-2'>
 					<BarChart3 className='w-4 h-4 text-primary' />
@@ -529,7 +529,7 @@ function IssueFieldRow({icon, label, missing, warning, items}: Readonly<IssueFie
 	const [isExpanded, setIsExpanded] = useState(false);
 
 	return (
-		<div className='border border-gray-200 rounded-lg overflow-hidden'>
+		<div className='border border-gray-200 rounded-button overflow-hidden'>
 			<button
 				onClick={() => setIsExpanded(!isExpanded)}
 				className='w-full p-3 flex items-center justify-between hover:bg-gray-50 transition-colors'
@@ -620,7 +620,7 @@ export function ContentSeoSummary({news, activities}: Readonly<ContentSeoSummary
 	return (
 		<div className='space-y-4'>
 			{/* Main SEO Overview Card */}
-			<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+			<div className='bg-white rounded-card shadow-base overflow-hidden'>
 				<div className='p-4 sm:p-5 border-b border-gray-100'>
 					<h3 className='font-semibold text-gray-800 flex items-center gap-2'>
 						<Search className='w-4 h-4 text-primary' />
@@ -630,7 +630,7 @@ export function ContentSeoSummary({news, activities}: Readonly<ContentSeoSummary
 
 				<div className='p-4 sm:p-5'>
 					{/* Overall Score with Improvement Potential */}
-					<div className='flex items-center justify-between mb-4 p-4 bg-gray-50 rounded-xl'>
+					<div className='flex items-center justify-between mb-4 p-4 bg-gray-50 rounded-card'>
 						<div className='flex-1'>
 							<p className='text-sm text-gray-500'>Gemiddelde SEO Score</p>
 							<div className='flex items-baseline gap-2'>
@@ -652,7 +652,7 @@ export function ContentSeoSummary({news, activities}: Readonly<ContentSeoSummary
 
 					{/* Stats Grid */}
 					<div className='grid grid-cols-2 sm:grid-cols-5 gap-3'>
-						<div className='text-center p-3 bg-gray-50 rounded-lg'>
+						<div className='text-center p-3 bg-gray-50 rounded-button'>
 							<p className='text-2xl font-bold text-gray-800'>{allItems.length}</p>
 							<p className='text-xs text-gray-500'>Content items</p>
 						</div>

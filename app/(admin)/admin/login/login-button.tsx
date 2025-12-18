@@ -12,7 +12,7 @@ export function LoginButton({returnTo}: LoginButtonProps) {
 	return (
 		<a
 			href={loginUrl}
-			className='w-full flex items-center justify-center gap-3 px-4 py-3 bg-primary text-white rounded-xl hover:bg-primary-hover transition-colors font-medium'
+			className='w-full flex items-center justify-center gap-3 px-4 py-3 bg-primary text-white rounded-card hover:bg-primary-hover transition-colors font-medium'
 		>
 			<User className='w-5 h-5' />
 			Inloggen

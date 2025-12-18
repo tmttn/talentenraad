@@ -66,7 +66,7 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 	};
 
 	return (
-		<div className='flex flex-wrap gap-1 p-2 border-b border-gray-300 bg-gray-50 rounded-t-lg'>
+		<div className='flex flex-wrap gap-1 p-2 border-b border-gray-300 bg-gray-50 rounded-t-button'>
 			{/* Text formatting */}
 			<ToolbarButton
 				onClick={() => {
@@ -379,7 +379,7 @@ function HtmlEditor({value, onChange, placeholder}: HtmlEditorProps) {
 	};
 
 	return (
-		<div className='relative min-h-[200px] bg-gray-900 rounded-b-lg overflow-hidden'>
+		<div className='relative min-h-[200px] bg-gray-900 rounded-b-button overflow-hidden'>
 			{/* Highlighted backdrop */}
 			<pre
 				ref={preRef}
@@ -463,7 +463,7 @@ export function RichTextEditor({value, onChange, placeholder}: RichTextEditorPro
 	};
 
 	return (
-		<div className='border-2 border-gray-300 rounded-lg bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/30 transition-colors'>
+		<div className='border-2 border-gray-300 rounded-button bg-white focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/30 transition-colors'>
 			<Toolbar editor={editor} isHtmlMode={isHtmlMode} onToggleHtmlMode={handleToggleHtmlMode} />
 			{isHtmlMode ? (
 				<HtmlEditor

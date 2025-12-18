@@ -48,7 +48,7 @@ export default function GlobalError({error, reset}: Readonly<GlobalErrorProperti
 					<div className='flex flex-wrap justify-center gap-3'>
 						<a
 							href='/'
-							className='inline-flex items-center gap-2 px-6 py-3 bg-pink-600 text-white font-semibold rounded-lg hover:bg-pink-700 transition-colors'
+							className='inline-flex items-center gap-2 px-6 py-3 bg-pink-600 text-white font-semibold rounded-button hover:bg-pink-700 transition-colors'
 						>
 							<Home className='w-5 h-5' />
 							Naar homepagina
@@ -57,7 +57,7 @@ export default function GlobalError({error, reset}: Readonly<GlobalErrorProperti
 						<button
 							type='button'
 							onClick={reset}
-							className='inline-flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors'
+							className='inline-flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-button hover:bg-gray-200 transition-colors'
 						>
 							<RefreshCw className='w-5 h-5' />
 							Probeer opnieuw

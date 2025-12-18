@@ -191,7 +191,7 @@ export function HeroSkeleton({size = 'medium'}: {size?: 'compact' | 'small' | 'm
 			<div className='relative z-10 max-w-4xl mx-auto px-6 text-center animate-pulse'>
 				<div className='h-10 md:h-12 bg-white/20 rounded w-3/4 mx-auto mb-4' />
 				<div className='h-5 md:h-6 bg-white/15 rounded w-1/2 mx-auto mb-8' />
-				<div className='h-12 bg-white/20 rounded-lg w-40 mx-auto' />
+				<div className='h-12 bg-white/20 rounded-button w-40 mx-auto' />
 			</div>
 		</section>
 	);
@@ -246,7 +246,7 @@ export function HomepageDashboardSkeleton() {
 							<div className='space-y-3'>
 								{[1, 2, 3].map(i => (
 									<div key={i} className='flex items-center gap-3 p-2'>
-										<div className='w-12 h-12 bg-gray-200 rounded-lg' />
+										<div className='w-12 h-12 bg-gray-200 rounded-button' />
 										<div className='flex-grow'>
 											<div className='h-4 bg-gray-200 rounded w-3/4 mb-1' />
 											<div className='h-3 bg-gray-200 rounded w-1/2' />
@@ -445,7 +445,7 @@ export function DashboardSkeleton() {
 // Site Header skeleton - matches SiteHeader component structure
 export function SiteHeaderSkeleton() {
 	return (
-		<header className='bg-white shadow-sm sticky top-0 z-50 animate-pulse'>
+		<header className='bg-white shadow-subtle sticky top-0 z-50 animate-pulse'>
 			<div className='max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between'>
 				{/* Logo placeholder */}
 				<div className='h-14 w-[120px] bg-gray-200 rounded' />
@@ -456,7 +456,7 @@ export function SiteHeaderSkeleton() {
 					))}
 				</nav>
 				{/* Mobile menu button */}
-				<div className='md:hidden h-10 w-10 bg-gray-200 rounded-lg' />
+				<div className='md:hidden h-10 w-10 bg-gray-200 rounded-button' />
 			</div>
 		</header>
 	);

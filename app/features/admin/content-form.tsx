@@ -27,9 +27,9 @@ type ContentFormProps = {
 };
 
 const inputStyles = [
-	'w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-gray-300 rounded-lg bg-white text-gray-900',
+	'w-full px-3 sm:px-4 py-2.5 sm:py-3 border-2 border-gray-300 rounded-button bg-white text-gray-900',
 	'focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none',
-	'transition-colors duration-200 text-base',
+	'transition-colors duration-fast text-base',
 ].join(' ');
 
 const labelStyles = 'block text-sm font-semibold text-gray-800 mb-2';
@@ -215,9 +215,9 @@ export function ContentForm({
 	};
 
 	return (
-		<form onSubmit={handleSubmit} className='bg-white rounded-xl shadow-md p-4 sm:p-6'>
+		<form onSubmit={handleSubmit} className='bg-white rounded-card shadow-base p-4 sm:p-6'>
 			{error && (
-				<div className='mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 flex items-start gap-3'>
+				<div className='mb-6 p-4 bg-red-50 border border-red-200 rounded-button text-red-800 flex items-start gap-3'>
 					<AlertCircle className='w-5 h-5 text-red-500 flex-shrink-0 mt-0.5' />
 					<span>{error}</span>
 				</div>
@@ -247,14 +247,14 @@ export function ContentForm({
 						router.push(cancelPath);
 					}}
 					disabled={isSubmitting}
-					className='w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50'
+					className='w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-gray-100 text-gray-700 font-medium rounded-card hover:bg-gray-200 transition-colors disabled:opacity-50'
 				>
 					Annuleren
 				</button>
 				<button
 					type='submit'
 					disabled={isSubmitting}
-					className='w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 flex items-center justify-center gap-2'
+					className='w-full sm:w-auto px-5 sm:px-6 py-2.5 sm:py-3 bg-primary text-white font-medium rounded-card hover:bg-primary-hover transition-colors disabled:opacity-50 flex items-center justify-center gap-2'
 				>
 					{isSubmitting ? (
 						<>

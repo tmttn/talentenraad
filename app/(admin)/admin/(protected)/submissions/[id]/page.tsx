@@ -53,7 +53,7 @@ export default async function SubmissionDetailPage({params}: Readonly<PageProper
 				</a>
 			</div>
 
-			<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+			<div className='bg-white rounded-card shadow-base overflow-hidden'>
 				<div className='p-6 border-b border-gray-200'>
 					<div className='flex justify-between items-start'>
 						<div>
@@ -94,7 +94,7 @@ export default async function SubmissionDetailPage({params}: Readonly<PageProper
 				<div className='p-6 border-t border-gray-200 bg-gray-50'>
 					<a
 						href={`mailto:${submission.email}?subject=Re: ${subjectLabels[submission.subject] ?? submission.subject}`}
-						className='inline-flex items-center px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors'
+						className='inline-flex items-center px-4 py-2 bg-primary text-white font-medium rounded-button hover:bg-primary-hover transition-colors'
 					>
 						Beantwoorden via e-mail
 					</a>

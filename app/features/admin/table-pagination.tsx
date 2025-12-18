@@ -73,7 +73,7 @@ export function TablePagination({
 						onPageChange(1);
 					}}
 					disabled={!canGoBack}
-					className='p-2 rounded-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+					className='p-2 rounded-button text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
 					title='Eerste pagina'
 				>
 					<ChevronsLeft className='w-5 h-5' />
@@ -84,7 +84,7 @@ export function TablePagination({
 						onPageChange(currentPage - 1);
 					}}
 					disabled={!canGoBack}
-					className='p-2 rounded-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+					className='p-2 rounded-button text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
 					title='Vorige pagina'
 				>
 					<ChevronLeft className='w-5 h-5' />
@@ -100,7 +100,7 @@ export function TablePagination({
 						onPageChange(currentPage + 1);
 					}}
 					disabled={!canGoForward}
-					className='p-2 rounded-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+					className='p-2 rounded-button text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
 					title='Volgende pagina'
 				>
 					<ChevronRight className='w-5 h-5' />
@@ -111,7 +111,7 @@ export function TablePagination({
 						onPageChange(totalPages);
 					}}
 					disabled={!canGoForward}
-					className='p-2 rounded-lg text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+					className='p-2 rounded-button text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
 					title='Laatste pagina'
 				>
 					<ChevronsRight className='w-5 h-5' />

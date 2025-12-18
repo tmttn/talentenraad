@@ -55,7 +55,7 @@ export default function ComponentPreviewIndexPage() {
 					als preview URL&apos;s in Builder.io.
 				</p>
 
-				<div className='bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8'>
+				<div className='bg-white rounded-button shadow-subtle border border-gray-200 p-6 mb-8'>
 					<h2 className='text-lg font-semibold text-gray-800 mb-2'>Preview URL Formaat</h2>
 					<code className='text-sm bg-gray-100 px-3 py-2 rounded block'>
 						https://your-site.com/component-preview/[component-slug]
@@ -75,7 +75,7 @@ export default function ComponentPreviewIndexPage() {
 								<Link
 									key={component.slug}
 									href={`/component-preview/${component.slug}`}
-									className='block p-4 bg-white rounded-lg border border-gray-200 hover:border-primary hover:shadow-md transition-all'
+									className='block p-4 bg-white rounded-button border border-gray-200 hover:border-primary hover:shadow-base transition-all'
 								>
 									<h3 className='font-medium text-gray-900'>{component.name}</h3>
 									<p className='text-sm text-gray-500 mt-1'>/component-preview/{component.slug}</p>
@@ -85,7 +85,7 @@ export default function ComponentPreviewIndexPage() {
 					</div>
 				))}
 
-				<div className='bg-blue-50 rounded-lg p-6 mt-8'>
+				<div className='bg-blue-50 rounded-button p-6 mt-8'>
 					<h2 className='text-lg font-semibold text-blue-900 mb-2'>
 						Builder.io Configuratie
 					</h2>

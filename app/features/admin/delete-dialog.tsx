@@ -47,7 +47,7 @@ export function DeleteDialog({title, message, onConfirm, onCancel}: DeleteDialog
 				onClick={isDeleting ? undefined : onCancel}
 				aria-hidden='true'
 			/>
-			<div className='relative bg-white rounded-xl shadow-lg p-5 sm:p-6 max-w-md w-full animate-in fade-in zoom-in-95 duration-200'>
+			<div className='relative bg-white rounded-card shadow-elevated p-5 sm:p-6 max-w-md w-full animate-in fade-in zoom-in-95 duration-fast'>
 				<div className='flex items-start gap-4'>
 					<div className='flex-shrink-0 w-10 h-10 rounded-full bg-red-100 flex items-center justify-center'>
 						<AlertTriangle className='w-5 h-5 text-red-600' />
@@ -62,7 +62,7 @@ export function DeleteDialog({title, message, onConfirm, onCancel}: DeleteDialog
 						type='button'
 						onClick={onCancel}
 						disabled={isDeleting}
-						className='w-full sm:w-auto px-4 py-2.5 text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gray-300'
+						className='w-full sm:w-auto px-4 py-2.5 text-gray-700 font-medium rounded-button border border-gray-300 hover:bg-gray-50 transition-colors disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-gray-300'
 					>
 						Annuleren
 					</button>
@@ -70,7 +70,7 @@ export function DeleteDialog({title, message, onConfirm, onCancel}: DeleteDialog
 						type='button'
 						onClick={handleConfirm}
 						disabled={isDeleting}
-						className='w-full sm:w-auto px-4 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2'
+						className='w-full sm:w-auto px-4 py-2.5 bg-red-600 text-white font-medium rounded-button hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2'
 					>
 						{isDeleting ? (
 							<>

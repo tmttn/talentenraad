@@ -24,9 +24,9 @@ const typeColors: Record<AnnouncementType, string> = {
 };
 
 const inputStyles = [
-	'w-full px-4 py-3 border-2 border-gray-300 rounded-lg bg-white text-gray-900',
+	'w-full px-4 py-3 border-2 border-gray-300 rounded-button bg-white text-gray-900',
 	'focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none',
-	'transition-colors duration-200',
+	'transition-colors duration-fast',
 ].join(' ');
 
 type FormData = {
@@ -213,13 +213,13 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 	];
 
 	const renderForm = () => (
-		<form onSubmit={handleSubmit} className='bg-white rounded-xl shadow-md p-6 mb-6'>
+		<form onSubmit={handleSubmit} className='bg-white rounded-card shadow-base p-6 mb-6'>
 			<h2 className='text-xl font-bold text-gray-800 mb-4'>
 				{editingId ? 'Aankondiging bewerken' : 'Nieuwe aankondiging'}
 			</h2>
 
 			{error && (
-				<div className='mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800'>
+				<div className='mb-4 p-4 bg-red-50 border border-red-200 rounded-button text-red-800'>
 					{error}
 				</div>
 			)}
@@ -312,7 +312,7 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 				<button
 					type='submit'
 					disabled={isSubmitting}
-					className='px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50'
+					className='px-6 py-3 bg-primary text-white font-medium rounded-card hover:bg-primary-hover transition-colors disabled:opacity-50'
 				>
 					{isSubmitting ? 'Bezig...' : 'Opslaan'}
 				</button>
@@ -320,7 +320,7 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 					type='button'
 					onClick={handleCancel}
 					disabled={isSubmitting}
-					className='px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-xl hover:bg-gray-200 transition-colors disabled:opacity-50'
+					className='px-6 py-3 bg-gray-100 text-gray-700 font-medium rounded-card hover:bg-gray-200 transition-colors disabled:opacity-50'
 				>
 					Annuleren
 				</button>
@@ -340,7 +340,7 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 					<button
 						type='button'
 						onClick={handleCreate}
-						className='px-4 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors flex items-center gap-2 whitespace-nowrap'
+						className='px-4 py-2.5 bg-primary text-white font-medium rounded-button hover:bg-primary-hover transition-colors flex items-center gap-2 whitespace-nowrap'
 					>
 						<Plus className='w-4 h-4' />
 						Nieuwe aankondiging
@@ -352,7 +352,7 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 
 			<div className='space-y-4'>
 				{filteredAnnouncements.length === 0 ? (
-					<div className='bg-white rounded-xl p-8 text-center text-gray-500'>
+					<div className='bg-white rounded-card p-8 text-center text-gray-500'>
 						{searchQuery || typeFilter || statusFilter
 							? 'Geen aankondigingen gevonden met de huidige filters.'
 							: 'Geen aankondigingen gevonden.'}
@@ -361,7 +361,7 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 					filteredAnnouncements.map(announcement => (
 						<div
 							key={announcement.id}
-							className={`bg-white rounded-xl shadow-md p-6 border-l-4 ${
+							className={`bg-white rounded-card shadow-base p-6 border-l-4 ${
 								announcement.data.actief ? typeColors[announcement.data.type] : 'border-gray-300'
 							}`}
 						>
@@ -395,7 +395,7 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 											handleToggleActive(announcement);
 										}}
 										title={announcement.data.actief ? 'Deactiveer' : 'Activeer'}
-										className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors'
+										className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button text-gray-600 hover:text-gray-800 hover:bg-gray-100 transition-colors'
 									>
 										{announcement.data.actief ? <PowerOff className='w-4 h-4' /> : <Power className='w-4 h-4' />}
 										<span className='hidden lg:inline'>{announcement.data.actief ? 'Deactiveer' : 'Activeer'}</span>
@@ -406,7 +406,7 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 											handleEdit(announcement);
 										}}
 										title='Bewerken'
-										className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
+										className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
 									>
 										<Pencil className='w-4 h-4' />
 										<span className='hidden lg:inline'>Bewerk</span>
@@ -417,7 +417,7 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 											setDeleteItem(announcement);
 										}}
 										title='Verwijderen'
-										className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors'
+										className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors'
 									>
 										<Trash2 className='w-4 h-4' />
 										<span className='hidden lg:inline'>Verwijder</span>

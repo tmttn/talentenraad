@@ -16,7 +16,7 @@ export default function ActiviteitenAdminPage() {
 				<h1 className='text-3xl font-bold text-gray-800'>Activiteiten</h1>
 				<Link
 					href='/admin/activiteiten/new'
-					className='px-6 py-3 bg-primary text-white font-medium rounded-xl hover:bg-primary-hover transition-colors'
+					className='px-6 py-3 bg-primary text-white font-medium rounded-card hover:bg-primary-hover transition-colors'
 				>
 					Nieuwe activiteit
 				</Link>

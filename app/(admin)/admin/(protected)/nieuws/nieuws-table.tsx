@@ -188,7 +188,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 			</TableFilters>
 
 			{viewMode === 'table' ? (
-				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+				<div className='bg-white rounded-card shadow-base overflow-hidden'>
 					<div className='overflow-x-auto'>
 						<table className='w-full min-w-[640px]'>
 							<thead className='bg-gray-50 border-b border-gray-200'>
@@ -265,7 +265,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 														href={`/nieuws/${generateSlug(item.data.titel)}`}
 														target='_blank'
 														title='Bekijk op website'
-														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors'
+														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors'
 													>
 														<ExternalLink className='w-4 h-4' />
 														<span className='hidden lg:inline'>Bekijken</span>
@@ -273,7 +273,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 													<Link
 														href={`/admin/nieuws/${item.id}`}
 														title='Bewerken'
-														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
+														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
 													>
 														<Pencil className='w-4 h-4' />
 														<span className='hidden lg:inline'>Bewerken</span>
@@ -284,7 +284,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 															setDeleteItem(item);
 														}}
 														title='Verwijderen'
-														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors'
+														className='inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors'
 													>
 														<Trash2 className='w-4 h-4' />
 														<span className='hidden lg:inline'>Verwijderen</span>
@@ -311,7 +311,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 			) : (
 				<div>
 					{paginatedItems.length === 0 ? (
-						<div className='bg-white rounded-xl shadow-md p-8 text-center text-gray-500'>
+						<div className='bg-white rounded-card shadow-base p-8 text-center text-gray-500'>
 							{searchQuery || statusFilter || pinnedFilter
 								? 'Geen nieuws gevonden met de huidige filters.'
 								: 'Geen nieuws gevonden.'}
@@ -319,7 +319,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 					) : (
 						<div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
 							{paginatedItems.map(item => (
-								<div key={item.id} className='bg-white rounded-xl shadow-md p-4'>
+								<div key={item.id} className='bg-white rounded-card shadow-base p-4'>
 									<div className='flex items-start justify-between gap-2 mb-3'>
 										<Link
 											href={`/admin/nieuws/${item.id}`}
@@ -348,7 +348,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 											href={`/nieuws/${generateSlug(item.data.titel)}`}
 											target='_blank'
 											title='Bekijk op website'
-											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors'
+											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-button text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors'
 										>
 											<ExternalLink className='w-4 h-4' />
 											<span>Bekijken</span>
@@ -356,7 +356,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 										<Link
 											href={`/admin/nieuws/${item.id}`}
 											title='Bewerken'
-											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
+											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-button text-primary hover:text-primary-hover hover:bg-primary/10 transition-colors'
 										>
 											<Pencil className='w-4 h-4' />
 											<span>Bewerken</span>
@@ -367,7 +367,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 												setDeleteItem(item);
 											}}
 											title='Verwijderen'
-											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-lg text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors'
+											className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-button text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors'
 										>
 											<Trash2 className='w-4 h-4' />
 											<span>Verwijderen</span>
@@ -378,7 +378,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 						</div>
 					)}
 					{totalItems > 0 && (
-						<div className='mt-4 bg-white rounded-xl shadow-md overflow-hidden'>
+						<div className='mt-4 bg-white rounded-card shadow-base overflow-hidden'>
 							<TablePagination
 								currentPage={currentPage}
 								totalPages={totalPages}

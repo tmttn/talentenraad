@@ -31,7 +31,7 @@ export function SubmissionsPageClient({
 			</div>
 
 			{/* Tabs */}
-			<div className='flex gap-1 mb-6 bg-gray-100 p-1 rounded-lg w-fit'>
+			<div className='flex gap-1 mb-6 bg-gray-100 p-1 rounded-button w-fit'>
 				<button
 					type='button'
 					onClick={() => setActiveTab('inbox')}
@@ -77,7 +77,7 @@ export function SubmissionsPageClient({
 			{submissions.length > 0 ? (
 				<SubmissionsTable submissions={submissions} isArchiveView={isArchiveView} />
 			) : (
-				<div className='bg-white rounded-xl shadow-md p-8 sm:p-12 text-center'>
+				<div className='bg-white rounded-card shadow-base p-8 sm:p-12 text-center'>
 					<Mail className='mx-auto text-gray-300 mb-4 h-12 w-12' aria-hidden='true' />
 					<p className='text-gray-500 text-base sm:text-lg'>
 						{isArchiveView

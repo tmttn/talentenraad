@@ -27,7 +27,7 @@ export default async function AdminLoginPage({searchParams}: AdminLoginPageProps
 
 	return (
 		<div className='min-h-screen flex items-center justify-center bg-gray-50 px-4'>
-			<div className='bg-white p-6 sm:p-8 rounded-2xl shadow-lg max-w-md w-full'>
+			<div className='bg-white p-6 sm:p-8 rounded-modal shadow-elevated max-w-md w-full'>
 				<div className='text-center mb-6 sm:mb-8'>
 					<h1 className='text-xl sm:text-2xl font-bold text-gray-800 mb-2'>
 						Admin Dashboard

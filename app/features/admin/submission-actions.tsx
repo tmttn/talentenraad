@@ -46,7 +46,7 @@ export function SubmissionActions({submissionId}: Readonly<SubmissionActionsProp
 				onClick={() => {
 					void handleAction('archive');
 				}}
-				className='px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors disabled:opacity-50'
+				className='px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-button transition-colors disabled:opacity-50'
 			>
 				Archiveren
 			</button>
@@ -56,7 +56,7 @@ export function SubmissionActions({submissionId}: Readonly<SubmissionActionsProp
 				onClick={() => {
 					void handleAction('delete');
 				}}
-				className='px-3 py-1.5 text-sm bg-red-100 text-red-700 hover:bg-red-200 rounded-lg transition-colors disabled:opacity-50'
+				className='px-3 py-1.5 text-sm bg-red-100 text-red-700 hover:bg-red-200 rounded-button transition-colors disabled:opacity-50'
 			>
 				Verwijderen
 			</button>

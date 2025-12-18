@@ -139,14 +139,14 @@ function TeamGrid({
 					<div className='relative mb-5 inline-block'>
 						<div className={[
 							'w-32 h-32 rounded-full bg-gradient-to-br flex items-center justify-center',
-							'shadow-lg group-hover:shadow-xl transition-shadow',
+							'shadow-elevated group-hover:shadow-floating transition-shadow',
 							avatarColors[index % avatarColors.length],
 						].join(' ')}>
 							<span className='text-white font-bold text-3xl'>
 								{getInitials(member.name)}
 							</span>
 						</div>
-						<div className='absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-md'>
+						<div className='absolute -bottom-2 left-1/2 -translate-x-1/2 bg-white px-3 py-1 rounded-full shadow-base'>
 							<span className='text-xs font-semibold text-primary'>
 								{member.role}
 							</span>

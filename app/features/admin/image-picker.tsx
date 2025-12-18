@@ -150,14 +150,14 @@ function ImagePickerModal({onSelect, onClose, currentValue}: ImagePickerModalPro
 				onClick={onClose}
 				aria-hidden='true'
 			/>
-			<div className='relative bg-white rounded-xl shadow-lg w-full max-w-4xl max-h-[85vh] flex flex-col animate-in fade-in zoom-in-95 duration-200'>
+			<div className='relative bg-white rounded-card shadow-elevated w-full max-w-4xl max-h-[85vh] flex flex-col animate-in fade-in zoom-in-95 duration-fast'>
 				{/* Header */}
 				<div className='flex items-center justify-between px-5 py-4 border-b'>
 					<h2 className='text-lg font-bold text-gray-900'>Kies een afbeelding</h2>
 					<button
 						type='button'
 						onClick={onClose}
-						className='p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors'
+						className='p-2 text-gray-400 hover:text-gray-600 rounded-button hover:bg-gray-100 transition-colors'
 					>
 						<X className='w-5 h-5' />
 					</button>
@@ -175,7 +175,7 @@ function ImagePickerModal({onSelect, onClose, currentValue}: ImagePickerModalPro
 									setSearch(e.target.value);
 								}}
 								placeholder='Zoek afbeeldingen...'
-								className='w-full pl-10 pr-4 py-2.5 border-2 border-gray-300 rounded-lg focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none'
+								className='w-full pl-10 pr-4 py-2.5 border-2 border-gray-300 rounded-button focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none'
 							/>
 						</div>
 						<input
@@ -189,7 +189,7 @@ function ImagePickerModal({onSelect, onClose, currentValue}: ImagePickerModalPro
 							type='button'
 							onClick={handleUploadClick}
 							disabled={isUploading}
-							className='flex items-center gap-2 px-4 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+							className='flex items-center gap-2 px-4 py-2.5 bg-primary text-white font-medium rounded-button hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
 						>
 							{isUploading ? (
 								<Loader2 className='w-5 h-5 animate-spin' />
@@ -244,7 +244,7 @@ function ImagePickerModal({onSelect, onClose, currentValue}: ImagePickerModalPro
 										onDoubleClick={() => {
 											onSelect(asset.url);
 										}}
-										className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 ${
+										className={`relative aspect-square rounded-button overflow-hidden border-2 transition-all hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50 ${
 											isSelected ? 'border-primary ring-2 ring-primary/30' : 'border-gray-200'
 										}`}
 									>
@@ -281,7 +281,7 @@ function ImagePickerModal({onSelect, onClose, currentValue}: ImagePickerModalPro
 						<button
 							type='button'
 							onClick={onClose}
-							className='px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-100 transition-colors'
+							className='px-4 py-2 text-gray-700 font-medium rounded-button border border-gray-300 hover:bg-gray-100 transition-colors'
 						>
 							Annuleren
 						</button>
@@ -289,7 +289,7 @@ function ImagePickerModal({onSelect, onClose, currentValue}: ImagePickerModalPro
 							type='button'
 							onClick={handleConfirm}
 							disabled={!selectedUrl}
-							className='px-4 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+							className='px-4 py-2 bg-primary text-white font-medium rounded-button hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
 						>
 							Selecteren
 						</button>
@@ -322,7 +322,7 @@ export function ImagePicker({value, onChange, label, helpText}: ImagePickerProps
 
 			{value ? (
 				<div className='relative'>
-					<div className='border-2 border-gray-300 rounded-lg overflow-hidden'>
+					<div className='border-2 border-gray-300 rounded-button overflow-hidden'>
 						{/* eslint-disable-next-line @next/next/no-img-element */}
 						<img
 							src={value}
@@ -336,14 +336,14 @@ export function ImagePicker({value, onChange, label, helpText}: ImagePickerProps
 							onClick={() => {
 								setShowModal(true);
 							}}
-							className='flex-1 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors'
+							className='flex-1 px-4 py-2 text-sm font-medium text-gray-700 border border-gray-300 rounded-button hover:bg-gray-50 transition-colors'
 						>
 							Andere afbeelding kiezen
 						</button>
 						<button
 							type='button'
 							onClick={handleClear}
-							className='px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors'
+							className='px-4 py-2 text-sm font-medium text-red-600 border border-red-200 rounded-button hover:bg-red-50 transition-colors'
 						>
 							Verwijderen
 						</button>
@@ -355,7 +355,7 @@ export function ImagePicker({value, onChange, label, helpText}: ImagePickerProps
 					onClick={() => {
 						setShowModal(true);
 					}}
-					className='w-full h-48 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center gap-2 text-gray-500 hover:border-primary hover:text-primary transition-colors'
+					className='w-full h-48 border-2 border-dashed border-gray-300 rounded-button flex flex-col items-center justify-center gap-2 text-gray-500 hover:border-primary hover:text-primary transition-colors'
 				>
 					<ImageIcon className='w-10 h-10' />
 					<span className='text-sm font-medium'>Klik om een afbeelding te kiezen</span>

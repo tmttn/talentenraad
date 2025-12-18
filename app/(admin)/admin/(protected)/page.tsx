@@ -174,7 +174,7 @@ function DashboardHeader() {
 			</div>
 
 			{/* Quick Create Buttons */}
-			<div className='bg-white p-4 sm:p-5 rounded-xl shadow-md'>
+			<div className='bg-white p-4 sm:p-5 rounded-card shadow-base'>
 				<h2 className='text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2'>
 					<Plus className='w-4 h-4' />
 					Snel aanmaken
@@ -182,21 +182,21 @@ function DashboardHeader() {
 				<div className='flex flex-wrap gap-2'>
 					<Link
 						href='/admin/nieuws/new'
-						className='inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary-text font-medium rounded-lg hover:bg-primary/20 transition-colors text-sm'
+						className='inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary-text font-medium rounded-button hover:bg-primary/20 transition-colors text-sm'
 					>
 						<Newspaper className='w-4 h-4' />
 						Nieuwsbericht
 					</Link>
 					<Link
 						href='/admin/activiteiten/new'
-						className='inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 font-medium rounded-lg hover:bg-green-200 transition-colors text-sm'
+						className='inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 font-medium rounded-button hover:bg-green-200 transition-colors text-sm'
 					>
 						<Calendar className='w-4 h-4' />
 						Activiteit
 					</Link>
 					<Link
 						href='/admin/aankondigingen'
-						className='inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-700 font-medium rounded-lg hover:bg-yellow-200 transition-colors text-sm'
+						className='inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-700 font-medium rounded-button hover:bg-yellow-200 transition-colors text-sm'
 					>
 						<Megaphone className='w-4 h-4' />
 						Aankondiging
@@ -209,7 +209,7 @@ function DashboardHeader() {
 
 function QuickLinks() {
 	return (
-		<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+		<div className='bg-white rounded-card shadow-base overflow-hidden'>
 			<div className='p-4 sm:p-5 border-b border-gray-100'>
 				<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
 					<Zap className='w-4 h-4 text-purple-500' />
@@ -219,9 +219,9 @@ function QuickLinks() {
 			<div className='p-3 sm:p-4 grid grid-cols-2 gap-2'>
 				<Link
 					href='/admin/submissions'
-					className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+					className='flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors'
 				>
-					<div className='w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center'>
+					<div className='w-10 h-10 bg-primary/10 rounded-button flex items-center justify-center'>
 						<FileText className='w-5 h-5 text-primary' />
 					</div>
 					<div>
@@ -231,9 +231,9 @@ function QuickLinks() {
 				</Link>
 				<Link
 					href='/admin/gebruikers'
-					className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+					className='flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors'
 				>
-					<div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center'>
+					<div className='w-10 h-10 bg-blue-100 rounded-button flex items-center justify-center'>
 						<Users className='w-5 h-5 text-blue-600' />
 					</div>
 					<div>
@@ -243,9 +243,9 @@ function QuickLinks() {
 				</Link>
 				<Link
 					href='/admin/decoraties'
-					className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+					className='flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors'
 				>
-					<div className='w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center'>
+					<div className='w-10 h-10 bg-pink-100 rounded-button flex items-center justify-center'>
 						<Sparkles className='w-5 h-5 text-pink-500' />
 					</div>
 					<div>
@@ -257,9 +257,9 @@ function QuickLinks() {
 					href='/'
 					target='_blank'
 					rel='noopener noreferrer'
-					className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+					className='flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors'
 				>
-					<div className='w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center'>
+					<div className='w-10 h-10 bg-green-100 rounded-button flex items-center justify-center'>
 						<ArrowRight className='w-5 h-5 text-green-600' />
 					</div>
 					<div>
@@ -283,7 +283,7 @@ async function DashboardContent() {
 					{data.announcements.map(announcement => (
 						<div
 							key={announcement.id}
-							className={`p-3 rounded-lg border flex items-center gap-3 ${getAnnouncementTypeColor(announcement.data.type)}`}
+							className={`p-3 rounded-button border flex items-center gap-3 ${getAnnouncementTypeColor(announcement.data.type)}`}
 						>
 							<AnnouncementIcon type={announcement.data.type} />
 							<span className='flex-1 text-sm font-medium'>{announcement.data.tekst}</span>
@@ -300,7 +300,7 @@ async function DashboardContent() {
 
 			{/* Statistics Cards */}
 			<div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4'>
-				<Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
+				<Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-card shadow-base hover:shadow-elevated transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
 						<Inbox className='w-5 h-5 text-gray-500 group-hover:text-primary transition-colors' />
 						<span className='text-xs text-gray-500'>totaal</span>
@@ -308,7 +308,7 @@ async function DashboardContent() {
 					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{data.totalCount}</p>
 					<p className='text-xs text-gray-500 mt-1'>Berichten</p>
 				</Link>
-				<Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
+				<Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-card shadow-base hover:shadow-elevated transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
 						<Mail className='w-5 h-5 text-primary' />
 						{data.unreadCount > 0 && (
@@ -318,14 +318,14 @@ async function DashboardContent() {
 					<p className='text-2xl sm:text-3xl font-bold text-primary'>{data.unreadCount}</p>
 					<p className='text-xs text-gray-500 mt-1'>Ongelezen</p>
 				</Link>
-				<Link href='/admin/nieuws' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
+				<Link href='/admin/nieuws' className='bg-white p-4 sm:p-5 rounded-card shadow-base hover:shadow-elevated transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
 						<Newspaper className='w-5 h-5 text-gray-500 group-hover:text-blue-500 transition-colors' />
 					</div>
 					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{data.news.length > 0 ? data.news.length : '0'}</p>
 					<p className='text-xs text-gray-500 mt-1'>Nieuwsberichten</p>
 				</Link>
-				<Link href='/admin/activiteiten' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
+				<Link href='/admin/activiteiten' className='bg-white p-4 sm:p-5 rounded-card shadow-base hover:shadow-elevated transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
 						<Calendar className='w-5 h-5 text-gray-500 group-hover:text-green-500 transition-colors' />
 					</div>
@@ -353,7 +353,7 @@ async function DashboardContent() {
 			{/* Content Lists Grid */}
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
 				{/* Recent Submissions */}
-				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+				<div className='bg-white rounded-card shadow-base overflow-hidden'>
 					<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
 						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
 							<Mail className='w-4 h-4 text-primary' />
@@ -401,7 +401,7 @@ async function DashboardContent() {
 				</div>
 
 				{/* Upcoming Activities */}
-				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+				<div className='bg-white rounded-card shadow-base overflow-hidden'>
 					<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
 						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
 							<Calendar className='w-4 h-4 text-green-500' />
@@ -464,7 +464,7 @@ async function DashboardContent() {
 				</div>
 
 				{/* Latest News */}
-				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+				<div className='bg-white rounded-card shadow-base overflow-hidden'>
 					<div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
 						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
 							<Newspaper className='w-4 h-4 text-blue-500' />

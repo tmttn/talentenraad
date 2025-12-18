@@ -173,7 +173,7 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
 
 					{/* Featured Image */}
 					{item.data.afbeelding && (
-						<div className='relative aspect-video rounded-2xl overflow-hidden mb-8'>
+						<div className='relative aspect-video rounded-modal overflow-hidden mb-8'>
 							<Image
 								src={item.data.afbeelding}
 								alt={item.data.titel}
