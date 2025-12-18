@@ -11,13 +11,13 @@ describe('Card', () => {
 		it('applies default variant by default', () => {
 			const {container} = render(<Card>Content</Card>);
 			const card = container.firstChild;
-			expect(card).toHaveClass('bg-white', 'shadow-md');
+			expect(card).toHaveClass('bg-white', 'shadow-base');
 		});
 
 		it('applies elevated variant', () => {
 			const {container} = render(<Card variant='elevated'>Content</Card>);
 			const card = container.firstChild;
-			expect(card).toHaveClass('bg-white', 'shadow-lg');
+			expect(card).toHaveClass('bg-white', 'shadow-elevated');
 		});
 
 		it('applies bordered variant', () => {
@@ -37,25 +37,25 @@ describe('Card', () => {
 		it('applies md padding by default', () => {
 			const {container} = render(<Card>Content</Card>);
 			const card = container.firstChild;
-			expect(card).toHaveClass('p-6');
+			expect(card).toHaveClass('p-component-md');
 		});
 
 		it('applies no padding', () => {
 			const {container} = render(<Card padding='none'>Content</Card>);
 			const card = container.firstChild;
-			expect(card).not.toHaveClass('p-4', 'p-6', 'p-8');
+			expect(card).not.toHaveClass('p-component-sm', 'p-component-md', 'p-component-lg');
 		});
 
 		it('applies sm padding', () => {
 			const {container} = render(<Card padding='sm'>Content</Card>);
 			const card = container.firstChild;
-			expect(card).toHaveClass('p-4');
+			expect(card).toHaveClass('p-component-sm');
 		});
 
 		it('applies lg padding', () => {
 			const {container} = render(<Card padding='lg'>Content</Card>);
 			const card = container.firstChild;
-			expect(card).toHaveClass('p-8');
+			expect(card).toHaveClass('p-component-lg');
 		});
 	});
 
@@ -63,20 +63,20 @@ describe('Card', () => {
 		it('does not apply hover styles by default', () => {
 			const {container} = render(<Card>Content</Card>);
 			const card = container.firstChild;
-			expect(card).not.toHaveClass('hover:shadow-lg', 'transition-shadow');
+			expect(card).not.toHaveClass('hover:shadow-elevated', 'transition-shadow');
 		});
 
 		it('applies hover styles when hover is true', () => {
 			const {container} = render(<Card hover>Content</Card>);
 			const card = container.firstChild;
-			expect(card).toHaveClass('hover:shadow-lg', 'transition-shadow');
+			expect(card).toHaveClass('hover:shadow-elevated', 'transition-shadow', 'duration-base');
 		});
 	});
 
-	it('has rounded-xl class', () => {
+	it('has rounded-card class (design token)', () => {
 		const {container} = render(<Card>Content</Card>);
 		const card = container.firstChild;
-		expect(card).toHaveClass('rounded-xl');
+		expect(card).toHaveClass('rounded-card');
 	});
 
 	it('accepts custom className', () => {

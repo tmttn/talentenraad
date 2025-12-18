@@ -8,18 +8,27 @@ type CardProperties = {
 	hover?: boolean;
 };
 
+/**
+ * Card variant styles using design tokens
+ * - Shadows: shadow-base, shadow-elevated, shadow-floating (from tokens)
+ * - Transitions applied via hover prop
+ */
 const variantStyles = {
-	default: 'bg-white shadow-md',
-	elevated: 'bg-white shadow-lg hover:shadow-xl',
+	default: 'bg-white shadow-base',
+	elevated: 'bg-white shadow-elevated hover:shadow-floating',
 	bordered: 'bg-white border border-gray-200',
 	ghost: 'bg-gray-50',
 };
 
+/**
+ * Card padding styles using design tokens
+ * Maps to --spacing-component-* CSS variables
+ */
 const paddingStyles = {
 	none: '',
-	sm: 'p-4',
-	md: 'p-6',
-	lg: 'p-8',
+	sm: 'p-component-sm',
+	md: 'p-component-md',
+	lg: 'p-component-lg',
 };
 
 function Card({
@@ -29,8 +38,14 @@ function Card({
 	className = '',
 	hover = false,
 }: Readonly<CardProperties>) {
+	const hoverStyles = hover
+		? 'hover:shadow-elevated transition-shadow duration-base'
+		: '';
+
 	return (
-		<div className={`rounded-xl ${variantStyles[variant]} ${paddingStyles[padding]} ${hover ? 'hover:shadow-lg transition-shadow' : ''} ${className}`}>
+		<div
+			className={`rounded-card ${variantStyles[variant]} ${paddingStyles[padding]} ${hoverStyles} ${className}`}
+		>
 			{children}
 		</div>
 	);
