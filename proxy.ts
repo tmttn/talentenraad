@@ -18,9 +18,8 @@ const staticPaths = new Set([
 	'/component-preview',
 ]);
 
-// Path prefixes for known routes (admin, api, etc.)
+// Path prefixes for known routes (api, etc.) - these skip 404 checks
 const knownPrefixes = [
-	'/admin',
 	'/api',
 	'/activiteiten/',
 	'/nieuws/',
@@ -29,6 +28,41 @@ const knownPrefixes = [
 	'/_next',
 	'/monitoring',
 ];
+
+// Valid admin routes (exact paths and patterns)
+const validAdminExactPaths = new Set([
+	'/admin',
+	'/admin/login',
+	'/admin/nieuws',
+	'/admin/nieuws/new',
+	'/admin/activiteiten',
+	'/admin/activiteiten/new',
+	'/admin/submissions',
+	'/admin/aankondigingen',
+	'/admin/gebruikers',
+	'/admin/decoraties',
+	'/admin/not-found-page', // Target for 404 rewrites
+]);
+
+// Admin routes with dynamic segments (e.g., /admin/nieuws/[id])
+const adminDynamicPatterns = [
+	/^\/admin\/nieuws\/[\w-]+$/,
+	/^\/admin\/activiteiten\/[\w-]+$/,
+	/^\/admin\/submissions\/[\w-]+$/,
+];
+
+/**
+ * Check if an admin path is valid
+ */
+function isValidAdminPath(pathname: string): boolean {
+	// Check exact paths
+	if (validAdminExactPaths.has(pathname)) {
+		return true;
+	}
+
+	// Check dynamic patterns
+	return adminDynamicPatterns.some(pattern => pattern.test(pathname));
+}
 
 // File extensions that should be passed through
 const fileExtensions = ['.ico', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.css', '.js', '.json', '.woff', '.woff2', '.ttf'];
@@ -87,7 +121,7 @@ export async function proxy(request: NextRequest) {
 		return authResponse;
 	}
 
-	// Skip 404 check for known prefixes
+	// Skip 404 check for known prefixes (non-admin)
 	if (knownPrefixes.some(prefix => pathname.startsWith(prefix))) {
 		return authResponse;
 	}
@@ -97,7 +131,18 @@ export async function proxy(request: NextRequest) {
 		return authResponse;
 	}
 
-	// Check if content exists in Builder.io
+	// Check admin routes for 404
+	if (pathname.startsWith('/admin')) {
+		if (!isValidAdminPath(pathname)) {
+			// Rewrite to admin 404 page with 404 status
+			const notFoundUrl = new URL('/admin/not-found-page', request.url);
+			return NextResponse.rewrite(notFoundUrl, {status: 404});
+		}
+
+		return authResponse;
+	}
+
+	// Check if content exists in Builder.io (for non-admin routes)
 	const contentExists = await checkBuilderContent(pathname, request);
 
 	if (!contentExists) {
