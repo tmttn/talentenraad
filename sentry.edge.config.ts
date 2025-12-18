@@ -13,4 +13,10 @@ Sentry.init({
 
 	// Setting this option to true will print useful information to the console while you're setting up Sentry.
 	debug: false,
+
+	// Ignore Next.js navigation errors - these are expected control flow, not real errors
+	ignoreErrors: [
+		'NEXT_NOT_FOUND',
+		'NEXT_REDIRECT',
+	],
 });

@@ -17,4 +17,23 @@ Sentry.init({
 	// eslint-disable-next-line n/prefer-global/process
 	spotlight: process.env.NODE_ENV === 'development',
 
+	// Ignore Next.js navigation errors - these are expected control flow, not real errors
+	ignoreErrors: [
+		'NEXT_NOT_FOUND',
+		'NEXT_REDIRECT',
+	],
+
+	// Additional filtering for errors that shouldn't be reported
+	beforeSend(event, hint) {
+		const error = hint.originalException;
+		// Filter out NEXT_NOT_FOUND errors (404s)
+		if (error instanceof Error) {
+			const digest = 'digest' in error ? String(error.digest) : '';
+			if (error.message === 'NEXT_NOT_FOUND' || digest.startsWith('NEXT_NOT_FOUND')) {
+				return null;
+			}
+		}
+
+		return event;
+	},
 });
