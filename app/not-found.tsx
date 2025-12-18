@@ -1,5 +1,7 @@
+import {Suspense} from 'react';
 import {SiteFooterServer} from '@components/layout/site-footer-server';
 import {SiteHeaderServer} from '@components/layout/site-header-server';
+import {SiteHeaderSkeleton, SiteFooterSkeleton} from '@components/skeletons';
 import {NotFoundPage} from '@components/error-pages';
 
 /**
@@ -13,11 +15,15 @@ import {NotFoundPage} from '@components/error-pages';
 export default function NotFound() {
 	return (
 		<>
-			<SiteHeaderServer />
+			<Suspense fallback={<SiteHeaderSkeleton />}>
+				<SiteHeaderServer />
+			</Suspense>
 			<main className='flex-1'>
 				<NotFoundPage />
 			</main>
-			<SiteFooterServer />
+			<Suspense fallback={<SiteFooterSkeleton />}>
+				<SiteFooterServer />
+			</Suspense>
 		</>
 	);
 }

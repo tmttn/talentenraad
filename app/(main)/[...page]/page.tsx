@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import {notFound} from 'next/navigation';
 import {BuilderContent} from '@components/builder/builder-content';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {
@@ -8,7 +9,6 @@ import {
 	extractSeoData,
 	ConfigurationError,
 	FetchError,
-	NotFoundContent,
 	type PageSearchParameters,
 // eslint-disable-next-line import-x/extensions
 } from '../../lib/builder-utils';
@@ -67,7 +67,7 @@ export default async function Page(properties: Readonly<PageProperties>) {
 	}
 
 	if (!canShowBuilderContent(content, searchParameters)) {
-		return <NotFoundContent />;
+		notFound();
 	}
 
 	// Generate breadcrumb schema from URL segments
