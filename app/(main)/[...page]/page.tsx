@@ -19,9 +19,9 @@ import {
 // eslint-disable-next-line import-x/extensions
 } from '../../lib/seo';
 
-// Force dynamic rendering to ensure proper 404 status codes
-// ISR (revalidate) was causing issues with notFound() on Vercel
-export const dynamic = 'force-dynamic';
+// Enable ISR with fast revalidation for quick content updates
+// 404 detection is now handled in proxy.ts before page rendering
+export const revalidate = 5;
 
 type PageProperties = {
 	params: Promise<{page: string[]}>;
@@ -39,9 +39,7 @@ export async function generateMetadata({params, searchParams}: PageProperties): 
 
 	const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
 
-	// Return minimal metadata for 404 pages - don't call notFound() here
-	// The Page component will handle the actual 404 response
-	// Calling notFound() in both generateMetadata and Page causes RSC stream errors
+	// Return minimal metadata for 404 pages (proxy handles the actual 404 status)
 	if (!canShowBuilderContent(content, searchParameters)) {
 		return {
 			title: 'Pagina niet gevonden',
@@ -73,8 +71,7 @@ export default async function Page(properties: Readonly<PageProperties>) {
 
 	const searchParameters = await properties.searchParams;
 
-	// Fetch content before streaming to ensure correct 404 status
-	// (generateMetadata runs in parallel, so we need to check here too)
+	// Fetch content - proxy.ts handles 404 detection, but we keep notFound() as fallback
 	const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
 
 	if (!canShowBuilderContent(content, searchParameters)) {
