@@ -29,26 +29,40 @@ type TabsProps = {
 	className?: string;
 };
 
+/**
+ * Tab variant styles using design tokens
+ * - Transition: duration-fast
+ * - Border radius: rounded-button (pills), rounded-input (bordered)
+ * - Gap: gap-gap-xs
+ * - Padding: component tokens
+ */
 const variantClasses: Record<TabsVariant, {list: string; tab: string; active: string}> = {
 	underline: {
 		list: 'border-b border-gray-200',
-		tab: 'px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent -mb-px transition-colors duration-fast',
+		tab: 'px-component-sm py-2 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent -mb-px transition-colors duration-fast',
 		active: 'border-primary text-primary',
 	},
 	pills: {
-		list: 'gap-2',
-		tab: 'px-4 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-fast',
+		list: 'gap-gap-xs',
+		tab: 'px-component-sm py-2 text-sm font-medium text-gray-600 rounded-button hover:bg-gray-100 transition-colors duration-fast',
 		active: 'bg-primary text-white hover:bg-primary',
 	},
 	bordered: {
-		list: 'border border-gray-200 rounded-lg p-1 bg-gray-50',
-		tab: 'px-4 py-2 text-sm font-medium text-gray-600 rounded-md transition-colors duration-fast',
-		active: 'bg-white text-gray-900 shadow-sm',
+		list: 'border border-gray-200 rounded-button p-1 bg-gray-50',
+		tab: 'px-component-sm py-2 text-sm font-medium text-gray-600 rounded-input transition-colors duration-fast',
+		active: 'bg-white text-gray-900 shadow-subtle',
 	},
 };
 
 /**
  * Tabs - Tab navigation component
+ *
+ * Uses design tokens:
+ * - Transition: duration-fast
+ * - Border radius: rounded-button, rounded-input
+ * - Gap: gap-gap-xs
+ * - Shadow: shadow-subtle (bordered active)
+ * - Padding: px-component-sm, pt-component-sm
  *
  * Usage:
  * <Tabs
@@ -121,12 +135,12 @@ export function Tabs({
 				))}
 			</div>
 
-			{/* Tab panel */}
+			{/* Tab panel - uses pt-component-sm token for consistent spacing */}
 			<div
 				role="tabpanel"
 				id={`tabpanel-${activeTab}`}
 				aria-labelledby={`tab-${activeTab}`}
-				className="pt-4"
+				className="pt-component-sm"
 			>
 				{activeTabContent}
 			</div>

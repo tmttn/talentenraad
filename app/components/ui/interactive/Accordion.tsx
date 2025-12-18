@@ -24,6 +24,10 @@ type AccordionProps = {
 /**
  * Accordion - Expandable sections component
  *
+ * Uses design tokens:
+ * - Transition: duration-fast (button), duration-base (icon, content)
+ * - Padding: py-component-sm, pb-component-sm
+ *
  * Usage:
  * <Accordion
  *   items={[
@@ -65,6 +69,7 @@ export function Accordion({
 
 				return (
 					<div key={item.id}>
+						{/* Accordion button - uses py-component-sm, duration-fast tokens */}
 						<button
 							type="button"
 							onClick={() => !item.disabled && toggleItem(item.id)}
@@ -72,7 +77,7 @@ export function Accordion({
 							aria-expanded={isOpen}
 							aria-controls={`accordion-content-${item.id}`}
 							className={[
-								'flex w-full items-center justify-between py-4 text-left',
+								'flex w-full items-center justify-between py-component-sm text-left',
 								'text-gray-900 font-medium',
 								'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/20',
 								'transition-colors duration-fast',
@@ -84,6 +89,7 @@ export function Accordion({
 								.join(' ')}
 						>
 							<span>{item.title}</span>
+							{/* Chevron icon - uses duration-base for smooth rotation */}
 							<svg
 								className={[
 									'h-5 w-5 text-gray-400 transition-transform duration-base',
@@ -105,13 +111,14 @@ export function Accordion({
 							</svg>
 						</button>
 
+						{/* Accordion content - uses duration-base, pb-component-sm tokens */}
 						<div
 							id={`accordion-content-${item.id}`}
 							role="region"
 							aria-labelledby={`accordion-header-${item.id}`}
 							className={[
 								'overflow-hidden transition-all duration-base',
-								isOpen ? 'max-h-96 pb-4' : 'max-h-0',
+								isOpen ? 'max-h-96 pb-component-sm' : 'max-h-0',
 							]
 								.filter(Boolean)
 								.join(' ')}
