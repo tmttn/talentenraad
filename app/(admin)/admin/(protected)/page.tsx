@@ -121,18 +121,31 @@ type DashboardData = {
 };
 
 async function fetchDashboardData(): Promise<DashboardData> {
-	// Fetch submission stats
-	const [totalResult] = await db.select({count: count()}).from(submissions);
-	const [unreadResult] = await db.select({count: count()})
-		.from(submissions)
-		.where(isNull(submissions.readAt));
+	// Default values for when database is unavailable
+	let totalCount = 0;
+	let unreadCount = 0;
+	let recentSubmissions: DashboardData['recentSubmissions'] = [];
 
-	// Fetch recent unread submissions
-	const recentSubmissions = await db.select()
-		.from(submissions)
-		.where(isNull(submissions.archivedAt))
-		.orderBy(desc(submissions.createdAt))
-		.limit(5);
+	// Fetch submission stats with error handling
+	try {
+		const [totalResult] = await db.select({count: count()}).from(submissions);
+		const [unreadResult] = await db.select({count: count()})
+			.from(submissions)
+			.where(isNull(submissions.readAt));
+
+		// Fetch recent unread submissions
+		recentSubmissions = await db.select()
+			.from(submissions)
+			.where(isNull(submissions.archivedAt))
+			.orderBy(desc(submissions.createdAt))
+			.limit(5);
+
+		totalCount = totalResult.count;
+		unreadCount = unreadResult.count;
+	} catch (error) {
+		// Log error but continue - dashboard will show zeros for submissions
+		console.error('Error fetching submissions data:', error);
+	}
 
 	// Fetch latest content from Builder.io
 	let activities: ActivityType[] = [];
@@ -153,8 +166,8 @@ async function fetchDashboardData(): Promise<DashboardData> {
 	}
 
 	return {
-		totalCount: totalResult.count,
-		unreadCount: unreadResult.count,
+		totalCount,
+		unreadCount,
 		recentSubmissions,
 		activities,
 		news,
