@@ -28,7 +28,7 @@ describe('ErrorPage', () => {
 			/>,
 		);
 
-		expect(screen.getByText('404')).toBeInTheDocument();
+		expect(screen.getByText('Foutcode 404')).toBeInTheDocument();
 		expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Test Title');
 		expect(screen.getByText('Test description')).toBeInTheDocument();
 	});
@@ -42,7 +42,7 @@ describe('ErrorPage', () => {
 			/>,
 		);
 
-		expect(screen.getByRole('link', {name: /naar homepagina/i})).toHaveAttribute('href', '/');
+		expect(screen.getByRole('link', {name: /naar home/i})).toHaveAttribute('href', '/');
 	});
 
 	it('renders back button by default', () => {
@@ -70,7 +70,7 @@ describe('ErrorPage', () => {
 			/>,
 		);
 
-		expect(screen.queryByRole('link', {name: /naar homepagina/i})).not.toBeInTheDocument();
+		expect(screen.queryByRole('link', {name: /naar home/i})).not.toBeInTheDocument();
 	});
 
 	it('hides back button when showBackButton is false', () => {
@@ -126,7 +126,7 @@ describe('ErrorPage', () => {
 			/>,
 		);
 
-		expect(screen.getByRole('link', {name: /contact/i})).toHaveAttribute('href', '/contact');
+		expect(screen.getByRole('link', {name: /laat het ons weten/i})).toHaveAttribute('href', '/contact');
 	});
 });
 
@@ -134,8 +134,8 @@ describe('NotFoundPage', () => {
 	it('renders 404 page with correct content', () => {
 		render(<NotFoundPage />);
 
-		expect(screen.getByText('404')).toBeInTheDocument();
-		expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Pagina niet gevonden');
+		expect(screen.getByText('Foutcode 404')).toBeInTheDocument();
+		expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Oeps, verdwaald!');
 		expect(screen.getByRole('link', {name: /zoeken/i})).toBeInTheDocument();
 	});
 });
@@ -144,8 +144,8 @@ describe('ForbiddenPage', () => {
 	it('renders 403 page with correct content', () => {
 		render(<ForbiddenPage />);
 
-		expect(screen.getByText('403')).toBeInTheDocument();
-		expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Geen toegang');
+		expect(screen.getByText('Foutcode 403')).toBeInTheDocument();
+		expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Hier mag je niet komen');
 	});
 });
 
@@ -153,8 +153,8 @@ describe('UnauthorizedPage', () => {
 	it('renders 401 page with correct content', () => {
 		render(<UnauthorizedPage />);
 
-		expect(screen.getByText('401')).toBeInTheDocument();
-		expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Niet ingelogd');
+		expect(screen.getByText('Foutcode 401')).toBeInTheDocument();
+		expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Sleutel vergeten?');
 	});
 });
 
@@ -162,8 +162,8 @@ describe('ServerErrorPage', () => {
 	it('renders 500 page with correct content', () => {
 		render(<ServerErrorPage />);
 
-		expect(screen.getByText('500')).toBeInTheDocument();
-		expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Er ging iets mis');
+		expect(screen.getByText('Foutcode 500')).toBeInTheDocument();
+		expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Oeps, kortsluiting!');
 	});
 
 	it('shows retry button when reset is provided', () => {
@@ -193,7 +193,7 @@ describe('AdminErrorPage', () => {
 			/>,
 		);
 
-		expect(screen.getByText('500')).toBeInTheDocument();
+		expect(screen.getByText('Fout 500')).toBeInTheDocument();
 		expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Admin Error');
 		expect(screen.getByText('Admin error description')).toBeInTheDocument();
 	});
