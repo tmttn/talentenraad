@@ -155,23 +155,19 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 					})}
 				</ul>
 			</nav>
-			{/* Collapse toggle button and version - only on desktop */}
-			<div className='hidden lg:flex p-2 border-t border-gray-200 justify-between items-center'>
-				{!isCollapsed && (
-					<span className='text-xs text-gray-400 pl-2'>v{process.env.NEXT_PUBLIC_APP_VERSION}</span>
-				)}
+			{/* Collapse toggle button - only on desktop */}
+			<div className='hidden lg:flex p-2 border-t border-gray-200 justify-center'>
 				<button
 					type='button'
 					onClick={toggleCollapsed}
 					title={isCollapsed ? 'Uitklappen' : 'Inklappen'}
-					className={`p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors ${isCollapsed ? 'mx-auto' : ''}`}
+					className='p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-lg transition-colors'
 				>
 					{isCollapsed ? <ChevronRight className='w-5 h-5' /> : <ChevronLeft className='w-5 h-5' />}
 				</button>
-				{!isCollapsed && <div className='w-8' />}
 			</div>
 			<div className={`${isCollapsed ? 'lg:p-2' : 'p-4'} border-t border-gray-200`}>
-				<div className={`flex items-center gap-3 ${isCollapsed ? 'lg:justify-center' : ''} mb-4`}>
+				<div className={`flex flex-col items-center ${isCollapsed ? '' : 'mb-4'}`}>
 					{user.image ? (
 						<Image
 							src={user.image}
@@ -191,7 +187,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 							</span>
 						</div>
 					)}
-					<div className={`text-sm min-w-0 flex-1 ${isCollapsed ? 'lg:hidden' : ''}`}>
+					<div className={`text-sm text-center mt-2 ${isCollapsed ? 'lg:hidden' : ''}`}>
 						<p className='font-medium text-gray-800 truncate'>{user.name ?? 'Gebruiker'}</p>
 						<p className='text-gray-500 text-xs truncate'>{user.email}</p>
 					</div>
@@ -199,11 +195,14 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 				<a
 					href='/auth/logout'
 					title={isCollapsed ? 'Uitloggen' : undefined}
-					className={`flex items-center gap-3 w-full ${isCollapsed ? 'lg:justify-center lg:px-2' : 'px-4'} py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors`}
+					className={`flex items-center justify-center gap-3 w-full ${isCollapsed ? 'lg:px-2' : 'px-4'} py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors`}
 				>
 					<LogOut className='w-5 h-5' strokeWidth={1.5} />
 					<span className={isCollapsed ? 'lg:hidden' : ''}>Uitloggen</span>
 				</a>
+				{!isCollapsed && (
+					<p className='text-xs text-gray-400 text-center mt-3 hidden lg:block'>v{process.env.NEXT_PUBLIC_APP_VERSION}</p>
+				)}
 			</div>
 		</>
 	);
