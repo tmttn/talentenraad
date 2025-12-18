@@ -442,6 +442,76 @@ export function DashboardSkeleton() {
 	);
 }
 
+// Site Header skeleton - matches SiteHeader component structure
+export function SiteHeaderSkeleton() {
+	return (
+		<header className='bg-white shadow-sm sticky top-0 z-50 animate-pulse'>
+			<div className='max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between'>
+				{/* Logo placeholder */}
+				<div className='h-14 w-[120px] bg-gray-200 rounded' />
+				{/* Navigation links - desktop */}
+				<nav className='hidden md:flex items-center gap-8'>
+					{Array.from({length: 5}).map((_, index) => (
+						<div key={index} className='h-5 bg-gray-200 rounded w-16' />
+					))}
+				</nav>
+				{/* Mobile menu button */}
+				<div className='md:hidden h-10 w-10 bg-gray-200 rounded-lg' />
+			</div>
+		</header>
+	);
+}
+
+// Site Footer skeleton - matches SiteFooter component structure
+export function SiteFooterSkeleton() {
+	return (
+		<footer className='bg-gray-100 animate-pulse'>
+			<div className='max-w-[1280px] mx-auto px-6 py-12'>
+				<div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
+					{/* Logo and info column */}
+					<div className='md:col-span-1'>
+						<div className='h-16 w-[150px] bg-gray-200 rounded mb-4' />
+						<div className='space-y-2 mb-4'>
+							<div className='h-4 bg-gray-200 rounded w-full' />
+							<div className='h-4 bg-gray-200 rounded w-3/4' />
+						</div>
+						<div className='space-y-1'>
+							<div className='h-3 bg-gray-200 rounded w-32' />
+							<div className='h-3 bg-gray-200 rounded w-28' />
+						</div>
+						<div className='h-4 bg-gray-200 rounded w-48 mt-4' />
+					</div>
+					{/* Navigation columns */}
+					{Array.from({length: 3}).map((_, groupIndex) => (
+						<div key={groupIndex}>
+							<div className='h-5 bg-gray-200 rounded w-24 mb-4' />
+							<div className='space-y-2'>
+								{Array.from({length: 3}).map((_, linkIndex) => (
+									<div key={linkIndex} className='h-4 bg-gray-200 rounded w-20' />
+								))}
+							</div>
+						</div>
+					))}
+				</div>
+				{/* Bottom bar */}
+				<div className='border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4'>
+					<div className='h-4 bg-gray-200 rounded w-64' />
+					<div className='flex gap-4'>
+						{Array.from({length: 4}).map((_, index) => (
+							<div key={index} className='h-4 bg-gray-200 rounded w-24' />
+						))}
+					</div>
+					<div className='flex gap-4'>
+						{Array.from({length: 2}).map((_, index) => (
+							<div key={index} className='h-5 w-5 bg-gray-200 rounded' />
+						))}
+					</div>
+				</div>
+			</div>
+		</footer>
+	);
+}
+
 // Full page loading for public site - matches typical homepage structure
 export function PublicPageSkeleton() {
 	return (

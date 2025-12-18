@@ -1,6 +1,8 @@
+import {Suspense} from 'react';
 import {fetchOneEntry} from '@builder.io/sdk-react-nextjs';
 import {AnnouncementsContainer} from '@features/marketing/announcements-container';
 import {SiteHeaderServer} from '@components/layout/site-header-server';
+import {SiteHeaderSkeleton} from '@components/skeletons';
 import {fetchGlobalAnnouncement, extractPageAnnouncement} from '../../lib/builder-utils';
 
 type PageWithAnnouncementsProps = {
@@ -31,7 +33,9 @@ export async function PageWithAnnouncements({content, children}: PageWithAnnounc
 				globalAnnouncement={globalAnnouncement}
 				pageAnnouncement={pageAnnouncementData}
 			/>
-			<SiteHeaderServer />
+			<Suspense fallback={<SiteHeaderSkeleton />}>
+				<SiteHeaderServer />
+			</Suspense>
 			<main id='main-content' role='main' className='flex-grow' tabIndex={-1}>
 				{children}
 			</main>
