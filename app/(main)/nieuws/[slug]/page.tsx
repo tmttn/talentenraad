@@ -4,6 +4,13 @@ import Image from 'next/image';
 import {Calendar} from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
+import {
+	generateMetadata as generateSeoMetadata,
+	generateArticleSchema,
+	generateBreadcrumbSchema,
+	JsonLd,
+// eslint-disable-next-line import-x/extensions
+} from '@/lib/seo';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -89,10 +96,16 @@ export async function generateMetadata({params}: {params: Promise<{slug: string}
 		return {title: 'Nieuws niet gevonden'};
 	}
 
-	return {
-		title: `${item.data.titel} - Talentenraad`,
+	const itemSlug = generateSlug(item.data.titel);
+
+	return generateSeoMetadata({
+		title: item.data.titel,
 		description: item.data.samenvatting,
-	};
+		url: `/nieuws/${itemSlug}`,
+		image: item.data.afbeelding,
+		type: 'article',
+		publishedTime: item.data.datum,
+	});
 }
 
 type PageProperties = {
@@ -107,8 +120,24 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
 		notFound();
 	}
 
+	const itemSlug = generateSlug(item.data.titel);
+	const articleSchema = generateArticleSchema({
+		title: item.data.titel,
+		description: item.data.samenvatting,
+		url: `/nieuws/${itemSlug}`,
+		image: item.data.afbeelding,
+		datePublished: item.data.datum,
+	});
+	const breadcrumbSchema = generateBreadcrumbSchema([
+		{name: 'Home', url: '/'},
+		{name: 'Nieuws', url: '/nieuws'},
+		{name: item.data.titel, url: `/nieuws/${itemSlug}`},
+	]);
+
 	return (
 		<PageWithAnnouncements content={undefined}>
+			<JsonLd data={articleSchema} />
+			<JsonLd data={breadcrumbSchema} />
 			<article className='py-12 px-6'>
 				<div className='max-w-3xl mx-auto'>
 					{/* Breadcrumb */}

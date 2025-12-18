@@ -1,5 +1,5 @@
 import {Suspense} from 'react';
-import {count, isNotNull, isNull, desc} from 'drizzle-orm';
+import {count, isNull, desc} from 'drizzle-orm';
 import Link from 'next/link';
 import {
 	Inbox,
@@ -23,6 +23,7 @@ import {db, submissions} from '@/lib/db';
 import {listContent} from '@/lib/builder-admin';
 import type {Activity as ActivityType, NewsItem, Announcement} from '@/lib/builder-types';
 import {DashboardSkeleton} from '@components/skeletons';
+import {ContentSeoSummary} from '@components/admin/seo-insights';
 
 function getGreeting(): string {
 	const hour = new Date().getHours();
@@ -332,6 +333,20 @@ async function DashboardContent() {
 					<p className='text-xs text-gray-500 mt-1'>Activiteiten</p>
 				</Link>
 			</div>
+
+			{/* SEO Overview */}
+			<ContentSeoSummary
+				news={data.news.map(item => ({
+					title: item.data.titel,
+					description: item.data.samenvatting,
+					image: item.data.afbeelding,
+				}))}
+				activities={data.activities.map(item => ({
+					title: item.data.titel,
+					description: item.data.beschrijving,
+					image: item.data.afbeelding,
+				}))}
+			/>
 
 			{/* Content Lists Grid */}
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>

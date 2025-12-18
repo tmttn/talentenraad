@@ -3,6 +3,13 @@ import Link from 'next/link';
 import {Calendar, Clock, MapPin} from 'lucide-react';
 import {AnimatedButton, AnimatedLink} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
+import {
+	generateMetadata as generateSeoMetadata,
+	generateEventSchema,
+	generateBreadcrumbSchema,
+	JsonLd,
+// eslint-disable-next-line import-x/extensions
+} from '@/lib/seo';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -121,10 +128,16 @@ export async function generateMetadata({params}: {params: Promise<{slug: string}
 		return {title: 'Activiteit niet gevonden'};
 	}
 
-	return {
-		title: `${item.data.titel} - Talentenraad`,
-		description: item.data.beschrijving ?? `Activiteit op ${formatDate(item.data.datum)}`,
-	};
+	const itemSlug = generateSlug(item.data.titel);
+	const description = item.data.beschrijving ?? `Activiteit op ${formatDate(item.data.datum)}`;
+
+	return generateSeoMetadata({
+		title: item.data.titel,
+		description,
+		url: `/activiteiten/${itemSlug}`,
+		image: item.data.afbeelding,
+		type: 'website',
+	});
 }
 
 type PageProperties = {
@@ -140,7 +153,8 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 	}
 
 	const {day, month} = formatShortDate(item.data.datum);
-	const style = categoryStyles[item.data.categorie] || categoryStyles.activiteit;
+	const style = categoryStyles[item.data.categorie] ?? categoryStyles.activiteit;
+	const itemSlug = generateSlug(item.data.titel);
 
 	// Check if event is in the past
 	const eventDate = new Date(item.data.datum);
@@ -148,8 +162,24 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 	now.setHours(0, 0, 0, 0);
 	const isPast = eventDate < now;
 
+	const eventSchema = generateEventSchema({
+		name: item.data.titel,
+		description: item.data.beschrijving,
+		url: `/activiteiten/${itemSlug}`,
+		startDate: item.data.datum,
+		location: item.data.locatie,
+		image: item.data.afbeelding,
+	});
+	const breadcrumbSchema = generateBreadcrumbSchema([
+		{name: 'Home', url: '/'},
+		{name: 'Kalender', url: '/kalender'},
+		{name: item.data.titel, url: `/activiteiten/${itemSlug}`},
+	]);
+
 	return (
 		<PageWithAnnouncements content={undefined}>
+			<JsonLd data={eventSchema} />
+			<JsonLd data={breadcrumbSchema} />
 			<article className='py-12 px-6'>
 				<div className='max-w-3xl mx-auto'>
 					{/* Breadcrumb */}

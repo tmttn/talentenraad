@@ -1,11 +1,63 @@
 import {Analytics} from '@vercel/analytics/react';
 import {SpeedInsights} from '@vercel/speed-insights/next';
-import type {Metadata} from 'next';
+import type {Metadata, Viewport} from 'next';
+// eslint-disable-next-line import-x/extensions
+import {siteConfig, generateOrganizationSchema, JsonLd} from './lib/seo';
 import './globals.css';
 
 export const metadata: Metadata = {
-	title: 'Talentenraad',
-	description: 'Website van de Talentenhuis Talentenraad',
+	title: {
+		default: siteConfig.name,
+		template: `%s | ${siteConfig.name}`,
+	},
+	description: siteConfig.description,
+	metadataBase: new URL(siteConfig.url),
+	alternates: {
+		canonical: '/',
+	},
+	openGraph: {
+		title: siteConfig.name,
+		description: siteConfig.description,
+		url: siteConfig.url,
+		siteName: siteConfig.name,
+		locale: siteConfig.locale,
+		type: 'website',
+		images: [
+			{
+				url: siteConfig.defaultImage,
+				width: 1200,
+				height: 630,
+				alt: siteConfig.name,
+			},
+		],
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: siteConfig.name,
+		description: siteConfig.description,
+		images: [siteConfig.defaultImage],
+	},
+	robots: {
+		index: true,
+		follow: true,
+		googleBot: {
+			index: true,
+			follow: true,
+			'max-video-preview': -1,
+			'max-image-preview': 'large',
+			'max-snippet': -1,
+		},
+	},
+	icons: {
+		icon: '/favicon.ico',
+		apple: '/apple-touch-icon.png',
+	},
+};
+
+export const viewport: Viewport = {
+	themeColor: '#ffffff',
+	width: 'device-width',
+	initialScale: 1,
 };
 
 /**
@@ -19,9 +71,12 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode;
 }>) {
+	const organizationSchema = generateOrganizationSchema();
+
 	return (
 		<html lang='nl' className='overflow-auto'>
 			<head>
+				<JsonLd data={organizationSchema} />
 				{/* eslint-disable-next-line n/prefer-global/process */}
 				{(process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') && (
 					<script

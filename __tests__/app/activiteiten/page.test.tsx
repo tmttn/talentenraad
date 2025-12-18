@@ -175,7 +175,7 @@ describe('generateMetadata', () => {
 		const params = Promise.resolve({slug: 'test-activiteit'});
 		const metadata = await generateMetadata({params});
 
-		expect(metadata.title).toBe('Test Activiteit - Talentenraad');
+		expect(metadata.title).toBe('Test Activiteit | Talentenraad');
 		expect(metadata.description).toBe('Test beschrijving van de activiteit');
 	});
 

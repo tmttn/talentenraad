@@ -47,11 +47,24 @@ describe('RootLayout', () => {
 });
 
 describe('metadata', () => {
-	it('has correct title', () => {
-		expect(metadata.title).toBe('Talentenraad');
+	it('has correct title configuration', () => {
+		expect(metadata.title).toEqual({
+			default: 'Talentenraad',
+			template: '%s | Talentenraad',
+		});
 	});
 
 	it('has correct description', () => {
-		expect(metadata.description).toBe('Website van de Talentenhuis Talentenraad');
+		expect(metadata.description).toBe('De Talentenraad van Talentenhuis - Een plek waar jongeren hun stem laten horen en samen bouwen aan een betere toekomst.');
+	});
+
+	it('has OpenGraph metadata', () => {
+		expect(metadata.openGraph).toBeDefined();
+		expect(metadata.openGraph?.siteName).toBe('Talentenraad');
+	});
+
+	it('has Twitter card metadata', () => {
+		expect(metadata.twitter).toBeDefined();
+		expect(metadata.twitter?.card).toBe('summary_large_image');
 	});
 });

@@ -143,6 +143,33 @@ export function canShowBuilderContent(
 
 export {getBuilderSearchParams, isEditing, isPreviewing} from '@builder.io/sdk-react-nextjs';
 
+// SEO data extraction from Builder.io content
+export type BuilderSeoData = {
+	title?: string;
+	description?: string;
+	image?: string;
+	noIndex?: boolean;
+};
+
+/**
+ * Extract SEO data from Builder.io page content
+ * Builder.io pages can have seoTitle, seoDescription, and ogImage fields
+ */
+export function extractSeoData(content: Awaited<ReturnType<typeof fetchOneEntry>> | undefined): BuilderSeoData {
+	if (!content?.data) {
+		return {};
+	}
+
+	const data = content.data as Record<string, unknown>;
+
+	return {
+		title: (data.seoTitle as string) ?? (data.title as string),
+		description: (data.seoDescription as string) ?? (data.description as string),
+		image: (data.ogImage as string) ?? (data.image as string),
+		noIndex: data.noIndex as boolean,
+	};
+}
+
 // Announcement types
 export type AnnouncementType = 'info' | 'waarschuwing' | 'belangrijk';
 
