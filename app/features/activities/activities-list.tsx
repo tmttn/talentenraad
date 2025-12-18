@@ -8,6 +8,7 @@ import {
 	Bookmark,
 } from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
+import {Container, Stack} from '@components/ui/layout';
 
 const articleClassName = [
 	'flex items-start gap-6 bg-white p-4 rounded-card shadow-base hover:shadow-elevated transition-shadow',
@@ -136,14 +137,14 @@ function ActivitiesList({
 	if (loading) {
 		return (
 			<section className='py-16 px-6' aria-busy='true' aria-label='Activiteiten worden geladen'>
-				<div className='max-w-4xl mx-auto'>
+				<Container size='lg'>
 					<div className='text-center'>
 						<div className='animate-pulse'>
 							<div className='h-8 bg-gray-200 rounded w-64 mx-auto mb-4' />
 							<div className='h-4 bg-gray-200 rounded w-48 mx-auto' />
 						</div>
 					</div>
-				</div>
+				</Container>
 				{/* Screen reader announcement */}
 				<div className='sr-only' role='status' aria-live='polite'>
 					{loadingMessage}
@@ -154,10 +155,10 @@ function ActivitiesList({
 
 	return (
 		<section className='py-16 px-6'>
-			<div className='max-w-4xl mx-auto'>
+			<Container size='lg'>
 				{activities.length > 0
 					? (
-						<div className='space-y-4' role='list' aria-label='Lijst van activiteiten'>
+						<Stack gap='md' role='list' aria-label='Lijst van activiteiten'>
 							{activities.map(activity => {
 								const {day, month} = formatDate(activity.data.datum);
 								return (
@@ -221,7 +222,7 @@ function ActivitiesList({
 									</a>
 								);
 							})}
-						</div>
+						</Stack>
 					)
 					: (
 						<div className='text-center py-16 px-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-modal border-2 border-dashed border-gray-200'>
@@ -245,7 +246,7 @@ function ActivitiesList({
 						</AnimatedLink>
 					</div>
 				)}
-			</div>
+			</Container>
 		</section>
 	);
 }

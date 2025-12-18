@@ -1,6 +1,7 @@
 'use client';
 
 import type {ReactNode} from 'react';
+import {Container} from '@components/ui/layout';
 
 type CtaBannerProperties = {
 	variant?: 'default' | 'accent' | 'light';
@@ -21,9 +22,9 @@ function CtaBanner({
 
 	return (
 		<section className={`py-12 md:py-16 ${bg}`}>
-			<div className='max-w-4xl mx-auto px-6 text-center'>
+			<Container size='lg' className='text-center'>
 				{children}
-			</div>
+			</Container>
 		</section>
 	);
 }

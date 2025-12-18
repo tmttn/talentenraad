@@ -9,6 +9,7 @@ import {
 import {useSearchParams} from 'next/navigation';
 import {CheckCircle, XCircle, Send, Loader2} from 'lucide-react';
 import {useRecaptcha} from './use-recaptcha';
+import {Container, Grid} from '@components/ui/layout';
 
 /**
  * Submit button using design tokens
@@ -205,13 +206,13 @@ const validSubjectValues = new Set(['vraag', 'activiteit', 'lidmaatschap', 'spon
 function SuccessMessage() {
 	return (
 		<section className='py-section-sm px-6 bg-gray-50'>
-			<div className='max-w-2xl mx-auto text-center'>
+			<Container size='sm' className='text-center'>
 				<div className='bg-success-600 text-white p-component-lg rounded-modal' role='alert'>
 					<CheckCircle className='h-16 w-16 mx-auto mb-4' aria-hidden='true' />
 					<h3 className='text-2xl font-bold mb-2'>Bedankt voor uw bericht!</h3>
 					<p>We nemen zo snel mogelijk contact met u op.</p>
 				</div>
-			</div>
+			</Container>
 		</section>
 	);
 }
@@ -390,7 +391,7 @@ function ContactFormInner({
 			{errors.general && <GeneralErrorMessage message={errors.general} />}
 
 			<form onSubmit={handleSubmit} className='bg-white p-component-lg rounded-modal shadow-elevated' noValidate>
-				<div className='grid md:grid-cols-2 gap-6'>
+				<Grid cols={1} colsMd={2} gap='md'>
 					<TextField
 						id='name'
 						label='Naam'
@@ -410,7 +411,7 @@ function ContactFormInner({
 						error={errors.email}
 						onChange={handleInputChange('email')}
 					/>
-				</div>
+				</Grid>
 				{showPhone && (
 					<div className='mt-6'>
 						<TextField
@@ -453,7 +454,7 @@ function ContactFormInner({
 function ContactFormSkeleton() {
 	return (
 		<div className='bg-white p-component-lg rounded-modal shadow-elevated animate-pulse'>
-			<div className='grid md:grid-cols-2 gap-6'>
+			<Grid cols={1} colsMd={2} gap='md'>
 				<div>
 					<div className='h-4 w-16 bg-gray-200 rounded mb-2' />
 					<div className='h-12 bg-gray-200 rounded-button' />
@@ -462,7 +463,7 @@ function ContactFormSkeleton() {
 					<div className='h-4 w-16 bg-gray-200 rounded mb-2' />
 					<div className='h-12 bg-gray-200 rounded-button' />
 				</div>
-			</div>
+			</Grid>
 			<div className='mt-6'>
 				<div className='h-4 w-24 bg-gray-200 rounded mb-2' />
 				<div className='h-12 bg-gray-200 rounded-button' />

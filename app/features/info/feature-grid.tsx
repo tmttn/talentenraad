@@ -10,6 +10,7 @@ import {
 	type LucideIcon,
 } from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
+import {Grid} from '@components/ui/layout';
 
 type FeatureItem = {
 	icon: string;
@@ -41,17 +42,21 @@ function FeatureGrid({
 	features = [],
 	columns = 3,
 }: Readonly<FeatureGridProperties>) {
-	const gridColsMap: Record<string, string> = {
-		cols2: 'sm:grid-cols-2',
-		cols3: 'sm:grid-cols-2 lg:grid-cols-3',
-	};
-
 	if (features.length === 0) {
 		return null;
 	}
 
+	// Map columns prop to responsive Grid props
+	const getGridProps = () => {
+		if (columns === 2) {
+			return {colsSm: 2 as const};
+		}
+
+		return {colsSm: 2 as const, colsLg: 3 as const};
+	};
+
 	return (
-		<div className={`grid grid-cols-1 ${gridColsMap[`cols${columns}`]} gap-6 md:gap-8`}>
+		<Grid cols={1} {...getGridProps()} gap='lg'>
 			{features.map((feature, index) => (
 				<div
 					key={index}
@@ -73,7 +78,7 @@ function FeatureGrid({
 					)}
 				</div>
 			))}
-		</div>
+		</Grid>
 	);
 }
 

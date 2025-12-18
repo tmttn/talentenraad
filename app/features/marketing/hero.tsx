@@ -1,6 +1,7 @@
 'use client';
 
 import type {ReactNode} from 'react';
+import {Container} from '@components/ui/layout';
 // eslint-disable-next-line import-x/extensions
 import {brandColors, gradients} from '@/styles/tokens';
 
@@ -43,8 +44,10 @@ function Hero({
 				<div className='absolute -bottom-32 -left-32 w-[500px] h-[500px] bg-white/5 rounded-full' />
 			</div>
 			{/* Content */}
-			<div className='relative z-10 max-w-4xl mx-auto px-6 text-center'>
-				{children}
+			<div className='relative z-10'>
+				<Container size='lg' className='text-center'>
+					{children}
+				</Container>
 			</div>
 		</section>
 	);
