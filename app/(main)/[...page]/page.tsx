@@ -37,12 +37,6 @@ export async function generateMetadata({params, searchParams}: PageProperties): 
 	}
 
 	const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
-
-	// Call notFound() early (in generateMetadata) so the 404 status is set before streaming starts
-	if (!canShowBuilderContent(content, searchParameters)) {
-		notFound();
-	}
-
 	const seoData = extractSeoData(content);
 
 	// Generate a readable title from the URL if no SEO title is set
