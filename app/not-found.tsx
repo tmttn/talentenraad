@@ -1,7 +1,3 @@
-import {Suspense} from 'react';
-import {SiteFooterServer} from '@components/layout/site-footer-server';
-import {SiteHeaderServer} from '@components/layout/site-header-server';
-import {SiteHeaderSkeleton, SiteFooterSkeleton} from '@components/skeletons';
 import {NotFoundPage} from '@components/error-pages';
 
 /**
@@ -11,19 +7,16 @@ import {NotFoundPage} from '@components/error-pages';
  * - A route doesn't exist
  * - notFound() is called from a server component
  * - A page explicitly throws a not found error
+ *
+ * Note: This page intentionally doesn't include header/footer to avoid
+ * potential errors from async data fetching that could convert a 404 into a 500.
  */
 export default function NotFound() {
 	return (
-		<>
-			<Suspense fallback={<SiteHeaderSkeleton />}>
-				<SiteHeaderServer />
-			</Suspense>
+		<div className='min-h-screen flex flex-col'>
 			<main className='flex-1'>
 				<NotFoundPage />
 			</main>
-			<Suspense fallback={<SiteFooterSkeleton />}>
-				<SiteFooterServer />
-			</Suspense>
-		</>
+		</div>
 	);
 }
