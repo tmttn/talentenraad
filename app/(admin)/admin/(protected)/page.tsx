@@ -337,11 +337,13 @@ async function DashboardContent() {
 			{/* SEO Overview */}
 			<ContentSeoSummary
 				news={data.news.map(item => ({
+					id: item.id,
 					title: item.data.titel,
 					description: item.data.samenvatting,
 					image: item.data.afbeelding,
 				}))}
 				activities={data.activities.map(item => ({
+					id: item.id,
 					title: item.data.titel,
 					description: item.data.beschrijving,
 					image: item.data.afbeelding,

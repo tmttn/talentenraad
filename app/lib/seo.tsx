@@ -204,6 +204,26 @@ export type SeoAnalysis = {
 	score: number;
 	issues: SeoIssue[];
 	suggestions: string[];
+	fieldScores: {
+		title: FieldScore;
+		description: FieldScore;
+		image: FieldScore;
+		content?: FieldScore;
+	};
+	quickWins: QuickWin[];
+};
+
+export type FieldScore = {
+	score: number;
+	maxScore: number;
+	status: 'good' | 'warning' | 'error' | 'missing';
+	recommendation?: string;
+};
+
+export type QuickWin = {
+	field: 'title' | 'description' | 'image' | 'content';
+	action: string;
+	impact: number; // How many points this would add
 };
 
 export type SeoIssue = {
@@ -223,52 +243,126 @@ export function analyzeSeo(content: {
 }): SeoAnalysis {
 	const issues: SeoIssue[] = [];
 	const suggestions: string[] = [];
+	const quickWins: QuickWin[] = [];
 	let score = 100;
 
-	// Title analysis
+	// Field scores initialization
+	const fieldScores: SeoAnalysis['fieldScores'] = {
+		title: {score: 0, maxScore: 25, status: 'missing'},
+		description: {score: 0, maxScore: 25, status: 'missing'},
+		image: {score: 0, maxScore: 15, status: 'missing'},
+	};
+
+	// Title analysis (25 points max)
 	if (!content.title) {
 		issues.push({type: 'error', message: 'Titel ontbreekt', field: 'title'});
 		score -= 25;
+		fieldScores.title = {
+			score: 0,
+			maxScore: 25,
+			status: 'missing',
+			recommendation: 'Voeg een pakkende titel toe van 30-60 tekens',
+		};
+		quickWins.push({field: 'title', action: 'Voeg een titel toe', impact: 25});
 	} else if (content.title.length < 30) {
-		issues.push({type: 'warning', message: 'Titel is te kort (min. 30 tekens)', field: 'title'});
+		issues.push({type: 'warning', message: `Titel is te kort (${content.title.length}/30 tekens)`, field: 'title'});
 		score -= 10;
+		fieldScores.title = {
+			score: 15,
+			maxScore: 25,
+			status: 'warning',
+			recommendation: `Voeg nog ${30 - content.title.length} tekens toe`,
+		};
+		quickWins.push({field: 'title', action: `Verleng titel met ${30 - content.title.length} tekens`, impact: 10});
 	} else if (content.title.length > 60) {
-		issues.push({type: 'warning', message: 'Titel is te lang (max. 60 tekens)', field: 'title'});
+		issues.push({type: 'warning', message: `Titel is te lang (${content.title.length}/60 tekens)`, field: 'title'});
 		score -= 5;
+		fieldScores.title = {
+			score: 20,
+			maxScore: 25,
+			status: 'warning',
+			recommendation: `Verkort titel met ${content.title.length - 60} tekens`,
+		};
+		quickWins.push({field: 'title', action: `Verkort titel met ${content.title.length - 60} tekens`, impact: 5});
+	} else {
+		fieldScores.title = {score: 25, maxScore: 25, status: 'good'};
 	}
 
-	// Description analysis
+	// Description analysis (25 points max)
 	if (!content.description) {
 		issues.push({type: 'error', message: 'Beschrijving ontbreekt', field: 'description'});
 		score -= 25;
+		fieldScores.description = {
+			score: 0,
+			maxScore: 25,
+			status: 'missing',
+			recommendation: 'Voeg een beschrijving toe van 120-160 tekens',
+		};
+		quickWins.push({field: 'description', action: 'Voeg een beschrijving toe', impact: 25});
 	} else if (content.description.length < 120) {
-		issues.push({type: 'warning', message: 'Beschrijving is te kort (min. 120 tekens)', field: 'description'});
+		issues.push({type: 'warning', message: `Beschrijving is te kort (${content.description.length}/120 tekens)`, field: 'description'});
 		score -= 10;
+		fieldScores.description = {
+			score: 15,
+			maxScore: 25,
+			status: 'warning',
+			recommendation: `Voeg nog ${120 - content.description.length} tekens toe`,
+		};
+		quickWins.push({field: 'description', action: `Verleng beschrijving met ${120 - content.description.length} tekens`, impact: 10});
 	} else if (content.description.length > 160) {
-		issues.push({type: 'warning', message: 'Beschrijving is te lang (max. 160 tekens)', field: 'description'});
+		issues.push({type: 'warning', message: `Beschrijving is te lang (${content.description.length}/160 tekens)`, field: 'description'});
 		score -= 5;
+		fieldScores.description = {
+			score: 20,
+			maxScore: 25,
+			status: 'warning',
+			recommendation: `Verkort beschrijving met ${content.description.length - 160} tekens`,
+		};
+		quickWins.push({field: 'description', action: `Verkort beschrijving met ${content.description.length - 160} tekens`, impact: 5});
+	} else {
+		fieldScores.description = {score: 25, maxScore: 25, status: 'good'};
 	}
 
-	// Image analysis
+	// Image analysis (15 points max)
 	if (!content.image) {
 		issues.push({type: 'warning', message: 'Geen afbeelding voor social media sharing', field: 'image'});
 		score -= 15;
+		fieldScores.image = {
+			score: 0,
+			maxScore: 15,
+			status: 'missing',
+			recommendation: 'Voeg een afbeelding toe (1200x630px aanbevolen)',
+		};
 		suggestions.push('Voeg een afbeelding toe voor betere weergave op social media');
+		quickWins.push({field: 'image', action: 'Voeg een afbeelding toe', impact: 15});
+	} else {
+		fieldScores.image = {score: 15, maxScore: 15, status: 'good'};
 	}
 
-	// Content analysis
+	// Content analysis (informational only, no score penalty)
 	if (content.content) {
 		const wordCount = content.content.split(/\s+/).length;
 		if (wordCount < 300) {
 			issues.push({type: 'info', message: `Inhoud is kort (${wordCount} woorden)`, field: 'content'});
-			suggestions.push('Langere content presteert meestal beter in zoekmachines');
+			suggestions.push('Langere content (300+ woorden) presteert meestal beter in zoekmachines');
+			fieldScores.content = {
+				score: Math.round((wordCount / 300) * 100),
+				maxScore: 100,
+				status: wordCount < 100 ? 'warning' : 'good',
+				recommendation: `Voeg nog ${300 - wordCount} woorden toe voor optimale SEO`,
+			};
+		} else {
+			fieldScores.content = {score: 100, maxScore: 100, status: 'good'};
 		}
 	}
 
 	// Ensure score doesn't go below 0
 	score = Math.max(0, score);
 
-	return {score, issues, suggestions};
+	// Sort quick wins by impact (highest first)
+	quickWins.sort((a, b) => b.impact - a.impact);
+
+	return {score, issues, suggestions, fieldScores, quickWins};
 }
 
 /**
