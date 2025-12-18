@@ -1,8 +1,112 @@
-import type {NextRequest} from 'next/server';
+import {type NextRequest, NextResponse} from 'next/server';
 import {auth0} from '@/lib/auth0';
 
+/**
+ * Proxy middleware that handles:
+ * 1. Auth0 authentication
+ * 2. 404 detection for dynamic content pages
+ *
+ * The 404 detection is needed because notFound() in Next.js App Router
+ * has issues on Vercel where it returns 500 instead of 404 status codes.
+ */
+
+// Static paths that don't need content checking
+const staticPaths = new Set([
+	'/',
+	'/robots.txt',
+	'/sitemap.xml',
+	'/component-preview',
+]);
+
+// Path prefixes for known routes (admin, api, etc.)
+const knownPrefixes = [
+	'/admin',
+	'/api',
+	'/activiteiten/',
+	'/nieuws/',
+	'/sections/',
+	'/component-preview/',
+	'/_next',
+	'/monitoring',
+];
+
+// File extensions that should be passed through
+const fileExtensions = ['.ico', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.css', '.js', '.json', '.woff', '.woff2', '.ttf'];
+
+/**
+ * Check if content exists in Builder.io for the given path
+ */
+async function checkBuilderContent(pathname: string, request: NextRequest): Promise<boolean> {
+	// eslint-disable-next-line n/prefer-global/process
+	const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
+
+	if (!builderApiKey) {
+		return true; // Assume content exists if no API key
+	}
+
+	try {
+		const url = new URL('https://cdn.builder.io/api/v3/content/page');
+		url.searchParams.set('apiKey', builderApiKey);
+		url.searchParams.set('userAttributes.urlPath', pathname);
+		url.searchParams.set('limit', '1');
+		url.searchParams.set('fields', 'id');
+
+		const response = await fetch(url.toString(), {
+			next: {revalidate: 60},
+		});
+
+		if (!response.ok) {
+			return true; // If API fails, assume content exists
+		}
+
+		const data = (await response.json()) as {results?: Array<{id: string}>};
+
+		// Check for preview mode
+		const searchParameters = request.nextUrl.searchParams;
+		const isPreview = searchParameters.has('builder.preview') || searchParameters.get('preview') === 'true';
+
+		return Boolean(data.results?.length) || isPreview;
+	} catch {
+		return true; // If there's an error, assume content exists
+	}
+}
+
 export async function proxy(request: NextRequest) {
-	return auth0.middleware(request);
+	const {pathname} = request.nextUrl;
+
+	// First, run Auth0 middleware
+	const authResponse = await auth0.middleware(request);
+
+	// If Auth0 returned a non-next response (redirect, etc.), return it
+	if (authResponse.status !== 200 || authResponse.headers.get('x-middleware-rewrite')) {
+		return authResponse;
+	}
+
+	// Skip 404 check for static paths
+	if (staticPaths.has(pathname)) {
+		return authResponse;
+	}
+
+	// Skip 404 check for known prefixes
+	if (knownPrefixes.some(prefix => pathname.startsWith(prefix))) {
+		return authResponse;
+	}
+
+	// Skip 404 check for file extensions
+	if (fileExtensions.some(ext => pathname.endsWith(ext))) {
+		return authResponse;
+	}
+
+	// Check if content exists in Builder.io
+	const contentExists = await checkBuilderContent(pathname, request);
+
+	if (!contentExists) {
+		// Rewrite to 404 page with 404 status
+		const notFoundUrl = new URL('/404', request.url);
+		return NextResponse.rewrite(notFoundUrl, {status: 404});
+	}
+
+	return authResponse;
 }
 
 export const config = {
