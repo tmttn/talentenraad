@@ -1,11 +1,15 @@
+import {Suspense} from 'react';
 import Link from 'next/link';
 import {listContent} from '@/lib/builder-admin';
-import type {Activity} from '@/lib/builder-types';
+import {TableSkeleton} from '@components/skeletons';
 import {ActiviteitenTable} from './activiteiten-table';
 
-export default async function ActiviteitenAdminPage() {
+async function ActiviteitenTableLoader() {
 	const activities = await listContent('activiteit');
+	return <ActiviteitenTable activities={activities} />;
+}
 
+export default function ActiviteitenAdminPage() {
 	return (
 		<div>
 			<div className='flex justify-between items-center mb-8'>
@@ -18,7 +22,9 @@ export default async function ActiviteitenAdminPage() {
 				</Link>
 			</div>
 
-			<ActiviteitenTable activities={activities} />
+			<Suspense fallback={<TableSkeleton rows={8} />}>
+				<ActiviteitenTableLoader />
+			</Suspense>
 		</div>
 	);
 }

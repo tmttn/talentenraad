@@ -423,25 +423,11 @@ export function SettingsSkeleton() {
 	);
 }
 
-// Dashboard skeleton (combines multiple sections)
+// Dashboard skeleton - only the data-dependent content (header/quick create shown immediately)
 export function DashboardSkeleton() {
 	return (
 		<SkeletonWrapper label='Dashboard wordt geladen'>
 			<div className='space-y-6 sm:space-y-8 animate-pulse'>
-				{/* Header */}
-				<div>
-					<div className='h-8 bg-gray-200 rounded w-48 mb-2' />
-					<div className='h-4 bg-gray-200 rounded w-64' />
-				</div>
-				{/* Quick create */}
-				<div className='bg-white p-4 sm:p-5 rounded-xl shadow-md'>
-					<div className='h-4 bg-gray-200 rounded w-32 mb-3' />
-					<div className='flex flex-wrap gap-2'>
-						<div className='h-10 bg-gray-200 rounded w-32' />
-						<div className='h-10 bg-gray-200 rounded w-28' />
-						<div className='h-10 bg-gray-200 rounded w-32' />
-					</div>
-				</div>
 				{/* Stats */}
 				<StatsCardsSkeleton />
 				{/* Content lists */}

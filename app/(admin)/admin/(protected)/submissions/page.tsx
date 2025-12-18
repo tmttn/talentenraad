@@ -1,8 +1,10 @@
+import {Suspense} from 'react';
 import {desc, isNull, isNotNull} from 'drizzle-orm';
 import {db, submissions} from '@/lib/db';
+import {SubmissionsPageSkeleton} from '@components/skeletons';
 import {SubmissionsPageClient} from './submissions-page-client';
 
-export default async function SubmissionsPage() {
+async function SubmissionsLoader() {
 	const [inboxSubmissions, archivedSubmissions] = await Promise.all([
 		db.query.submissions.findMany({
 			orderBy: [desc(submissions.createdAt)],
@@ -19,5 +21,13 @@ export default async function SubmissionsPage() {
 			inboxSubmissions={inboxSubmissions}
 			archivedSubmissions={archivedSubmissions}
 		/>
+	);
+}
+
+export default function SubmissionsPage() {
+	return (
+		<Suspense fallback={<SubmissionsPageSkeleton />}>
+			<SubmissionsLoader />
+		</Suspense>
 	);
 }

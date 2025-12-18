@@ -1,3 +1,4 @@
+import {Suspense} from 'react';
 import {count, isNotNull, isNull, desc} from 'drizzle-orm';
 import Link from 'next/link';
 import {
@@ -21,6 +22,7 @@ import {
 import {db, submissions} from '@/lib/db';
 import {listContent} from '@/lib/builder-admin';
 import type {Activity as ActivityType, NewsItem, Announcement} from '@/lib/builder-types';
+import {DashboardSkeleton} from '@components/skeletons';
 
 function getGreeting(): string {
 	const hour = new Date().getHours();
@@ -98,15 +100,31 @@ function getCategoryColor(category: string): string {
 	}
 }
 
-export default async function AdminDashboardPage() {
+type DashboardData = {
+	totalCount: number;
+	unreadCount: number;
+	recentSubmissions: Array<{
+		id: string;
+		name: string;
+		email: string;
+		phone: string | null;
+		subject: string;
+		message: string;
+		createdAt: Date;
+		readAt: Date | null;
+		archivedAt: Date | null;
+	}>;
+	activities: ActivityType[];
+	news: NewsItem[];
+	announcements: Announcement[];
+};
+
+async function fetchDashboardData(): Promise<DashboardData> {
 	// Fetch submission stats
 	const [totalResult] = await db.select({count: count()}).from(submissions);
 	const [unreadResult] = await db.select({count: count()})
 		.from(submissions)
 		.where(isNull(submissions.readAt));
-	const [archivedResult] = await db.select({count: count()})
-		.from(submissions)
-		.where(isNotNull(submissions.archivedAt));
 
 	// Fetch recent unread submissions
 	const recentSubmissions = await db.select()
@@ -133,36 +151,26 @@ export default async function AdminDashboardPage() {
 		// Silently handle Builder.io errors - dashboard will still work
 	}
 
+	return {
+		totalCount: totalResult.count,
+		unreadCount: unreadResult.count,
+		recentSubmissions,
+		activities,
+		news,
+		announcements,
+	};
+}
+
+function DashboardHeader() {
 	const greeting = getGreeting();
 
 	return (
-		<div className='space-y-6 sm:space-y-8'>
+		<>
 			{/* Header with greeting */}
 			<div>
 				<h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>{greeting}!</h1>
 				<p className='text-gray-500 mt-1'>Hier is een overzicht van je website.</p>
 			</div>
-
-			{/* Active Announcements Alert */}
-			{announcements.length > 0 && (
-				<div className='space-y-2'>
-					{announcements.map(announcement => (
-						<div
-							key={announcement.id}
-							className={`p-3 rounded-lg border flex items-center gap-3 ${getAnnouncementTypeColor(announcement.data.type)}`}
-						>
-							<AnnouncementIcon type={announcement.data.type} />
-							<span className='flex-1 text-sm font-medium'>{announcement.data.tekst}</span>
-							<Link
-								href='/admin/aankondigingen'
-								className='text-xs underline hover:no-underline'
-							>
-								Beheren
-							</Link>
-						</div>
-					))}
-				</div>
-			)}
 
 			{/* Quick Create Buttons */}
 			<div className='bg-white p-4 sm:p-5 rounded-xl shadow-md'>
@@ -194,6 +202,100 @@ export default async function AdminDashboardPage() {
 					</Link>
 				</div>
 			</div>
+		</>
+	);
+}
+
+function QuickLinks() {
+	return (
+		<div className='bg-white rounded-xl shadow-md overflow-hidden'>
+			<div className='p-4 sm:p-5 border-b border-gray-100'>
+				<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
+					<Zap className='w-4 h-4 text-purple-500' />
+					Snelle links
+				</h2>
+			</div>
+			<div className='p-3 sm:p-4 grid grid-cols-2 gap-2'>
+				<Link
+					href='/admin/submissions'
+					className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+				>
+					<div className='w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center'>
+						<FileText className='w-5 h-5 text-primary' />
+					</div>
+					<div>
+						<p className='font-medium text-gray-800 text-sm'>Berichten</p>
+						<p className='text-xs text-gray-500'>Inbox beheren</p>
+					</div>
+				</Link>
+				<Link
+					href='/admin/gebruikers'
+					className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+				>
+					<div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center'>
+						<Users className='w-5 h-5 text-blue-600' />
+					</div>
+					<div>
+						<p className='font-medium text-gray-800 text-sm'>Gebruikers</p>
+						<p className='text-xs text-gray-500'>Beheerders</p>
+					</div>
+				</Link>
+				<Link
+					href='/admin/decoraties'
+					className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+				>
+					<div className='w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center'>
+						<Sparkles className='w-5 h-5 text-pink-500' />
+					</div>
+					<div>
+						<p className='font-medium text-gray-800 text-sm'>Decoraties</p>
+						<p className='text-xs text-gray-500'>Seizoensversiering</p>
+					</div>
+				</Link>
+				<Link
+					href='/'
+					target='_blank'
+					rel='noopener noreferrer'
+					className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
+				>
+					<div className='w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center'>
+						<ArrowRight className='w-5 h-5 text-green-600' />
+					</div>
+					<div>
+						<p className='font-medium text-gray-800 text-sm'>Website</p>
+						<p className='text-xs text-gray-500'>Bekijk live site</p>
+					</div>
+				</Link>
+			</div>
+		</div>
+	);
+}
+
+async function DashboardContent() {
+	const data = await fetchDashboardData();
+
+	return (
+		<>
+			{/* Active Announcements Alert */}
+			{data.announcements.length > 0 && (
+				<div className='space-y-2'>
+					{data.announcements.map(announcement => (
+						<div
+							key={announcement.id}
+							className={`p-3 rounded-lg border flex items-center gap-3 ${getAnnouncementTypeColor(announcement.data.type)}`}
+						>
+							<AnnouncementIcon type={announcement.data.type} />
+							<span className='flex-1 text-sm font-medium'>{announcement.data.tekst}</span>
+							<Link
+								href='/admin/aankondigingen'
+								className='text-xs underline hover:no-underline'
+							>
+								Beheren
+							</Link>
+						</div>
+					))}
+				</div>
+			)}
 
 			{/* Statistics Cards */}
 			<div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4'>
@@ -202,31 +304,31 @@ export default async function AdminDashboardPage() {
 						<Inbox className='w-5 h-5 text-gray-500 group-hover:text-primary transition-colors' />
 						<span className='text-xs text-gray-500'>totaal</span>
 					</div>
-					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{totalResult.count}</p>
+					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{data.totalCount}</p>
 					<p className='text-xs text-gray-500 mt-1'>Berichten</p>
 				</Link>
 				<Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
 						<Mail className='w-5 h-5 text-primary' />
-						{unreadResult.count > 0 && (
+						{data.unreadCount > 0 && (
 							<span className='bg-primary text-white text-xs px-2 py-0.5 rounded-full'>nieuw</span>
 						)}
 					</div>
-					<p className='text-2xl sm:text-3xl font-bold text-primary'>{unreadResult.count}</p>
+					<p className='text-2xl sm:text-3xl font-bold text-primary'>{data.unreadCount}</p>
 					<p className='text-xs text-gray-500 mt-1'>Ongelezen</p>
 				</Link>
 				<Link href='/admin/nieuws' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
 						<Newspaper className='w-5 h-5 text-gray-500 group-hover:text-blue-500 transition-colors' />
 					</div>
-					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{news.length > 0 ? news.length : '0'}</p>
+					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{data.news.length > 0 ? data.news.length : '0'}</p>
 					<p className='text-xs text-gray-500 mt-1'>Nieuwsberichten</p>
 				</Link>
 				<Link href='/admin/activiteiten' className='bg-white p-4 sm:p-5 rounded-xl shadow-md hover:shadow-lg transition-shadow group'>
 					<div className='flex items-center justify-between mb-2'>
 						<Calendar className='w-5 h-5 text-gray-500 group-hover:text-green-500 transition-colors' />
 					</div>
-					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{activities.length > 0 ? activities.length : '0'}</p>
+					<p className='text-2xl sm:text-3xl font-bold text-gray-800'>{data.activities.length > 0 ? data.activities.length : '0'}</p>
 					<p className='text-xs text-gray-500 mt-1'>Activiteiten</p>
 				</Link>
 			</div>
@@ -246,12 +348,12 @@ export default async function AdminDashboardPage() {
 						</Link>
 					</div>
 					<div className='divide-y divide-gray-50'>
-						{recentSubmissions.length === 0 ? (
+						{data.recentSubmissions.length === 0 ? (
 							<div className='p-4 text-center text-gray-500 text-sm'>
 								Geen berichten
 							</div>
 						) : (
-							recentSubmissions.map(submission => (
+							data.recentSubmissions.map(submission => (
 								<Link
 									key={submission.id}
 									href={`/admin/submissions/${submission.id}`}
@@ -294,12 +396,12 @@ export default async function AdminDashboardPage() {
 						</Link>
 					</div>
 					<div className='divide-y divide-gray-50'>
-						{activities.length === 0 ? (
+						{data.activities.length === 0 ? (
 							<div className='p-4 text-center text-gray-500 text-sm'>
 								Geen activiteiten
 							</div>
 						) : (
-							activities.map(activity => (
+							data.activities.map(activity => (
 								<Link
 									key={activity.id}
 									href={`/admin/activiteiten/${activity.id}`}
@@ -357,12 +459,12 @@ export default async function AdminDashboardPage() {
 						</Link>
 					</div>
 					<div className='divide-y divide-gray-50'>
-						{news.length === 0 ? (
+						{data.news.length === 0 ? (
 							<div className='p-4 text-center text-gray-500 text-sm'>
 								Geen nieuwsberichten
 							</div>
 						) : (
-							news.map(item => (
+							data.news.map(item => (
 								<Link
 									key={item.id}
 									href={`/admin/nieuws/${item.id}`}
@@ -400,67 +502,19 @@ export default async function AdminDashboardPage() {
 				</div>
 
 				{/* Quick Links */}
-				<div className='bg-white rounded-xl shadow-md overflow-hidden'>
-					<div className='p-4 sm:p-5 border-b border-gray-100'>
-						<h2 className='font-semibold text-gray-800 flex items-center gap-2'>
-							<Zap className='w-4 h-4 text-purple-500' />
-							Snelle links
-						</h2>
-					</div>
-					<div className='p-3 sm:p-4 grid grid-cols-2 gap-2'>
-						<Link
-							href='/admin/submissions'
-							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
-						>
-							<div className='w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center'>
-								<FileText className='w-5 h-5 text-primary' />
-							</div>
-							<div>
-								<p className='font-medium text-gray-800 text-sm'>Berichten</p>
-								<p className='text-xs text-gray-500'>Inbox beheren</p>
-							</div>
-						</Link>
-						<Link
-							href='/admin/gebruikers'
-							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
-						>
-							<div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center'>
-								<Users className='w-5 h-5 text-blue-600' />
-							</div>
-							<div>
-								<p className='font-medium text-gray-800 text-sm'>Gebruikers</p>
-								<p className='text-xs text-gray-500'>Beheerders</p>
-							</div>
-						</Link>
-						<Link
-							href='/admin/decoraties'
-							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
-						>
-							<div className='w-10 h-10 bg-pink-100 rounded-lg flex items-center justify-center'>
-								<Sparkles className='w-5 h-5 text-pink-500' />
-							</div>
-							<div>
-								<p className='font-medium text-gray-800 text-sm'>Decoraties</p>
-								<p className='text-xs text-gray-500'>Seizoensversiering</p>
-							</div>
-						</Link>
-						<Link
-							href='/'
-							target='_blank'
-							rel='noopener noreferrer'
-							className='flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors'
-						>
-							<div className='w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center'>
-								<ArrowRight className='w-5 h-5 text-green-600' />
-							</div>
-							<div>
-								<p className='font-medium text-gray-800 text-sm'>Website</p>
-								<p className='text-xs text-gray-500'>Bekijk live site</p>
-							</div>
-						</Link>
-					</div>
-				</div>
+				<QuickLinks />
 			</div>
+		</>
+	);
+}
+
+export default function AdminDashboardPage() {
+	return (
+		<div className='space-y-6 sm:space-y-8'>
+			<DashboardHeader />
+			<Suspense fallback={<DashboardSkeleton />}>
+				<DashboardContent />
+			</Suspense>
 		</div>
 	);
 }

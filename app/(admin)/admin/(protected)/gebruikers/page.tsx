@@ -1,4 +1,6 @@
+import {Suspense} from 'react';
 import {db} from '@/lib/db';
+import {TableSkeleton} from '@components/skeletons';
 import {UsersManager} from './users-manager';
 
 function getProtectedEmails(): string[] {
@@ -6,17 +8,23 @@ function getProtectedEmails(): string[] {
 	return emails.split(',').map(e => e.trim().toLowerCase()).filter(Boolean);
 }
 
-export default async function UsersAdminPage() {
+async function UsersLoader() {
 	const allUsers = await db.query.users.findMany({
 		orderBy: (users, {desc}) => [desc(users.createdAt)],
 	});
 
 	const protectedEmails = getProtectedEmails();
 
+	return <UsersManager initialUsers={allUsers} protectedEmails={protectedEmails} />;
+}
+
+export default function UsersAdminPage() {
 	return (
 		<div>
 			<h1 className='text-3xl font-bold text-gray-800 mb-8'>Gebruikers</h1>
-			<UsersManager initialUsers={allUsers} protectedEmails={protectedEmails} />
+			<Suspense fallback={<TableSkeleton rows={6} />}>
+				<UsersLoader />
+			</Suspense>
 		</div>
 	);
 }

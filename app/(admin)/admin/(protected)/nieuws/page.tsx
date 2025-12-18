@@ -1,10 +1,15 @@
+import {Suspense} from 'react';
 import Link from 'next/link';
 import {listContent} from '@/lib/builder-admin';
+import {TableSkeleton} from '@components/skeletons';
 import {NieuwsTable} from './nieuws-table';
 
-export default async function NieuwsAdminPage() {
+async function NieuwsTableLoader() {
 	const newsItems = await listContent('nieuws');
+	return <NieuwsTable newsItems={newsItems} />;
+}
 
+export default function NieuwsAdminPage() {
 	return (
 		<div>
 			<div className='flex justify-between items-center mb-8'>
@@ -17,7 +22,9 @@ export default async function NieuwsAdminPage() {
 				</Link>
 			</div>
 
-			<NieuwsTable newsItems={newsItems} />
+			<Suspense fallback={<TableSkeleton rows={8} />}>
+				<NieuwsTableLoader />
+			</Suspense>
 		</div>
 	);
 }
