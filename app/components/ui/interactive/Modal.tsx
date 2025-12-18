@@ -27,6 +27,10 @@ type ModalProps = {
 	className?: string;
 };
 
+/**
+ * Modal size classes
+ * Maps to max-width values for different modal sizes
+ */
 const sizeClasses: Record<ModalSize, string> = {
 	sm: 'max-w-md',
 	md: 'max-w-lg',
@@ -37,6 +41,13 @@ const sizeClasses: Record<ModalSize, string> = {
 
 /**
  * Modal - Dialog overlay component
+ *
+ * Uses design tokens:
+ * - Border radius: rounded-modal
+ * - Shadow: shadow-overlay
+ * - Transitions: duration-slow
+ * - Padding: p-component-md (body)
+ * - Close button: rounded-button, duration-fast
  *
  * Usage:
  * <Modal open={isOpen} onClose={() => setIsOpen(false)} title="Confirm">
@@ -94,14 +105,14 @@ export function Modal({
 			aria-modal="true"
 			aria-labelledby={title ? 'modal-title' : undefined}
 		>
-			{/* Overlay */}
+			{/* Overlay - uses duration-slow token for transition */}
 			<div
 				className="fixed inset-0 bg-black/50 transition-opacity duration-slow"
 				onClick={handleOverlayClick}
 				aria-hidden="true"
 			/>
 
-			{/* Modal content */}
+			{/* Modal content - uses rounded-modal, shadow-overlay, duration-slow tokens */}
 			<div
 				className={[
 					'relative z-10 w-full rounded-modal bg-white shadow-overlay',
@@ -112,9 +123,9 @@ export function Modal({
 					.filter(Boolean)
 					.join(' ')}
 			>
-				{/* Header */}
+				{/* Header - uses component padding tokens */}
 				{(title || showCloseButton) && (
-					<div className="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+					<div className="flex items-center justify-between border-b border-gray-200 px-component-md py-component-sm">
 						{title && (
 							<h2 id="modal-title" className="text-lg font-semibold text-gray-900">
 								{title}
@@ -124,7 +135,7 @@ export function Modal({
 							<button
 								type="button"
 								onClick={onClose}
-								className="ml-auto rounded-lg p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20"
+								className="ml-auto rounded-button p-1 text-gray-400 transition-colors duration-fast hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20"
 								aria-label="Sluiten"
 							>
 								<svg
@@ -145,8 +156,8 @@ export function Modal({
 					</div>
 				)}
 
-				{/* Body */}
-				<div className="px-6 py-4">{children}</div>
+				{/* Body - uses p-component-md token for consistent padding */}
+				<div className="p-component-md">{children}</div>
 			</div>
 		</div>
 	);
