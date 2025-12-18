@@ -1,33 +1,36 @@
 'use client';
 
 import type {ReactNode} from 'react';
+import {Container} from '@components/ui/layout';
 
 type UnifiedCtaProperties = {
 	variant?: 'compact' | 'full' | 'minimal';
 	children?: ReactNode;
 };
 
+const variantStyles: Record<string, string> = {
+	minimal: 'bg-gray-900 py-8 px-6',
+	compact: 'bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 py-10 px-6',
+	full: 'bg-gradient-to-br from-gray-900 to-gray-800 py-16 px-6',
+};
+
+const containerConfig: Record<string, {size: 'lg' | 'xl'; className?: string}> = {
+	minimal: {size: 'lg', className: 'text-center'},
+	compact: {size: 'lg'},
+	full: {size: 'xl'},
+};
+
 function UnifiedCta({
 	variant = 'full',
 	children,
 }: Readonly<UnifiedCtaProperties>) {
-	const variantStyles: Record<string, string> = {
-		minimal: 'bg-gray-900 py-8 px-6',
-		compact: 'bg-gradient-to-r from-brand-primary-500 to-brand-primary-600 py-10 px-6',
-		full: 'bg-gradient-to-br from-gray-900 to-gray-800 py-16 px-6',
-	};
-
-	const containerStyles: Record<string, string> = {
-		minimal: 'max-w-4xl mx-auto text-center',
-		compact: 'max-w-4xl mx-auto',
-		full: 'max-w-5xl mx-auto',
-	};
+	const config = containerConfig[variant];
 
 	return (
 		<section className={variantStyles[variant]}>
-			<div className={containerStyles[variant]}>
+			<Container size={config.size} className={config.className}>
 				{children}
-			</div>
+			</Container>
 		</section>
 	);
 }

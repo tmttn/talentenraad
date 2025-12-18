@@ -3,6 +3,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {Calendar, Clock, ChevronRight} from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
+import {Stack} from '@components/ui/layout';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -102,7 +103,7 @@ function CalendarSection({
 
 	if (loading) {
 		return (
-			<div className='animate-pulse space-y-4'>
+			<Stack gap='sm' className='animate-pulse'>
 				{Array.from({length: 3}).map((_, i) => (
 					<div key={i} className='flex items-center gap-6 bg-white p-4 rounded-card shadow-base'>
 						<div className='w-16 h-16 bg-gray-200 rounded-card' />
@@ -112,7 +113,7 @@ function CalendarSection({
 						</div>
 					</div>
 				))}
-			</div>
+			</Stack>
 		);
 	}
 
@@ -127,7 +128,7 @@ function CalendarSection({
 
 	return (
 		<div>
-			<div className='space-y-4'>
+			<Stack gap='sm'>
 				{events.map((event, index) => {
 					const {day, month} = formatDate(event.date);
 					const slug = 'slug' in event ? (event as CalendarEvent & {slug: string}).slug : generateSlug(event.title);
@@ -154,7 +155,7 @@ function CalendarSection({
 						</a>
 					);
 				})}
-			</div>
+			</Stack>
 
 			{showViewAll && (
 				<div className='text-center mt-8'>

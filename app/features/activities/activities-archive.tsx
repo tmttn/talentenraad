@@ -2,6 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {Archive, ChevronDown} from 'lucide-react';
+import {Container, Stack} from '@components/ui/layout';
 
 type Activity = {
 	id: string;
@@ -101,15 +102,15 @@ function ActivitiesArchive({
 	if (loading) {
 		return (
 			<section className='py-12 px-6 bg-gray-50' aria-busy='true'>
-				<div className='max-w-4xl mx-auto'>
+				<Container size='lg'>
 					<div className='animate-pulse'>
 						<div className='h-6 bg-gray-200 rounded w-32 mb-4' />
-						<div className='space-y-2'>
+						<Stack gap='xs'>
 							<div className='h-4 bg-gray-200 rounded w-full' />
 							<div className='h-4 bg-gray-200 rounded w-3/4' />
-						</div>
+						</Stack>
 					</div>
-				</div>
+				</Container>
 			</section>
 		);
 	}
@@ -123,7 +124,7 @@ function ActivitiesArchive({
 
 	return (
 		<section className='py-12 px-6 bg-gray-50' aria-labelledby='archief-title'>
-			<div className='max-w-4xl mx-auto'>
+			<Container size='lg'>
 				<button
 					type='button'
 					onClick={() => {
@@ -160,7 +161,7 @@ function ActivitiesArchive({
 								</span>
 								{year}
 							</h3>
-							<div className='space-y-3 pl-4 border-l-2 border-gray-200'>
+							<Stack gap='sm' className='pl-4 border-l-2 border-gray-200'>
 								{groupedActivities[year].map(activity => (
 									<a
 										key={activity.id}
@@ -189,11 +190,11 @@ function ActivitiesArchive({
 										</div>
 									</a>
 								))}
-							</div>
+							</Stack>
 						</div>
 					))}
 				</div>
-			</div>
+			</Container>
 		</section>
 	);
 }

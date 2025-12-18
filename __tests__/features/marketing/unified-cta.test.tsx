@@ -25,22 +25,25 @@ describe('UnifiedCTA', () => {
 	});
 
 	describe('container styles', () => {
-		it('uses max-w-5xl for full variant', () => {
+		it('uses Container xl size for full variant', () => {
 			const {container} = render(<UnifiedCTA variant='full' />);
 			const innerDiv = container.querySelector('section > div');
+			// Container size='xl' maps to max-w-6xl
+			expect(innerDiv).toHaveClass('max-w-6xl');
+		});
+
+		it('uses Container lg size for compact variant', () => {
+			const {container} = render(<UnifiedCTA variant='compact' />);
+			const innerDiv = container.querySelector('section > div');
+			// Container size='lg' maps to max-w-5xl
 			expect(innerDiv).toHaveClass('max-w-5xl');
 		});
 
-		it('uses max-w-4xl for compact variant', () => {
-			const {container} = render(<UnifiedCTA variant='compact' />);
-			const innerDiv = container.querySelector('section > div');
-			expect(innerDiv).toHaveClass('max-w-4xl');
-		});
-
-		it('uses max-w-4xl and text-center for minimal variant', () => {
+		it('uses Container lg size and text-center for minimal variant', () => {
 			const {container} = render(<UnifiedCTA variant='minimal' />);
 			const innerDiv = container.querySelector('section > div');
-			expect(innerDiv).toHaveClass('max-w-4xl', 'text-center');
+			// Container size='lg' maps to max-w-5xl
+			expect(innerDiv).toHaveClass('max-w-5xl', 'text-center');
 		});
 	});
 
