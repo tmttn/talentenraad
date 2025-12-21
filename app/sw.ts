@@ -19,7 +19,9 @@ declare global {
 declare const self: ServiceWorkerGlobalScope;
 
 const serwist = new Serwist({
-	precacheEntries: self.__SW_MANIFEST,
+	// Disable precaching - it blocks SW activation and breaks push notifications
+	// Runtime caching still works for dynamic content
+	precacheEntries: [],
 	skipWaiting: true,
 	clientsClaim: true,
 	navigationPreload: true,
