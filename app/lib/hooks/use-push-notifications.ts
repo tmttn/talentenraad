@@ -37,6 +37,16 @@ async function withTimeout<T>(promise: Promise<T>, ms: number, errorMessage: str
 }
 
 async function getServiceWorkerRegistration(timeoutMs = 5000): Promise<ServiceWorkerRegistration> {
+	// First check if there's a controller - if not, SW might need to be registered
+	if (!navigator.serviceWorker.controller) {
+		// Try to register manually
+		try {
+			await navigator.serviceWorker.register('/serwist/sw.js', {scope: '/'});
+		} catch {
+			// Ignore registration errors - ready might still work
+		}
+	}
+
 	return withTimeout(
 		navigator.serviceWorker.ready,
 		timeoutMs,
@@ -106,8 +116,23 @@ export function usePushNotifications() {
 				}
 			}
 
-			// Get VAPID public key
-			const response = await fetch('/api/push/vapid-public-key');
+			// Denied permission check
+			if (Notification.permission === 'denied') {
+				setState(s => ({
+					...s,
+					isLoading: false,
+					permission: 'denied',
+					error: 'Notificaties geblokkeerd in browser',
+				}));
+				return;
+			}
+
+			// Get VAPID public key with timeout
+			const response = await withTimeout(
+				fetch('/api/push/vapid-public-key'),
+				10_000,
+				'VAPID key ophalen duurde te lang',
+			);
 			if (!response.ok) {
 				throw new Error('VAPID key niet beschikbaar');
 			}
@@ -116,21 +141,29 @@ export function usePushNotifications() {
 
 			const registration = await getServiceWorkerRegistration();
 
-			// Subscribe to push
-			const subscription = await registration.pushManager.subscribe({
-				userVisibleOnly: true,
-				applicationServerKey: urlBase64ToUint8Array(publicKey),
-			});
-
-			// Send subscription to server
-			const subscribeResponse = await fetch('/api/push/subscribe', {
-				method: 'POST',
-				headers: {'Content-Type': 'application/json'},
-				body: JSON.stringify({
-					...subscription.toJSON(),
-					topics,
+			// Subscribe to push with timeout
+			const subscription = await withTimeout(
+				registration.pushManager.subscribe({
+					userVisibleOnly: true,
+					applicationServerKey: urlBase64ToUint8Array(publicKey),
 				}),
-			});
+				10_000,
+				'Push abonnement duurde te lang',
+			);
+
+			// Send subscription to server with timeout
+			const subscribeResponse = await withTimeout(
+				fetch('/api/push/subscribe', {
+					method: 'POST',
+					headers: {'Content-Type': 'application/json'},
+					body: JSON.stringify({
+						...subscription.toJSON(),
+						topics,
+					}),
+				}),
+				10_000,
+				'Abonnement opslaan duurde te lang',
+			);
 
 			if (!subscribeResponse.ok) {
 				throw new Error('Kon abonnement niet opslaan');
@@ -159,20 +192,30 @@ export function usePushNotifications() {
 			const subscription = await registration.pushManager.getSubscription();
 
 			if (subscription) {
-				await subscription.unsubscribe();
-				await fetch('/api/push/subscribe', {
-					method: 'DELETE',
-					headers: {'Content-Type': 'application/json'},
-					body: JSON.stringify({endpoint: subscription.endpoint}),
-				});
+				await withTimeout(
+					subscription.unsubscribe(),
+					5000,
+					'Uitschrijven duurde te lang',
+				);
+				await withTimeout(
+					fetch('/api/push/subscribe', {
+						method: 'DELETE',
+						headers: {'Content-Type': 'application/json'},
+						body: JSON.stringify({endpoint: subscription.endpoint}),
+					}),
+					5000,
+					'Server uitschrijven duurde te lang',
+				);
 			}
 
 			setState(s => ({...s, isSubscribed: false, isLoading: false}));
 		} catch {
+			// Even if unsubscribe fails, mark as unsubscribed locally
 			setState(s => ({
 				...s,
+				isSubscribed: false,
 				isLoading: false,
-				error: 'Kon niet uitschrijven',
+				error: 'Kon niet volledig uitschrijven',
 			}));
 		}
 	}, []);
