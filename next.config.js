@@ -52,6 +52,16 @@ nextConfig.images = {
 // Security headers
 nextConfig.headers = async () => [
 	{
+		// Allow service worker to control root scope
+		source: '/serwist/sw.js',
+		headers: [
+			{
+				key: 'Service-Worker-Allowed',
+				value: '/',
+			},
+		],
+	},
+	{
 		source: '/(.*)',
 		headers: [
 			{
