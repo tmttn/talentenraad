@@ -23,6 +23,27 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
 	return outputArray;
 }
 
+async function withTimeout<T>(promise: Promise<T>, ms: number, errorMessage: string): Promise<T> {
+	let timeoutId: ReturnType<typeof setTimeout>;
+	const timeoutPromise = new Promise<never>((_, reject) => {
+		timeoutId = setTimeout(() => reject(new Error(errorMessage)), ms);
+	});
+
+	try {
+		return await Promise.race([promise, timeoutPromise]);
+	} finally {
+		clearTimeout(timeoutId!);
+	}
+}
+
+async function getServiceWorkerRegistration(timeoutMs = 5000): Promise<ServiceWorkerRegistration> {
+	return withTimeout(
+		navigator.serviceWorker.ready,
+		timeoutMs,
+		'Service worker niet beschikbaar',
+	);
+}
+
 export function usePushNotifications() {
 	const [state, setState] = useState<PushNotificationState>({
 		isSupported: false,
@@ -54,7 +75,7 @@ export function usePushNotifications() {
 
 			// Check subscription status in background (don't block on this)
 			try {
-				const registration = await navigator.serviceWorker.ready;
+				const registration = await getServiceWorkerRegistration();
 				const subscription = await registration.pushManager.getSubscription();
 				if (subscription) {
 					setState(s => ({...s, isSubscribed: true}));
@@ -93,7 +114,7 @@ export function usePushNotifications() {
 
 			const {publicKey} = await response.json() as {publicKey: string};
 
-			const registration = await navigator.serviceWorker.ready;
+			const registration = await getServiceWorkerRegistration();
 
 			// Subscribe to push
 			const subscription = await registration.pushManager.subscribe({
@@ -134,7 +155,7 @@ export function usePushNotifications() {
 		setState(s => ({...s, isLoading: true, error: null}));
 
 		try {
-			const registration = await navigator.serviceWorker.ready;
+			const registration = await getServiceWorkerRegistration();
 			const subscription = await registration.pushManager.getSubscription();
 
 			if (subscription) {
