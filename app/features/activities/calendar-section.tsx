@@ -4,6 +4,8 @@ import {useEffect, useRef, useState} from 'react';
 import {Calendar, Clock, ChevronRight} from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 import {Stack} from '@components/ui/layout';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -45,6 +47,7 @@ function CalendarSection({
 	viewAllLink = '/kalender',
 	limit = 5,
 }: Readonly<CalendarSectionProperties>) {
+	const isEnabled = useFlag('activitiesCalendar');
 	const [events, setEvents] = useState<CalendarEvent[]>([]);
 	const [loading, setLoading] = useState(true);
 	const hasFetched = useRef(false);
@@ -124,6 +127,11 @@ function CalendarSection({
 				<p className='text-gray-500'>Geen activiteiten gepland</p>
 			</div>
 		);
+	}
+
+	// Check feature flag
+	if (!isEnabled) {
+		return null;
 	}
 
 	return (

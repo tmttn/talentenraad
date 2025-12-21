@@ -2,6 +2,8 @@
 
 import type {ReactNode} from 'react';
 import {Container} from '@components/ui/layout';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 type CtaBannerProperties = {
 	variant?: 'default' | 'accent' | 'light';
@@ -12,6 +14,12 @@ function CtaBanner({
 	variant = 'default',
 	children,
 }: Readonly<CtaBannerProperties>) {
+	const isEnabled = useFlag('ctaBanner');
+
+	if (!isEnabled) {
+		return null;
+	}
+
 	const variants = {
 		default: 'bg-gray-900',
 		accent: 'bg-gradient-to-r from-brand-primary-500 to-brand-primary-700',

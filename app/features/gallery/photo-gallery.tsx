@@ -17,6 +17,8 @@ import {
 	Maximize2,
 	Loader2,
 } from 'lucide-react';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 type GalleryImage = {
 	src: string;
@@ -404,6 +406,7 @@ function PhotoGallery({
 	aspectRatio = 'square',
 	hoverEffect = 'zoom',
 }: Readonly<PhotoGalleryProperties>) {
+	const isEnabled = useFlag('photoGallery');
 	const [images, setImages] = useState<GalleryImage[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | undefined>(undefined);
@@ -618,6 +621,11 @@ function PhotoGallery({
 				Geen afbeeldingen gevonden in deze map
 			</div>
 		);
+	}
+
+	// Check feature flag
+	if (!isEnabled) {
+		return null;
 	}
 
 	return (

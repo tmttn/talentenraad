@@ -3,6 +3,8 @@
 import {useEffect, useState} from 'react';
 import {Archive, ChevronDown} from 'lucide-react';
 import {Container, Stack} from '@components/ui/layout';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 type Activity = {
 	id: string;
@@ -39,6 +41,7 @@ function ActivitiesArchive({
 	limit = 20,
 	showYear = true,
 }: Readonly<ActivitiesArchiveProperties>) {
+	const isEnabled = useFlag('activitiesArchive');
 	const [activities, setActivities] = useState<Activity[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [isExpanded, setIsExpanded] = useState(false);
@@ -116,6 +119,11 @@ function ActivitiesArchive({
 	}
 
 	if (activities.length === 0) {
+		return null;
+	}
+
+	// Check feature flag
+	if (!isEnabled) {
 		return null;
 	}
 

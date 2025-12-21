@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 import {Container, Stack} from '@components/ui/layout';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 const articleClassName = [
 	'flex items-start gap-6 bg-white p-4 rounded-card shadow-base hover:shadow-elevated transition-shadow',
@@ -61,6 +63,7 @@ function ActivitiesList({
 	showLocation = true,
 	showDescription = false,
 }: Readonly<ActivitiesListProperties>) {
+	const isEnabled = useFlag('activitiesList');
 	const [activities, setActivities] = useState<Activity[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [loadingMessage, setLoadingMessage] = useState('Activiteiten worden geladen...');
@@ -151,6 +154,11 @@ function ActivitiesList({
 				</div>
 			</section>
 		);
+	}
+
+	// Check feature flag
+	if (!isEnabled) {
+		return null;
 	}
 
 	return (

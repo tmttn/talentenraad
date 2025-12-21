@@ -10,6 +10,7 @@ import {useSearchParams} from 'next/navigation';
 import {CheckCircle, XCircle, Send, Loader2} from 'lucide-react';
 import {useRecaptcha} from './use-recaptcha';
 import {Container, Grid} from '@components/ui/layout';
+import {useFlags} from '@/lib/flags-client';
 
 /**
  * Submit button using design tokens
@@ -490,11 +491,22 @@ function ContactFormWithParameters(props: Readonly<ContactFormProperties>) {
 	return <ContactFormInner {...props} defaultSubject={defaultSubject} />;
 }
 
-// Main exported component with Suspense boundary
+// Main exported component with Suspense boundary and feature flag check
 function ContactForm(props: Readonly<ContactFormProperties>) {
+	const flags = useFlags();
+
+	// Check if contact form is enabled
+	if (!flags.contactForm) {
+		return null;
+	}
+
+	// Override props with flag values (flags take precedence over props)
+	const showPhone = props.showPhone && flags.contactFormPhone;
+	const showSubject = props.showSubject !== false && flags.contactFormSubject;
+
 	return (
 		<Suspense fallback={<ContactFormSkeleton />}>
-			<ContactFormWithParameters {...props} />
+			<ContactFormWithParameters {...props} showPhone={showPhone} showSubject={showSubject} />
 		</Suspense>
 	);
 }

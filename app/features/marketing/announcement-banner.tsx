@@ -7,6 +7,8 @@ import {
 	Star,
 	X,
 } from 'lucide-react';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 type Announcement = {
 	id: string;
@@ -22,6 +24,7 @@ type Announcement = {
 const builderApiKey = '3706422a8e454ceebe64acdc5a1475ba';
 
 export function AnnouncementBanner() {
+	const isEnabled = useFlag('announcementBanner');
 	const [announcement, setAnnouncement] = useState<Announcement | undefined>(undefined);
 	const [isVisible, setIsVisible] = useState(true);
 
@@ -54,7 +57,8 @@ export function AnnouncementBanner() {
 		void fetchAnnouncement();
 	}, []);
 
-	if (!announcement || !isVisible) {
+	// Check feature flag and visibility
+	if (!isEnabled || !announcement || !isVisible) {
 		return null;
 	}
 

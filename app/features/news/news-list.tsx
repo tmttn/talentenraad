@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import {linkStyles} from '@components/ui';
 import {Container, Stack, Grid} from '@components/ui/layout';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 const articleListClassName = [
 	'bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow group overflow-hidden',
@@ -65,6 +67,7 @@ function NewsList({
 	layout = 'list',
 	showImages = true,
 }: Readonly<NewsListProperties>) {
+	const isEnabled = useFlag('newsList');
 	const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [loadingMessage, setLoadingMessage] = useState('Nieuwsberichten worden geladen...');
@@ -151,6 +154,11 @@ function NewsList({
 				</div>
 			</section>
 		);
+	}
+
+	// Check feature flag
+	if (!isEnabled) {
+		return null;
 	}
 
 	const renderGridLayout = () => (

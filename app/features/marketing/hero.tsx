@@ -4,6 +4,8 @@ import type {ReactNode} from 'react';
 import {Container} from '@components/ui/layout';
 // eslint-disable-next-line import-x/extensions
 import {brandColors, gradients} from '@/styles/tokens';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 type HeroProperties = {
 	backgroundImage?: string;
@@ -33,6 +35,12 @@ function Hero({
 	size = 'medium',
 	children,
 }: Readonly<HeroProperties>) {
+	const isEnabled = useFlag('heroBanner');
+
+	if (!isEnabled) {
+		return null;
+	}
+
 	return (
 		<section
 			className={`relative overflow-hidden ${sizeClasses[size]}`}

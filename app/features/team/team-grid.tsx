@@ -2,6 +2,8 @@
 
 import {useEffect, useState} from 'react';
 import {Container, Grid} from '@components/ui/layout';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 type TeamMemberData = {
 	name: string;
@@ -37,6 +39,7 @@ function TeamGrid({
 	showDescription = true,
 	category = '',
 }: Readonly<TeamGridProperties>) {
+	const isEnabled = useFlag('teamGrid');
 	const [teamMembers, setTeamMembers] = useState<TeamMemberData[]>([]);
 	const [loading, setLoading] = useState(true);
 
@@ -138,6 +141,11 @@ function TeamGrid({
 				Geen teamleden gevonden
 			</Container>
 		);
+	}
+
+	// Check feature flag
+	if (!isEnabled) {
+		return null;
 	}
 
 	return (

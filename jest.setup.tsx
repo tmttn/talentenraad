@@ -56,3 +56,46 @@ jest.mock('@builder.io/sdk-react-nextjs', () => ({
 		</div>
 	),
 }));
+
+// Mock feature flags - all enabled by default for tests
+const mockFlagValues = {
+	adminSubmissions: true,
+	adminActivities: true,
+	adminNews: true,
+	adminAnnouncements: true,
+	adminNotifications: true,
+	adminAuditLogs: true,
+	seasonalDecorations: false,
+	cookieBanner: true,
+	contactForm: true,
+	contactFormPhone: true,
+	contactFormSubject: true,
+	announcementBanner: true,
+	heroBanner: true,
+	ctaBanner: true,
+	activitiesList: true,
+	activitiesCalendar: true,
+	activitiesArchive: true,
+	newsList: true,
+	faqSection: true,
+	teamGrid: true,
+	photoGallery: true,
+	newsletterSignup: true,
+	serviceWorker: true,
+	offlinePage: true,
+	pushNotifications: true,
+	installPrompt: true,
+};
+
+jest.mock('@/lib/flags-client', () => ({
+	useFlag: (key: string) => mockFlagValues[key as keyof typeof mockFlagValues] ?? true,
+	useFlags: () => mockFlagValues,
+	FlagsProvider: ({children}: {children: React.ReactNode}) => children,
+}));
+
+jest.mock('@/lib/flags', () => ({
+	getFlag: async (key: string) => mockFlagValues[key as keyof typeof mockFlagValues] ?? true,
+	getAllFlags: async () => mockFlagValues,
+	seasonalDecorations: async () => false,
+	cookieBanner: async () => true,
+}));

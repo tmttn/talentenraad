@@ -5,6 +5,8 @@ import {
 } from 'react';
 import {ChevronDown, HelpCircle} from 'lucide-react';
 import {Container, Stack} from '@components/ui/layout';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 const faqButtonClassName = [
 	'faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4',
@@ -104,6 +106,7 @@ function generateFaqStructuredData(faqs: FaqItem[]) {
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '3706422a8e454ceebe64acdc5a1475ba'; // eslint-disable-line n/prefer-global/process
 
 function Faq() {
+	const isEnabled = useFlag('faqSection');
 	const [faqs, setFaqs] = useState<FaqItem[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [openIndex, setOpenIndex] = useState<number | undefined>(undefined);
@@ -215,6 +218,11 @@ function Faq() {
 				</div>
 			</Container>
 		);
+	}
+
+	// Check feature flag
+	if (!isEnabled) {
+		return null;
 	}
 
 	return (
