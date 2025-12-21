@@ -92,6 +92,7 @@
       "eslint.config.mjs",
       "scripts/**",
       "proxy.ts",
+      "public/sw.js",
       "app/components/**",
       "app/api/**",
       "app/lib/**",

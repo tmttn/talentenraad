@@ -15,6 +15,7 @@ const staticPaths = new Set([
 	'/',
 	'/robots.txt',
 	'/sitemap.xml',
+	'/manifest.webmanifest',
 	'/component-preview',
 ]);
 

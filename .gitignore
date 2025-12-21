@@ -19,6 +19,10 @@
 # production
 /build
 
+# PWA service worker (generated during build)
+/public/sw.js
+/public/sw.js.map
+
 # misc
 .DS_Store
 *.pem
