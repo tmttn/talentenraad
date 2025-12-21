@@ -1,7 +1,8 @@
 'use client';
 
 import {useState, useEffect} from 'react';
-import {Send, Users, Bell, Clock, CheckCircle, XCircle, Loader2} from 'lucide-react';
+import {Send, Users, Bell, Clock, Loader2} from 'lucide-react';
+import {toast} from 'sonner';
 
 type NotificationHistoryEntry = {
 	id: string;
@@ -26,7 +27,6 @@ export function NotificatiesManager() {
 	const [url, setUrl] = useState('');
 	const [isSending, setIsSending] = useState(false);
 	const [isLoading, setIsLoading] = useState(true);
-	const [message, setMessage] = useState<{type: 'success' | 'error'; text: string} | null>(null);
 	const [data, setData] = useState<NotificationData | null>(null);
 
 	const fetchData = async () => {
@@ -51,12 +51,11 @@ export function NotificatiesManager() {
 		event.preventDefault();
 
 		if (!title.trim() || !body.trim()) {
-			setMessage({type: 'error', text: 'Titel en bericht zijn verplicht'});
+			toast.error('Titel en bericht zijn verplicht');
 			return;
 		}
 
 		setIsSending(true);
-		setMessage(null);
 
 		try {
 			const response = await fetch('/api/admin/notifications', {
@@ -72,23 +71,23 @@ export function NotificatiesManager() {
 			const result = await response.json() as {success: boolean; sent?: number; failed?: number; error?: string};
 
 			if (response.ok && result.success) {
-				setMessage({
-					type: 'success',
-					text: `Notificatie verzonden naar ${result.sent ?? 0} abonnees${result.failed ? ` (${result.failed} mislukt)` : ''}`,
-				});
+				const successMessage = `Notificatie verzonden naar ${result.sent ?? 0} abonnees${result.failed ? ` (${result.failed} mislukt)` : ''}`;
+				if (result.failed && result.failed > 0) {
+					toast.warning(successMessage);
+				} else {
+					toast.success(successMessage);
+				}
+
 				setTitle('');
 				setBody('');
 				setUrl('');
 				// Refresh data
 				await fetchData();
 			} else {
-				setMessage({
-					type: 'error',
-					text: result.error ?? 'Verzenden mislukt',
-				});
+				toast.error(result.error ?? 'Verzenden mislukt');
 			}
 		} catch {
-			setMessage({type: 'error', text: 'Verzenden mislukt'});
+			toast.error('Verzenden mislukt');
 		} finally {
 			setIsSending(false);
 		}
@@ -182,21 +181,6 @@ export function NotificatiesManager() {
 							Waar gebruikers naartoe gaan als ze op de notificatie klikken
 						</p>
 					</div>
-
-					{message && (
-						<div className={`p-4 rounded-button flex items-center gap-2 ${
-							message.type === 'success'
-								? 'bg-green-50 text-green-700'
-								: 'bg-red-50 text-red-700'
-						}`}>
-							{message.type === 'success' ? (
-								<CheckCircle className='w-5 h-5' />
-							) : (
-								<XCircle className='w-5 h-5' />
-							)}
-							{message.text}
-						</div>
-					)}
 
 					<button
 						type='submit'
