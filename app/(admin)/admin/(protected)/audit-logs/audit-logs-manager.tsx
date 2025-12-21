@@ -153,11 +153,11 @@ function JsonViewer({data, label}: {data: Record<string, unknown> | null; label:
 
 function DetailModal({log, onClose}: {log: AuditLog; onClose: () => void}) {
 	return (
-		<div className='fixed inset-0 z-50 flex items-center justify-center p-4'>
+		<div className='fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4'>
 			<div className='fixed inset-0 bg-black/50' onClick={onClose} aria-hidden='true' />
-			<div className='relative bg-white rounded-card shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto'>
-				<div className='sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between'>
-					<h3 className='text-lg font-semibold text-gray-900'>Audit Log Details</h3>
+			<div className='relative bg-white rounded-t-xl sm:rounded-card shadow-xl w-full sm:max-w-2xl max-h-[85vh] sm:max-h-[90vh] overflow-y-auto'>
+				<div className='sticky top-0 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between'>
+					<h3 className='text-base sm:text-lg font-semibold text-gray-900'>Audit Log Details</h3>
 					<button
 						type='button'
 						onClick={onClose}
@@ -166,8 +166,8 @@ function DetailModal({log, onClose}: {log: AuditLog; onClose: () => void}) {
 						<X className='w-5 h-5' />
 					</button>
 				</div>
-				<div className='p-6'>
-					<div className='grid grid-cols-2 gap-4 mb-6'>
+				<div className='p-4 sm:p-6'>
+					<div className='grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-6'>
 						<div>
 							<p className='text-xs font-medium text-gray-500'>Actie</p>
 							<p className='text-sm text-gray-900'>
@@ -182,7 +182,7 @@ function DetailModal({log, onClose}: {log: AuditLog; onClose: () => void}) {
 						</div>
 						<div>
 							<p className='text-xs font-medium text-gray-500'>Gebruiker</p>
-							<p className='text-sm text-gray-900'>{log.userName ?? log.userEmail}</p>
+							<p className='text-sm text-gray-900 break-all'>{log.userName ?? log.userEmail}</p>
 						</div>
 						<div>
 							<p className='text-xs font-medium text-gray-500'>Datum</p>
@@ -194,7 +194,7 @@ function DetailModal({log, onClose}: {log: AuditLog; onClose: () => void}) {
 						</div>
 						<div>
 							<p className='text-xs font-medium text-gray-500'>Resource ID</p>
-							<p className='text-sm text-gray-900 font-mono'>{log.resourceId ?? '-'}</p>
+							<p className='text-sm text-gray-900 font-mono break-all'>{log.resourceId ?? '-'}</p>
 						</div>
 					</div>
 
@@ -321,52 +321,58 @@ export function AuditLogsManager({initialLogs}: AuditLogsManagerProps) {
 			) : (
 				<div className='bg-white rounded-card shadow-base overflow-hidden'>
 					<div className='overflow-x-auto'>
-						<table className='w-full min-w-[800px]'>
+						<table className='w-full min-w-[500px]'>
 							<thead className='bg-gray-50 border-b border-gray-200'>
 								<tr>
-									<th className='px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase'>
+									<th className='px-3 sm:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase'>
 										Actie
 									</th>
-									<th className='px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase'>
+									<th className='px-3 sm:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase'>
 										Gebruiker
 									</th>
-									<th className='px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase'>
+									<th className='hidden sm:table-cell px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase'>
 										Resource
 									</th>
-									<th className='px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase'>
+									<th className='hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase'>
 										IP Adres
 									</th>
-									<th className='px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase'>
+									<th className='px-3 sm:px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase'>
 										Datum
 									</th>
-									<th className='px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase'>
-										Details
+									<th className='px-3 sm:px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase'>
+										<span className='sr-only'>Details</span>
 									</th>
 								</tr>
 							</thead>
 							<tbody className='divide-y divide-gray-200'>
 								{paginatedLogs.map(log => (
 									<tr key={log.id} className='hover:bg-gray-50'>
-										<td className='px-4 py-3'>
+										<td className='px-3 sm:px-4 py-3'>
 											<span
-												className={`inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded ${getActionColor(log.actionType)}`}
+												className={`inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-1 text-xs font-medium rounded ${getActionColor(log.actionType)}`}
 											>
 												{getActionIcon(log.actionType)}
-												{actionTypeLabels[log.actionType] ?? log.actionType}
+												<span className='hidden sm:inline'>
+													{actionTypeLabels[log.actionType] ?? log.actionType}
+												</span>
 											</span>
+											{/* Show resource on mobile under action */}
+											<p className='sm:hidden text-xs text-gray-500 mt-1'>
+												{resourceTypeLabels[log.resourceType] ?? log.resourceType}
+											</p>
 										</td>
-										<td className='px-4 py-3'>
+										<td className='px-3 sm:px-4 py-3'>
 											<div className='flex items-center gap-2'>
-												<User className='w-4 h-4 text-gray-400 flex-shrink-0' />
+												<User className='w-4 h-4 text-gray-400 flex-shrink-0 hidden sm:block' />
 												<div className='min-w-0'>
-													<p className='text-sm font-medium text-gray-900 truncate'>
+													<p className='text-sm font-medium text-gray-900 truncate max-w-[100px] sm:max-w-none'>
 														{log.userName ?? '-'}
 													</p>
-													<p className='text-xs text-gray-500 truncate'>{log.userEmail}</p>
+													<p className='text-xs text-gray-500 truncate max-w-[100px] sm:max-w-none'>{log.userEmail}</p>
 												</div>
 											</div>
 										</td>
-										<td className='px-4 py-3'>
+										<td className='hidden sm:table-cell px-4 py-3'>
 											<p className='text-sm text-gray-900'>
 												{resourceTypeLabels[log.resourceType] ?? log.resourceType}
 											</p>
@@ -376,22 +382,27 @@ export function AuditLogsManager({initialLogs}: AuditLogsManagerProps) {
 												</p>
 											)}
 										</td>
-										<td className='px-4 py-3 text-sm text-gray-500 font-mono'>
+										<td className='hidden lg:table-cell px-4 py-3 text-sm text-gray-500 font-mono'>
 											{log.ipAddress ?? '-'}
 										</td>
-										<td className='px-4 py-3 text-sm text-gray-500 whitespace-nowrap'>
+										<td className='px-3 sm:px-4 py-3 text-xs sm:text-sm text-gray-500 whitespace-nowrap'>
 											{formatDate(log.createdAt)}
 										</td>
-										<td className='px-4 py-3 text-right'>
-											{hasDetails(log) && (
+										<td className='px-3 sm:px-4 py-3 text-right'>
+											{hasDetails(log) ? (
 												<button
 													type='button'
 													onClick={() => setSelectedLog(log)}
-													className='inline-flex items-center gap-1 px-2 py-1 text-sm text-primary hover:bg-primary/10 rounded-button transition-colors'
+													className='inline-flex items-center gap-1 p-1.5 sm:px-2 sm:py-1 text-sm text-primary hover:bg-primary/10 rounded-button transition-colors'
+													title='Bekijk details'
 												>
 													<Eye className='w-4 h-4' />
-													Bekijk
+													<span className='hidden sm:inline'>Bekijk</span>
 												</button>
+											) : (
+												<span className='text-gray-300 p-1.5'>
+													<Eye className='w-4 h-4' />
+												</span>
 											)}
 										</td>
 									</tr>
