@@ -36,35 +36,24 @@ async function withTimeout<T>(promise: Promise<T>, ms: number, errorMessage: str
 	}
 }
 
-async function getServiceWorkerRegistration(timeoutMs = 5000): Promise<ServiceWorkerRegistration> {
+async function getOrRegisterServiceWorker(): Promise<ServiceWorkerRegistration> {
 	// Check existing registrations first
 	const registrations = await navigator.serviceWorker.getRegistrations();
 
-	// Find a registration with an active worker
+	// Return any existing registration (active, waiting, or installing)
 	for (const reg of registrations) {
-		if (reg.active) {
+		if (reg.active ?? reg.waiting ?? reg.installing) {
 			return reg;
 		}
 	}
 
-	// If no active worker, try to wait for one to become ready
-	// But with a short timeout since SW might be installing
-	try {
-		return await withTimeout(
-			navigator.serviceWorker.ready,
-			timeoutMs,
-			'Service worker nog niet klaar',
-		);
-	} catch {
-		// If timeout, check if there's at least one registration we can use
-		const regs = await navigator.serviceWorker.getRegistrations();
-		if (regs.length > 0 && (regs[0].active ?? regs[0].waiting ?? regs[0].installing)) {
-			// Return the registration even if not fully active - pushManager might still work
-			return regs[0];
-		}
+	// No registration exists - register the SW ourselves
+	// This is needed because the SW registration might not have completed yet
+	const registration = await navigator.serviceWorker.register('/serwist/sw.js', {scope: '/'});
 
-		throw new Error('Service worker niet beschikbaar - herlaad de pagina');
-	}
+	// Return immediately - don't wait for it to become active
+	// Push subscription works on registration, not active worker
+	return registration;
 }
 
 export function usePushNotifications() {
@@ -98,7 +87,7 @@ export function usePushNotifications() {
 
 			// Check subscription status in background (don't block on this)
 			try {
-				const registration = await getServiceWorkerRegistration();
+				const registration = await getOrRegisterServiceWorker();
 				const subscription = await registration.pushManager.getSubscription();
 				if (subscription) {
 					setState(s => ({...s, isSubscribed: true}));
@@ -152,7 +141,7 @@ export function usePushNotifications() {
 
 			const {publicKey} = await response.json() as {publicKey: string};
 
-			const registration = await getServiceWorkerRegistration();
+			const registration = await getOrRegisterServiceWorker();
 
 			// Subscribe to push with timeout
 			const subscription = await withTimeout(
