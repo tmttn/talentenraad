@@ -13,6 +13,11 @@ const packageJson = require('./package.json');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	serverExternalPackages: ['isolated-vm'],
+	// Disable Turbopack - required for Serwist PWA service worker generation
+	// https://github.com/serwist/serwist/issues/54
+	experimental: {
+		turbo: false,
+	},
 };
 
 nextConfig.webpack = (webpackConfig, {webpack}) => {
