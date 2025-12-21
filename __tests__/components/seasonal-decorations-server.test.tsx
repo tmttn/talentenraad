@@ -82,14 +82,12 @@ describe('getSeasonalDecorationsConfig', () => {
 	});
 
 	it('returns default config when database throws error', async () => {
-		const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 		mockFindFirst.mockRejectedValueOnce(new Error('DB Error'));
 
 		const result = await getSeasonalDecorationsConfig();
 
+		// Silently returns defaults without logging
 		expect(result.enabled).toBe(false);
-		expect(consoleSpy).toHaveBeenCalled();
-		consoleSpy.mockRestore();
 	});
 
 	it('returns default config when value structure is invalid', async () => {
@@ -101,7 +99,6 @@ describe('getSeasonalDecorationsConfig', () => {
 	});
 
 	it('returns default config when db.query.siteSettings is not available', async () => {
-		const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 		const originalQuery = db.query;
 
 		// Temporarily remove query
@@ -109,12 +106,11 @@ describe('getSeasonalDecorationsConfig', () => {
 
 		const result = await getSeasonalDecorationsConfig();
 
+		// Silently returns defaults without logging
 		expect(result.enabled).toBe(false);
-		expect(consoleSpy).toHaveBeenCalledWith('siteSettings query not available, using default config');
 
 		// Restore
 		(db as {query?: unknown}).query = originalQuery;
-		consoleSpy.mockRestore();
 	});
 });
 

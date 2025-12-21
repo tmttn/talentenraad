@@ -5,11 +5,19 @@ import {Snowfall, SeasonalStyles, defaultSeasonalConfig} from './seasonal-decora
 
 const SEASONAL_DECORATIONS_KEY = 'seasonal_decorations';
 
+// Check if we're in build/static generation phase (no DB access)
+// eslint-disable-next-line n/prefer-global/process
+const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
+
 export async function getSeasonalDecorationsConfig(): Promise<SeasonalDecorationsConfig> {
+	// Skip database calls during build - return defaults
+	if (isBuildPhase) {
+		return defaultSeasonalConfig;
+	}
+
 	try {
 		// Check if db.query.siteSettings exists before querying
 		if (!db.query?.siteSettings) {
-			console.warn('siteSettings query not available, using default config');
 			return defaultSeasonalConfig;
 		}
 
@@ -24,9 +32,8 @@ export async function getSeasonalDecorationsConfig(): Promise<SeasonalDecoration
 				return value;
 			}
 		}
-	} catch (error) {
-		// Log the error in development for debugging
-		console.error('Error fetching seasonal decorations config:', error);
+	} catch {
+		// Silently fail during runtime - will use defaults
 	}
 
 	return defaultSeasonalConfig;

@@ -1,6 +1,8 @@
 import {Suspense} from 'react';
 import {count, isNull, desc} from 'drizzle-orm';
 import Link from 'next/link';
+// eslint-disable-next-line n/prefer-global/process
+const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 import {
 	Inbox,
 	Mail,
@@ -126,25 +128,26 @@ async function fetchDashboardData(): Promise<DashboardData> {
 	let unreadCount = 0;
 	let recentSubmissions: DashboardData['recentSubmissions'] = [];
 
-	// Fetch submission stats with error handling
-	try {
-		const [totalResult] = await db.select({count: count()}).from(submissions);
-		const [unreadResult] = await db.select({count: count()})
-			.from(submissions)
-			.where(isNull(submissions.readAt));
+	// Skip database calls during build phase
+	if (!isBuildPhase) {
+		try {
+			const [totalResult] = await db.select({count: count()}).from(submissions);
+			const [unreadResult] = await db.select({count: count()})
+				.from(submissions)
+				.where(isNull(submissions.readAt));
 
-		// Fetch recent unread submissions
-		recentSubmissions = await db.select()
-			.from(submissions)
-			.where(isNull(submissions.archivedAt))
-			.orderBy(desc(submissions.createdAt))
-			.limit(5);
+			// Fetch recent unread submissions
+			recentSubmissions = await db.select()
+				.from(submissions)
+				.where(isNull(submissions.archivedAt))
+				.orderBy(desc(submissions.createdAt))
+				.limit(5);
 
-		totalCount = totalResult.count;
-		unreadCount = unreadResult.count;
-	} catch (error) {
-		// Log error but continue - dashboard will show zeros for submissions
-		console.error('Error fetching submissions data:', error);
+			totalCount = totalResult.count;
+			unreadCount = unreadResult.count;
+		} catch {
+			// Silently fail - dashboard will show zeros for submissions
+		}
 	}
 
 	// Fetch latest content from Builder.io
