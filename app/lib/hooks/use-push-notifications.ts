@@ -188,24 +188,30 @@ export function usePushNotifications() {
 		setState(s => ({...s, isLoading: true, error: null}));
 
 		try {
-			const registration = await getServiceWorkerRegistration();
-			const subscription = await registration.pushManager.getSubscription();
+			// Try to get existing subscription and unsubscribe
+			const registrations = await navigator.serviceWorker.getRegistrations();
 
-			if (subscription) {
-				await withTimeout(
-					subscription.unsubscribe(),
-					5000,
-					'Uitschrijven duurde te lang',
-				);
-				await withTimeout(
-					fetch('/api/push/subscribe', {
-						method: 'DELETE',
-						headers: {'Content-Type': 'application/json'},
-						body: JSON.stringify({endpoint: subscription.endpoint}),
-					}),
-					5000,
-					'Server uitschrijven duurde te lang',
-				);
+			for (const registration of registrations) {
+				try {
+					const subscription = await registration.pushManager.getSubscription();
+					if (subscription) {
+						// Try to notify server first
+						try {
+							await fetch('/api/push/subscribe', {
+								method: 'DELETE',
+								headers: {'Content-Type': 'application/json'},
+								body: JSON.stringify({endpoint: subscription.endpoint}),
+							});
+						} catch {
+							// Ignore server errors
+						}
+
+						// Unsubscribe from browser
+						await subscription.unsubscribe();
+					}
+				} catch {
+					// Ignore individual registration errors
+				}
 			}
 
 			setState(s => ({...s, isSubscribed: false, isLoading: false}));
