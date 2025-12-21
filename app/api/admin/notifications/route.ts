@@ -11,6 +11,8 @@ const vapidPublicKey = process.env.VAPID_PUBLIC_KEY?.replaceAll('=', '');
 // eslint-disable-next-line n/prefer-global/process
 const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY?.replaceAll('=', '');
 
+let vapidConfigured = false;
+
 if (vapidPublicKey && vapidPrivateKey) {
 	try {
 		webpush.setVapidDetails(
@@ -18,6 +20,7 @@ if (vapidPublicKey && vapidPrivateKey) {
 			vapidPublicKey,
 			vapidPrivateKey,
 		);
+		vapidConfigured = true;
 	} catch (error) {
 		console.error('Failed to configure VAPID:', error);
 	}
@@ -42,6 +45,11 @@ export async function POST(request: NextRequest) {
 	}
 
 	try {
+		if (!vapidConfigured) {
+			console.error('VAPID keys not configured');
+			return NextResponse.json({error: 'Push notifications not configured (VAPID keys missing)'}, {status: 500});
+		}
+
 		const {title, body, url, topic} = await request.json() as SendNotificationRequest;
 
 		if (!title || !body) {
@@ -90,6 +98,11 @@ export async function POST(request: NextRequest) {
 				successCount++;
 			} catch (error) {
 				failureCount++;
+				console.error('Push notification failed:', {
+					endpoint: sub.endpoint.slice(0, 50) + '...',
+					error: error instanceof Error ? error.message : error,
+					statusCode: (error as {statusCode?: number}).statusCode,
+				});
 				// Mark for cleanup if subscription is invalid (410 Gone)
 				if ((error as {statusCode?: number}).statusCode === 410) {
 					failedEndpoints.push(sub.endpoint);
