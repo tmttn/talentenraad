@@ -1,20 +1,12 @@
 // eslint-disable-next-line unicorn/prefer-module
-const withSerwist = require('@serwist/next').default({
-	swSrc: 'app/sw.ts',
-	swDest: 'public/sw.js',
-	// eslint-disable-next-line n/prefer-global/process
-	disable: process.env.NODE_ENV === 'development',
-});
-// eslint-disable-next-line unicorn/prefer-module
 const {withSentryConfig} = require('@sentry/nextjs');
 // eslint-disable-next-line unicorn/prefer-module
 const packageJson = require('./package.json');
 
 /** @type {import('next').NextConfig} */
-// Note: Turbopack is disabled via TURBOPACK=0 in vercel.json for Serwist PWA compatibility
-// https://github.com/serwist/serwist/issues/54
 const nextConfig = {
-	serverExternalPackages: ['isolated-vm'],
+	// Esbuild-wasm is required for @serwist/turbopack
+	serverExternalPackages: ['isolated-vm', 'esbuild-wasm'],
 };
 
 nextConfig.webpack = (webpackConfig, {webpack}) => {
@@ -92,7 +84,7 @@ nextConfig.env = {
 };
 
 // eslint-disable-next-line unicorn/prefer-module
-module.exports = withSerwist(withSentryConfig(
+module.exports = withSentryConfig(
 	nextConfig,
 	{
 		// For all available options, see:
@@ -133,4 +125,4 @@ module.exports = withSerwist(withSentryConfig(
 			automaticVercelMonitors: true,
 		},
 	},
-));
+);
