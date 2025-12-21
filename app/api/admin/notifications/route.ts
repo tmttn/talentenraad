@@ -108,8 +108,11 @@ export async function POST(request: NextRequest) {
 				};
 				errors.push(errorInfo);
 				console.error('Push notification failed:', errorInfo);
-				// Mark for cleanup if subscription is invalid (410 Gone)
-				if (webPushError.statusCode === 410) {
+				// Mark for cleanup if subscription is invalid:
+				// - 410 Gone: subscription expired
+				// - 404 Not Found: subscription doesn't exist
+				// - 403 Forbidden: VAPID key mismatch (subscription created with different keys)
+				if ([403, 404, 410].includes(webPushError.statusCode ?? 0)) {
 					failedEndpoints.push(sub.endpoint);
 				}
 			}
