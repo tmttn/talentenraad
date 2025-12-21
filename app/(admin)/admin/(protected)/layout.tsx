@@ -4,6 +4,8 @@ import {eq, and, gt} from 'drizzle-orm';
 import {Toaster} from 'sonner';
 import {auth0, isAdminEmail} from '@/lib/auth0';
 import {db, users, auditLogs} from '@/lib/db';
+import {getAllFlags} from '@/lib/flags';
+import {FlagsProvider} from '@/lib/flags-client';
 import {AdminSidebar} from '@/features/admin/admin-sidebar';
 import {SessionValidator} from '@/features/admin/session-validator';
 
@@ -115,20 +117,25 @@ export default async function AdminProtectedLayout({
 	// Log login event (with deduplication)
 	await logLoginEvent(userEmail, session.user.name);
 
+	// Get feature flags for client components
+	const flags = await getAllFlags();
+
 	return (
-		<div className='min-h-screen bg-gray-50 flex'>
-			<Toaster position='top-right' richColors closeButton />
-			<SessionValidator />
-			<AdminSidebar user={{
-				name: session.user.name,
-				email: session.user.email,
-				image: session.user.picture,
-			}} />
-			<main id='main-content' className='flex-1 overflow-auto pt-16 lg:pt-0'>
-				<div className='p-4 sm:p-6 lg:p-8'>
-					{children}
-				</div>
-			</main>
-		</div>
+		<FlagsProvider flags={flags}>
+			<div className='min-h-screen bg-gray-50 flex'>
+				<Toaster position='top-right' richColors closeButton />
+				<SessionValidator />
+				<AdminSidebar user={{
+					name: session.user.name,
+					email: session.user.email,
+					image: session.user.picture,
+				}} />
+				<main id='main-content' className='flex-1 overflow-auto pt-16 lg:pt-0'>
+					<div className='p-4 sm:p-6 lg:p-8'>
+						{children}
+					</div>
+				</main>
+			</div>
+		</FlagsProvider>
 	);
 }

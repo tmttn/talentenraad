@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, useEffect, useCallback} from 'react';
+import {useState, useEffect, useCallback, useMemo} from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {usePathname} from 'next/navigation';
@@ -19,7 +19,10 @@ import {
 	X,
 	Menu,
 	LogOut,
+	type LucideIcon,
 } from 'lucide-react';
+import {useFlags} from '@/lib/flags-client';
+import type {FlagValues} from '@/generated/hypertune';
 
 type AdminSidebarProperties = {
 	user: {
@@ -31,22 +34,35 @@ type AdminSidebarProperties = {
 
 const SIDEBAR_COLLAPSED_KEY = 'admin-sidebar-collapsed';
 
-const navItems = [
+type NavItem = {
+	href: string;
+	label: string;
+	icon: LucideIcon;
+	flag?: keyof FlagValues;
+};
+
+const navItems: NavItem[] = [
 	{href: '/admin', label: 'Dashboard', icon: Home},
-	{href: '/admin/submissions', label: 'Berichten', icon: Mail},
-	{href: '/admin/activiteiten', label: 'Activiteiten', icon: Calendar},
-	{href: '/admin/nieuws', label: 'Nieuws', icon: Newspaper},
-	{href: '/admin/aankondigingen', label: 'Aankondigingen', icon: Megaphone},
-	{href: '/admin/notificaties', label: 'Notificaties', icon: Bell},
-	{href: '/admin/decoraties', label: 'Decoraties', icon: Sparkles},
-	{href: '/admin/gebruikers', label: 'Gebruikers', icon: Users},
-	{href: '/admin/audit-logs', label: 'Audit Logs', icon: History},
+	{href: '/admin/submissions', label: 'Berichten', icon: Mail, flag: 'adminSubmissions'},
+	{href: '/admin/activiteiten', label: 'Activiteiten', icon: Calendar, flag: 'adminActivities'},
+	{href: '/admin/nieuws', label: 'Nieuws', icon: Newspaper, flag: 'adminNews'},
+	{href: '/admin/aankondigingen', label: 'Aankondigingen', icon: Megaphone, flag: 'adminAnnouncements'},
+	{href: '/admin/notificaties', label: 'Notificaties', icon: Bell, flag: 'adminNotifications'},
+	{href: '/admin/decoraties', label: 'Decoraties', icon: Sparkles, flag: 'adminDecorations'},
+	{href: '/admin/gebruikers', label: 'Gebruikers', icon: Users, flag: 'adminUsers'},
+	{href: '/admin/audit-logs', label: 'Audit Logs', icon: History, flag: 'adminAuditLogs'},
 ];
 
 export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 	const pathname = usePathname();
+	const flags = useFlags();
 	const [isOpen, setIsOpen] = useState(false);
 	const [isCollapsed, setIsCollapsed] = useState(false);
+
+	// Filter nav items based on feature flags
+	const visibleNavItems = useMemo(() =>
+		navItems.filter(item => !item.flag || flags[item.flag]),
+	[flags]);
 
 	// Load collapsed state from localStorage on mount
 	useEffect(() => {
@@ -137,7 +153,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 			</div>
 			<nav className={`flex-1 ${isCollapsed ? 'lg:p-2' : 'p-4'} overflow-y-auto`}>
 				<ul className='space-y-1'>
-					{navItems.map(item => {
+					{visibleNavItems.map(item => {
 						const Icon = item.icon;
 						return (
 							<li key={item.href}>
