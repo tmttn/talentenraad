@@ -2,16 +2,19 @@
 
 import {Bell, BellOff, Loader2} from 'lucide-react';
 import {usePushNotifications} from '@/lib/hooks/use-push-notifications';
+// eslint-disable-next-line import-x/extensions
+import {useFlag} from '@/lib/flags-client';
 
 type NotificationToggleProperties = {
 	className?: string;
 };
 
 export function NotificationToggle({className = ''}: Readonly<NotificationToggleProperties>) {
+	const isEnabled = useFlag('pushNotifications');
 	const {isSupported, isSubscribed, isLoading, permission, subscribe, unsubscribe} = usePushNotifications();
 
-	// Don't render anything if not supported
-	if (!isSupported) {
+	// Don't render if feature flag is disabled or not supported
+	if (!isEnabled || !isSupported) {
 		return null;
 	}
 
