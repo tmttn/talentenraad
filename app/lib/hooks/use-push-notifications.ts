@@ -34,7 +34,7 @@ export function usePushNotifications() {
 
 	useEffect(() => {
 		const checkSupport = async () => {
-			const isSupported = 'serviceWorker' in navigator && 'PushManager' in window;
+			const isSupported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 
 			if (!isSupported) {
 				setState(s => ({...s, isLoading: false, permission: 'unsupported'}));
@@ -43,24 +43,24 @@ export function usePushNotifications() {
 
 			const permission = Notification.permission;
 
-			// Check if already subscribed
+			// Set supported immediately so bell shows - don't wait for SW ready
+			setState({
+				isSupported: true,
+				isSubscribed: false,
+				isLoading: false,
+				permission,
+				error: null,
+			});
+
+			// Check subscription status in background (don't block on this)
 			try {
 				const registration = await navigator.serviceWorker.ready;
 				const subscription = await registration.pushManager.getSubscription();
-
-				setState({
-					isSupported: true,
-					isSubscribed: Boolean(subscription),
-					isLoading: false,
-					permission,
-					error: null,
-				});
+				if (subscription) {
+					setState(s => ({...s, isSubscribed: true}));
+				}
 			} catch {
-				setState(s => ({
-					...s,
-					isLoading: false,
-					error: 'Kon notificatiestatus niet ophalen',
-				}));
+				// Silently ignore - SW might not be ready yet
 			}
 		};
 
