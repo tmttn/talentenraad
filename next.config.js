@@ -1,3 +1,15 @@
+// eslint-disable-next-line unicorn/prefer-module
+const withSerwist = require('@serwist/next').default({
+	swSrc: 'app/sw.ts',
+	swDest: 'public/sw.js',
+	// eslint-disable-next-line n/prefer-global/process
+	disable: process.env.NODE_ENV === 'development',
+});
+// eslint-disable-next-line unicorn/prefer-module
+const {withSentryConfig} = require('@sentry/nextjs');
+// eslint-disable-next-line unicorn/prefer-module
+const packageJson = require('./package.json');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	serverExternalPackages: ['isolated-vm'],
@@ -72,25 +84,14 @@ nextConfig.headers = async () => [
 	},
 ];
 
-// eslint-disable-next-line unicorn/prefer-module
-module.exports = nextConfig;
-
-// Injected content via Sentry wizard below
-
-// eslint-disable-next-line unicorn/prefer-module
-const {withSentryConfig} = require('@sentry/nextjs');
-// eslint-disable-next-line unicorn/prefer-module
-const packageJson = require('./package.json');
-
 // Expose version to client
 nextConfig.env = {
 	NEXT_PUBLIC_APP_VERSION: packageJson.version,
 };
 
 // eslint-disable-next-line unicorn/prefer-module
-module.exports = withSentryConfig(
-	// eslint-disable-next-line unicorn/prefer-module
-	module.exports,
+module.exports = withSerwist(withSentryConfig(
+	nextConfig,
 	{
 		// For all available options, see:
 		// https://github.com/getsentry/sentry-webpack-plugin#options
@@ -130,4 +131,4 @@ module.exports = withSentryConfig(
 			automaticVercelMonitors: true,
 		},
 	},
-);
+));

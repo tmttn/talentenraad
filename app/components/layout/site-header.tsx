@@ -6,6 +6,7 @@ import {usePathname} from 'next/navigation';
 import {useEffect, useRef, useState} from 'react';
 import {Menu, X} from 'lucide-react';
 import {ChristmasLights} from '@components/seasonal-decorations';
+import {NotificationToggle} from '@components/ui/notification-toggle';
 
 type NavigationLink = {
 	text: string;
@@ -100,11 +101,14 @@ export function SiteHeader({
 								{item.text}
 							</Link>
 						))}
+						<NotificationToggle />
 					</nav>
-					<button
-						type="button"
-						className="md:hidden p-2 text-gray-600 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded-button transition-colors"
-						aria-label={isMenuOpen ? 'Menu sluiten' : 'Menu openen'}
+					<div className="flex items-center gap-2 md:hidden">
+						<NotificationToggle />
+						<button
+							type="button"
+							className="p-2 text-gray-600 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded-button transition-colors"
+							aria-label={isMenuOpen ? 'Menu sluiten' : 'Menu openen'}
 						aria-expanded={isMenuOpen}
 						aria-controls="mobile-menu"
 						onClick={() => {
@@ -112,9 +116,10 @@ export function SiteHeader({
 						}}
 					>
 						{isMenuOpen
-							? <X className='w-6 h-6 transition-transform duration-fast' />
-							: <Menu className='w-6 h-6 transition-transform duration-fast' />}
-					</button>
+								? <X className='w-6 h-6 transition-transform duration-fast' />
+								: <Menu className='w-6 h-6 transition-transform duration-fast' />}
+						</button>
+					</div>
 				</div>
 
 				{/* Mobile menu with animation */}

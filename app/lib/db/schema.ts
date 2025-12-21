@@ -7,6 +7,7 @@ import {
 	boolean,
 	jsonb,
 	index,
+	integer,
 } from 'drizzle-orm/pg-core';
 
 // Audit action type enum
@@ -103,6 +104,51 @@ export type NewSiteSetting = typeof siteSettings.$inferInsert;
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type NewAuditLog = typeof auditLogs.$inferInsert;
 export type AuditActionType = (typeof auditActionTypeEnum.enumValues)[number];
+
+// Push notification subscriptions table
+export const pushSubscriptions = pgTable('push_subscriptions', {
+	id: uuid('id').defaultRandom().primaryKey(),
+
+	// Subscription data (from PushSubscription.toJSON())
+	endpoint: text('endpoint').notNull().unique(),
+	p256dh: text('p256dh').notNull(), // Public key
+	auth: text('auth').notNull(), // Auth secret
+
+	// User association (optional - for logged-in users)
+	userId: uuid('user_id').references(() => users.id, {onDelete: 'cascade'}),
+
+	// Device info for management
+	userAgent: text('user_agent'),
+
+	// Subscription preferences
+	topics: text('topics').array(),
+
+	// Timestamps
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	lastUsedAt: timestamp('last_used_at'),
+}, table => [
+	index('push_subscriptions_user_id_idx').on(table.userId),
+	index('push_subscriptions_endpoint_idx').on(table.endpoint),
+]);
+
+// Notification history for tracking
+export const notificationHistory = pgTable('notification_history', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	title: text('title').notNull(),
+	body: text('body').notNull(),
+	url: text('url'),
+	topic: text('topic'),
+	sentBy: uuid('sent_by').references(() => users.id),
+	sentAt: timestamp('sent_at').defaultNow().notNull(),
+	recipientCount: integer('recipient_count').default(0),
+	successCount: integer('success_count').default(0),
+	failureCount: integer('failure_count').default(0),
+});
+
+export type PushSubscription = typeof pushSubscriptions.$inferSelect;
+export type NewPushSubscription = typeof pushSubscriptions.$inferInsert;
+export type NotificationHistoryEntry = typeof notificationHistory.$inferSelect;
+export type NewNotificationHistoryEntry = typeof notificationHistory.$inferInsert;
 
 // Re-export shared types for convenience
 export type {SeasonalDecorationsConfig} from '../types';

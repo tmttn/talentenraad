@@ -52,6 +52,15 @@ export const metadata: Metadata = {
 		icon: '/favicon.ico',
 		apple: '/apple-touch-icon.png',
 	},
+	manifest: '/manifest.webmanifest',
+	appleWebApp: {
+		capable: true,
+		statusBarStyle: 'default',
+		title: siteConfig.name,
+	},
+	formatDetection: {
+		telephone: false,
+	},
 };
 
 export const viewport: Viewport = {
