@@ -2,6 +2,7 @@ import {type NextRequest, NextResponse} from 'next/server';
 import {auth0, verifyAdmin} from '@/lib/auth0';
 import {db, submissions} from '@/lib/db';
 import {inArray} from 'drizzle-orm';
+import {logAudit, createAuditContext} from '@/lib/audit';
 
 type BulkActionRequest = {
 	ids: string[];
@@ -67,6 +68,21 @@ export async function PATCH(request: NextRequest) {
 				return NextResponse.json({error: 'Invalid action'}, {status: 400});
 			}
 		}
+
+		// Log audit event for bulk action
+		await logAudit({
+			actionType: 'bulk_action',
+			resourceType: 'submission',
+			resourceId: null,
+			dataBefore: null,
+			dataAfter: null,
+			metadata: {
+				action: body.action,
+				affectedIds: body.ids,
+				count: body.ids.length,
+			},
+			context: createAuditContext(request, session),
+		});
 
 		return NextResponse.json({success: true});
 	} catch (error) {

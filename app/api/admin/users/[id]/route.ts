@@ -3,6 +3,8 @@ import {auth0, isAdminEmail} from '@/lib/auth0';
 import {db, users} from '@/lib/db';
 import {eq} from 'drizzle-orm';
 import {sendInvitationEmail} from '@/lib/email/resend';
+import {logAudit, createAuditContext} from '@/lib/audit';
+import {computeDataDiff} from '@/lib/audit/helpers';
 
 type RouteContext = {
 	params: Promise<{id: string}>;
@@ -100,6 +102,17 @@ export async function PUT(
 				}, {status: 500});
 			}
 
+			// Log audit event for resend invitation
+			await logAudit({
+				actionType: 'update',
+				resourceType: 'user',
+				resourceId: id,
+				dataBefore: {invitedAt: existingUser.invitedAt},
+				dataAfter: {invitedAt: updatedUser.invitedAt},
+				metadata: {action: 'resend_invitation'},
+				context: createAuditContext(request, session),
+			});
+
 			return NextResponse.json({success: true, user: updatedUser});
 		}
 
@@ -122,6 +135,22 @@ export async function PUT(
 			.where(eq(users.id, id))
 			.returning();
 
+		// Log audit event with before/after diff
+		const diff = computeDataDiff(
+			{name: existingUser.name, isAdmin: existingUser.isAdmin},
+			{name: updatedUser.name, isAdmin: updatedUser.isAdmin},
+		);
+		if (diff.before ?? diff.after) {
+			await logAudit({
+				actionType: 'update',
+				resourceType: 'user',
+				resourceId: id,
+				dataBefore: diff.before,
+				dataAfter: diff.after,
+				context: createAuditContext(request, session),
+			});
+		}
+
 		return NextResponse.json({success: true, user: updatedUser});
 	} catch (error) {
 		console.error('Error updating user:', error);
@@ -130,7 +159,7 @@ export async function PUT(
 }
 
 export async function DELETE(
-	_request: NextRequest,
+	request: NextRequest,
 	context: RouteContext,
 ) {
 	const session = await auth0.getSession();
@@ -162,6 +191,20 @@ export async function DELETE(
 		}
 
 		await db.delete(users).where(eq(users.id, id));
+
+		// Log audit event
+		await logAudit({
+			actionType: 'delete',
+			resourceType: 'user',
+			resourceId: id,
+			dataBefore: {
+				email: existingUser.email,
+				name: existingUser.name,
+				isAdmin: existingUser.isAdmin,
+			},
+			dataAfter: null,
+			context: createAuditContext(request, session),
+		});
 
 		return NextResponse.json({success: true});
 	} catch (error) {

@@ -1,15 +1,17 @@
-import {NextResponse} from 'next/server';
+import {type NextRequest, NextResponse} from 'next/server';
 import {eq} from 'drizzle-orm';
 import {auth0, isAdminEmail} from '@/lib/auth0';
 import {db, siteSettings, users, type SeasonalDecorationsConfig} from '@/lib/db';
 import {defaultSeasonalConfig} from '@components/seasonal-decorations';
+import {logAudit, createAuditContext} from '@/lib/audit';
+import {computeDataDiff} from '@/lib/audit/helpers';
 
 const SEASONAL_DECORATIONS_KEY = 'seasonal_decorations';
 
-async function verifyAdmin() {
+async function verifyAdminWithSession() {
 	const session = await auth0.getSession();
 	if (!session?.user?.email) {
-		return null;
+		return {email: null, session: null};
 	}
 
 	const email = session.user.email.toLowerCase();
@@ -18,15 +20,15 @@ async function verifyAdmin() {
 			where: eq(users.email, email),
 		});
 		if (!user?.isAdmin) {
-			return null;
+			return {email: null, session: null};
 		}
 	}
 
-	return email;
+	return {email, session};
 }
 
 export async function GET() {
-	const email = await verifyAdmin();
+	const {email} = await verifyAdminWithSession();
 	if (!email) {
 		return NextResponse.json({error: 'Unauthorized'}, {status: 401});
 	}
@@ -46,8 +48,8 @@ export async function GET() {
 	}
 }
 
-export async function PUT(request: Request) {
-	const email = await verifyAdmin();
+export async function PUT(request: NextRequest) {
+	const {email, session} = await verifyAdminWithSession();
 	if (!email) {
 		return NextResponse.json({error: 'Unauthorized'}, {status: 401});
 	}
@@ -70,6 +72,8 @@ export async function PUT(request: Request) {
 			where: eq(siteSettings.key, SEASONAL_DECORATIONS_KEY),
 		});
 
+		const previousConfig = existing?.value ?? defaultSeasonalConfig;
+
 		if (existing) {
 			// Update existing setting
 			await db.update(siteSettings)
@@ -87,6 +91,20 @@ export async function PUT(request: Request) {
 				updatedBy: user?.id,
 			});
 		}
+
+		// Log audit event
+		const diff = computeDataDiff(
+			previousConfig as Record<string, unknown>,
+			config as unknown as Record<string, unknown>,
+		);
+		await logAudit({
+			actionType: 'settings_change',
+			resourceType: 'settings:seasonal_decorations',
+			resourceId: SEASONAL_DECORATIONS_KEY,
+			dataBefore: diff.before,
+			dataAfter: diff.after,
+			context: createAuditContext(request, session),
+		});
 
 		return NextResponse.json({success: true, config});
 	} catch (error) {

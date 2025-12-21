@@ -2,6 +2,7 @@ import {type NextRequest, NextResponse} from 'next/server';
 import {auth0, verifyAdmin} from '@/lib/auth0';
 import {listContent, createContent} from '@/lib/builder-admin';
 import type {BuilderModel} from '@/lib/builder-types';
+import {logAudit, createAuditContext} from '@/lib/audit';
 
 const validModels = new Set<BuilderModel>(['activiteit', 'nieuws', 'aankondiging']);
 
@@ -79,6 +80,17 @@ export async function POST(
 		const result = await createContent(model, body.data, {
 			publish: body.publish ?? true,
 			name: body.name,
+		});
+
+		// Log audit event
+		await logAudit({
+			actionType: 'create',
+			resourceType: `content:${model}`,
+			resourceId: result.id,
+			dataBefore: null,
+			dataAfter: body.data,
+			metadata: {name: body.name, published: body.publish ?? true},
+			context: createAuditContext(request, session),
 		});
 
 		return NextResponse.json({success: true, id: result.id});

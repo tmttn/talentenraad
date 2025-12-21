@@ -1,8 +1,9 @@
 import {redirect} from 'next/navigation';
-import {eq} from 'drizzle-orm';
+import {headers} from 'next/headers';
+import {eq, and, gt} from 'drizzle-orm';
 import {Toaster} from 'sonner';
 import {auth0, isAdminEmail} from '@/lib/auth0';
-import {db, users} from '@/lib/db';
+import {db, users, auditLogs} from '@/lib/db';
 import {AdminSidebar} from '@/features/admin/admin-sidebar';
 import {SessionValidator} from '@/features/admin/session-validator';
 
@@ -43,6 +44,49 @@ async function ensureUserInDatabase(email: string, name: string | undefined, aut
 	return existingUser.isAdmin || isEnvAdmin;
 }
 
+async function logLoginEvent(email: string, name: string | undefined): Promise<void> {
+	try {
+		// Check if user logged in recently (within 30 minutes) to avoid duplicate logs
+		const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+		const recentLogin = await db.query.auditLogs.findFirst({
+			where: and(
+				eq(auditLogs.userEmail, email),
+				eq(auditLogs.actionType, 'login'),
+				gt(auditLogs.createdAt, thirtyMinutesAgo),
+			),
+		});
+
+		if (recentLogin) {
+			return; // Skip if already logged recently
+		}
+
+		// Look up user
+		const user = await db.query.users.findFirst({
+			where: eq(users.email, email),
+		});
+
+		const headersList = await headers();
+
+		await db.insert(auditLogs).values({
+			actionType: 'login',
+			resourceType: 'session',
+			resourceId: null,
+			userId: user?.id ?? null,
+			userEmail: email,
+			userName: name ?? null,
+			ipAddress: headersList.get('x-forwarded-for')?.split(',')[0].trim() ?? null,
+			userAgent: headersList.get('user-agent'),
+			requestPath: '/admin',
+			requestMethod: 'GET',
+			dataBefore: null,
+			dataAfter: null,
+		});
+	} catch (error) {
+		// Don't let login logging break the admin access
+		console.error('Failed to log login event:', error);
+	}
+}
+
 export default async function AdminProtectedLayout({
 	children,
 }: Readonly<{
@@ -67,6 +111,9 @@ export default async function AdminProtectedLayout({
 	if (!isAdmin) {
 		redirect('/');
 	}
+
+	// Log login event (with deduplication)
+	await logLoginEvent(userEmail, session.user.name);
 
 	return (
 		<div className='min-h-screen bg-gray-50 flex'>

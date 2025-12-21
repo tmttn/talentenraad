@@ -1,11 +1,27 @@
 import {
 	pgTable,
+	pgEnum,
 	text,
 	timestamp,
 	uuid,
 	boolean,
 	jsonb,
+	index,
 } from 'drizzle-orm/pg-core';
+
+// Audit action type enum
+export const auditActionTypeEnum = pgEnum('audit_action_type', [
+	'create',
+	'read',
+	'update',
+	'delete',
+	'login',
+	'logout',
+	'publish',
+	'unpublish',
+	'settings_change',
+	'bulk_action',
+]);
 
 // Site settings table for global configuration
 export const siteSettings = pgTable('site_settings', {
@@ -42,12 +58,51 @@ export const submissions = pgTable('submissions', {
 	archivedAt: timestamp('archived_at'),
 });
 
+// Audit logs table for tracking all admin actions
+export const auditLogs = pgTable('audit_logs', {
+	id: uuid('id').defaultRandom().primaryKey(),
+
+	// Action details
+	actionType: auditActionTypeEnum('action_type').notNull(),
+	resourceType: text('resource_type').notNull(), // 'user', 'content:nieuws', 'session', etc.
+	resourceId: text('resource_id'), // ID of affected resource (null for login/logout)
+
+	// User who performed action
+	userId: uuid('user_id').references(() => users.id, {onDelete: 'set null'}),
+	userEmail: text('user_email').notNull(), // Stored for resilience if user is deleted
+	userName: text('user_name'),
+
+	// Request metadata
+	ipAddress: text('ip_address'),
+	userAgent: text('user_agent'),
+	requestPath: text('request_path'),
+	requestMethod: text('request_method'),
+
+	// Data changes (JSON diff)
+	dataBefore: jsonb('data_before'), // State before action
+	dataAfter: jsonb('data_after'), // State after action
+	metadata: jsonb('metadata'), // Additional context (e.g., bulk action IDs)
+
+	// Timestamps
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => [
+	// Indexes for efficient querying
+	index('audit_logs_created_at_idx').on(table.createdAt),
+	index('audit_logs_user_email_idx').on(table.userEmail),
+	index('audit_logs_action_type_idx').on(table.actionType),
+	index('audit_logs_resource_type_idx').on(table.resourceType),
+	index('audit_logs_resource_id_idx').on(table.resourceId),
+]);
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Submission = typeof submissions.$inferSelect;
 export type NewSubmission = typeof submissions.$inferInsert;
 export type SiteSetting = typeof siteSettings.$inferSelect;
 export type NewSiteSetting = typeof siteSettings.$inferInsert;
+export type AuditLog = typeof auditLogs.$inferSelect;
+export type NewAuditLog = typeof auditLogs.$inferInsert;
+export type AuditActionType = (typeof auditActionTypeEnum.enumValues)[number];
 
 // Re-export shared types for convenience
 export type {SeasonalDecorationsConfig} from '../types';

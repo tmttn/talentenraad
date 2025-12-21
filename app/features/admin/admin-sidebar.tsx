@@ -12,6 +12,7 @@ import {
 	Megaphone,
 	Sparkles,
 	Users,
+	History,
 	ChevronLeft,
 	ChevronRight,
 	X,
@@ -37,6 +38,7 @@ const navItems = [
 	{href: '/admin/aankondigingen', label: 'Aankondigingen', icon: Megaphone},
 	{href: '/admin/decoraties', label: 'Decoraties', icon: Sparkles},
 	{href: '/admin/gebruikers', label: 'Gebruikers', icon: Users},
+	{href: '/admin/audit-logs', label: 'Audit Logs', icon: History},
 ];
 
 export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
@@ -193,7 +195,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 					</div>
 				</div>
 				<a
-					href='/auth/logout'
+					href='/api/admin/auth/logout'
 					title={isCollapsed ? 'Uitloggen' : undefined}
 					className={`flex items-center justify-center gap-3 w-full ${isCollapsed ? 'lg:px-2' : 'px-4'} py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-button transition-colors`}
 				>
