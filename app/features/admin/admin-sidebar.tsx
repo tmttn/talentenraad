@@ -22,7 +22,7 @@ import {
 	type LucideIcon,
 } from 'lucide-react';
 import {useFlags} from '@/lib/flags-client';
-import type {FlagValues} from '@/generated/hypertune';
+import type {FlagValues} from '@/generated/hypertune/hypertune';
 
 type AdminSidebarProperties = {
 	user: {

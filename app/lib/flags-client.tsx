@@ -1,8 +1,8 @@
 'use client';
 
 import {createContext, useContext, type ReactNode} from 'react';
-import type {FlagValues} from '@/generated/hypertune';
-import {flagFallbacks} from '@/generated/hypertune';
+import type {FlagValues} from '@/generated/hypertune/hypertune';
+import {flagFallbacks} from './flag-defaults';
 
 // Context for feature flags
 const FlagsContext = createContext<FlagValues>(flagFallbacks);

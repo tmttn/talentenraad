@@ -13,13 +13,12 @@
  */
 
 import 'server-only';
-import {
-	flagFallbacks,
-	type FlagValues,
-} from '@/generated/hypertune';
+import type {FlagValues} from '@/generated/hypertune/hypertune';
+import {flagFallbacks} from './flag-defaults';
 
-// Re-export types
-export type {FlagValues} from '@/generated/hypertune';
+// Re-export types and fallbacks
+export type {FlagValues} from '@/generated/hypertune/hypertune';
+export {flagFallbacks} from './flag-defaults';
 
 /**
  * Get a feature flag value

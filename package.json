@@ -105,7 +105,8 @@
       "app/lib/**",
       "app/(admin)/**",
       "app/features/admin/**",
-      "app/features/contact/**"
+      "app/features/contact/**",
+      "generated/**"
     ]
   },
   "overrides": {
