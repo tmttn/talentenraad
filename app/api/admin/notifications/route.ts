@@ -2,7 +2,8 @@ import {type NextRequest, NextResponse} from 'next/server';
 import webpush from 'web-push';
 import {desc, inArray, sql} from 'drizzle-orm';
 import {auth0, verifyAdmin} from '@/lib/auth0';
-import {db, pushSubscriptions, notificationHistory, users} from '@/lib/db';
+import {db, pushSubscriptions, notificationHistory} from '@/lib/db';
+import {logAudit, createAuditContext} from '@/lib/audit';
 
 // Configure web-push with VAPID
 // Note: VAPID keys must be URL-safe Base64 without "=" padding
@@ -123,7 +124,7 @@ export async function POST(request: NextRequest) {
 			await db.delete(pushSubscriptions).where(inArray(pushSubscriptions.endpoint, failedEndpoints));
 		}
 
-		// Log notification
+		// Log notification to history
 		await db.insert(notificationHistory).values({
 			title,
 			body,
@@ -133,6 +134,23 @@ export async function POST(request: NextRequest) {
 			recipientCount: subscriptions.length,
 			successCount,
 			failureCount,
+		});
+
+		// Log to audit trail
+		await logAudit({
+			actionType: 'create',
+			resourceType: 'notification',
+			dataAfter: {
+				title,
+				body,
+				url,
+				topic,
+				recipientCount: subscriptions.length,
+				successCount,
+				failureCount,
+				cleanedSubscriptions: failedEndpoints.length,
+			},
+			context: createAuditContext(request, session),
 		});
 
 		return NextResponse.json({
