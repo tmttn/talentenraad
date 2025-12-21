@@ -5,15 +5,22 @@ import {auth0, verifyAdmin} from '@/lib/auth0';
 import {db, pushSubscriptions, notificationHistory, users} from '@/lib/db';
 
 // Configure web-push with VAPID
+// Note: VAPID keys must be URL-safe Base64 without "=" padding
 // eslint-disable-next-line n/prefer-global/process
-if (process.env.VAPID_PUBLIC_KEY && process.env.VAPID_PRIVATE_KEY) {
-	webpush.setVapidDetails(
-		'mailto:info@talentenraad.be',
-		// eslint-disable-next-line n/prefer-global/process
-		process.env.VAPID_PUBLIC_KEY,
-		// eslint-disable-next-line n/prefer-global/process
-		process.env.VAPID_PRIVATE_KEY,
-	);
+const vapidPublicKey = process.env.VAPID_PUBLIC_KEY?.replaceAll('=', '');
+// eslint-disable-next-line n/prefer-global/process
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY?.replaceAll('=', '');
+
+if (vapidPublicKey && vapidPrivateKey) {
+	try {
+		webpush.setVapidDetails(
+			'mailto:info@talentenraad.be',
+			vapidPublicKey,
+			vapidPrivateKey,
+		);
+	} catch (error) {
+		console.error('Failed to configure VAPID:', error);
+	}
 }
 
 type SendNotificationRequest = {
