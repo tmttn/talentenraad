@@ -11,13 +11,10 @@ const {withSentryConfig} = require('@sentry/nextjs');
 const packageJson = require('./package.json');
 
 /** @type {import('next').NextConfig} */
+// Note: Turbopack is disabled via TURBOPACK=0 in vercel.json for Serwist PWA compatibility
+// https://github.com/serwist/serwist/issues/54
 const nextConfig = {
 	serverExternalPackages: ['isolated-vm'],
-	// Disable Turbopack - required for Serwist PWA service worker generation
-	// https://github.com/serwist/serwist/issues/54
-	experimental: {
-		turbo: false,
-	},
 };
 
 nextConfig.webpack = (webpackConfig, {webpack}) => {
