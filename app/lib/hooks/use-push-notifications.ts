@@ -37,21 +37,34 @@ async function withTimeout<T>(promise: Promise<T>, ms: number, errorMessage: str
 }
 
 async function getServiceWorkerRegistration(timeoutMs = 5000): Promise<ServiceWorkerRegistration> {
-	// First check if there's a controller - if not, SW might need to be registered
-	if (!navigator.serviceWorker.controller) {
-		// Try to register manually
-		try {
-			await navigator.serviceWorker.register('/serwist/sw.js', {scope: '/'});
-		} catch {
-			// Ignore registration errors - ready might still work
+	// Check existing registrations first
+	const registrations = await navigator.serviceWorker.getRegistrations();
+
+	// Find a registration with an active worker
+	for (const reg of registrations) {
+		if (reg.active) {
+			return reg;
 		}
 	}
 
-	return withTimeout(
-		navigator.serviceWorker.ready,
-		timeoutMs,
-		'Service worker niet beschikbaar',
-	);
+	// If no active worker, try to wait for one to become ready
+	// But with a short timeout since SW might be installing
+	try {
+		return await withTimeout(
+			navigator.serviceWorker.ready,
+			timeoutMs,
+			'Service worker nog niet klaar',
+		);
+	} catch {
+		// If timeout, check if there's at least one registration we can use
+		const regs = await navigator.serviceWorker.getRegistrations();
+		if (regs.length > 0 && (regs[0].active ?? regs[0].waiting ?? regs[0].installing)) {
+			// Return the registration even if not fully active - pushManager might still work
+			return regs[0];
+		}
+
+		throw new Error('Service worker niet beschikbaar - herlaad de pagina');
+	}
 }
 
 export function usePushNotifications() {
