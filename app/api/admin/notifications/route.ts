@@ -77,6 +77,7 @@ export async function POST(request: NextRequest) {
 		let successCount = 0;
 		let failureCount = 0;
 		const failedEndpoints: string[] = [];
+		const errors: Array<{endpoint: string; message: string; statusCode?: number; body?: string}> = [];
 
 		// Send notifications
 		const payload = JSON.stringify({
@@ -98,13 +99,17 @@ export async function POST(request: NextRequest) {
 				successCount++;
 			} catch (error) {
 				failureCount++;
-				console.error('Push notification failed:', {
+				const webPushError = error as {statusCode?: number; body?: string; message?: string};
+				const errorInfo = {
 					endpoint: sub.endpoint.slice(0, 50) + '...',
-					error: error instanceof Error ? error.message : error,
-					statusCode: (error as {statusCode?: number}).statusCode,
-				});
+					message: error instanceof Error ? error.message : String(error),
+					statusCode: webPushError.statusCode,
+					body: webPushError.body,
+				};
+				errors.push(errorInfo);
+				console.error('Push notification failed:', errorInfo);
 				// Mark for cleanup if subscription is invalid (410 Gone)
-				if ((error as {statusCode?: number}).statusCode === 410) {
+				if (webPushError.statusCode === 410) {
 					failedEndpoints.push(sub.endpoint);
 				}
 			}
@@ -132,6 +137,8 @@ export async function POST(request: NextRequest) {
 			sent: successCount,
 			failed: failureCount,
 			cleaned: failedEndpoints.length,
+			// Include error details for debugging (only first 3)
+			errors: errors.slice(0, 3),
 		});
 	} catch (error) {
 		console.error('Send notification error:', error);
