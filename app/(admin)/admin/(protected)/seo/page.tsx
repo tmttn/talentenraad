@@ -312,9 +312,17 @@ export default function SeoDashboardPage() {
 		setLoading(true);
 		try {
 			const [newsResponse, activitiesResponse] = await Promise.all([
-				fetch('/api/admin/content/nieuws'),
-				fetch('/api/admin/content/activiteit'),
+				fetch('/api/admin/content/nieuws', {credentials: 'include'}),
+				fetch('/api/admin/content/activiteit', {credentials: 'include'}),
 			]);
+
+			if (!newsResponse.ok || !activitiesResponse.ok) {
+				console.error('API errors:', {
+					news: newsResponse.status,
+					activities: activitiesResponse.status,
+				});
+				throw new Error(`API error: news=${newsResponse.status}, activities=${activitiesResponse.status}`);
+			}
 
 			const newsData = await newsResponse.json() as {items: Array<{id: string; data: {titel?: string; samenvatting?: string; afbeelding?: string; inhoud?: string; datum?: string}}>};
 			const activitiesData = await activitiesResponse.json() as {items: Array<{id: string; data: {titel?: string; samenvatting?: string; afbeelding?: string; inhoud?: string; datum?: string}}>};
