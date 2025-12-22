@@ -1,7 +1,6 @@
 import {type NextRequest, NextResponse} from 'next/server';
 import {db, feedback} from '@/lib/db';
 import {verifyRecaptcha} from '@/lib/recaptcha';
-import {withRateLimit} from '@/lib/rate-limit';
 
 type FeedbackFormData = {
 	rating: number;
@@ -27,12 +26,6 @@ function sanitizeInput(input: string): string {
 }
 
 export async function POST(request: NextRequest) {
-	// Check rate limit
-	const rateLimit = await withRateLimit('feedback', request);
-	if (rateLimit.limited) {
-		return rateLimit.response;
-	}
-
 	try {
 		const body = await request.json() as FeedbackFormData;
 

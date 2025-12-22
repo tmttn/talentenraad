@@ -2,7 +2,6 @@ import {type NextRequest, NextResponse} from 'next/server';
 import {db, submissions} from '@/lib/db';
 import {sendContactNotification} from '@/lib/email/resend';
 import {verifyRecaptcha} from '@/lib/recaptcha';
-import {withRateLimit} from '@/lib/rate-limit';
 
 type ContactFormData = {
 	name: string;
@@ -29,12 +28,6 @@ function sanitizeInput(input: string): string {
 }
 
 export async function POST(request: NextRequest) {
-	// Check rate limit
-	const rateLimit = await withRateLimit('contact', request);
-	if (rateLimit.limited) {
-		return rateLimit.response;
-	}
-
 	try {
 		const body = await request.json() as ContactFormData;
 
