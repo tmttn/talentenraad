@@ -12,6 +12,8 @@ import {
 	JsonLd,
 // eslint-disable-next-line import-x/extensions
 } from '@/lib/seo';
+// eslint-disable-next-line import-x/extensions
+import {clapsButton} from '@/lib/flags';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -135,6 +137,8 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
 		{name: item.data.titel, url: `/nieuws/${itemSlug}`},
 	]);
 
+	const showClaps = await clapsButton();
+
 	return (
 		<PageWithAnnouncements content={undefined}>
 			<JsonLd data={articleSchema} />
@@ -194,9 +198,11 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
 					)}
 
 					{/* Clap button */}
-					<div className='mt-8 flex items-center justify-center'>
-						<ClapButton contentType='nieuws' contentId={item.id} />
-					</div>
+					{showClaps && (
+						<div className='mt-8 flex items-center justify-center'>
+							<ClapButton contentType='nieuws' contentId={item.id} />
+						</div>
+					)}
 
 					{/* Back link */}
 					<div className='mt-12 pt-8 border-t border-gray-200'>

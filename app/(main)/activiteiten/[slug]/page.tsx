@@ -11,6 +11,8 @@ import {
 	JsonLd,
 // eslint-disable-next-line import-x/extensions
 } from '@/lib/seo';
+// eslint-disable-next-line import-x/extensions
+import {clapsButton} from '@/lib/flags';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
@@ -178,6 +180,8 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 		{name: item.data.titel, url: `/activiteiten/${itemSlug}`},
 	]);
 
+	const showClaps = await clapsButton();
+
 	return (
 		<PageWithAnnouncements content={undefined}>
 			<JsonLd data={eventSchema} />
@@ -274,9 +278,11 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 					)}
 
 					{/* Clap button */}
-					<div className='mt-8 flex items-center justify-center'>
-						<ClapButton contentType='activiteit' contentId={item.id} />
-					</div>
+					{showClaps && (
+						<div className='mt-8 flex items-center justify-center'>
+							<ClapButton contentType='activiteit' contentId={item.id} />
+						</div>
+					)}
 
 					{/* CTA for future events */}
 					{!isPast && (

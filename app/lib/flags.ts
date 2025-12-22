@@ -87,3 +87,7 @@ export const seasonalDecorations = () => getFlag('seasonalDecorations');
 
 // Other Features
 export const cookieBanner = () => getFlag('cookieBanner');
+
+// Engagement Features
+export const feedbackButton = () => getFlag('feedbackButton');
+export const clapsButton = () => getFlag('clapsButton');

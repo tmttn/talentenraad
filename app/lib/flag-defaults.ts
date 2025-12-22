@@ -55,4 +55,8 @@ export const flagFallbacks: FlagValues = {
 
 	// Other Features
 	cookieBanner: true,
+
+	// Engagement Features
+	feedbackButton: true,
+	clapsButton: true,
 };

@@ -21,6 +21,11 @@ jest.mock('@components/layout/page-with-announcements', () => ({
 	),
 }));
 
+// Mock flags
+jest.mock('@/lib/flags', () => ({
+	clapsButton: jest.fn().mockResolvedValue(true),
+}));
+
 // Mock fetch
 const mockFetch = jest.fn();
 global.fetch = mockFetch;
