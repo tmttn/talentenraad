@@ -40,7 +40,7 @@
     "drizzle-orm": "^0.45.1",
     "flags": "^4.0.2",
     "hypertune": "^2.10.1",
-    "lucide-react": "^0.561.0",
+    "lucide-react": "^0.562.0",
     "next": "16.1.0",
     "postgres": "^3.4.7",
     "react": "^19.2.3",
