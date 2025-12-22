@@ -20,12 +20,15 @@ import {
 	Users,
 	Zap,
 	Sparkles,
+	Search,
+	TrendingUp,
+	ChevronRight,
 } from 'lucide-react';
 import {db, submissions} from '@/lib/db';
 import {listContent} from '@/lib/builder-admin';
 import type {Activity as ActivityType, NewsItem, Announcement} from '@/lib/builder-types';
 import {DashboardSkeleton} from '@components/skeletons';
-import {ContentSeoSummary} from '@components/admin/seo-insights';
+import {analyzeSeo, getSeoScoreColor, getSeoScoreBgColor, getSeoScoreLabel} from '@/lib/seo';
 
 function getGreeting(): string {
 	const hour = new Date().getHours();
@@ -223,6 +226,73 @@ function DashboardHeader() {
 	);
 }
 
+function SeoQuickOverview({news, activities}: Readonly<{news: NewsItem[]; activities: ActivityType[]}>) {
+	// Calculate SEO stats
+	const allItems = [
+		...news.map(item => ({title: item.data.titel, description: item.data.samenvatting, image: item.data.afbeelding})),
+		...activities.map(item => ({title: item.data.titel, description: item.data.samenvatting, image: item.data.afbeelding})),
+	];
+	const analyses = allItems.map(item => analyzeSeo(item));
+	const avgScore = analyses.length > 0
+		? Math.round(analyses.reduce((sum, a) => sum + a.score, 0) / analyses.length)
+		: 0;
+	const perfectCount = analyses.filter(a => a.score === 100).length;
+	const needsAttention = analyses.filter(a => a.score < 80).length;
+
+	return (
+		<Link
+			href='/admin/seo'
+			className='block bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow overflow-hidden group'
+		>
+			<div className='p-4 sm:p-5'>
+				<div className='flex items-center justify-between mb-4'>
+					<div className='flex items-center gap-2'>
+						<Search className='w-5 h-5 text-primary' />
+						<h3 className='font-semibold text-gray-800'>SEO Overzicht</h3>
+					</div>
+					<div className='flex items-center gap-2 text-primary-text text-sm font-medium group-hover:underline'>
+						Volledig dashboard
+						<ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform' />
+					</div>
+				</div>
+
+				<div className='grid grid-cols-4 gap-4'>
+					{/* Score Ring */}
+					<div className='flex flex-col items-center'>
+						<div className={`w-16 h-16 rounded-full flex items-center justify-center ${getSeoScoreBgColor(avgScore)}`}>
+							<span className={`text-xl font-bold ${getSeoScoreColor(avgScore)}`}>{avgScore}</span>
+						</div>
+						<p className='text-xs text-gray-500 mt-2'>Gem. Score</p>
+					</div>
+
+					{/* Stats */}
+					<div className='flex flex-col items-center justify-center'>
+						<p className='text-2xl font-bold text-gray-800'>{allItems.length}</p>
+						<p className='text-xs text-gray-500'>Content items</p>
+					</div>
+
+					<div className='flex flex-col items-center justify-center'>
+						<p className='text-2xl font-bold text-green-600'>{perfectCount}</p>
+						<p className='text-xs text-gray-500'>Perfect</p>
+					</div>
+
+					<div className='flex flex-col items-center justify-center'>
+						<p className='text-2xl font-bold text-yellow-600'>{needsAttention}</p>
+						<p className='text-xs text-gray-500'>Aandacht nodig</p>
+					</div>
+				</div>
+
+				{needsAttention > 0 && (
+					<div className='mt-4 flex items-center gap-2 text-sm text-yellow-700 bg-yellow-50 px-3 py-2 rounded-button'>
+						<TrendingUp className='w-4 h-4' />
+						<span>{needsAttention} item{needsAttention !== 1 ? 's' : ''} kunnen verbeterd worden</span>
+					</div>
+				)}
+			</div>
+		</Link>
+	);
+}
+
 function QuickLinks() {
 	return (
 		<div className='bg-white rounded-card shadow-base overflow-hidden'>
@@ -350,21 +420,8 @@ async function DashboardContent() {
 				</Link>
 			</div>
 
-			{/* SEO Overview */}
-			<ContentSeoSummary
-				news={data.news.map(item => ({
-					id: item.id,
-					title: item.data.titel,
-					description: item.data.samenvatting,
-					image: item.data.afbeelding,
-				}))}
-				activities={data.activities.map(item => ({
-					id: item.id,
-					title: item.data.titel,
-					description: item.data.samenvatting,
-					image: item.data.afbeelding,
-				}))}
-			/>
+			{/* SEO Quick Overview */}
+			<SeoQuickOverview news={data.news} activities={data.activities} />
 
 			{/* Content Lists Grid */}
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
