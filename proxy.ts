@@ -43,6 +43,7 @@ const validAdminExactPaths = new Set([
 	'/admin/aankondigingen',
 	'/admin/notificaties',
 	'/admin/seo',
+	'/admin/sponsors',
 	'/admin/data',
 	'/admin/gebruikers',
 	'/admin/decoraties',
