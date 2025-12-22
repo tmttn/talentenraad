@@ -1,7 +1,7 @@
 import {notFound} from 'next/navigation';
 import Link from 'next/link';
 import {Calendar, Clock, MapPin} from 'lucide-react';
-import {AnimatedButton, AnimatedLink} from '@components/ui';
+import {AnimatedButton, AnimatedLink, AddToCalendarButton} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {ClapButton} from '@components/claps';
 import {
@@ -256,6 +256,19 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 								</div>
 							)}
 						</dl>
+						{!isPast && (
+							<div className='mt-6 pt-4 border-t border-gray-200'>
+								<AddToCalendarButton
+									title={item.data.titel}
+									date={item.data.datum}
+									time={item.data.tijd}
+									location={item.data.locatie}
+									description={item.data.samenvatting}
+									url={`https://www.talentenraad.be/activiteiten/${itemSlug}`}
+									id={item.id}
+								/>
+							</div>
+						)}
 					</div>
 
 					{/* Image */}

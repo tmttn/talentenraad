@@ -16,6 +16,9 @@ jest.mock('@components/ui', () => ({
 	AnimatedLink: ({children, href}: {children: React.ReactNode; href: string}) => (
 		<a href={href} data-testid='animated-link'>{children}</a>
 	),
+	AddToCalendarButton: ({title}: {title: string}) => (
+		<button type='button' data-testid='add-to-calendar'>Toevoegen aan agenda voor {title}</button>
+	),
 }));
 
 jest.mock('@components/layout/page-with-announcements', () => ({

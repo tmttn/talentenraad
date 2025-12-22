@@ -48,3 +48,6 @@ export type {DateBadgeProperties} from './date-badge';
 export {CategoryBadge, categoryStyles} from './category-badge';
 export type {CategoryBadgeProperties} from './category-badge';
 
+// Calendar components
+export {AddToCalendarButton} from './add-to-calendar-button';
+
