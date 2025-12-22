@@ -1,6 +1,8 @@
 'use client';
 
+import {useState} from 'react';
 import {ContentForm, type FieldDefinition} from '@/features/admin/content-form';
+import {SeoInsights} from '@components/admin/seo-insights';
 import type {NewsItem} from '@/lib/builder-types';
 
 const newsFields: FieldDefinition[] = [
@@ -58,6 +60,8 @@ type EditNewsFormProps = {
 };
 
 export function EditNewsForm({newsItem}: EditNewsFormProps) {
+	const [formValues, setFormValues] = useState<Record<string, unknown>>(newsItem.data);
+
 	const handleSubmit = async (data: Record<string, unknown>) => {
 		const response = await fetch(`/api/admin/content/nieuws/${newsItem.id}`, {
 			method: 'PUT',
@@ -76,13 +80,28 @@ export function EditNewsForm({newsItem}: EditNewsFormProps) {
 	};
 
 	return (
-		<ContentForm
-			fields={newsFields}
-			initialData={newsItem.data}
-			onSubmit={handleSubmit}
-			submitLabel='Wijzigingen opslaan'
-			successMessage='Nieuwsbericht opgeslagen'
-			cancelPath='/admin/nieuws'
-		/>
+		<div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+			<div className='lg:col-span-2'>
+				<ContentForm
+					fields={newsFields}
+					initialData={newsItem.data}
+					onSubmit={handleSubmit}
+					onValuesChange={setFormValues}
+					submitLabel='Wijzigingen opslaan'
+					successMessage='Nieuwsbericht opgeslagen'
+					cancelPath='/admin/nieuws'
+				/>
+			</div>
+			<div className='lg:col-span-1'>
+				<div className='sticky top-6'>
+					<SeoInsights
+						title={formValues.titel as string | undefined}
+						description={formValues.samenvatting as string | undefined}
+						image={formValues.afbeelding as string | undefined}
+						content={formValues.inhoud as string | undefined}
+					/>
+				</div>
+			</div>
+		</div>
 	);
 }

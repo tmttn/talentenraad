@@ -21,6 +21,7 @@ type ContentFormProps = {
 	fields: FieldDefinition[];
 	initialData?: Record<string, unknown>;
 	onSubmit: (data: Record<string, unknown>) => Promise<void>;
+	onValuesChange?: (data: Record<string, unknown>) => void;
 	submitLabel?: string;
 	successMessage?: string;
 	cancelPath: string;
@@ -39,6 +40,7 @@ export function ContentForm({
 	fields,
 	initialData = {},
 	onSubmit,
+	onValuesChange,
 	submitLabel = 'Opslaan',
 	successMessage = 'Opgeslagen',
 	cancelPath,
@@ -49,8 +51,10 @@ export function ContentForm({
 	const [error, setError] = useState<string | null>(null);
 
 	const handleChange = (name: string, value: unknown) => {
-		setFormData(previous => ({...previous, [name]: value}));
+		const newData = {...formData, [name]: value};
+		setFormData(newData);
 		setError(null);
+		onValuesChange?.(newData);
 	};
 
 	const handleSubmit = async (event: FormEvent) => {
