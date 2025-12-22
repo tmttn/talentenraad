@@ -81,6 +81,10 @@ export function Auth0LockLogin({domain, clientId, returnTo}: Auth0LockLoginProps
 				// Build the callback URL for Auth0
 				const callbackUrl = `${window.location.origin}/auth/callback`;
 
+				// Store returnTo in sessionStorage for after callback
+				// (can't use custom state param - conflicts with Auth0 SDK's CSRF validation)
+				sessionStorage.setItem('auth0_returnTo', returnTo);
+
 				// Initialize Auth0 Lock with custom branding
 				const lock = new window.Auth0Lock(clientId, domain, {
 					container: 'auth0-lock-container',
@@ -89,7 +93,6 @@ export function Auth0LockLogin({domain, clientId, returnTo}: Auth0LockLoginProps
 						responseType: 'code',
 						params: {
 							scope: 'openid profile email',
-							state: btoa(JSON.stringify({returnTo})),
 						},
 					},
 					theme: {
