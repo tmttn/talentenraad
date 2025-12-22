@@ -1,4 +1,5 @@
 import {Suspense} from 'react';
+import {Toaster} from 'sonner';
 import {SiteFooterServer} from '@components/layout/site-footer-server';
 import {CookieConsentProvider, CookieBanner} from '@components/cookie-consent';
 import {SiteFooterSkeleton} from '@components/skeletons';
@@ -84,6 +85,7 @@ export default async function MainSiteLayout({
 				</SafeSeasonalDecorations>
 				<ConditionalCookieBanner />
 				<ConditionalFeedbackButton />
+				<Toaster position='bottom-left' richColors closeButton />
 			</CookieConsentProvider>
 		</FlagsProvider>
 	);
