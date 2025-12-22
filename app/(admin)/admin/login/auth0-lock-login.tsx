@@ -1,7 +1,6 @@
 'use client';
 
 import {useEffect, useRef, useState} from 'react';
-import type Auth0Lock from 'auth0-lock';
 import {brandColors} from '@/styles/tokens/colors';
 
 type Auth0LockLoginProps = {
@@ -10,9 +9,60 @@ type Auth0LockLoginProps = {
 	returnTo: string;
 };
 
+// Type for Auth0Lock instance
+type Auth0LockInstance = {
+	show: () => void;
+	hide: () => void;
+	on: (event: string, callback: (...args: unknown[]) => void) => void;
+};
+
+// Declare Auth0Lock on window for CDN loading
+declare global {
+	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+	interface Window {
+		Auth0Lock?: new (clientId: string, domain: string, options?: Record<string, unknown>) => Auth0LockInstance;
+	}
+}
+
+function loadAuth0LockScript(): Promise<void> {
+	return new Promise((resolve, reject) => {
+		// Check if already loaded
+		if (window.Auth0Lock) {
+			resolve();
+			return;
+		}
+
+		// Check if script is already being loaded
+		const existingScript = document.querySelector('script[src*="auth0-lock"]');
+		if (existingScript) {
+			existingScript.addEventListener('load', () => {
+				resolve();
+			});
+			existingScript.addEventListener('error', () => {
+				reject(new Error('Failed to load Auth0 Lock script'));
+			});
+			return;
+		}
+
+		// Load the script from CDN
+		const script = document.createElement('script');
+		script.src = 'https://cdn.auth0.com/js/lock/12.5/lock.min.js';
+		script.async = true;
+		script.onload = () => {
+			resolve();
+		};
+
+		script.onerror = () => {
+			reject(new Error('Failed to load Auth0 Lock script'));
+		};
+
+		document.head.append(script);
+	});
+}
+
 export function Auth0LockLogin({domain, clientId, returnTo}: Auth0LockLoginProps) {
 	const containerRef = useRef<HTMLDivElement>(null);
-	const lockRef = useRef<Auth0Lock | null>(null);
+	const lockRef = useRef<Auth0LockInstance | null>(null);
 	const [isLoading, setIsLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -21,10 +71,10 @@ export function Auth0LockLogin({domain, clientId, returnTo}: Auth0LockLoginProps
 
 		async function initLock() {
 			try {
-				// Dynamically import Auth0 Lock (it's a browser-only library)
-				const Auth0Lock = (await import('auth0-lock')).default;
+				// Load Auth0 Lock from CDN
+				await loadAuth0LockScript();
 
-				if (!mounted || !containerRef.current) {
+				if (!mounted || !containerRef.current || !window.Auth0Lock) {
 					return;
 				}
 
@@ -32,7 +82,7 @@ export function Auth0LockLogin({domain, clientId, returnTo}: Auth0LockLoginProps
 				const callbackUrl = `${window.location.origin}/auth/callback`;
 
 				// Initialize Auth0 Lock with custom branding
-				const lock = new Auth0Lock(clientId, domain, {
+				const lock = new window.Auth0Lock(clientId, domain, {
 					container: 'auth0-lock-container',
 					auth: {
 						redirectUrl: callbackUrl,
@@ -117,7 +167,7 @@ export function Auth0LockLogin({domain, clientId, returnTo}: Auth0LockLoginProps
 					allowSignUp: false,
 					allowShowPassword: true,
 					rememberLastLogin: true,
-					avatar: undefined,
+					avatar: null,
 					additionalSignUpFields: [],
 				});
 
@@ -126,14 +176,15 @@ export function Auth0LockLogin({domain, clientId, returnTo}: Auth0LockLoginProps
 				setIsLoading(false);
 
 				// Handle authentication events
-				lock.on('authenticated', authResult => {
+				lock.on('authenticated', () => {
 					// The SDK handles the redirect automatically
 					console.log('Authentication successful');
 				});
 
-				lock.on('authorization_error', err => {
+				lock.on('authorization_error', (err: unknown) => {
 					console.error('Authorization error:', err);
-					setError(err.errorDescription ?? 'Er ging iets mis bij het inloggen.');
+					const errorObj = err as {errorDescription?: string} | undefined;
+					setError(errorObj?.errorDescription ?? 'Er ging iets mis bij het inloggen.');
 				});
 			} catch (err) {
 				console.error('Failed to initialize Auth0 Lock:', err);
