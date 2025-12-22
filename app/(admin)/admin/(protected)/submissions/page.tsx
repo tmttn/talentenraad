@@ -1,8 +1,13 @@
+import type {Metadata} from 'next';
 import {Suspense} from 'react';
-import {desc, isNull, isNotNull, and} from 'drizzle-orm';
+import {desc, isNull, isNotNull} from 'drizzle-orm';
 import {db, submissions, feedback} from '@/lib/db';
 import {SubmissionsPageSkeleton} from '@components/skeletons';
 import {SubmissionsPageClient} from './submissions-page-client';
+
+export const metadata: Metadata = {
+	title: 'Berichten',
+};
 
 async function SubmissionsLoader() {
 	const [inboxSubmissions, archivedSubmissions, feedbackItems] = await Promise.all([

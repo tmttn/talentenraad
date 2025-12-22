@@ -1,6 +1,11 @@
+import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
 import {getContent} from '@/lib/builder-admin';
 import {EditNewsForm} from './edit-news-form';
+
+export const metadata: Metadata = {
+	title: 'Artikel bewerken',
+};
 
 type PageProps = {
 	params: Promise<{id: string}>;

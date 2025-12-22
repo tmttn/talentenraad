@@ -1,4 +1,9 @@
+import type {Metadata} from 'next';
 import {NotificatiesManager} from './notificaties-manager';
+
+export const metadata: Metadata = {
+	title: 'Notificaties',
+};
 
 export default function NotificatiesPage() {
 	return (

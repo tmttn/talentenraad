@@ -1,4 +1,9 @@
+import type {Metadata} from 'next';
 import {NotFoundPage} from '@components/error-pages';
+
+export const metadata: Metadata = {
+	title: 'Pagina niet gevonden',
+};
 
 /**
  * Explicit 404 Page Route

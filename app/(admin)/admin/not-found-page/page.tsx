@@ -1,4 +1,9 @@
+import type {Metadata} from 'next';
 import {AdminErrorPage} from '@components/error-pages';
+
+export const metadata: Metadata = {
+	title: 'Pagina niet gevonden',
+};
 
 /**
  * Admin 404 Page (Proxy Target)

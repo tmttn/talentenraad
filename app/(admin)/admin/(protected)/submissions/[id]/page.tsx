@@ -1,7 +1,12 @@
+import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
 import {eq} from 'drizzle-orm';
 import {db, submissions} from '@/lib/db';
 import {SubmissionActions} from '@/features/admin/submission-actions';
+
+export const metadata: Metadata = {
+	title: 'Bericht details',
+};
 
 type PageProperties = {
 	params: Promise<{id: string}>;

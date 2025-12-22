@@ -1,6 +1,11 @@
+import type {Metadata} from 'next';
 import {redirect} from 'next/navigation';
 import {auth0} from '@/lib/auth0';
 import {LoginButton} from './login-button';
+
+export const metadata: Metadata = {
+	title: 'Inloggen',
+};
 
 type AdminLoginPageProps = {
 	searchParams: Promise<{

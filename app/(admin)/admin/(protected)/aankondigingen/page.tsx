@@ -1,7 +1,12 @@
+import type {Metadata} from 'next';
 import {Suspense} from 'react';
 import {listContent} from '@/lib/builder-admin';
 import {CardGridSkeleton} from '@components/skeletons';
 import {AankondigingenManager} from './aankondigingen-manager';
+
+export const metadata: Metadata = {
+	title: 'Aankondigingen',
+};
 
 async function AankondigingenLoader() {
 	const announcements = await listContent('aankondiging');

@@ -1,6 +1,11 @@
+import type {Metadata} from 'next';
 import {Suspense} from 'react';
 import {count, isNull, desc} from 'drizzle-orm';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+	title: 'Dashboard',
+};
 // eslint-disable-next-line n/prefer-global/process
 const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 import {

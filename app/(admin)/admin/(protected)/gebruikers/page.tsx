@@ -1,7 +1,12 @@
+import type {Metadata} from 'next';
 import {Suspense} from 'react';
 import {db} from '@/lib/db';
 import {TableSkeleton} from '@components/skeletons';
 import {UsersManager} from './users-manager';
+
+export const metadata: Metadata = {
+	title: 'Gebruikers',
+};
 
 function getProtectedEmails(): string[] {
 	const emails = process.env.ADMIN_EMAILS ?? '';

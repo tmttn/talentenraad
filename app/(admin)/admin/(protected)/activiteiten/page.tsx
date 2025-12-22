@@ -1,9 +1,14 @@
+import type {Metadata} from 'next';
 import {Suspense} from 'react';
 import Link from 'next/link';
 import {listContent} from '@/lib/builder-admin';
 import {getClapsForContentType} from '@/lib/claps-admin';
 import {TableSkeleton} from '@components/skeletons';
 import {ActiviteitenTable} from './activiteiten-table';
+
+export const metadata: Metadata = {
+	title: 'Activiteiten',
+};
 
 async function ActiviteitenTableLoader() {
 	const [activities, clapsMap] = await Promise.all([

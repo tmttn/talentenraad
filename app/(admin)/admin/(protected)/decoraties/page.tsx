@@ -1,5 +1,10 @@
+import type {Metadata} from 'next';
 import {getSeasonalDecorationsConfig} from '@components/seasonal-decorations-server';
 import {DecoratiesManager} from './decoraties-manager';
+
+export const metadata: Metadata = {
+	title: 'Decoraties',
+};
 
 export default async function DecoratiesPage() {
 	const config = await getSeasonalDecorationsConfig();

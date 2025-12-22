@@ -1,9 +1,14 @@
+import type {Metadata} from 'next';
 import {Suspense} from 'react';
 import Link from 'next/link';
 import {listContent} from '@/lib/builder-admin';
 import {getClapsForContentType} from '@/lib/claps-admin';
 import {TableSkeleton} from '@components/skeletons';
 import {NieuwsTable} from './nieuws-table';
+
+export const metadata: Metadata = {
+	title: 'Nieuws',
+};
 
 async function NieuwsTableLoader() {
 	const [newsItems, clapsMap] = await Promise.all([
