@@ -339,20 +339,43 @@ export function analyzeSeo(content: {
 		fieldScores.image = {score: 15, maxScore: 15, status: 'good'};
 	}
 
-	// Content analysis (informational only, no score penalty)
-	if (content.content) {
-		const wordCount = content.content.split(/\s+/).length;
-		if (wordCount < 300) {
-			issues.push({type: 'info', message: `Inhoud is kort (${wordCount} woorden)`, field: 'content'});
-			suggestions.push('Langere content (300+ woorden) presteert meestal beter in zoekmachines');
+	// Content analysis (35 points max - only when content is provided/expected)
+	if (content.content !== undefined) {
+		const strippedContent = content.content.replaceAll(/<[^>]*>/g, '').trim(); // Strip HTML tags
+		const wordCount = strippedContent ? strippedContent.split(/\s+/).length : 0;
+
+		if (!strippedContent || wordCount === 0) {
+			issues.push({type: 'error', message: 'Inhoud ontbreekt', field: 'content'});
+			score -= 35;
 			fieldScores.content = {
-				score: Math.round((wordCount / 300) * 100),
-				maxScore: 100,
-				status: wordCount < 100 ? 'warning' : 'good',
-				recommendation: `Voeg nog ${300 - wordCount} woorden toe voor optimale SEO`,
+				score: 0,
+				maxScore: 35,
+				status: 'missing',
+				recommendation: 'Voeg inhoud toe van minimaal 100 woorden',
 			};
+			quickWins.push({field: 'content', action: 'Voeg inhoud toe', impact: 35});
+		} else if (wordCount < 100) {
+			issues.push({type: 'warning', message: `Inhoud is te kort (${wordCount}/100 woorden)`, field: 'content'});
+			score -= 20;
+			fieldScores.content = {
+				score: 15,
+				maxScore: 35,
+				status: 'warning',
+				recommendation: `Voeg nog ${100 - wordCount} woorden toe`,
+			};
+			quickWins.push({field: 'content', action: `Voeg nog ${100 - wordCount} woorden toe`, impact: 20});
+		} else if (wordCount < 300) {
+			issues.push({type: 'info', message: `Inhoud is kort (${wordCount} woorden)`, field: 'content'});
+			score -= 5;
+			fieldScores.content = {
+				score: 30,
+				maxScore: 35,
+				status: 'good',
+				recommendation: `Overweeg nog ${300 - wordCount} woorden toe te voegen voor optimale SEO`,
+			};
+			suggestions.push('Langere content (300+ woorden) presteert meestal beter in zoekmachines');
 		} else {
-			fieldScores.content = {score: 100, maxScore: 100, status: 'good'};
+			fieldScores.content = {score: 35, maxScore: 35, status: 'good'};
 		}
 	}
 
