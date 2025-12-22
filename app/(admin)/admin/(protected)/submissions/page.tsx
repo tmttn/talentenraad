@@ -1,5 +1,5 @@
 import {Suspense} from 'react';
-import {desc, isNull, isNotNull} from 'drizzle-orm';
+import {desc, isNull, isNotNull, and} from 'drizzle-orm';
 import {db, submissions, feedback} from '@/lib/db';
 import {SubmissionsPageSkeleton} from '@components/skeletons';
 import {SubmissionsPageClient} from './submissions-page-client';
@@ -19,11 +19,19 @@ async function SubmissionsLoader() {
 		}),
 	]);
 
+	// Count unread items
+	const unreadSubmissionsCount = inboxSubmissions.filter(s => !s.readAt).length;
+	const unreadFeedbackCount = feedbackItems.filter(f => !f.readAt).length;
+
 	return (
 		<SubmissionsPageClient
 			inboxSubmissions={inboxSubmissions}
 			archivedSubmissions={archivedSubmissions}
 			feedbackItems={feedbackItems}
+			unreadCounts={{
+				submissions: unreadSubmissionsCount,
+				feedback: unreadFeedbackCount,
+			}}
 		/>
 	);
 }

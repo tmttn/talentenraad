@@ -1,9 +1,9 @@
 import {redirect} from 'next/navigation';
 import {headers} from 'next/headers';
-import {eq, and, gt} from 'drizzle-orm';
+import {eq, and, gt, isNull} from 'drizzle-orm';
 import {Toaster} from 'sonner';
 import {auth0, isAdminEmail} from '@/lib/auth0';
-import {db, users, auditLogs} from '@/lib/db';
+import {db, users, auditLogs, feedback, submissions} from '@/lib/db';
 import {getAllFlags} from '@/lib/flags';
 import {FlagsProvider} from '@/lib/flags-client';
 import {AdminSidebar} from '@/features/admin/admin-sidebar';
@@ -44,6 +44,27 @@ async function ensureUserInDatabase(email: string, name: string | undefined, aut
 
 	// Return true if user is admin in database OR in env var
 	return existingUser.isAdmin || isEnvAdmin;
+}
+
+async function getUnreadCounts(): Promise<{unreadFeedback: number; unreadSubmissions: number}> {
+	try {
+		const [unreadFeedbackItems, unreadSubmissionItems] = await Promise.all([
+			db.query.feedback.findMany({
+				where: isNull(feedback.readAt),
+				columns: {id: true},
+			}),
+			db.query.submissions.findMany({
+				where: and(isNull(submissions.readAt), isNull(submissions.archivedAt)),
+				columns: {id: true},
+			}),
+		]);
+		return {
+			unreadFeedback: unreadFeedbackItems.length,
+			unreadSubmissions: unreadSubmissionItems.length,
+		};
+	} catch {
+		return {unreadFeedback: 0, unreadSubmissions: 0};
+	}
 }
 
 async function logLoginEvent(email: string, name: string | undefined): Promise<void> {
@@ -117,19 +138,25 @@ export default async function AdminProtectedLayout({
 	// Log login event (with deduplication)
 	await logLoginEvent(userEmail, session.user.name);
 
-	// Get feature flags for client components
-	const flags = await getAllFlags();
+	// Get feature flags and unread counts in parallel
+	const [flags, unreadCounts] = await Promise.all([
+		getAllFlags(),
+		getUnreadCounts(),
+	]);
 
 	return (
 		<FlagsProvider flags={flags}>
 			<div className='min-h-screen bg-gray-50 flex'>
 				<Toaster position='top-right' richColors closeButton />
 				<SessionValidator />
-				<AdminSidebar user={{
-					name: session.user.name,
-					email: session.user.email,
-					image: session.user.picture,
-				}} />
+				<AdminSidebar
+					user={{
+						name: session.user.name,
+						email: session.user.email,
+						image: session.user.picture,
+					}}
+					unreadCounts={unreadCounts}
+				/>
 				<main id='main-content' className='flex-1 overflow-auto pt-16 lg:pt-0'>
 					<div className='p-4 sm:p-6 lg:p-8'>
 						{children}

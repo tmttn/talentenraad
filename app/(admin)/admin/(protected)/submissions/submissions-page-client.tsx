@@ -1,15 +1,22 @@
 'use client';
 
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
+import {useRouter} from 'next/navigation';
 import type {Submission, Feedback} from '@/lib/db/index.js';
 import {SubmissionsTable} from '@/features/admin/submissions-table';
 import {FeedbackTable} from '@/features/admin/feedback-table';
 import {Mail, MessageSquare} from 'lucide-react';
 
+type UnreadCounts = {
+	submissions: number;
+	feedback: number;
+};
+
 type SubmissionsPageClientProps = {
 	inboxSubmissions: Submission[];
 	archivedSubmissions: Submission[];
 	feedbackItems: Feedback[];
+	unreadCounts?: UnreadCounts;
 };
 
 type TabType = 'inbox' | 'archived' | 'feedback';
@@ -18,8 +25,26 @@ export function SubmissionsPageClient({
 	inboxSubmissions,
 	archivedSubmissions,
 	feedbackItems,
+	unreadCounts,
 }: SubmissionsPageClientProps) {
+	const router = useRouter();
 	const [activeTab, setActiveTab] = useState<TabType>('inbox');
+
+	// Mark feedback as read when viewing the feedback tab
+	useEffect(() => {
+		if (activeTab === 'feedback' && unreadCounts?.feedback && unreadCounts.feedback > 0) {
+			// Mark all unread feedback as read
+			fetch('/api/admin/feedback', {
+				method: 'PATCH',
+				headers: {'Content-Type': 'application/json'},
+				body: JSON.stringify({action: 'markAllRead'}),
+			}).then(() => {
+				router.refresh();
+			}).catch(() => {
+				// Silently fail
+			});
+		}
+	}, [activeTab, unreadCounts?.feedback, router]);
 
 	const submissions = activeTab === 'inbox' ? inboxSubmissions : archivedSubmissions;
 	const isArchiveView = activeTab === 'archived';
@@ -60,11 +85,15 @@ export function SubmissionsPageClient({
 					Inbox
 					{inboxSubmissions.length > 0 && (
 						<span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
-							activeTab === 'inbox'
-								? 'bg-primary/10 text-primary-text'
-								: 'bg-gray-200 text-gray-600'
+							unreadCounts?.submissions && unreadCounts.submissions > 0
+								? 'bg-red-500 text-white'
+								: activeTab === 'inbox'
+									? 'bg-primary/10 text-primary-text'
+									: 'bg-gray-200 text-gray-600'
 						}`}>
-							{inboxSubmissions.length}
+							{unreadCounts?.submissions && unreadCounts.submissions > 0
+								? unreadCounts.submissions
+								: inboxSubmissions.length}
 						</span>
 					)}
 				</button>
@@ -100,11 +129,15 @@ export function SubmissionsPageClient({
 					Feedback
 					{feedbackItems.length > 0 && (
 						<span className={`ml-2 px-2 py-0.5 text-xs rounded-full ${
-							activeTab === 'feedback'
-								? 'bg-yellow-100 text-yellow-700'
-								: 'bg-gray-200 text-gray-600'
+							unreadCounts?.feedback && unreadCounts.feedback > 0
+								? 'bg-red-500 text-white'
+								: activeTab === 'feedback'
+									? 'bg-yellow-100 text-yellow-700'
+									: 'bg-gray-200 text-gray-600'
 						}`}>
-							{feedbackItems.length}
+							{unreadCounts?.feedback && unreadCounts.feedback > 0
+								? unreadCounts.feedback
+								: feedbackItems.length}
 						</span>
 					)}
 				</button>

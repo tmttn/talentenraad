@@ -26,12 +26,18 @@ import {
 import {useFlags} from '@/lib/flags-client';
 import type {FlagValues} from '@/generated/hypertune/hypertune';
 
+type UnreadCounts = {
+	unreadFeedback: number;
+	unreadSubmissions: number;
+};
+
 type AdminSidebarProperties = {
 	user: {
 		name?: string | null;
 		email?: string | null;
 		image?: string | null;
 	};
+	unreadCounts?: UnreadCounts;
 };
 
 const SIDEBAR_COLLAPSED_KEY = 'admin-sidebar-collapsed';
@@ -57,9 +63,12 @@ const navItems: NavItem[] = [
 	{href: '/admin/audit-logs', label: 'Audit Logs', icon: History, flag: 'adminAuditLogs'},
 ];
 
-export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
+export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperties>) {
 	const pathname = usePathname();
 	const flags = useFlags();
+
+	// Calculate total unread for the Berichten nav item
+	const totalUnread = (unreadCounts?.unreadFeedback ?? 0) + (unreadCounts?.unreadSubmissions ?? 0);
 	const [isOpen, setIsOpen] = useState(false);
 	const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -159,6 +168,7 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 				<ul className='space-y-1'>
 					{visibleNavItems.map(item => {
 						const Icon = item.icon;
+						const showBadge = item.href === '/admin/submissions' && totalUnread > 0;
 						return (
 							<li key={item.href}>
 								<Link
@@ -171,8 +181,18 @@ export function AdminSidebar({user}: Readonly<AdminSidebarProperties>) {
 											: 'text-gray-600 hover:bg-gray-100'
 									}`}
 								>
-									<Icon className='w-5 h-5 flex-shrink-0' strokeWidth={1.5} />
-									<span className={isCollapsed ? 'lg:hidden' : ''}>{item.label}</span>
+									<span className='relative'>
+										<Icon className='w-5 h-5 flex-shrink-0' strokeWidth={1.5} />
+										{showBadge && isCollapsed && (
+											<span className='absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full hidden lg:block' />
+										)}
+									</span>
+									<span className={`flex-1 ${isCollapsed ? 'lg:hidden' : ''}`}>{item.label}</span>
+									{showBadge && !isCollapsed && (
+										<span className='px-1.5 py-0.5 text-xs font-medium bg-red-500 text-white rounded-full min-w-[1.25rem] text-center'>
+											{totalUnread > 99 ? '99+' : totalUnread}
+										</span>
+									)}
 								</Link>
 							</li>
 						);
