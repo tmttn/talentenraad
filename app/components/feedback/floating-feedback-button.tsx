@@ -100,12 +100,12 @@ export function FloatingFeedbackButton() {
 
 	return (
 		<>
-			{/* Floating Action Button */}
+			{/* Floating Action Button - positioned above reCAPTCHA badge */}
 			<button
 				type="button"
 				onClick={() => setIsOpen(true)}
 				className="
-					fixed bottom-6 right-6 z-40
+					fixed bottom-24 right-6 z-40
 					w-14 h-14 rounded-full
 					bg-primary text-white
 					shadow-floating hover:shadow-high
