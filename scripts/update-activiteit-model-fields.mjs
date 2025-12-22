@@ -4,15 +4,6 @@
 
 const privateKey = process.env.BUILDER_PRIVATE_KEY ?? 'bpk-4537158022f148049234c9ffbe759373';
 
-const mutation = `
-  mutation UpdateModel($id: ID!, $body: JSONObject!) {
-    updateModel(id: $id, body: $body) {
-      id
-      name
-    }
-  }
-`;
-
 // Updated fields - replace beschrijving with samenvatting and inhoud
 const updatedFields = [
 	{
@@ -128,36 +119,44 @@ async function getModelId() {
 async function updateModel(modelId) {
 	console.log('Updating activiteit model fields...');
 
+	// Use GraphQL mutation with variables
+	const mutation = `
+		mutation UpdateModel($body: UpdateModelInput!) {
+			updateModel(body: $body) {
+				id
+				name
+			}
+		}
+	`;
+
+	const variables = {
+		body: {
+			id: modelId,
+			data: {
+				fields: updatedFields,
+			},
+		},
+	};
+
 	const response = await fetch('https://builder.io/api/v2/admin', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${privateKey}`,
 		},
-		body: JSON.stringify({
-			query: mutation,
-			variables: {
-				id: modelId,
-				body: {
-					fields: updatedFields,
-				},
-			},
-		}),
+		body: JSON.stringify({query: mutation, variables}),
 	});
 
 	const result = await response.json();
-	console.log('Response:', JSON.stringify(result, null, 2));
 
 	if (result.errors) {
-		console.error('GraphQL errors:', result.errors);
+		console.error('GraphQL errors:', JSON.stringify(result.errors, null, 2));
 		throw new Error('Failed to update model');
 	}
 
-	if (result.data?.updateModel) {
-		console.log('Model updated successfully!');
-		console.log('Model ID:', result.data.updateModel.id);
-		console.log('Model Name:', result.data.updateModel.name);
-	}
+	console.log('Model updated successfully!');
+	console.log('Model ID:', result.data.updateModel.id);
+	console.log('Model Name:', result.data.updateModel.name);
 }
 
 async function main() {
