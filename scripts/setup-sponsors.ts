@@ -340,27 +340,27 @@ async function main(): Promise<void> {
 	console.log('Setting up sponsors in Builder.io...\n');
 
 	try {
-		// Create the model
-		console.log('1. Creating sponsor model...');
-		await createSponsorModel();
-
-		// Verify it exists
-		console.log('\n2. Verifying model...');
-		const exists = await verifyModel();
-		if (!exists) {
-			console.error('Error: Model was not created successfully');
-			process.exit(1);
-		}
+		// Note about model creation
+		console.log('1. Sponsor model setup:');
+		console.log('   Please create the "sponsor" model manually in Builder.io with these fields:');
+		console.log('   - naam (string, required): Naam van de sponsor');
+		console.log('   - logo (file, required): Logo van de sponsor');
+		console.log('   - website (url): Website URL van de sponsor');
+		console.log('   - beschrijving (longText): Korte beschrijving');
+		console.log('   - tier (enum: gold/silver/bronze/partner, required): Sponsorniveau');
+		console.log('   - actief (boolean, required, default: true): Is sponsor actief');
+		console.log('   - volgorde (number): Sorteervolgorde\n');
 
 		// Create the page
-		console.log('\n3. Creating sponsors page...');
+		console.log('2. Creating sponsors page...');
 		await createSponsorsPage();
 
 		console.log('\nSetup complete!');
 		console.log('\nNext steps:');
-		console.log('1. Go to Builder.io and add sponsors to the "sponsor" model');
-		console.log('2. Use the SponsorBanner component on pages to display rotating sponsors');
-		console.log('3. View analytics at /api/sponsors/track?sponsorId=<id>');
+		console.log('1. Create the "sponsor" model in Builder.io (if not already done)');
+		console.log('2. Add sponsors to the "sponsor" model');
+		console.log('3. Use the SponsorBanner component on pages to display rotating sponsors');
+		console.log('4. View analytics at /api/sponsors/track?sponsorId=<id>');
 	} catch (error) {
 		console.error('Error:', error);
 		process.exit(1);
