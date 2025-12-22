@@ -30,10 +30,18 @@ const activityFields: FieldDefinition[] = [
 		placeholder: 'Waar vindt de activiteit plaats?',
 	},
 	{
-		name: 'beschrijving',
-		label: 'Beschrijving',
+		name: 'samenvatting',
+		label: 'Samenvatting',
+		type: 'textarea',
+		placeholder: 'Korte samenvatting (max 200 tekens)',
+		helpText: 'Deze tekst wordt getoond in de activiteitenlijst en voor SEO',
+	},
+	{
+		name: 'inhoud',
+		label: 'Inhoud',
 		type: 'richtext',
-		placeholder: 'Beschrijving van de activiteit',
+		placeholder: 'Volledige inhoud van de activiteit...',
+		helpText: 'HTML is toegestaan',
 	},
 	{
 		name: 'categorie',

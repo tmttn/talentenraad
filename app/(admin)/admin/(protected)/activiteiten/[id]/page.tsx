@@ -25,7 +25,7 @@ export default async function EditActivityPage({params}: PageProps) {
 				<div className='lg:col-span-1'>
 					<SeoInsights
 						title={activity.data.titel}
-						description={activity.data.beschrijving}
+						description={activity.data.samenvatting}
 						image={activity.data.afbeelding}
 					/>
 				</div>

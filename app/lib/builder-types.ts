@@ -7,7 +7,8 @@ export type ActivityData = {
 	datum: string;
 	tijd?: string;
 	locatie?: string;
-	beschrijving?: string;
+	samenvatting?: string;
+	inhoud?: string;
 	categorie: ActivityCategory;
 	afbeelding?: string;
 	vastgepind?: boolean;

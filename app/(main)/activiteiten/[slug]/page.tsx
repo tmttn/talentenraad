@@ -21,7 +21,8 @@ type Activity = {
 		datum: string;
 		tijd?: string;
 		locatie?: string;
-		beschrijving?: string;
+		samenvatting?: string;
+		inhoud?: string;
 		categorie: string;
 		afbeelding?: string;
 	};
@@ -129,7 +130,7 @@ export async function generateMetadata({params}: {params: Promise<{slug: string}
 	}
 
 	const itemSlug = generateSlug(item.data.titel);
-	const description = item.data.beschrijving ?? `Activiteit op ${formatDate(item.data.datum)}`;
+	const description = item.data.samenvatting ?? `Activiteit op ${formatDate(item.data.datum)}`;
 
 	return generateSeoMetadata({
 		title: item.data.titel,
@@ -164,7 +165,7 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 
 	const eventSchema = generateEventSchema({
 		name: item.data.titel,
-		description: item.data.beschrijving,
+		description: item.data.samenvatting,
 		url: `/activiteiten/${itemSlug}`,
 		startDate: item.data.datum,
 		location: item.data.locatie,
@@ -263,11 +264,11 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 						</div>
 					)}
 
-					{/* Description */}
-					{item.data.beschrijving && (
+					{/* Content */}
+					{item.data.inhoud && (
 						<div className='prose prose-lg max-w-none prose-headings:text-gray-800 prose-p:text-gray-600'>
 							<h2>Over deze activiteit</h2>
-							<p className='whitespace-pre-line'>{item.data.beschrijving}</p>
+							<div dangerouslySetInnerHTML={{__html: item.data.inhoud}} />
 						</div>
 					)}
 

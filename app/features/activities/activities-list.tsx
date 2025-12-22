@@ -24,7 +24,8 @@ type Activity = {
 		datum: string;
 		tijd?: string;
 		locatie?: string;
-		beschrijving?: string;
+		samenvatting?: string;
+		inhoud?: string;
 		categorie: string;
 		vastgepind?: boolean;
 		volgorde?: number;
@@ -204,11 +205,11 @@ function ActivitiesList({
 														{activity.data.locatie}
 													</p>
 												)}
-												{showDescription && activity.data.beschrijving && (
+												{showDescription && activity.data.samenvatting && (
 													<p className='text-sm text-gray-600 mt-2 line-clamp-2'>
-														{activity.data.beschrijving.length > 150
-															? `${activity.data.beschrijving.slice(0, 150)}...`
-															: activity.data.beschrijving}
+														{activity.data.samenvatting.length > 150
+															? `${activity.data.samenvatting.slice(0, 150)}...`
+															: activity.data.samenvatting}
 													</p>
 												)}
 											</div>
@@ -295,7 +296,7 @@ export const ActivitiesListInfo = {
 			name: 'showDescription',
 			type: 'boolean',
 			defaultValue: false,
-			helperText: 'Toon beschrijving van activiteiten',
+			helperText: 'Toon samenvatting van activiteiten',
 		},
 	],
 };

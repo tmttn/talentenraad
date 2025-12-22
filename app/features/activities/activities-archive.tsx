@@ -13,7 +13,8 @@ type Activity = {
 		datum: string;
 		tijd?: string;
 		locatie?: string;
-		beschrijving?: string;
+		samenvatting?: string;
+		inhoud?: string;
 		categorie: string;
 	};
 };

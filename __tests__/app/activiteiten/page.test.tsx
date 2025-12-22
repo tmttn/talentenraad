@@ -35,7 +35,8 @@ const mockActivity = {
 		datum: '2025-06-15',
 		tijd: '14:00',
 		locatie: 'Test Locatie',
-		beschrijving: 'Test beschrijving van de activiteit',
+		samenvatting: 'Test samenvatting van de activiteit',
+		inhoud: '<p>Test inhoud van de activiteit</p>',
 		categorie: 'feest',
 		afbeelding: 'https://example.com/image.jpg',
 	},
@@ -56,7 +57,7 @@ describe('ActivityDetailPage', () => {
 
 		expect(screen.getByRole('heading', {level: 1, name: 'Test Activiteit'})).toBeInTheDocument();
 		expect(screen.getByText('Test Locatie')).toBeInTheDocument();
-		expect(screen.getByText('Test beschrijving van de activiteit')).toBeInTheDocument();
+		expect(screen.getByText('Test inhoud van de activiteit')).toBeInTheDocument();
 	});
 
 	it('renders category badge', async () => {
@@ -176,7 +177,7 @@ describe('generateMetadata', () => {
 		const metadata = await generateMetadata({params});
 
 		expect(metadata.title).toBe('Test Activiteit | Talentenraad');
-		expect(metadata.description).toBe('Test beschrijving van de activiteit');
+		expect(metadata.description).toBe('Test samenvatting van de activiteit');
 	});
 
 	it('returns fallback title when activity not found', async () => {
@@ -190,12 +191,12 @@ describe('generateMetadata', () => {
 		expect(metadata.title).toBe('Activiteit niet gevonden');
 	});
 
-	it('uses date in description when no beschrijving', async () => {
+	it('uses date in description when no samenvatting', async () => {
 		const activityWithoutDescription = {
 			...mockActivity,
 			data: {
 				...mockActivity.data,
-				beschrijving: undefined,
+				samenvatting: undefined,
 			},
 		};
 		mockFetch.mockResolvedValue({

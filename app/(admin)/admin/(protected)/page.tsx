@@ -361,7 +361,7 @@ async function DashboardContent() {
 				activities={data.activities.map(item => ({
 					id: item.id,
 					title: item.data.titel,
-					description: item.data.beschrijving,
+					description: item.data.samenvatting,
 					image: item.data.afbeelding,
 				}))}
 			/>
