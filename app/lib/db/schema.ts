@@ -200,5 +200,24 @@ export type NewClapSession = typeof clapSessions.$inferInsert;
 export type Feedback = typeof feedback.$inferSelect;
 export type NewFeedback = typeof feedback.$inferInsert;
 
+// Sponsor analytics - aggregate tracking
+export const sponsorAnalytics = pgTable('sponsor_analytics', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	sponsorId: text('sponsor_id').notNull(),
+	sponsorName: text('sponsor_name').notNull(),
+	date: timestamp('date').notNull(), // Date of the analytics (truncated to day)
+	impressions: integer('impressions').default(0).notNull(),
+	clicks: integer('clicks').default(0).notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, table => [
+	uniqueIndex('sponsor_analytics_unique_idx').on(table.sponsorId, table.date),
+	index('sponsor_analytics_sponsor_id_idx').on(table.sponsorId),
+	index('sponsor_analytics_date_idx').on(table.date),
+]);
+
+export type SponsorAnalytics = typeof sponsorAnalytics.$inferSelect;
+export type NewSponsorAnalytics = typeof sponsorAnalytics.$inferInsert;
+
 // Re-export shared types for convenience
 export type {SeasonalDecorationsConfig} from '../types';

@@ -24,6 +24,7 @@ const knownPrefixes = [
 	'/api',
 	'/activiteiten/',
 	'/nieuws/',
+	'/sponsors/',
 	'/sections/',
 	'/component-preview/',
 	'/_next',

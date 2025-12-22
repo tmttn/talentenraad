@@ -62,9 +62,30 @@ export type Announcement = {
 	data: AnnouncementData;
 };
 
-export type BuilderModel = 'activiteit' | 'nieuws' | 'aankondiging';
+export type SponsorTier = 'gold' | 'silver' | 'bronze' | 'partner';
 
-export type ContentItem = Activity | NewsItem | Announcement;
+export type SponsorData = {
+	naam: string;
+	logo: string;
+	website?: string;
+	beschrijving?: string;
+	tier: SponsorTier;
+	actief: boolean;
+	volgorde?: number;
+};
+
+export type Sponsor = {
+	id: string;
+	name: string;
+	published: 'published' | 'draft' | 'archived';
+	createdDate: number;
+	lastUpdated?: number;
+	data: SponsorData;
+};
+
+export type BuilderModel = 'activiteit' | 'nieuws' | 'aankondiging' | 'sponsor';
+
+export type ContentItem = Activity | NewsItem | Announcement | Sponsor;
 
 // API response types
 export type BuilderListResponse<T> = {

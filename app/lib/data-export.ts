@@ -1,10 +1,10 @@
 // Export/Import type definitions for data management
 
-import type {Activity, NewsItem, Announcement} from './builder-types';
+import type {Activity, NewsItem, Announcement, Sponsor} from './builder-types';
 import type {User, Submission, AuditLog, PushSubscription, NotificationHistoryEntry} from './db/schema';
 
 // Content type identifiers
-export type BuilderContentType = 'nieuws' | 'activiteit' | 'aankondiging';
+export type BuilderContentType = 'nieuws' | 'activiteit' | 'aankondiging' | 'sponsor';
 export type DatabaseContentType = 'users' | 'submissions' | 'auditLogs' | 'pushSubscriptions' | 'notificationHistory';
 export type ContentType = BuilderContentType | DatabaseContentType;
 
@@ -16,6 +16,7 @@ export type ContentTypeMap = {
 	nieuws: NewsItem;
 	activiteit: Activity;
 	aankondiging: Announcement;
+	sponsor: Sponsor;
 	users: Omit<User, 'auth0Id'>; // Exclude sensitive field
 	submissions: Submission;
 	auditLogs: AuditLog;
@@ -85,6 +86,7 @@ export const contentTypeInfo: ContentTypeInfo[] = [
 	{key: 'nieuws', label: 'Nieuwsbericht', labelPlural: 'Nieuwsberichten', source: 'builder', canImport: true},
 	{key: 'activiteit', label: 'Activiteit', labelPlural: 'Activiteiten', source: 'builder', canImport: true},
 	{key: 'aankondiging', label: 'Aankondiging', labelPlural: 'Aankondigingen', source: 'builder', canImport: true},
+	{key: 'sponsor', label: 'Sponsor', labelPlural: 'Sponsors', source: 'builder', canImport: true},
 	{key: 'users', label: 'Gebruiker', labelPlural: 'Gebruikers', source: 'database', canImport: true},
 	{key: 'submissions', label: 'Bericht', labelPlural: 'Berichten', source: 'database', canImport: true},
 	{key: 'auditLogs', label: 'Audit Log', labelPlural: 'Audit Logs', source: 'database', canImport: false},

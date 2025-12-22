@@ -17,6 +17,7 @@ import {
 	History,
 	Bell,
 	Send,
+	Building2,
 } from 'lucide-react';
 import {toast} from 'sonner';
 import {type ContentType, type ImportValidationResult, type ImportResult, contentTypeInfo} from '@/lib/data-export';
@@ -31,6 +32,7 @@ const iconMap: Record<ContentType, React.ReactNode> = {
 	nieuws: <Newspaper className='w-5 h-5' />,
 	activiteit: <Calendar className='w-5 h-5' />,
 	aankondiging: <Megaphone className='w-5 h-5' />,
+	sponsor: <Building2 className='w-5 h-5' />,
 	users: <Users className='w-5 h-5' />,
 	submissions: <Mail className='w-5 h-5' />,
 	auditLogs: <History className='w-5 h-5' />,

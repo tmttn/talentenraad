@@ -26,6 +26,7 @@ import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
 import {CtaButtonInfo} from '@components/ui/cta-button';
 import {TypographyInfo} from '@components/ui/typography';
 import {PhotoGalleryInfo} from '@features/gallery/photo-gallery';
+import {SponsorBannerInfo} from '@features/sponsors/sponsor-banner';
 
 type BuilderContentProperties = {
 	// eslint-disable-next-line @typescript-eslint/no-restricted-types
@@ -67,6 +68,7 @@ export function BuilderContent({content, apiKey, model}: Readonly<BuilderContent
 				CtaButtonInfo,
 				TypographyInfo,
 				PhotoGalleryInfo,
+				SponsorBannerInfo,
 			]}
 		/>
 	);

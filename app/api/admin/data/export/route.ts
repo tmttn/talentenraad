@@ -6,7 +6,7 @@ import {isNull, eq} from 'drizzle-orm';
 import type {ContentType, ExportData, ExportMetadata} from '@/lib/data-export';
 import type {BuilderModel} from '@/lib/builder-types';
 
-const builderModels = new Set<ContentType>(['nieuws', 'activiteit', 'aankondiging']);
+const builderModels = new Set<ContentType>(['nieuws', 'activiteit', 'aankondiging', 'sponsor']);
 
 function isBuilderModel(type: ContentType): type is BuilderModel {
 	return builderModels.has(type);
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
 
 	// Validate all types
 	const validTypes: ContentType[] = [
-		'nieuws', 'activiteit', 'aankondiging',
+		'nieuws', 'activiteit', 'aankondiging', 'sponsor',
 		'users', 'submissions', 'auditLogs',
 		'pushSubscriptions', 'notificationHistory',
 	];
