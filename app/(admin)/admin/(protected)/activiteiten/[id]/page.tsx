@@ -27,6 +27,7 @@ export default async function EditActivityPage({params}: PageProps) {
 						title={activity.data.titel}
 						description={activity.data.samenvatting}
 						image={activity.data.afbeelding}
+						content={activity.data.inhoud}
 					/>
 				</div>
 			</div>

@@ -290,17 +290,17 @@ export function analyzeSeo(content: {
 
 	// Description analysis (25 points max)
 	if (!content.description) {
-		issues.push({type: 'error', message: 'Beschrijving ontbreekt', field: 'description'});
+		issues.push({type: 'error', message: 'Samenvatting ontbreekt', field: 'description'});
 		score -= 25;
 		fieldScores.description = {
 			score: 0,
 			maxScore: 25,
 			status: 'missing',
-			recommendation: 'Voeg een beschrijving toe van 120-160 tekens',
+			recommendation: 'Voeg een samenvatting toe van 120-160 tekens',
 		};
-		quickWins.push({field: 'description', action: 'Voeg een beschrijving toe', impact: 25});
+		quickWins.push({field: 'description', action: 'Voeg een samenvatting toe', impact: 25});
 	} else if (content.description.length < 120) {
-		issues.push({type: 'warning', message: `Beschrijving is te kort (${content.description.length}/120 tekens)`, field: 'description'});
+		issues.push({type: 'warning', message: `Samenvatting is te kort (${content.description.length}/120 tekens)`, field: 'description'});
 		score -= 10;
 		fieldScores.description = {
 			score: 15,
@@ -308,17 +308,17 @@ export function analyzeSeo(content: {
 			status: 'warning',
 			recommendation: `Voeg nog ${120 - content.description.length} tekens toe`,
 		};
-		quickWins.push({field: 'description', action: `Verleng beschrijving met ${120 - content.description.length} tekens`, impact: 10});
+		quickWins.push({field: 'description', action: `Verleng samenvatting met ${120 - content.description.length} tekens`, impact: 10});
 	} else if (content.description.length > 160) {
-		issues.push({type: 'warning', message: `Beschrijving is te lang (${content.description.length}/160 tekens)`, field: 'description'});
+		issues.push({type: 'warning', message: `Samenvatting is te lang (${content.description.length}/160 tekens)`, field: 'description'});
 		score -= 5;
 		fieldScores.description = {
 			score: 20,
 			maxScore: 25,
 			status: 'warning',
-			recommendation: `Verkort beschrijving met ${content.description.length - 160} tekens`,
+			recommendation: `Verkort samenvatting met ${content.description.length - 160} tekens`,
 		};
-		quickWins.push({field: 'description', action: `Verkort beschrijving met ${content.description.length - 160} tekens`, impact: 5});
+		quickWins.push({field: 'description', action: `Verkort samenvatting met ${content.description.length - 160} tekens`, impact: 5});
 	} else {
 		fieldScores.description = {score: 25, maxScore: 25, status: 'good'};
 	}

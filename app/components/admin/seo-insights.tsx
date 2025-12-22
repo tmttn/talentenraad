@@ -151,7 +151,7 @@ export function SeoInsights({
 				{/* Field Progress Bars */}
 				<div className='space-y-3'>
 					<FieldProgressBar fieldScore={analysis.fieldScores.title} label='Titel' />
-					<FieldProgressBar fieldScore={analysis.fieldScores.description} label='Beschrijving' />
+					<FieldProgressBar fieldScore={analysis.fieldScores.description} label='Samenvatting' />
 					<FieldProgressBar fieldScore={analysis.fieldScores.image} label='Afbeelding' />
 					{analysis.fieldScores.content && (
 						<FieldProgressBar fieldScore={analysis.fieldScores.content} label='Inhoud' />
@@ -159,7 +159,7 @@ export function SeoInsights({
 				</div>
 
 				{/* Quick Stats */}
-				<div className='grid grid-cols-3 gap-3'>
+				<div className={`grid gap-3 ${content ? 'grid-cols-4' : 'grid-cols-3'}`}>
 					<div className='text-center p-3 bg-gray-50 rounded-button'>
 						<FileText className='w-5 h-5 mx-auto text-gray-500 mb-1' />
 						<p className='text-xs text-gray-500'>Titel</p>
@@ -169,7 +169,7 @@ export function SeoInsights({
 					</div>
 					<div className='text-center p-3 bg-gray-50 rounded-button'>
 						<FileText className='w-5 h-5 mx-auto text-gray-500 mb-1' />
-						<p className='text-xs text-gray-500'>Beschrijving</p>
+						<p className='text-xs text-gray-500'>Samenvatting</p>
 						<p className='text-sm font-medium text-gray-800'>
 							{description ? `${description.length} tekens` : 'Ontbreekt'}
 						</p>
@@ -185,6 +185,19 @@ export function SeoInsights({
 							)}
 						</p>
 					</div>
+					{content !== undefined && (
+						<div className='text-center p-3 bg-gray-50 rounded-button'>
+							<FileText className='w-5 h-5 mx-auto text-gray-500 mb-1' />
+							<p className='text-xs text-gray-500'>Inhoud</p>
+							<p className='text-sm font-medium text-gray-800'>
+								{content ? (
+									<CheckCircle className='w-4 h-4 mx-auto text-green-500' />
+								) : (
+									'Ontbreekt'
+								)}
+							</p>
+						</div>
+					)}
 				</div>
 
 				{/* Quick Wins */}
@@ -495,7 +508,7 @@ export function SeoIssueBreakdown({items}: Readonly<IssueBreakdownProperties>) {
 				{(issuesByField.description.missing > 0 || issuesByField.description.warning > 0) && (
 					<IssueFieldRow
 						icon={<FileText className='w-5 h-5' />}
-						label='Beschrijving'
+						label='Samenvatting'
 						missing={issuesByField.description.missing}
 						warning={issuesByField.description.warning}
 						items={issuesByField.description.items}
