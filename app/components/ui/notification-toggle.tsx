@@ -1,6 +1,6 @@
 'use client';
 
-import {Bell, BellOff, Loader2} from 'lucide-react';
+import {Loader2} from 'lucide-react';
 import {usePushNotifications} from '@/lib/hooks/use-push-notifications';
 // eslint-disable-next-line import-x/extensions
 import {useFlag} from '@/lib/flags-client';
@@ -18,7 +18,7 @@ export function NotificationToggle({className = ''}: Readonly<NotificationToggle
 		return null;
 	}
 
-	const handleClick = async () => {
+	const handleToggle = async () => {
 		if (permission === 'denied') {
 			// Show alert about blocked notifications
 			// eslint-disable-next-line no-alert
@@ -36,23 +36,32 @@ export function NotificationToggle({className = ''}: Readonly<NotificationToggle
 	return (
 		<button
 			type='button'
-			onClick={handleClick}
+			onClick={handleToggle}
 			disabled={isLoading}
-			title={isSubscribed ? 'Notificaties uitschakelen' : 'Notificaties inschakelen'}
-			aria-label={isSubscribed ? 'Notificaties uitschakelen' : 'Notificaties inschakelen'}
-			className={`p-2 rounded-full transition-colors disabled:opacity-50 ${
+			className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
 				isSubscribed
-					? 'text-primary hover:bg-primary/10'
-					: 'text-gray-500 hover:bg-gray-100 hover:text-gray-700'
-			} ${className}`}
+					? 'bg-primary/10 text-primary hover:bg-primary/20'
+					: 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+			} disabled:opacity-50 ${className}`}
 		>
 			{isLoading ? (
-				<Loader2 className='w-5 h-5 animate-spin' />
-			) : isSubscribed ? (
-				<Bell className='w-5 h-5' />
+				<Loader2 className='w-4 h-4 animate-spin' />
 			) : (
-				<BellOff className='w-5 h-5' />
+				<span
+					className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+						isSubscribed ? 'bg-primary' : 'bg-gray-300'
+					}`}
+				>
+					<span
+						className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
+							isSubscribed ? 'translate-x-4' : 'translate-x-0.5'
+						}`}
+					/>
+				</span>
 			)}
+			<span className='whitespace-nowrap'>
+				{isSubscribed ? 'Notificaties aan' : 'Notificaties uit'}
+			</span>
 		</button>
 	);
 }
