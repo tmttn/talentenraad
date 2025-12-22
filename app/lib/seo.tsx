@@ -8,7 +8,7 @@ export const siteConfig = {
 	locale: 'nl_BE',
 	type: 'website' as const,
 	twitterHandle: '@talentenraad',
-	defaultImage: '/images/og-default.jpg',
+	defaultImage: '/og-default.png',
 };
 
 export type SeoConfig = {
