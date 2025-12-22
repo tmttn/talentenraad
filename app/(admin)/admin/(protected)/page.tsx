@@ -23,9 +23,11 @@ import {
 	Search,
 	TrendingUp,
 	ChevronRight,
+	Heart,
 } from 'lucide-react';
 import {db, submissions} from '@/lib/db';
 import {listContent} from '@/lib/builder-admin';
+import {getTotalClapsStats} from '@/lib/claps-admin';
 import type {Activity as ActivityType, NewsItem, Announcement} from '@/lib/builder-types';
 import {DashboardSkeleton} from '@components/skeletons';
 import {analyzeSeo, getSeoScoreColor, getSeoScoreBgColor, getSeoScoreLabel} from '@/lib/seo';
@@ -106,6 +108,13 @@ function getCategoryColor(category: string): string {
 	}
 }
 
+type ClapsStats = {
+	totalClaps: number;
+	newsClaps: number;
+	activitiesClaps: number;
+	topContent: Array<{contentType: string; contentId: string; totalClaps: number}>;
+};
+
 type DashboardData = {
 	totalCount: number;
 	unreadCount: number;
@@ -123,6 +132,7 @@ type DashboardData = {
 	activities: ActivityType[];
 	news: NewsItem[];
 	announcements: Announcement[];
+	clapsStats: ClapsStats;
 };
 
 async function fetchDashboardData(): Promise<DashboardData> {
@@ -130,6 +140,7 @@ async function fetchDashboardData(): Promise<DashboardData> {
 	let totalCount = 0;
 	let unreadCount = 0;
 	let recentSubmissions: DashboardData['recentSubmissions'] = [];
+	let clapsStats: ClapsStats = {totalClaps: 0, newsClaps: 0, activitiesClaps: 0, topContent: []};
 
 	// Skip database calls during build phase
 	if (!isBuildPhase) {
@@ -148,6 +159,9 @@ async function fetchDashboardData(): Promise<DashboardData> {
 
 			totalCount = totalResult.count;
 			unreadCount = unreadResult.count;
+
+			// Fetch claps stats
+			clapsStats = await getTotalClapsStats();
 		} catch {
 			// Silently fail - dashboard will show zeros for submissions
 		}
@@ -178,6 +192,7 @@ async function fetchDashboardData(): Promise<DashboardData> {
 		activities,
 		news,
 		announcements,
+		clapsStats,
 	};
 }
 
@@ -358,6 +373,56 @@ function QuickLinks() {
 	);
 }
 
+function ClapsOverview({clapsStats}: Readonly<{clapsStats: ClapsStats}>) {
+	return (
+		<div className='bg-white rounded-card shadow-base overflow-hidden'>
+			<div className='p-4 sm:p-5'>
+				<div className='flex items-center justify-between mb-4'>
+					<div className='flex items-center gap-2'>
+						<Heart className='w-5 h-5 text-pink-500 fill-pink-500' />
+						<h3 className='font-semibold text-gray-800'>Bezoekers Claps</h3>
+					</div>
+				</div>
+
+				<div className='grid grid-cols-3 gap-4'>
+					{/* Total Claps */}
+					<div className='flex flex-col items-center'>
+						<div className='w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center'>
+							<span className='text-xl font-bold text-pink-600'>{clapsStats.totalClaps}</span>
+						</div>
+						<p className='text-xs text-gray-500 mt-2'>Totaal</p>
+					</div>
+
+					{/* News Claps */}
+					<div className='flex flex-col items-center justify-center'>
+						<div className='flex items-center gap-1 text-blue-600'>
+							<Newspaper className='w-4 h-4' />
+							<p className='text-2xl font-bold'>{clapsStats.newsClaps}</p>
+						</div>
+						<p className='text-xs text-gray-500'>Nieuws</p>
+					</div>
+
+					{/* Activities Claps */}
+					<div className='flex flex-col items-center justify-center'>
+						<div className='flex items-center gap-1 text-green-600'>
+							<Calendar className='w-4 h-4' />
+							<p className='text-2xl font-bold'>{clapsStats.activitiesClaps}</p>
+						</div>
+						<p className='text-xs text-gray-500'>Activiteiten</p>
+					</div>
+				</div>
+
+				{clapsStats.totalClaps > 0 && (
+					<div className='mt-4 flex items-center gap-2 text-sm text-pink-700 bg-pink-50 px-3 py-2 rounded-button'>
+						<Heart className='w-4 h-4 fill-pink-500' />
+						<span>Bezoekers waarderen je content!</span>
+					</div>
+				)}
+			</div>
+		</div>
+	);
+}
+
 async function DashboardContent() {
 	const data = await fetchDashboardData();
 
@@ -420,8 +485,11 @@ async function DashboardContent() {
 				</Link>
 			</div>
 
-			{/* SEO Quick Overview */}
-			<SeoQuickOverview news={data.news} activities={data.activities} />
+			{/* SEO Quick Overview & Claps Overview */}
+			<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
+				<SeoQuickOverview news={data.news} activities={data.activities} />
+				<ClapsOverview clapsStats={data.clapsStats} />
+			</div>
 
 			{/* Content Lists Grid */}
 			<div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
