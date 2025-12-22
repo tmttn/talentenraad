@@ -47,9 +47,23 @@ export function useRecaptcha() {
 				grecaptcha.ready(() => {
 					setIsReady(true);
 				});
+				return;
 			}
 
-			return;
+			// Script tag exists but grecaptcha not ready yet - poll until ready
+			const checkReady = setInterval(() => {
+				const g = getGrecaptcha();
+				if (g) {
+					clearInterval(checkReady);
+					g.ready(() => {
+						setIsReady(true);
+					});
+				}
+			}, 100);
+
+			return () => {
+				clearInterval(checkReady);
+			};
 		}
 
 		// Load the reCAPTCHA script
