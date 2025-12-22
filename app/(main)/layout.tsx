@@ -8,6 +8,7 @@ import {
 	type SeasonalDecorationsConfig,
 } from '@components/seasonal-decorations-context';
 import {Snowfall, SeasonalStyles} from '@components/seasonal-decorations';
+import {ConditionalFeedbackButton} from '@components/feedback';
 // eslint-disable-next-line import-x/extensions
 import {seasonalDecorations, cookieBanner, getAllFlags} from '@/lib/flags';
 // eslint-disable-next-line import-x/extensions
@@ -82,6 +83,7 @@ export default async function MainSiteLayout({
 					</Suspense>
 				</SafeSeasonalDecorations>
 				<ConditionalCookieBanner />
+				<ConditionalFeedbackButton />
 			</CookieConsentProvider>
 		</FlagsProvider>
 	);

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import {Calendar, Clock, MapPin} from 'lucide-react';
 import {AnimatedButton, AnimatedLink} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
+import {ClapButton} from '@components/claps';
 import {
 	generateMetadata as generateSeoMetadata,
 	generateEventSchema,
@@ -271,6 +272,11 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 							<div dangerouslySetInnerHTML={{__html: item.data.inhoud}} />
 						</div>
 					)}
+
+					{/* Clap button */}
+					<div className='mt-8 flex items-center justify-center'>
+						<ClapButton contentType='activiteit' contentId={item.id} />
+					</div>
 
 					{/* CTA for future events */}
 					{!isPast && (

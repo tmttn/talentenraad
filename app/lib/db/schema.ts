@@ -8,6 +8,7 @@ import {
 	jsonb,
 	index,
 	integer,
+	uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
 // Audit action type enum
@@ -149,6 +150,55 @@ export type PushSubscription = typeof pushSubscriptions.$inferSelect;
 export type NewPushSubscription = typeof pushSubscriptions.$inferInsert;
 export type NotificationHistoryEntry = typeof notificationHistory.$inferSelect;
 export type NewNotificationHistoryEntry = typeof notificationHistory.$inferInsert;
+
+// Content claps aggregate table
+export const contentClaps = pgTable('content_claps', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	contentType: text('content_type').notNull(), // 'nieuws' | 'activiteit'
+	contentId: text('content_id').notNull(),
+	totalClaps: integer('total_claps').default(0).notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, table => [
+	uniqueIndex('content_claps_unique_idx').on(table.contentType, table.contentId),
+]);
+
+// Per-session clap tracking (max 50 claps per visitor per content)
+export const clapSessions = pgTable('clap_sessions', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	sessionId: text('session_id').notNull(),
+	contentType: text('content_type').notNull(),
+	contentId: text('content_id').notNull(),
+	clapCount: integer('clap_count').default(0).notNull(),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	updatedAt: timestamp('updated_at').defaultNow().notNull(),
+}, table => [
+	uniqueIndex('clap_sessions_unique_idx').on(table.sessionId, table.contentType, table.contentId),
+]);
+
+// Visitor feedback
+export const feedback = pgTable('feedback', {
+	id: uuid('id').defaultRandom().primaryKey(),
+	rating: integer('rating').notNull(), // 1-5
+	comment: text('comment'),
+	email: text('email'),
+	pageUrl: text('page_url'),
+	pageTitle: text('page_title'),
+	userAgent: text('user_agent'),
+	createdAt: timestamp('created_at').defaultNow().notNull(),
+	readAt: timestamp('read_at'),
+	archivedAt: timestamp('archived_at'),
+}, table => [
+	index('feedback_created_at_idx').on(table.createdAt),
+	index('feedback_rating_idx').on(table.rating),
+]);
+
+export type ContentClaps = typeof contentClaps.$inferSelect;
+export type NewContentClaps = typeof contentClaps.$inferInsert;
+export type ClapSession = typeof clapSessions.$inferSelect;
+export type NewClapSession = typeof clapSessions.$inferInsert;
+export type Feedback = typeof feedback.$inferSelect;
+export type NewFeedback = typeof feedback.$inferInsert;
 
 // Re-export shared types for convenience
 export type {SeasonalDecorationsConfig} from '../types';
