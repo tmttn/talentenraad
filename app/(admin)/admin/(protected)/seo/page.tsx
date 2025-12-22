@@ -312,15 +312,15 @@ export default function SeoDashboardPage() {
 		setLoading(true);
 		try {
 			const [newsResponse, activitiesResponse] = await Promise.all([
-				fetch('/api/admin/content?model=nieuws'),
-				fetch('/api/admin/content?model=activiteit'),
+				fetch('/api/admin/content/nieuws'),
+				fetch('/api/admin/content/activiteit'),
 			]);
 
-			const newsData = await newsResponse.json() as {results: Array<{id: string; data: {titel?: string; samenvatting?: string; afbeelding?: string; inhoud?: string; datum?: string}}>};
-			const activitiesData = await activitiesResponse.json() as {results: Array<{id: string; data: {titel?: string; samenvatting?: string; afbeelding?: string; inhoud?: string; datum?: string}}>};
+			const newsData = await newsResponse.json() as {items: Array<{id: string; data: {titel?: string; samenvatting?: string; afbeelding?: string; inhoud?: string; datum?: string}}>};
+			const activitiesData = await activitiesResponse.json() as {items: Array<{id: string; data: {titel?: string; samenvatting?: string; afbeelding?: string; inhoud?: string; datum?: string}}>};
 
 			const items: ContentItem[] = [
-				...(newsData.results ?? []).map(item => ({
+				...(newsData.items ?? []).map(item => ({
 					id: item.id,
 					type: 'nieuws' as const,
 					title: item.data.titel,
@@ -329,7 +329,7 @@ export default function SeoDashboardPage() {
 					content: item.data.inhoud,
 					date: item.data.datum,
 				})),
-				...(activitiesData.results ?? []).map(item => ({
+				...(activitiesData.items ?? []).map(item => ({
 					id: item.id,
 					type: 'activiteiten' as const,
 					title: item.data.titel,
