@@ -6,6 +6,16 @@ describe('useRecaptcha', () => {
 	const mockExecute = jest.fn();
 	const mockReady = jest.fn(callback => callback());
 
+	// Helper to set up grecaptcha.enterprise mock
+	function setupGrecaptchaMock() {
+		(window as {grecaptcha?: unknown}).grecaptcha = {
+			enterprise: {
+				ready: mockReady,
+				execute: mockExecute,
+			},
+		};
+	}
+
 	beforeEach(() => {
 		jest.resetModules();
 		jest.clearAllMocks();
@@ -64,20 +74,17 @@ describe('useRecaptcha', () => {
 			process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY = 'test-site-key';
 		});
 
-		it('loads the reCAPTCHA script', () => {
+		it('loads the reCAPTCHA Enterprise script', () => {
 			renderHook(() => useRecaptcha());
 
 			const script = document.querySelector('#recaptcha-script');
 			expect(script).toBeInTheDocument();
-			expect(script).toHaveAttribute('src', 'https://www.google.com/recaptcha/api.js?render=test-site-key');
+			expect(script).toHaveAttribute('src', 'https://www.google.com/recaptcha/enterprise.js?render=test-site-key');
 		});
 
 		it('sets isReady to true when script loads', async () => {
-			// Set up grecaptcha mock before rendering
-			(window as {grecaptcha?: unknown}).grecaptcha = {
-				ready: mockReady,
-				execute: mockExecute,
-			};
+			// Set up grecaptcha.enterprise mock before rendering
+			setupGrecaptchaMock();
 
 			const {result} = renderHook(() => useRecaptcha());
 
@@ -124,10 +131,7 @@ describe('useRecaptcha', () => {
 			existingScript.id = 'recaptcha-script';
 			document.head.append(existingScript);
 
-			(window as {grecaptcha?: unknown}).grecaptcha = {
-				ready: mockReady,
-				execute: mockExecute,
-			};
+			setupGrecaptchaMock();
 
 			const {result} = renderHook(() => useRecaptcha());
 
@@ -139,10 +143,7 @@ describe('useRecaptcha', () => {
 		describe('executeRecaptcha', () => {
 			beforeEach(() => {
 				mockExecute.mockResolvedValue('test-token');
-				(window as {grecaptcha?: unknown}).grecaptcha = {
-					ready: mockReady,
-					execute: mockExecute,
-				};
+				setupGrecaptchaMock();
 			});
 
 			it('executes reCAPTCHA and returns token', async () => {
@@ -185,10 +186,7 @@ describe('useRecaptcha', () => {
 				const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
 				mockExecute.mockRejectedValue(new Error('Execute failed'));
 
-				(window as {grecaptcha?: unknown}).grecaptcha = {
-					ready: mockReady,
-					execute: mockExecute,
-				};
+				setupGrecaptchaMock();
 
 				const {result} = renderHook(() => useRecaptcha());
 

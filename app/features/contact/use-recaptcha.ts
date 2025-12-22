@@ -2,7 +2,7 @@
 
 import {useEffect, useState, useCallback} from 'react';
 
-type Grecaptcha = {
+type GrecaptchaEnterprise = {
 	ready: (callback: () => void) => void;
 	execute: (siteKey: string, options: {action: string}) => Promise<string>;
 };
@@ -10,20 +10,22 @@ type Grecaptcha = {
 declare global {
 	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Window {
-		grecaptcha?: Grecaptcha;
+		grecaptcha?: {
+			enterprise?: GrecaptchaEnterprise;
+		};
 	}
 }
 
 const recaptchaScriptId = 'recaptcha-script';
 
-function getGrecaptcha(): Grecaptcha | undefined {
+function getGrecaptchaEnterprise(): GrecaptchaEnterprise | undefined {
 	// eslint-disable-next-line unicorn/prefer-global-this
-	return window.grecaptcha;
+	return window.grecaptcha?.enterprise;
 }
 
 /**
- * Hook for reCAPTCHA v3 integration
- * Loads the reCAPTCHA script and provides executeRecaptcha function
+ * Hook for reCAPTCHA Enterprise integration
+ * Loads the reCAPTCHA Enterprise script and provides executeRecaptcha function
  */
 export function useRecaptcha() {
 	const [isReady, setIsReady] = useState(false);
@@ -42,7 +44,7 @@ export function useRecaptcha() {
 
 		// Check if already loaded
 		if (document.querySelector(`#${recaptchaScriptId}`)) {
-			const grecaptcha = getGrecaptcha();
+			const grecaptcha = getGrecaptchaEnterprise();
 			if (grecaptcha) {
 				grecaptcha.ready(() => {
 					setIsReady(true);
@@ -52,7 +54,7 @@ export function useRecaptcha() {
 
 			// Script tag exists but grecaptcha not ready yet - poll until ready
 			const checkReady = setInterval(() => {
-				const g = getGrecaptcha();
+				const g = getGrecaptchaEnterprise();
 				if (g) {
 					clearInterval(checkReady);
 					g.ready(() => {
@@ -66,15 +68,15 @@ export function useRecaptcha() {
 			};
 		}
 
-		// Load the reCAPTCHA script
+		// Load the reCAPTCHA Enterprise script
 		const script = document.createElement('script');
 		script.id = recaptchaScriptId;
-		script.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+		script.src = `https://www.google.com/recaptcha/enterprise.js?render=${siteKey}`;
 		script.async = true;
 		script.defer = true;
 
 		script.addEventListener('load', () => {
-			getGrecaptcha()?.ready(() => {
+			getGrecaptchaEnterprise()?.ready(() => {
 				setIsReady(true);
 			});
 		});
@@ -96,7 +98,7 @@ export function useRecaptcha() {
 			return undefined;
 		}
 
-		const grecaptcha = getGrecaptcha();
+		const grecaptcha = getGrecaptchaEnterprise();
 		if (!grecaptcha) {
 			setError('reCAPTCHA not loaded');
 			return undefined;
