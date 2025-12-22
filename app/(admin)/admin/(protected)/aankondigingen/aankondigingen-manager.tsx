@@ -6,6 +6,7 @@ import {Plus, Power, PowerOff, Pencil, Trash2} from 'lucide-react';
 import type {Announcement, AnnouncementType} from '@/lib/builder-types';
 import {DeleteDialog} from '@/features/admin/delete-dialog';
 import {TableFilters} from '@/features/admin/table-filters';
+import {ExportButton} from '@/features/admin/export-button';
 
 type AankondigingenManagerProps = {
 	announcements: Announcement[];
@@ -411,6 +412,12 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
 										<Pencil className='w-4 h-4' />
 										<span className='hidden lg:inline'>Bewerk</span>
 									</button>
+									<ExportButton
+										contentType='aankondiging'
+										itemId={announcement.id}
+										label='Exporteer'
+										variant='icon'
+									/>
 									<button
 										type='button'
 										onClick={() => {

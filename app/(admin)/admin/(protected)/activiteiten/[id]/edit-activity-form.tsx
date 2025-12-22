@@ -3,6 +3,7 @@
 import {useState} from 'react';
 import {ContentForm, type FieldDefinition} from '@/features/admin/content-form';
 import {SeoInsights} from '@components/admin/seo-insights';
+import {ExportButton} from '@/features/admin/export-button';
 import type {Activity} from '@/lib/builder-types';
 
 const activityFields: FieldDefinition[] = [
@@ -116,13 +117,23 @@ export function EditActivityForm({activity}: EditActivityFormProps) {
 				/>
 			</div>
 			<div className='lg:col-span-1'>
-				<div className='sticky top-6'>
+				<div className='sticky top-6 space-y-4'>
 					<SeoInsights
 						title={formValues.titel as string | undefined}
 						description={formValues.samenvatting as string | undefined}
 						image={formValues.afbeelding as string | undefined}
 						content={formValues.inhoud as string | undefined}
 					/>
+					<div className='bg-white rounded-card shadow-base p-4'>
+						<h3 className='text-sm font-semibold text-gray-800 mb-3'>Acties</h3>
+						<ExportButton
+							contentType='activiteit'
+							itemId={activity.id}
+							label='Exporteer activiteit'
+							variant='secondary'
+							className='w-full justify-center'
+						/>
+					</div>
 				</div>
 			</div>
 		</div>

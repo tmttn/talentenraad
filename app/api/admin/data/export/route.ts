@@ -1,8 +1,8 @@
 import {type NextRequest, NextResponse} from 'next/server';
 import {auth0, verifyAdmin} from '@/lib/auth0';
-import {listContent} from '@/lib/builder-admin';
+import {listContent, getContent} from '@/lib/builder-admin';
 import {db, users, submissions, auditLogs, pushSubscriptions, notificationHistory} from '@/lib/db';
-import {isNull} from 'drizzle-orm';
+import {isNull, eq} from 'drizzle-orm';
 import type {ContentType, ExportData, ExportMetadata} from '@/lib/data-export';
 import type {BuilderModel} from '@/lib/builder-types';
 
@@ -25,6 +25,7 @@ export async function GET(request: NextRequest) {
 
 	const searchParameters = request.nextUrl.searchParams;
 	const typesParam = searchParameters.get('types');
+	const idParam = searchParameters.get('id');
 	const includeArchived = searchParameters.get('includeArchived') === 'true';
 
 	if (!typesParam) {
@@ -44,6 +45,11 @@ export async function GET(request: NextRequest) {
 		if (!validTypes.includes(type)) {
 			return NextResponse.json({error: `Invalid type: ${type}`}, {status: 400});
 		}
+	}
+
+	// Single item export by ID
+	if (idParam && types.length === 1) {
+		return handleSingleItemExport(types[0], idParam);
 	}
 
 	try {
@@ -147,5 +153,132 @@ export async function GET(request: NextRequest) {
 	} catch (error) {
 		console.error('Error exporting data:', error);
 		return NextResponse.json({error: 'Failed to export data'}, {status: 500});
+	}
+}
+
+async function handleSingleItemExport(
+	type: ContentType,
+	id: string,
+): Promise<NextResponse> {
+	try {
+		let item: unknown = null;
+		let itemName = id;
+
+		if (isBuilderModel(type)) {
+			// Builder.io content
+			const content = await getContent(type, id);
+			if (!content) {
+				return NextResponse.json({error: 'Item not found'}, {status: 404});
+			}
+
+			item = content;
+			itemName = content.name ?? id;
+		} else {
+			// Database content
+			switch (type) {
+				case 'users': {
+					const user = await db.query.users.findFirst({
+						where: eq(users.id, id),
+					});
+					if (!user) {
+						return NextResponse.json({error: 'User not found'}, {status: 404});
+					}
+
+					// Exclude auth0Id for security
+					const {auth0Id: _, ...safeUser} = user;
+					item = safeUser;
+					itemName = user.name ?? user.email;
+					break;
+				}
+
+				case 'submissions': {
+					const submission = await db.query.submissions.findFirst({
+						where: eq(submissions.id, id),
+					});
+					if (!submission) {
+						return NextResponse.json({error: 'Submission not found'}, {status: 404});
+					}
+
+					item = submission;
+					itemName = `${submission.name}-${submission.subject}`;
+					break;
+				}
+
+				case 'auditLogs': {
+					const log = await db.query.auditLogs.findFirst({
+						where: eq(auditLogs.id, id),
+					});
+					if (!log) {
+						return NextResponse.json({error: 'Audit log not found'}, {status: 404});
+					}
+
+					item = log;
+					itemName = `${log.actionType}-${log.resourceType}`;
+					break;
+				}
+
+				case 'pushSubscriptions': {
+					const subscription = await db.query.pushSubscriptions.findFirst({
+						where: eq(pushSubscriptions.id, id),
+					});
+					if (!subscription) {
+						return NextResponse.json({error: 'Push subscription not found'}, {status: 404});
+					}
+
+					item = subscription;
+					itemName = subscription.id;
+					break;
+				}
+
+				case 'notificationHistory': {
+					const notification = await db.query.notificationHistory.findFirst({
+						where: eq(notificationHistory.id, id),
+					});
+					if (!notification) {
+						return NextResponse.json({error: 'Notification not found'}, {status: 404});
+					}
+
+					item = notification;
+					itemName = notification.title ?? notification.id;
+					break;
+				}
+
+				default: {
+					return NextResponse.json({error: 'Invalid type for single export'}, {status: 400});
+				}
+			}
+		}
+
+		const metadata: ExportMetadata = {
+			version: '1.0',
+			exportDate: new Date().toISOString(),
+			contentType: type,
+			itemCount: 1,
+			source: isBuilderModel(type) ? 'builder' : 'database',
+		};
+
+		const exportData: ExportData<unknown> = {
+			metadata,
+			items: [item],
+		};
+
+		// Sanitize filename
+		const safeItemName = itemName
+			.toLowerCase()
+			.replaceAll(/[^a-z0-9-]/g, '-')
+			.replaceAll(/-+/g, '-')
+			.slice(0, 50);
+
+		const filename = `export-${type}-${safeItemName}-${new Date().toISOString().split('T')[0]}.json`;
+
+		return new NextResponse(JSON.stringify(exportData, null, 2), {
+			headers: {
+				'Content-Type': 'application/json',
+				'Content-Disposition': `attachment; filename="${filename}"`,
+			},
+		});
+	} catch (error) {
+		console.error('Error exporting single item:', error);
+		return NextResponse.json({error: 'Failed to export item'}, {status: 500});
 	}
 }
