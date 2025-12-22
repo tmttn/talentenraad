@@ -1,12 +1,18 @@
 import {Suspense} from 'react';
 import Link from 'next/link';
 import {listContent} from '@/lib/builder-admin';
+import {getClapsForContentType} from '@/lib/claps-admin';
 import {TableSkeleton} from '@components/skeletons';
 import {NieuwsTable} from './nieuws-table';
 
 async function NieuwsTableLoader() {
-	const newsItems = await listContent('nieuws');
-	return <NieuwsTable newsItems={newsItems} />;
+	const [newsItems, clapsMap] = await Promise.all([
+		listContent('nieuws'),
+		getClapsForContentType('nieuws'),
+	]);
+	// Convert Map to plain object for serialization
+	const clapsData: Record<string, number> = Object.fromEntries(clapsMap);
+	return <NieuwsTable newsItems={newsItems} clapsData={clapsData} />;
 }
 
 export default function NieuwsAdminPage() {

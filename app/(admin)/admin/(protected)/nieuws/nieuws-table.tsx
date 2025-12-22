@@ -4,7 +4,7 @@ import {useState, useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {toast} from 'sonner';
-import {Star, ExternalLink, Pencil, Trash2} from 'lucide-react';
+import {Star, ExternalLink, Pencil, Trash2, Heart} from 'lucide-react';
 import type {NewsItem} from '@/lib/builder-types';
 import {TableFilters} from '@/features/admin/table-filters';
 import {TablePagination} from '@/features/admin/table-pagination';
@@ -15,6 +15,7 @@ import {useViewMode} from '@/features/admin/use-view-mode';
 
 type NieuwsTableProps = {
 	newsItems: NewsItem[];
+	clapsData?: Record<string, number>;
 };
 
 const statusOptions = [
@@ -36,7 +37,7 @@ function generateSlug(title: string): string {
 		.replaceAll(/\s+/g, '-');
 }
 
-export function NieuwsTable({newsItems}: NieuwsTableProps) {
+export function NieuwsTable({newsItems, clapsData = {}}: NieuwsTableProps) {
 	const router = useRouter();
 	const [deleteItem, setDeleteItem] = useState<NewsItem | null>(null);
 	const {viewMode, setViewMode} = useViewMode();
@@ -212,6 +213,12 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 										/>
 									</th>
 									<th className='px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
+										<span className='flex items-center gap-1'>
+											<Heart className='w-3 h-3' />
+											Claps
+										</span>
+									</th>
+									<th className='px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
 										Vastgepind
 									</th>
 									<th className='px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider'>
@@ -225,7 +232,7 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 							<tbody className='divide-y divide-gray-200'>
 								{paginatedItems.length === 0 ? (
 									<tr>
-										<td colSpan={5} className='px-4 sm:px-6 py-8 text-center text-gray-500'>
+										<td colSpan={6} className='px-4 sm:px-6 py-8 text-center text-gray-500'>
 											{searchQuery || statusFilter || pinnedFilter
 												? 'Geen nieuws gevonden met de huidige filters.'
 												: 'Geen nieuws gevonden.'}
@@ -244,6 +251,16 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 											</td>
 											<td className='px-4 sm:px-6 py-4 text-sm text-gray-500 whitespace-nowrap'>
 												{formatDate(item.data.datum)}
+											</td>
+											<td className='px-4 sm:px-6 py-4'>
+												{clapsData[item.id] ? (
+													<span className='inline-flex items-center gap-1 text-sm text-pink-600 font-medium'>
+														<Heart className='w-4 h-4 fill-pink-600' />
+														{clapsData[item.id]}
+													</span>
+												) : (
+													<span className='text-sm text-gray-400'>-</span>
+												)}
 											</td>
 											<td className='px-4 sm:px-6 py-4'>
 												<Star
@@ -342,6 +359,12 @@ export function NieuwsTable({newsItems}: NieuwsTableProps) {
 										}`}>
 											{item.published === 'published' ? 'Gepubliceerd' : 'Concept'}
 										</span>
+										{clapsData[item.id] && clapsData[item.id] > 0 && (
+											<span className='inline-flex items-center gap-1 px-2 py-1 text-xs font-medium rounded bg-pink-100 text-pink-700'>
+												<Heart className='w-3 h-3 fill-pink-500' />
+												{clapsData[item.id]}
+											</span>
+										)}
 									</div>
 									<div className='flex gap-1 border-t border-gray-100 pt-3'>
 										<Link

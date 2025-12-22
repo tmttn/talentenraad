@@ -1,12 +1,18 @@
 import {Suspense} from 'react';
 import Link from 'next/link';
 import {listContent} from '@/lib/builder-admin';
+import {getClapsForContentType} from '@/lib/claps-admin';
 import {TableSkeleton} from '@components/skeletons';
 import {ActiviteitenTable} from './activiteiten-table';
 
 async function ActiviteitenTableLoader() {
-	const activities = await listContent('activiteit');
-	return <ActiviteitenTable activities={activities} />;
+	const [activities, clapsMap] = await Promise.all([
+		listContent('activiteit'),
+		getClapsForContentType('activiteit'),
+	]);
+	// Convert Map to plain object for serialization
+	const clapsData: Record<string, number> = Object.fromEntries(clapsMap);
+	return <ActiviteitenTable activities={activities} clapsData={clapsData} />;
 }
 
 export default function ActiviteitenAdminPage() {
