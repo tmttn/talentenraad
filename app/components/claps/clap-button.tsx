@@ -90,7 +90,7 @@ export function ClapButton({contentType, contentId, className = ''}: ClapButtonP
 						${buttonStateStyles}
 						${isAnimating ? 'clap-animate' : ''}
 					`}
-					aria-label={`${totalClaps} claps. ${canClap ? 'Klik om te klappen' : 'Maximum aantal claps bereikt'}`}
+					aria-label={`${totalClaps} keer geklapt. ${canClap ? 'Klik om te klappen' : 'Maximum bereikt'}`}
 				>
 					<span className="text-xl" role="img" aria-hidden="true">
 						{isLoading ? '...' : '👏'}
@@ -114,7 +114,7 @@ export function ClapButton({contentType, contentId, className = ''}: ClapButtonP
 					{isLoading ? '-' : totalClaps.toLocaleString('nl-BE')}
 				</span>
 				<span className="text-xs text-gray-500">
-					{totalClaps === 1 ? 'clap' : 'claps'}
+					keer
 				</span>
 			</div>
 		</div>
