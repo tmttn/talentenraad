@@ -30,6 +30,24 @@ export function SubmissionsPageClient({
 	const router = useRouter();
 	const [activeTab, setActiveTab] = useState<TabType>('inbox');
 
+	// Mark submissions as read when viewing the inbox tab
+	useEffect(() => {
+		if (activeTab === 'inbox' && unreadCounts?.submissions && unreadCounts.submissions > 0) {
+			const unreadIds = inboxSubmissions.filter(s => !s.readAt).map(s => s.id);
+			if (unreadIds.length > 0) {
+				fetch('/api/admin/submissions', {
+					method: 'PATCH',
+					headers: {'Content-Type': 'application/json'},
+					body: JSON.stringify({action: 'markRead', ids: unreadIds}),
+				}).then(() => {
+					router.refresh();
+				}).catch(() => {
+					// Silently fail
+				});
+			}
+		}
+	}, [activeTab, unreadCounts?.submissions, inboxSubmissions, router]);
+
 	// Mark feedback as read when viewing the feedback tab
 	useEffect(() => {
 		if (activeTab === 'feedback' && unreadCounts?.feedback && unreadCounts.feedback > 0) {
