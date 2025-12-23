@@ -10,6 +10,7 @@ import {
 } from '@components/seasonal-decorations-context';
 import {Snowfall, SeasonalStyles} from '@components/seasonal-decorations';
 import {ConditionalFeedbackButton} from '@components/feedback';
+import {EditModeButton} from '@components/builder/edit-mode-button';
 import {seasonalDecorations, cookieBanner, getAllFlags} from '@lib/flags';
 import {FlagsProvider} from '@lib/flags-client';
 
@@ -83,6 +84,9 @@ export default async function MainSiteLayout({
         </SafeSeasonalDecorations>
         <ConditionalCookieBanner />
         <ConditionalFeedbackButton />
+        <Suspense fallback={null}>
+          <EditModeButton />
+        </Suspense>
         <Toaster position='bottom-left' richColors closeButton />
       </CookieConsentProvider>
     </FlagsProvider>
