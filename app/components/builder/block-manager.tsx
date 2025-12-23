@@ -6,15 +6,32 @@ import {
   useEffect,
 } from 'react';
 import {
-  ChevronUp,
-  ChevronDown,
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities';
+import {
   Trash2,
   Plus,
   GripVertical,
   X,
   Layers,
+  Settings,
 } from 'lucide-react';
 import {ComponentPicker, type ComponentDefinition} from './component-picker';
+import {BlockEditor} from './block-editor';
 
 // Builder.io block type
 type BuilderBlock = {
@@ -36,6 +53,83 @@ type BlockManagerProps = {
   onClose: () => void;
 };
 
+type SortableBlockItemProps = {
+  block: BuilderBlock;
+  onDelete: () => void;
+  onEdit: () => void;
+};
+
+function SortableBlockItem({block, onDelete, onEdit}: SortableBlockItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({id: block.id});
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  const getBlockDisplayName = (b: BuilderBlock): string => {
+    if (b.component?.name) {
+      return b.component.name;
+    }
+
+    if (b['@type'] === '@builder.io/sdk:Element') {
+      return 'Element';
+    }
+
+    return 'Block';
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`flex items-center gap-2 p-2 bg-gray-50 rounded-lg border group ${
+        isDragging ? 'border-primary shadow-lg' : 'border-gray-200'
+      }`}
+    >
+      <button
+        type='button'
+        className='touch-none cursor-grab active:cursor-grabbing p-1 -m-1'
+        {...attributes}
+        {...listeners}
+      >
+        <GripVertical className='w-4 h-4 text-gray-400' />
+      </button>
+
+      <span className='flex-1 text-sm font-medium text-gray-700 truncate'>
+        {getBlockDisplayName(block)}
+      </span>
+
+      <div className='flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
+        <button
+          type='button'
+          onClick={onEdit}
+          title='Bewerken'
+          className='p-1 rounded hover:bg-gray-200 transition-colors'
+        >
+          <Settings className='w-4 h-4 text-gray-600' />
+        </button>
+        <button
+          type='button'
+          onClick={onDelete}
+          title='Verwijderen'
+          className='p-1 rounded hover:bg-red-100 transition-colors'
+        >
+          <Trash2 className='w-4 h-4 text-red-500' />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 const addBlockButtonClasses = [
   'w-full py-2 border-2 border-dashed border-gray-300 rounded',
   'text-gray-400 hover:border-primary hover:text-primary',
@@ -51,32 +145,36 @@ export function BlockManager({
   const [localBlocks, setLocalBlocks] = useState<BuilderBlock[]>(blocks);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const [insertIndex, setInsertIndex] = useState<number>(0);
+  const [editingBlock, setEditingBlock] = useState<BuilderBlock | null>(null);
+  const [editingBlockIndex, setEditingBlockIndex] = useState<number>(-1);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
 
   // Sync with parent blocks
   useEffect(() => {
     setLocalBlocks(blocks);
   }, [blocks]);
 
-  const handleMoveUp = useCallback((index: number) => {
-    if (index <= 0) {
-      return;
+  const handleDragEnd = useCallback((event: DragEndEvent) => {
+    const {active, over} = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = localBlocks.findIndex(b => b.id === active.id);
+      const newIndex = localBlocks.findIndex(b => b.id === over.id);
+
+      const newBlocks = arrayMove(localBlocks, oldIndex, newIndex);
+      setLocalBlocks(newBlocks);
+      onBlocksChange(newBlocks);
     }
-
-    const newBlocks = [...localBlocks];
-    [newBlocks[index - 1], newBlocks[index]] = [newBlocks[index], newBlocks[index - 1]];
-    setLocalBlocks(newBlocks);
-    onBlocksChange(newBlocks);
-  }, [localBlocks, onBlocksChange]);
-
-  const handleMoveDown = useCallback((index: number) => {
-    if (index >= localBlocks.length - 1) {
-      return;
-    }
-
-    const newBlocks = [...localBlocks];
-    [newBlocks[index], newBlocks[index + 1]] = [newBlocks[index + 1], newBlocks[index]];
-    setLocalBlocks(newBlocks);
-    onBlocksChange(newBlocks);
   }, [localBlocks, onBlocksChange]);
 
   const handleDelete = useCallback((index: number) => {
@@ -108,17 +206,19 @@ export function BlockManager({
     setIsPickerOpen(false);
   }, [insertIndex, localBlocks, onBlocksChange]);
 
-  const getBlockDisplayName = (block: BuilderBlock): string => {
-    if (block.component?.name) {
-      return block.component.name;
-    }
+  const handleEditBlock = useCallback((block: BuilderBlock, index: number) => {
+    setEditingBlock(block);
+    setEditingBlockIndex(index);
+  }, []);
 
-    if (block['@type'] === '@builder.io/sdk:Element') {
-      return 'Element';
-    }
-
-    return 'Block';
-  };
+  const handleSaveBlock = useCallback((updatedBlock: BuilderBlock) => {
+    const newBlocks = [...localBlocks];
+    newBlocks[editingBlockIndex] = updatedBlock;
+    setLocalBlocks(newBlocks);
+    onBlocksChange(newBlocks);
+    setEditingBlock(null);
+    setEditingBlockIndex(-1);
+  }, [localBlocks, editingBlockIndex, onBlocksChange]);
 
   if (!isOpen) {
     return null;
@@ -166,86 +266,64 @@ export function BlockManager({
               </button>
             </div>
           ) : (
-            <div className='space-y-2'>
-              {/* Add button at top */}
-              <button
-                type='button'
-                onClick={() => {
-                  handleAddBlock(0);
-                }}
-                className={addBlockButtonClasses}
-              >
-                <Plus className='w-3 h-3' />
-                Toevoegen
-              </button>
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <div className='space-y-2'>
+                {/* Add button at top */}
+                <button
+                  type='button'
+                  onClick={() => {
+                    handleAddBlock(0);
+                  }}
+                  className={addBlockButtonClasses}
+                >
+                  <Plus className='w-3 h-3' />
+                  Toevoegen
+                </button>
 
-              {localBlocks.map((block, index) => (
-                <div key={block.id}>
-                  {/* Block item */}
-                  <div className='flex items-center gap-2 p-2 bg-gray-50 rounded-lg border border-gray-200 group'>
-                    <GripVertical className='w-4 h-4 text-gray-400 cursor-move' />
-
-                    <span className='flex-1 text-sm font-medium text-gray-700 truncate'>
-                      {getBlockDisplayName(block)}
-                    </span>
-
-                    <div className='flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity'>
-                      <button
-                        type='button'
-                        onClick={() => {
-                          handleMoveUp(index);
-                        }}
-                        disabled={index === 0}
-                        title='Omhoog'
-                        className='p-1 rounded hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors'
-                      >
-                        <ChevronUp className='w-4 h-4 text-gray-600' />
-                      </button>
-                      <button
-                        type='button'
-                        onClick={() => {
-                          handleMoveDown(index);
-                        }}
-                        disabled={index === localBlocks.length - 1}
-                        title='Omlaag'
-                        className='p-1 rounded hover:bg-gray-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors'
-                      >
-                        <ChevronDown className='w-4 h-4 text-gray-600' />
-                      </button>
-                      <button
-                        type='button'
-                        onClick={() => {
+                <SortableContext
+                  items={localBlocks.map(b => b.id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {localBlocks.map((block, index) => (
+                    <div key={block.id}>
+                      <SortableBlockItem
+                        block={block}
+                        onDelete={() => {
                           handleDelete(index);
                         }}
-                        title='Verwijderen'
-                        className='p-1 rounded hover:bg-red-100 transition-colors'
+                        onEdit={() => {
+                          handleEditBlock(block, index);
+                        }}
+                      />
+
+                      {/* Add button after each block */}
+                      <button
+                        type='button'
+                        onClick={() => {
+                          handleAddBlock(index + 1);
+                        }}
+                        className={`mt-2 ${addBlockButtonClasses}`}
                       >
-                        <Trash2 className='w-4 h-4 text-red-500' />
+                        <Plus className='w-3 h-3' />
+                        Toevoegen
                       </button>
                     </div>
-                  </div>
-
-                  {/* Add button after each block */}
-                  <button
-                    type='button'
-                    onClick={() => {
-                      handleAddBlock(index + 1);
-                    }}
-                    className={`mt-2 ${addBlockButtonClasses}`}
-                  >
-                    <Plus className='w-3 h-3' />
-                    Toevoegen
-                  </button>
-                </div>
-              ))}
-            </div>
+                  ))}
+                </SortableContext>
+              </div>
+            </DndContext>
           )}
         </div>
 
         {/* Footer with info */}
         <div className='px-4 py-3 border-t border-gray-200 bg-gray-50'>
           <p className='text-xs text-gray-500'>
-            Wijzigingen worden opgeslagen wanneer je op &quot;Opslaan&quot; klikt in de toolbar.
+            Sleep blokken om te herschikken. Wijzigingen worden opgeslagen wanneer je op
+            &quot;Opslaan&quot; klikt.
           </p>
         </div>
       </div>
@@ -258,6 +336,18 @@ export function BlockManager({
         }}
         onSelect={handleSelectComponent}
       />
+
+      {/* Block editor */}
+      {editingBlock && (
+        <BlockEditor
+          block={editingBlock}
+          onSave={handleSaveBlock}
+          onClose={() => {
+            setEditingBlock(null);
+            setEditingBlockIndex(-1);
+          }}
+        />
+      )}
     </>
   );
 }
