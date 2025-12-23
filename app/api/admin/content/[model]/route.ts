@@ -4,7 +4,7 @@ import {listContent, createContent} from '@lib/builder-admin';
 import type {BuilderModel} from '@lib/builder-types';
 import {logAudit, createAuditContext} from '@lib/audit';
 
-const validModels = new Set<BuilderModel>(['activiteit', 'nieuws', 'aankondiging']);
+const validModels = new Set<BuilderModel>(['activiteit', 'nieuws', 'aankondiging', 'page']);
 
 function isValidModel(model: string): model is BuilderModel {
   return validModels.has(model as BuilderModel);

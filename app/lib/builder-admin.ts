@@ -9,6 +9,7 @@ import type {
   NewsItem,
   Announcement,
   Sponsor,
+  Page,
 } from './builder-types';
 
 const builderPublicKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '';
@@ -22,6 +23,7 @@ type ContentTypeMap = {
   nieuws: NewsItem;
   aankondiging: Announcement;
   sponsor: Sponsor;
+  page: Page;
 };
 
 /**

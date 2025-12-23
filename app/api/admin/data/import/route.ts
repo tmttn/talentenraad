@@ -12,17 +12,16 @@ import {
   type ImportResult,
   type ImportValidationResult,
   type ConflictItem,
+  type BuilderContentType,
   isValidExportData,
   exportOnlyTypes,
 } from '@lib/data-export';
-import type {
-  BuilderModel, Activity, NewsItem, Announcement,
-} from '@lib/builder-types';
+import type {Activity, NewsItem, Announcement} from '@lib/builder-types';
 import type {User, Submission, PushSubscription} from '@lib/db/schema';
 
 const builderModels = new Set<ContentType>(['nieuws', 'activiteit', 'aankondiging']);
 
-function isBuilderModel(type: ContentType): type is BuilderModel {
+function isBuilderModel(type: ContentType): type is BuilderContentType {
   return builderModels.has(type);
 }
 

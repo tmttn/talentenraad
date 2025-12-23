@@ -83,9 +83,40 @@ export type Sponsor = {
   data: SponsorData;
 };
 
-export type BuilderModel = 'activiteit' | 'nieuws' | 'aankondiging' | 'sponsor';
+// Page data for admin management (simplified - actual pages have more Builder.io fields)
+export type PageData = {
+  url: string;
+  title?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: string;
+  noIndex?: boolean;
+};
 
-export type ContentItem = Activity | NewsItem | Announcement | Sponsor;
+export type Page = {
+  id: string;
+  name: string;
+  published: 'published' | 'draft' | 'archived';
+  createdDate: number;
+  lastUpdated?: number;
+  data: PageData;
+};
+
+// List of protected page URLs that cannot be deleted
+export const PROTECTED_PAGE_URLS = [
+  '/',
+  '/kalender',
+  '/nieuws',
+  '/activiteiten',
+  '/contact',
+  '/over-ons',
+  '/privacy',
+  '/algemene-voorwaarden',
+];
+
+export type BuilderModel = 'activiteit' | 'nieuws' | 'aankondiging' | 'sponsor' | 'page';
+
+export type ContentItem = Activity | NewsItem | Announcement | Sponsor | Page;
 
 // API response types
 export type BuilderListResponse<T> = {

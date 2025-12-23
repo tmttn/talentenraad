@@ -5,12 +5,11 @@ import {
   db, users, submissions, auditLogs, pushSubscriptions, notificationHistory,
 } from '@lib/db';
 import {isNull, eq} from 'drizzle-orm';
-import type {ContentType, ExportData, ExportMetadata} from '@lib/data-export';
-import type {BuilderModel} from '@lib/builder-types';
+import type {ContentType, ExportData, ExportMetadata, BuilderContentType} from '@lib/data-export';
 
 const builderModels = new Set<ContentType>(['nieuws', 'activiteit', 'aankondiging', 'sponsor']);
 
-function isBuilderModel(type: ContentType): type is BuilderModel {
+function isBuilderModel(type: ContentType): type is BuilderContentType {
   return builderModels.has(type);
 }
 

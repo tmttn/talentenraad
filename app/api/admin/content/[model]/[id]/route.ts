@@ -3,11 +3,11 @@ import {auth0, verifyAdmin} from '@lib/auth0';
 import {
   getContent, updateContent, deleteContent, publishContent, unpublishContent,
 } from '@lib/builder-admin';
-import type {BuilderModel} from '@lib/builder-types';
+import {type BuilderModel, PROTECTED_PAGE_URLS} from '@lib/builder-types';
 import {logAudit, createAuditContext} from '@lib/audit';
 import {computeDataDiff} from '@lib/audit/helpers';
 
-const validModels = new Set<BuilderModel>(['activiteit', 'nieuws', 'aankondiging']);
+const validModels = new Set<BuilderModel>(['activiteit', 'nieuws', 'aankondiging', 'page']);
 
 function isValidModel(model: string): model is BuilderModel {
   return validModels.has(model as BuilderModel);
@@ -137,6 +137,17 @@ export async function DELETE(
   try {
     // Fetch existing content for audit log
     const existingContent = await getContent(model, id);
+
+    // Check if this is a protected page that cannot be deleted
+    if (model === 'page' && existingContent?.data) {
+      const pageData = existingContent.data as {url?: string};
+      if (pageData.url && PROTECTED_PAGE_URLS.includes(pageData.url)) {
+        return NextResponse.json(
+          {error: 'Deze pagina is beschermd en kan niet worden verwijderd'},
+          {status: 403},
+        );
+      }
+    }
 
     await deleteContent(model, id);
 

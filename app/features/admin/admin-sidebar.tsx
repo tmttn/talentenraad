@@ -11,6 +11,7 @@ import {
   Mail,
   Calendar,
   Newspaper,
+  FileText,
   Megaphone,
   Sparkles,
   Users,
@@ -63,6 +64,7 @@ const navItems: NavItem[] = [
   {
     href: '/admin/nieuws', label: 'Nieuws', icon: Newspaper, flag: 'adminNews',
   },
+  {href: '/admin/paginas', label: 'Pagina\'s', icon: FileText},
   {
     href: '/admin/aankondigingen', label: 'Aankondigingen', icon: Megaphone, flag: 'adminAnnouncements',
   },
