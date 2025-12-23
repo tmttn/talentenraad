@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {cleanupOldAuditLogs} from '@/lib/audit';
+import {cleanupOldAuditLogs} from '@lib/audit';
 
 // Verify cron secret to prevent unauthorized access
 function verifyCronSecret(request: NextRequest): boolean {

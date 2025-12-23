@@ -1,4 +1,4 @@
-import type {AuditActionType} from '@/lib/db';
+import type {AuditActionType} from '@lib/db';
 
 /**
  * Compute a diff between two objects for audit logging.

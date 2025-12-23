@@ -5,8 +5,8 @@
  * Can be imported by both server and client components.
  */
 
-import type {FlagValues} from '@/generated/hypertune/hypertune';
-import {flagFallbacks as generatedFallbacks} from '@/generated/hypertune/hypertune';
+import type {FlagValues} from '@generated/hypertune/hypertune';
+import {flagFallbacks as generatedFallbacks} from '@generated/hypertune/hypertune';
 
 // Override fallbacks - most features should be ON by default
 export const flagFallbacks: FlagValues = {

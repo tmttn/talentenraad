@@ -1,9 +1,8 @@
 'use client';
 
 import {Loader2} from 'lucide-react';
-import {usePushNotifications} from '@/lib/hooks/use-push-notifications';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {usePushNotifications} from '@lib/hooks/use-push-notifications';
+import {useFlag} from '@lib/flags-client';
 
 type NotificationToggleProperties = {
 	className?: string;

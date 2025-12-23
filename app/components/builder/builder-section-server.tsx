@@ -1,5 +1,4 @@
 import {fetchOneEntry} from '@builder.io/sdk-react-nextjs';
-// eslint-disable-next-line import-x/extensions
 import {BuilderSectionClient} from './builder-section-client';
 
 // eslint-disable-next-line n/prefer-global/process

@@ -2,10 +2,8 @@
 
 import type {ReactNode} from 'react';
 import {Container} from '@components/ui/layout';
-// eslint-disable-next-line import-x/extensions
-import {brandColors, gradients} from '@/styles/tokens';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {brandColors, gradients} from '@styles/tokens';
+import {useFlag} from '@lib/flags-client';
 
 type HeroProperties = {
 	backgroundImage?: string;

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {toast} from 'sonner';
 import {Eye, CheckCircle, Circle, Archive, ArchiveRestore, Trash2} from 'lucide-react';
-import type {Submission} from '@/lib/db/index.js';
+import type {Submission} from '@lib/db/index.js';
 import {TableFilters} from './table-filters';
 import {TablePagination} from './table-pagination';
 import {SortableHeader, useSorting, type SortDirection} from './sortable-header';

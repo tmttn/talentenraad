@@ -1,6 +1,6 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0} from '@/lib/auth0';
-import {db, auditLogs, users} from '@/lib/db';
+import {auth0} from '@lib/auth0';
+import {db, auditLogs, users} from '@lib/db';
 import {eq} from 'drizzle-orm';
 
 export async function GET(request: NextRequest) {

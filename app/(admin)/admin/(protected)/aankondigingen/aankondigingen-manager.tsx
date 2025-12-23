@@ -3,10 +3,10 @@
 import {useState, useMemo, type FormEvent, type ChangeEvent} from 'react';
 import {useRouter} from 'next/navigation';
 import {Plus, Power, PowerOff, Pencil, Trash2} from 'lucide-react';
-import type {Announcement, AnnouncementType} from '@/lib/builder-types';
-import {DeleteDialog} from '@/features/admin/delete-dialog';
-import {TableFilters} from '@/features/admin/table-filters';
-import {ExportButton} from '@/features/admin/export-button';
+import type {Announcement, AnnouncementType} from '@lib/builder-types';
+import {DeleteDialog} from '@features/admin/delete-dialog';
+import {TableFilters} from '@features/admin/table-filters';
+import {ExportButton} from '@features/admin/export-button';
 
 type AankondigingenManagerProps = {
 	announcements: Announcement[];

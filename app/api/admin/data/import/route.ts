@@ -1,9 +1,9 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, verifyAdmin} from '@/lib/auth0';
-import {createContent, updateContent, getContent} from '@/lib/builder-admin';
-import {db, users, submissions, pushSubscriptions} from '@/lib/db';
+import {auth0, verifyAdmin} from '@lib/auth0';
+import {createContent, updateContent, getContent} from '@lib/builder-admin';
+import {db, users, submissions, pushSubscriptions} from '@lib/db';
 import {eq} from 'drizzle-orm';
-import {logAudit, createAuditContext} from '@/lib/audit';
+import {logAudit, createAuditContext} from '@lib/audit';
 import {
 	type ContentType,
 	type ExportData,
@@ -12,9 +12,9 @@ import {
 	type ConflictItem,
 	isValidExportData,
 	exportOnlyTypes,
-} from '@/lib/data-export';
-import type {BuilderModel, Activity, NewsItem, Announcement} from '@/lib/builder-types';
-import type {User, Submission, PushSubscription} from '@/lib/db/schema';
+} from '@lib/data-export';
+import type {BuilderModel, Activity, NewsItem, Announcement} from '@lib/builder-types';
+import type {User, Submission, PushSubscription} from '@lib/db/schema';
 
 const builderModels = new Set<ContentType>(['nieuws', 'activiteit', 'aankondiging']);
 

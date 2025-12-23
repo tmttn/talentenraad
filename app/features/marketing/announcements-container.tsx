@@ -1,8 +1,7 @@
 'use client';
 
 import {useState} from 'react';
-// eslint-disable-next-line import-x/extensions
-import {AnnouncementDisplay, type AnnouncementData} from './announcement-display';
+import {AnnouncementDisplay, type AnnouncementData} from '@features/marketing/announcement-display';
 
 export type AnnouncementsContainerProps = {
 	globalAnnouncement?: AnnouncementData;

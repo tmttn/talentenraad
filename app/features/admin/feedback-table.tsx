@@ -4,7 +4,7 @@ import {useState, useMemo} from 'react';
 import {useRouter} from 'next/navigation';
 import {toast} from 'sonner';
 import {Star, Trash2, ExternalLink, Mail} from 'lucide-react';
-import type {Feedback} from '@/lib/db/index.js';
+import type {Feedback} from '@lib/db/index.js';
 import {TableFilters} from './table-filters';
 import {TablePagination} from './table-pagination';
 import {SortableHeader, useSorting} from './sortable-header';

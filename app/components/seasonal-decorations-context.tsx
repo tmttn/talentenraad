@@ -1,10 +1,10 @@
 'use client';
 
 import {createContext, useContext, type ReactNode} from 'react';
-import {defaultSeasonalConfig, type SeasonalDecorationsConfig} from '@/lib/types';
+import {defaultSeasonalConfig, type SeasonalDecorationsConfig} from '@lib/types';
 
 export {defaultSeasonalConfig};
-export type {SeasonalDecorationsConfig} from '@/lib/types';
+export type {SeasonalDecorationsConfig} from '@lib/types';
 
 const SeasonalDecorationsContext = createContext<SeasonalDecorationsConfig>(defaultSeasonalConfig);
 

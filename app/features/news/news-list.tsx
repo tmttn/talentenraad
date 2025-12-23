@@ -9,8 +9,7 @@ import {
 } from 'lucide-react';
 import {linkStyles} from '@components/ui';
 import {Container, Stack, Grid} from '@components/ui/layout';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {useFlag} from '@lib/flags-client';
 
 const articleListClassName = [
 	'bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow group overflow-hidden',

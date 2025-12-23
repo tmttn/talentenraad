@@ -1,7 +1,7 @@
 import {type NextRequest, NextResponse} from 'next/server';
 import {desc, eq, and, gte, lte, like, sql} from 'drizzle-orm';
-import {auth0, verifyAdmin} from '@/lib/auth0';
-import {db, auditLogs, type AuditActionType} from '@/lib/db';
+import {auth0, verifyAdmin} from '@lib/auth0';
+import {db, auditLogs, type AuditActionType} from '@lib/db';
 
 export async function GET(request: NextRequest) {
 	const session = await auth0.getSession();

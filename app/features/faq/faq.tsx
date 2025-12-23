@@ -5,8 +5,7 @@ import {
 } from 'react';
 import {ChevronDown, HelpCircle} from 'lucide-react';
 import {Container, Stack} from '@components/ui/layout';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {useFlag} from '@lib/flags-client';
 
 const faqButtonClassName = [
 	'faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4',

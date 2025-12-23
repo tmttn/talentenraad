@@ -1,8 +1,8 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, verifyAdmin} from '@/lib/auth0';
-import {db, submissions} from '@/lib/db';
+import {auth0, verifyAdmin} from '@lib/auth0';
+import {db, submissions} from '@lib/db';
 import {inArray} from 'drizzle-orm';
-import {logAudit, createAuditContext} from '@/lib/audit';
+import {logAudit, createAuditContext} from '@lib/audit';
 
 type BulkActionRequest = {
 	ids: string[];

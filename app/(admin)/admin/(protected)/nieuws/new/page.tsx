@@ -1,6 +1,6 @@
 'use client';
 
-import {ContentForm, type FieldDefinition} from '@/features/admin/content-form';
+import {ContentForm, type FieldDefinition} from '@features/admin/content-form';
 
 const newsFields: FieldDefinition[] = [
 	{

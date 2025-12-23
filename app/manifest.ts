@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import type {MetadataRoute} from 'next';
-// eslint-disable-next-line import-x/extensions
-import {siteConfig} from '@/lib/seo';
+import {siteConfig} from '@lib/seo';
 
 // Web App Manifest spec requires snake_case property names
 export default function manifest(): MetadataRoute.Manifest {

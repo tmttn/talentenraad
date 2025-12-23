@@ -1,9 +1,9 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, isAdminEmail} from '@/lib/auth0';
-import {db, users} from '@/lib/db';
+import {auth0, isAdminEmail} from '@lib/auth0';
+import {db, users} from '@lib/db';
 import {eq} from 'drizzle-orm';
-import {sendInvitationEmail} from '@/lib/email/resend';
-import {logAudit, createAuditContext} from '@/lib/audit';
+import {sendInvitationEmail} from '@lib/email/resend';
+import {logAudit, createAuditContext} from '@lib/audit';
 
 export async function GET() {
 	const session = await auth0.getSession();

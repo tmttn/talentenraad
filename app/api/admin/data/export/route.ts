@@ -1,10 +1,10 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, verifyAdmin} from '@/lib/auth0';
-import {listContent, getContent} from '@/lib/builder-admin';
-import {db, users, submissions, auditLogs, pushSubscriptions, notificationHistory} from '@/lib/db';
+import {auth0, verifyAdmin} from '@lib/auth0';
+import {listContent, getContent} from '@lib/builder-admin';
+import {db, users, submissions, auditLogs, pushSubscriptions, notificationHistory} from '@lib/db';
 import {isNull, eq} from 'drizzle-orm';
-import type {ContentType, ExportData, ExportMetadata} from '@/lib/data-export';
-import type {BuilderModel} from '@/lib/builder-types';
+import type {ContentType, ExportData, ExportMetadata} from '@lib/data-export';
+import type {BuilderModel} from '@lib/builder-types';
 
 const builderModels = new Set<ContentType>(['nieuws', 'activiteit', 'aankondiging', 'sponsor']);
 

@@ -1,10 +1,8 @@
 import {Analytics} from '@vercel/analytics/react';
 import {SpeedInsights} from '@vercel/speed-insights/next';
 import type {Metadata, Viewport} from 'next';
-// eslint-disable-next-line import-x/extensions
-import {siteConfig, generateOrganizationSchema, JsonLd} from './lib/seo';
-// eslint-disable-next-line import-x/extensions
-import {SwRegister} from './components/pwa/sw-register';
+import {siteConfig, generateOrganizationSchema, JsonLd} from '@lib/seo';
+import {SwRegister} from '@components/pwa/sw-register';
 import './globals.css';
 
 export const metadata: Metadata = {

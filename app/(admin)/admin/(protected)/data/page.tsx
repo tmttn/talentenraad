@@ -20,7 +20,7 @@ import {
 	Building2,
 } from 'lucide-react';
 import {toast} from 'sonner';
-import {type ContentType, type ImportValidationResult, type ImportResult, contentTypeInfo} from '@/lib/data-export';
+import {type ContentType, type ImportValidationResult, type ImportResult, contentTypeInfo} from '@lib/data-export';
 
 type ContentTypeCount = {
 	type: ContentType;

@@ -1,8 +1,7 @@
 'use client';
 
 import {CalendarPlus} from 'lucide-react';
-// eslint-disable-next-line import-x/extensions
-import {downloadICalEvent} from '@/lib/calendar';
+import {downloadICalEvent} from '@lib/calendar';
 
 type AddToCalendarButtonProperties = {
 	title: string;

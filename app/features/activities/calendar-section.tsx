@@ -4,8 +4,7 @@ import {useEffect, useRef, useState} from 'react';
 import {Calendar, Clock, ChevronRight} from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 import {Stack} from '@components/ui/layout';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {useFlag} from '@lib/flags-client';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;

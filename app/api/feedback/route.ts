@@ -1,6 +1,6 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {db, feedback} from '@/lib/db';
-import {verifyRecaptcha} from '@/lib/recaptcha';
+import {db, feedback} from '@lib/db';
+import {verifyRecaptcha} from '@lib/recaptcha';
 
 type FeedbackFormData = {
 	rating: number;

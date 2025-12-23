@@ -32,7 +32,13 @@
       "@features/*": [
         "./app/features/*"
       ],
-      "@/generated/*": [
+      "@lib/*": [
+        "./app/lib/*"
+      ],
+      "@styles/*": [
+        "./app/styles/*"
+      ],
+      "@generated/*": [
         "./generated/*"
       ]
     },

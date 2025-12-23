@@ -2,9 +2,9 @@
 
 import {useState, useEffect} from 'react';
 import {useRouter} from 'next/navigation';
-import type {Submission, Feedback} from '@/lib/db/index.js';
-import {SubmissionsTable} from '@/features/admin/submissions-table';
-import {FeedbackTable} from '@/features/admin/feedback-table';
+import type {Submission, Feedback} from '@lib/db/index.js';
+import {SubmissionsTable} from '@features/admin/submissions-table';
+import {FeedbackTable} from '@features/admin/feedback-table';
 import {Mail, MessageSquare} from 'lucide-react';
 
 type UnreadCounts = {

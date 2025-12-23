@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
-import {getContent} from '@/lib/builder-admin';
+import {getContent} from '@lib/builder-admin';
 import {EditActivityForm} from './edit-activity-form';
 
 export const metadata: Metadata = {

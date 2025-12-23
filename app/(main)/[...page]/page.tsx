@@ -9,15 +9,13 @@ import {
 	extractSeoData,
 	ConfigurationError,
 	type PageSearchParameters,
-// eslint-disable-next-line import-x/extensions
-} from '../../lib/builder-utils';
+} from '@lib/builder-utils';
 import {
 	generateMetadata as generateSeoMetadata,
 	generateBreadcrumbSchema,
 	JsonLd,
 	siteConfig,
-// eslint-disable-next-line import-x/extensions
-} from '../../lib/seo';
+} from '@lib/seo';
 
 // Enable ISR with fast revalidation for quick content updates
 // 404 detection is now handled in proxy.ts before page rendering

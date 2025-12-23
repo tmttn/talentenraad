@@ -1,5 +1,5 @@
 import {Auth0Client} from '@auth0/nextjs-auth0/server';
-import {db, users} from '@/lib/db';
+import {db, users} from '@lib/db';
 import {eq} from 'drizzle-orm';
 
 export const auth0 = new Auth0Client();

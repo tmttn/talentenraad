@@ -1,5 +1,4 @@
 import {fetchOneEntry} from '@builder.io/sdk-react-nextjs';
-// eslint-disable-next-line import-x/extensions
 import {SiteHeader} from './site-header';
 
 // eslint-disable-next-line n/prefer-global/process

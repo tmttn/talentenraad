@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import {Suspense} from 'react';
 import {desc} from 'drizzle-orm';
-import {db, auditLogs} from '@/lib/db';
+import {db, auditLogs} from '@lib/db';
 import {TableSkeleton} from '@components/skeletons';
 import {AuditLogsManager} from './audit-logs-manager';
 

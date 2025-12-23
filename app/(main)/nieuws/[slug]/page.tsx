@@ -10,10 +10,8 @@ import {
 	generateArticleSchema,
 	generateBreadcrumbSchema,
 	JsonLd,
-// eslint-disable-next-line import-x/extensions
-} from '@/lib/seo';
-// eslint-disable-next-line import-x/extensions
-import {clapsButton} from '@/lib/flags';
+} from '@lib/seo';
+import {clapsButton} from '@lib/flags';
 
 // eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;

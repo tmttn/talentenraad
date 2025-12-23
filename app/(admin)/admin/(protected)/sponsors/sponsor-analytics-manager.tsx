@@ -12,7 +12,7 @@ import {
 	ArrowUp,
 	ArrowDown,
 } from 'lucide-react';
-import type {SponsorAnalytics} from '@/lib/db/schema';
+import type {SponsorAnalytics} from '@lib/db/schema';
 
 type SponsorAnalyticsManagerProperties = {
 	initialAnalytics: SponsorAnalytics[];

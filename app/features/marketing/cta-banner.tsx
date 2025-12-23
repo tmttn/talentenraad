@@ -2,8 +2,7 @@
 
 import type {ReactNode} from 'react';
 import {Container} from '@components/ui/layout';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {useFlag} from '@lib/flags-client';
 
 type CtaBannerProperties = {
 	variant?: 'default' | 'accent' | 'light';

@@ -2,12 +2,12 @@ import {redirect} from 'next/navigation';
 import {headers} from 'next/headers';
 import {eq, and, gt, isNull} from 'drizzle-orm';
 import {Toaster} from 'sonner';
-import {auth0, isAdminEmail} from '@/lib/auth0';
-import {db, users, auditLogs, feedback, submissions} from '@/lib/db';
-import {getAllFlags} from '@/lib/flags';
-import {FlagsProvider} from '@/lib/flags-client';
-import {AdminSidebar} from '@/features/admin/admin-sidebar';
-import {SessionValidator} from '@/features/admin/session-validator';
+import {auth0, isAdminEmail} from '@lib/auth0';
+import {db, users, auditLogs, feedback, submissions} from '@lib/db';
+import {getAllFlags} from '@lib/flags';
+import {FlagsProvider} from '@lib/flags-client';
+import {AdminSidebar} from '@features/admin/admin-sidebar';
+import {SessionValidator} from '@features/admin/session-validator';
 
 async function ensureUserInDatabase(email: string, name: string | undefined, auth0Id: string): Promise<boolean> {
 	const isEnvAdmin = isAdminEmail(email);

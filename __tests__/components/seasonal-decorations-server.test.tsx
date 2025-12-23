@@ -44,7 +44,7 @@ jest.mock('../../app/components/seasonal-decorations', () => ({
 }));
 
 // Import the mocked db
-import {db} from '@/lib/db';
+import {db} from '@lib/db';
 const mockFindFirst = db.query.siteSettings.findFirst as jest.Mock;
 
 describe('getSeasonalDecorationsConfig', () => {

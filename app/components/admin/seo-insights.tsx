@@ -27,7 +27,7 @@ import {
 	type SeoAnalysis,
 	type SeoIssue,
 	type FieldScore,
-} from '@/lib/seo';
+} from '@lib/seo';
 
 type SeoInsightsProperties = {
 	title?: string;

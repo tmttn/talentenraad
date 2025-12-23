@@ -10,7 +10,7 @@ import {useSearchParams} from 'next/navigation';
 import {CheckCircle, XCircle, Send, Loader2} from 'lucide-react';
 import {useRecaptcha} from './use-recaptcha';
 import {Container, Grid} from '@components/ui/layout';
-import {useFlags} from '@/lib/flags-client';
+import {useFlags} from '@lib/flags-client';
 
 /**
  * Submit button using design tokens

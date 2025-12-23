@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {Container, Section, Stack, Cluster, Grid, Divider} from '@/components/ui/layout';
+import {Container, Section, Stack, Cluster, Grid, Divider} from '@components/ui/layout';
 
 describe('Container', () => {
 	it('renders children correctly', () => {

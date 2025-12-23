@@ -1,6 +1,6 @@
 import {type NextRequest} from 'next/server';
 import {eq, lt} from 'drizzle-orm';
-import {db, auditLogs, users, type AuditActionType} from '@/lib/db';
+import {db, auditLogs, users, type AuditActionType} from '@lib/db';
 
 type AuditContext = {
 	request: NextRequest;

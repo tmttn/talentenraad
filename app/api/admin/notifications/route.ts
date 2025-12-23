@@ -1,9 +1,9 @@
 import {type NextRequest, NextResponse} from 'next/server';
 import webpush from 'web-push';
 import {desc, inArray, sql} from 'drizzle-orm';
-import {auth0, verifyAdmin} from '@/lib/auth0';
-import {db, pushSubscriptions, notificationHistory} from '@/lib/db';
-import {logAudit, createAuditContext} from '@/lib/audit';
+import {auth0, verifyAdmin} from '@lib/auth0';
+import {db, pushSubscriptions, notificationHistory} from '@lib/db';
+import {logAudit, createAuditContext} from '@lib/audit';
 
 // Configure web-push with VAPID
 // Note: VAPID keys must be URL-safe Base64 without "=" padding

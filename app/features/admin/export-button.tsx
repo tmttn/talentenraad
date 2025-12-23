@@ -3,7 +3,7 @@
 import {useState} from 'react';
 import {Download} from 'lucide-react';
 import {toast} from 'sonner';
-import type {ContentType} from '@/lib/data-export';
+import type {ContentType} from '@lib/data-export';
 
 type ExportButtonProps = {
 	contentType: ContentType;

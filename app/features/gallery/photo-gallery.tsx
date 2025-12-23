@@ -17,8 +17,7 @@ import {
 	Maximize2,
 	Loader2,
 } from 'lucide-react';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {useFlag} from '@lib/flags-client';
 
 type GalleryImage = {
 	src: string;

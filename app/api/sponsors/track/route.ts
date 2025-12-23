@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {db, sponsorAnalytics} from '@/lib/db';
+import {db, sponsorAnalytics} from '@lib/db';
 import {eq, and, sql} from 'drizzle-orm';
 
 type TrackEventType = 'impression' | 'click';

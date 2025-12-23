@@ -71,4 +71,4 @@ export {
 } from './transitions';
 
 // Re-export component tokens when they exist
-export * from './components/index';
+export * from '@components/index';

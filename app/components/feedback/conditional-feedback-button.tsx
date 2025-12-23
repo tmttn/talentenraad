@@ -1,7 +1,7 @@
 'use client';
 
 import {usePathname} from 'next/navigation';
-import {useFlag} from '@/lib/flags-client';
+import {useFlag} from '@lib/flags-client';
 import {FloatingFeedbackButton} from './floating-feedback-button';
 
 // Pages where claps are shown (no feedback button needed)

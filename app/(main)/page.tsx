@@ -7,10 +7,8 @@ import {
 	extractSeoData,
 	ConfigurationError,
 	type PageSearchParameters,
-// eslint-disable-next-line import-x/extensions
-} from '../lib/builder-utils';
-// eslint-disable-next-line import-x/extensions
-import {generateMetadata as generateSeoMetadata, siteConfig} from '../lib/seo';
+} from '@lib/builder-utils';
+import {generateMetadata as generateSeoMetadata, siteConfig} from '@lib/seo';
 
 // Enable ISR with fast revalidation for quick content updates
 export const revalidate = 5;

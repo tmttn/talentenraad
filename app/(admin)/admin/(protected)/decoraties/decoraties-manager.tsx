@@ -3,7 +3,7 @@
 import {useState, type ChangeEvent} from 'react';
 import {toast} from 'sonner';
 import {Info} from 'lucide-react';
-import type {SeasonalDecorationsConfig} from '@/lib/db';
+import type {SeasonalDecorationsConfig} from '@lib/db';
 
 type DecoratiesManagerProps = {
 	initialConfig: SeasonalDecorationsConfig;

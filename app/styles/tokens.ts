@@ -9,6 +9,4 @@
  */
 
 // Re-export everything from the new token system
-// Note: Using extensionless import for Jest compatibility
-// eslint-disable-next-line import-x/extensions
-export * from './tokens/index';
+export * from '@styles/tokens/index';

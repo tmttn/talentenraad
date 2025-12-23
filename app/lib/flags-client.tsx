@@ -1,7 +1,7 @@
 'use client';
 
 import {createContext, useContext, type ReactNode} from 'react';
-import type {FlagValues} from '@/generated/hypertune/hypertune';
+import type {FlagValues} from '@generated/hypertune/hypertune';
 import {flagFallbacks} from './flag-defaults';
 
 // Context for feature flags
@@ -16,8 +16,8 @@ type FlagsProviderProps = {
  * Provider for feature flags in client components
  *
  * Usage in layout.tsx:
- *   import { FlagsProvider } from '@/lib/flags-client';
- *   import { getAllFlags } from '@/lib/flags';
+ *   import { FlagsProvider } from '@lib/flags-client';
+ *   import { getAllFlags } from '@lib/flags';
  *
  *   export default async function Layout({ children }) {
  *     const flags = await getAllFlags();

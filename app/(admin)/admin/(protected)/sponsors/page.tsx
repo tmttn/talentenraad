@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import {Suspense} from 'react';
 import {desc} from 'drizzle-orm';
-import {db, sponsorAnalytics} from '@/lib/db';
+import {db, sponsorAnalytics} from '@lib/db';
 import {TableSkeleton} from '@components/skeletons';
 import {SponsorAnalyticsManager} from './sponsor-analytics-manager';
 

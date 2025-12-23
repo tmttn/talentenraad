@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import Image from 'next/image';
 import {redirect} from 'next/navigation';
-import {auth0} from '@/lib/auth0';
+import {auth0} from '@lib/auth0';
 import {LoginButton} from './login-button';
 
 export const metadata: Metadata = {

@@ -3,13 +3,13 @@
 import {useState, useMemo, type FormEvent, type ChangeEvent} from 'react';
 import {toast} from 'sonner';
 import {Loader2, Shield, ShieldOff, Pencil, Trash2, Send, Lock} from 'lucide-react';
-import type {User} from '@/lib/db/schema';
-import {DeleteDialog} from '@/features/admin/delete-dialog';
-import {TableFilters} from '@/features/admin/table-filters';
-import {TablePagination} from '@/features/admin/table-pagination';
-import {SortableHeader, useSorting} from '@/features/admin/sortable-header';
-import {ViewModeToggle} from '@/features/admin/view-mode-toggle';
-import {useViewMode} from '@/features/admin/use-view-mode';
+import type {User} from '@lib/db/schema';
+import {DeleteDialog} from '@features/admin/delete-dialog';
+import {TableFilters} from '@features/admin/table-filters';
+import {TablePagination} from '@features/admin/table-pagination';
+import {SortableHeader, useSorting} from '@features/admin/sortable-header';
+import {ViewModeToggle} from '@features/admin/view-mode-toggle';
+import {useViewMode} from '@features/admin/use-view-mode';
 
 type UsersManagerProps = {
 	initialUsers: User[];

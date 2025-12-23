@@ -1,10 +1,10 @@
 'use client';
 
 import {useState} from 'react';
-import {ContentForm, type FieldDefinition} from '@/features/admin/content-form';
+import {ContentForm, type FieldDefinition} from '@features/admin/content-form';
 import {SeoInsights} from '@components/admin/seo-insights';
-import {ExportButton} from '@/features/admin/export-button';
-import type {NewsItem} from '@/lib/builder-types';
+import {ExportButton} from '@features/admin/export-button';
+import type {NewsItem} from '@lib/builder-types';
 
 const newsFields: FieldDefinition[] = [
 	{

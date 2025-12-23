@@ -24,8 +24,8 @@ import {
 	LogOut,
 	type LucideIcon,
 } from 'lucide-react';
-import {useFlags} from '@/lib/flags-client';
-import type {FlagValues} from '@/generated/hypertune/hypertune';
+import {useFlags} from '@lib/flags-client';
+import type {FlagValues} from '@generated/hypertune/hypertune';
 
 type UnreadCounts = {
 	unreadFeedback: number;

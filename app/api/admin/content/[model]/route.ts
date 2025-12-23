@@ -1,8 +1,8 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, verifyAdmin} from '@/lib/auth0';
-import {listContent, createContent} from '@/lib/builder-admin';
-import type {BuilderModel} from '@/lib/builder-types';
-import {logAudit, createAuditContext} from '@/lib/audit';
+import {auth0, verifyAdmin} from '@lib/auth0';
+import {listContent, createContent} from '@lib/builder-admin';
+import type {BuilderModel} from '@lib/builder-types';
+import {logAudit, createAuditContext} from '@lib/audit';
 
 const validModels = new Set<BuilderModel>(['activiteit', 'nieuws', 'aankondiging']);
 

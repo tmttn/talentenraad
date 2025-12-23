@@ -5,19 +5,19 @@
  * Flags are managed via Hypertune and cached in Vercel Edge Config.
  *
  * Usage in Server Components:
- *   import { getFlag } from '@/lib/flags';
+ *   import { getFlag } from '@lib/flags';
  *   const isEnabled = await getFlag('pushNotifications');
  *
  * Usage in Client Components:
- *   Use the useFlag hook from '@/lib/flags-client'
+ *   Use the useFlag hook from '@lib/flags-client'
  */
 
 import 'server-only';
-import type {FlagValues} from '@/generated/hypertune/hypertune';
+import type {FlagValues} from '@generated/hypertune/hypertune';
 import {flagFallbacks} from './flag-defaults';
 
 // Re-export types and fallbacks
-export type {FlagValues} from '@/generated/hypertune/hypertune';
+export type {FlagValues} from '@generated/hypertune/hypertune';
 export {flagFallbacks} from './flag-defaults';
 
 /**

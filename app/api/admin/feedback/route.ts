@@ -1,6 +1,6 @@
 import {NextResponse} from 'next/server';
 import {inArray, isNull} from 'drizzle-orm';
-import {db, feedback} from '@/lib/db';
+import {db, feedback} from '@lib/db';
 
 /**
  * PATCH /api/admin/feedback

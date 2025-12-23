@@ -16,9 +16,9 @@ import {
 	Archive,
 	Layers,
 } from 'lucide-react';
-import type {AuditLog} from '@/lib/db/schema';
-import {TableFilters} from '@/features/admin/table-filters';
-import {TablePagination} from '@/features/admin/table-pagination';
+import type {AuditLog} from '@lib/db/schema';
+import {TableFilters} from '@features/admin/table-filters';
+import {TablePagination} from '@features/admin/table-pagination';
 
 type AuditLogsManagerProps = {
 	initialLogs: AuditLog[];

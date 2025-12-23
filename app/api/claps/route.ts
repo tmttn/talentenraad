@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {db, contentClaps, clapSessions} from '@/lib/db';
+import {db, contentClaps, clapSessions} from '@lib/db';
 import {eq, and, sql} from 'drizzle-orm';
 import {cookies} from 'next/headers';
 import {randomUUID} from 'node:crypto';

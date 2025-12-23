@@ -31,7 +31,7 @@ import {
 	getSeoScoreColor,
 	getSeoScoreBgColor,
 	getSeoScoreLabel,
-} from '@/lib/seo';
+} from '@lib/seo';
 
 type ContentItem = {
 	id: string;

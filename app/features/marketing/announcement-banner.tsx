@@ -7,8 +7,7 @@ import {
 	Star,
 	X,
 } from 'lucide-react';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {useFlag} from '@lib/flags-client';
 
 type Announcement = {
 	id: string;

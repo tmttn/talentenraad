@@ -3,9 +3,9 @@
 import {useState, useCallback} from 'react';
 import {MessageCircle, Send, X} from 'lucide-react';
 import {toast} from 'sonner';
-import {Modal} from '@/components/ui/interactive/Modal';
+import {Modal} from '@components/ui/interactive/Modal';
 import {StarRating} from './star-rating';
-import {useRecaptcha} from '@/features/contact/use-recaptcha';
+import {useRecaptcha} from '@features/contact/use-recaptcha';
 
 type FeedbackFormData = {
 	rating: number;

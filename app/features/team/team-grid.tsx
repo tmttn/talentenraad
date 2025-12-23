@@ -2,8 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {Container, Grid} from '@components/ui/layout';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {useFlag} from '@lib/flags-client';
 
 type TeamMemberData = {
 	name: string;

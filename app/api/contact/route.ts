@@ -1,7 +1,7 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {db, submissions} from '@/lib/db';
-import {sendContactNotification} from '@/lib/email/resend';
-import {verifyRecaptcha} from '@/lib/recaptcha';
+import {db, submissions} from '@lib/db';
+import {sendContactNotification} from '@lib/email/resend';
+import {verifyRecaptcha} from '@lib/recaptcha';
 
 type ContactFormData = {
 	name: string;

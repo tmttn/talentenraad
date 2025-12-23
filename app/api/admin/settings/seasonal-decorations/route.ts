@@ -1,10 +1,10 @@
 import {type NextRequest, NextResponse} from 'next/server';
 import {eq} from 'drizzle-orm';
-import {auth0, isAdminEmail} from '@/lib/auth0';
-import {db, siteSettings, users, type SeasonalDecorationsConfig} from '@/lib/db';
+import {auth0, isAdminEmail} from '@lib/auth0';
+import {db, siteSettings, users, type SeasonalDecorationsConfig} from '@lib/db';
 import {defaultSeasonalConfig} from '@components/seasonal-decorations';
-import {logAudit, createAuditContext} from '@/lib/audit';
-import {computeDataDiff} from '@/lib/audit/helpers';
+import {logAudit, createAuditContext} from '@lib/audit';
+import {computeDataDiff} from '@lib/audit/helpers';
 
 const SEASONAL_DECORATIONS_KEY = 'seasonal_decorations';
 

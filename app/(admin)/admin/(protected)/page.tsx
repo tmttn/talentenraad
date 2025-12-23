@@ -30,12 +30,12 @@ import {
 	ChevronRight,
 	Heart,
 } from 'lucide-react';
-import {db, submissions} from '@/lib/db';
-import {listContent} from '@/lib/builder-admin';
-import {getTotalClapsStats} from '@/lib/claps-admin';
-import type {Activity as ActivityType, NewsItem, Announcement} from '@/lib/builder-types';
+import {db, submissions} from '@lib/db';
+import {listContent} from '@lib/builder-admin';
+import {getTotalClapsStats} from '@lib/claps-admin';
+import type {Activity as ActivityType, NewsItem, Announcement} from '@lib/builder-types';
 import {DashboardSkeleton} from '@components/skeletons';
-import {analyzeSeo, getSeoScoreColor, getSeoScoreBgColor, getSeoScoreLabel} from '@/lib/seo';
+import {analyzeSeo, getSeoScoreColor, getSeoScoreBgColor, getSeoScoreLabel} from '@lib/seo';
 
 function getGreeting(): string {
 	const hour = new Date().getHours();

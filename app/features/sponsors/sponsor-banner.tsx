@@ -8,7 +8,7 @@ import {
 } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import type {Sponsor} from '@/lib/builder-types';
+import type {Sponsor} from '@lib/builder-types';
 
 type SponsorBannerProperties = {
 	hidden?: boolean;

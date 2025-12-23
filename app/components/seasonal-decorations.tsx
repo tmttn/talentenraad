@@ -122,4 +122,4 @@ export function SeasonalStyles() {
 }
 
 // Re-export from shared types for backwards compatibility
-export {defaultSeasonalConfig} from '@/lib/types';
+export {defaultSeasonalConfig} from '@lib/types';

@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import {Suspense} from 'react';
-import {listContent} from '@/lib/builder-admin';
+import {listContent} from '@lib/builder-admin';
 import {CardGridSkeleton} from '@components/skeletons';
 import {AankondigingenManager} from './aankondigingen-manager';
 

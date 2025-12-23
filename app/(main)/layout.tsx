@@ -10,10 +10,8 @@ import {
 } from '@components/seasonal-decorations-context';
 import {Snowfall, SeasonalStyles} from '@components/seasonal-decorations';
 import {ConditionalFeedbackButton} from '@components/feedback';
-// eslint-disable-next-line import-x/extensions
-import {seasonalDecorations, cookieBanner, getAllFlags} from '@/lib/flags';
-// eslint-disable-next-line import-x/extensions
-import {FlagsProvider} from '@/lib/flags-client';
+import {seasonalDecorations, cookieBanner, getAllFlags} from '@lib/flags';
+import {FlagsProvider} from '@lib/flags-client';
 
 // Dynamically import the server component to prevent build-time errors
 async function SafeSeasonalDecorations({children}: {children: React.ReactNode}) {

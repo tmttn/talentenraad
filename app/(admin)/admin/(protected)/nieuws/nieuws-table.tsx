@@ -5,13 +5,13 @@ import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {toast} from 'sonner';
 import {Star, ExternalLink, Pencil, Trash2, Heart} from 'lucide-react';
-import type {NewsItem} from '@/lib/builder-types';
-import {TableFilters} from '@/features/admin/table-filters';
-import {TablePagination} from '@/features/admin/table-pagination';
-import {SortableHeader, useSorting} from '@/features/admin/sortable-header';
-import {DeleteDialog} from '@/features/admin/delete-dialog';
-import {ViewModeToggle} from '@/features/admin/view-mode-toggle';
-import {useViewMode} from '@/features/admin/use-view-mode';
+import type {NewsItem} from '@lib/builder-types';
+import {TableFilters} from '@features/admin/table-filters';
+import {TablePagination} from '@features/admin/table-pagination';
+import {SortableHeader, useSorting} from '@features/admin/sortable-header';
+import {DeleteDialog} from '@features/admin/delete-dialog';
+import {ViewModeToggle} from '@features/admin/view-mode-toggle';
+import {useViewMode} from '@features/admin/use-view-mode';
 
 type NieuwsTableProps = {
 	newsItems: NewsItem[];

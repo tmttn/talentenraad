@@ -3,8 +3,7 @@
  * Use with Next.js loading.tsx files for non-blocking page renders
  */
 
-// eslint-disable-next-line import-x/extensions
-import {gradients} from '@/styles/tokens';
+import {gradients} from '@styles/tokens';
 
 type SkeletonWrapperProperties = {
 	label: string;

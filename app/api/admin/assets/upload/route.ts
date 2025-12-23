@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, verifyAdmin} from '@/lib/auth0';
+import {auth0, verifyAdmin} from '@lib/auth0';
 
 const builderPrivateKey = process.env.BUILDER_PRIVATE_KEY ?? '';
 

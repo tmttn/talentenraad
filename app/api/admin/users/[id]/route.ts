@@ -1,10 +1,10 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, isAdminEmail} from '@/lib/auth0';
-import {db, users} from '@/lib/db';
+import {auth0, isAdminEmail} from '@lib/auth0';
+import {db, users} from '@lib/db';
 import {eq} from 'drizzle-orm';
-import {sendInvitationEmail} from '@/lib/email/resend';
-import {logAudit, createAuditContext} from '@/lib/audit';
-import {computeDataDiff} from '@/lib/audit/helpers';
+import {sendInvitationEmail} from '@lib/email/resend';
+import {logAudit, createAuditContext} from '@lib/audit';
+import {computeDataDiff} from '@lib/audit/helpers';
 
 type RouteContext = {
 	params: Promise<{id: string}>;

@@ -9,8 +9,7 @@ import {
 } from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 import {Container, Stack} from '@components/ui/layout';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {useFlag} from '@lib/flags-client';
 
 const articleClassName = [
 	'flex items-start gap-6 bg-white p-4 rounded-card shadow-base hover:shadow-elevated transition-shadow',

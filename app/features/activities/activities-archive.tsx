@@ -3,8 +3,7 @@
 import {useEffect, useState} from 'react';
 import {Archive, ChevronDown} from 'lucide-react';
 import {Container, Stack} from '@components/ui/layout';
-// eslint-disable-next-line import-x/extensions
-import {useFlag} from '@/lib/flags-client';
+import {useFlag} from '@lib/flags-client';
 
 type Activity = {
 	id: string;

@@ -1,6 +1,6 @@
 import {type NextRequest, NextResponse} from 'next/server';
 import {headers} from 'next/headers';
-import {db, pushSubscriptions} from '@/lib/db';
+import {db, pushSubscriptions} from '@lib/db';
 import {eq} from 'drizzle-orm';
 
 type SubscriptionData = {

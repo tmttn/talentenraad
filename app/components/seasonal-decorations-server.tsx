@@ -1,5 +1,5 @@
 import {eq} from 'drizzle-orm';
-import {db, siteSettings} from '@/lib/db';
+import {db, siteSettings} from '@lib/db';
 import {SeasonalDecorationsProvider, type SeasonalDecorationsConfig} from './seasonal-decorations-context';
 import {Snowfall, SeasonalStyles, defaultSeasonalConfig} from './seasonal-decorations';
 
