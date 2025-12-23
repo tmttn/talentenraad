@@ -131,9 +131,29 @@ function formatLabel(key: string): string {
     .trim();
 }
 
+// Extract block options from various possible locations in Builder.io blocks
+function extractBlockOptions(block: BuilderBlock): Record<string, unknown> {
+  // First try component.options (standard location for custom components)
+  const componentOptions = block.component?.options ?? {};
+
+  // Builder.io sometimes stores props directly on the block
+  // Extract any non-standard properties from the block itself
+  const blockLevelProps: Record<string, unknown> = {};
+  const reservedKeys = new Set(['@type', 'id', 'component', 'children', 'responsiveStyles', 'meta', 'layerName', 'tagName', 'class', 'properties', 'bindings', 'actions', 'code']);
+
+  for (const [key, value] of Object.entries(block)) {
+    if (!reservedKeys.has(key) && value !== undefined) {
+      blockLevelProps[key] = value;
+    }
+  }
+
+  // Merge both sources, with component options taking precedence
+  return {...blockLevelProps, ...componentOptions};
+}
+
 export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
   const [options, setOptions] = useState<Record<string, unknown>>(
-    block.component?.options ?? {},
+    extractBlockOptions(block),
   );
 
   const componentName = block.component?.name ?? 'Unknown';
