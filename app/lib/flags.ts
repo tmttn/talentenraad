@@ -25,17 +25,17 @@ export {flagFallbacks} from './flag-defaults';
  * Uses fallback values until Hypertune is fully connected
  */
 export async function getFlag<K extends keyof FlagValues>(key: K): Promise<FlagValues[K]> {
-	// TODO: Once Hypertune is connected, replace with actual SDK call
-	// For now, use fallback values
-	return flagFallbacks[key];
+  // TODO: Once Hypertune is connected, replace with actual SDK call
+  // For now, use fallback values
+  return flagFallbacks[key];
 }
 
 /**
  * Get all flag values at once (useful for client-side hydration)
  */
 export async function getAllFlags(): Promise<FlagValues> {
-	// TODO: Once Hypertune is connected, fetch all flags from SDK
-	return {...flagFallbacks};
+  // TODO: Once Hypertune is connected, fetch all flags from SDK
+  return {...flagFallbacks};
 }
 
 // =============================================================================

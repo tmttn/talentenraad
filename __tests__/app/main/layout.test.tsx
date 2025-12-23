@@ -14,8 +14,8 @@
 import MainSiteLayout from '../../../app/(main)/layout';
 
 describe('MainSiteLayout', () => {
-	it('exports a default function component', () => {
-		expect(typeof MainSiteLayout).toBe('function');
-		expect(MainSiteLayout.name).toBe('MainSiteLayout');
-	});
+  it('exports a default function component', () => {
+    expect(typeof MainSiteLayout).toBe('function');
+    expect(MainSiteLayout.name).toBe('MainSiteLayout');
+  });
 });

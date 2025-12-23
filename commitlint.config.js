@@ -8,17 +8,17 @@ module.exports = {
       2,
       'always',
       [
-        'feat',     // New features
-        'fix',      // Bug fixes
-        'style',    // UI/styling changes
+        'feat', // New features
+        'fix', // Bug fixes
+        'style', // UI/styling changes
         'refactor', // Code refactoring
-        'perf',     // Performance improvements
-        'test',     // Tests
-        'docs',     // Documentation
-        'chore',    // Build/tooling
-        'deploy',   // Deployment
-        'enhance'   // Enhancements
-      ]
+        'perf', // Performance improvements
+        'test', // Tests
+        'docs', // Documentation
+        'chore', // Build/tooling
+        'deploy', // Deployment
+        'enhance', // Enhancements
+      ],
     ],
     'subject-min-length': [2, 'always', 1],
     'subject-max-length': [2, 'always', 100],
@@ -28,14 +28,14 @@ module.exports = {
     'header-pattern': [
       2,
       'always',
-      /^([\p{Emoji}][\u200d\ufe0f]* )?(feat|fix|style|refactor|perf|test|docs|chore|deploy|enhance)(\(.+\))?: .+$/u
-    ]
+      /^([\p{Emoji}][\u200D\uFE0F]* )?(feat|fix|style|refactor|perf|test|docs|chore|deploy|enhance)(\(.+\))?: .+$/u,
+    ],
   },
   plugins: [
     {
       rules: {
-        'header-pattern': ({ header }) => {
-          const pattern = /^([\p{Emoji}][\u200d\ufe0f]* )?(feat|fix|style|refactor|perf|test|docs|chore|deploy|enhance)(\(.+\))?: .+$/u;
+        'header-pattern'({header}) {
+          const pattern = /^([\p{Emoji}][\u200D\uFE0F]* )?(feat|fix|style|refactor|perf|test|docs|chore|deploy|enhance)(\(.+\))?: .+$/u;
 
           if (!pattern.test(header)) {
             return [
@@ -48,13 +48,13 @@ Examples:
   feat: add new feature
   fix: resolve bug in component
   chore: update dependencies
-  chore(deps): update dependency xyz`
+  chore(deps): update dependency xyz`,
             ];
           }
 
           return [true];
-        }
-      }
-    }
-  ]
+        },
+      },
+    },
+  ],
 };

@@ -131,7 +131,7 @@ async function addTeamlid(teamlid) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${PRIVATE_KEY}`,
+        Authorization: `Bearer ${PRIVATE_KEY}`,
       },
       body: JSON.stringify(content),
     });
@@ -156,7 +156,10 @@ async function main() {
   let added = 0;
   for (const teamlid of teamleden) {
     const success = await addTeamlid(teamlid);
-    if (success) added++;
+    if (success) {
+      added++;
+    }
+
     // Small delay to avoid rate limiting
     await new Promise(resolve => setTimeout(resolve, 100));
   }

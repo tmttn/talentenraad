@@ -6,45 +6,45 @@ import {SubmissionsPageSkeleton} from '@components/skeletons';
 import {SubmissionsPageClient} from './submissions-page-client';
 
 export const metadata: Metadata = {
-	title: 'Berichten',
+  title: 'Berichten',
 };
 
 async function SubmissionsLoader() {
-	const [inboxSubmissions, archivedSubmissions, feedbackItems] = await Promise.all([
-		db.query.submissions.findMany({
-			orderBy: [desc(submissions.createdAt)],
-			where: isNull(submissions.archivedAt),
-		}),
-		db.query.submissions.findMany({
-			orderBy: [desc(submissions.archivedAt)],
-			where: isNotNull(submissions.archivedAt),
-		}),
-		db.query.feedback.findMany({
-			orderBy: [desc(feedback.createdAt)],
-		}),
-	]);
+  const [inboxSubmissions, archivedSubmissions, feedbackItems] = await Promise.all([
+    db.query.submissions.findMany({
+      orderBy: [desc(submissions.createdAt)],
+      where: isNull(submissions.archivedAt),
+    }),
+    db.query.submissions.findMany({
+      orderBy: [desc(submissions.archivedAt)],
+      where: isNotNull(submissions.archivedAt),
+    }),
+    db.query.feedback.findMany({
+      orderBy: [desc(feedback.createdAt)],
+    }),
+  ]);
 
-	// Count unread items
-	const unreadSubmissionsCount = inboxSubmissions.filter(s => !s.readAt).length;
-	const unreadFeedbackCount = feedbackItems.filter(f => !f.readAt).length;
+  // Count unread items
+  const unreadSubmissionsCount = inboxSubmissions.filter(s => !s.readAt).length;
+  const unreadFeedbackCount = feedbackItems.filter(f => !f.readAt).length;
 
-	return (
-		<SubmissionsPageClient
-			inboxSubmissions={inboxSubmissions}
-			archivedSubmissions={archivedSubmissions}
-			feedbackItems={feedbackItems}
-			unreadCounts={{
-				submissions: unreadSubmissionsCount,
-				feedback: unreadFeedbackCount,
-			}}
-		/>
-	);
+  return (
+    <SubmissionsPageClient
+      inboxSubmissions={inboxSubmissions}
+      archivedSubmissions={archivedSubmissions}
+      feedbackItems={feedbackItems}
+      unreadCounts={{
+        submissions: unreadSubmissionsCount,
+        feedback: unreadFeedbackCount,
+      }}
+    />
+  );
 }
 
 export default function SubmissionsPage() {
-	return (
-		<Suspense fallback={<SubmissionsPageSkeleton />}>
-			<SubmissionsLoader />
-		</Suspense>
-	);
+  return (
+    <Suspense fallback={<SubmissionsPageSkeleton />}>
+      <SubmissionsLoader />
+    </Suspense>
+  );
 }

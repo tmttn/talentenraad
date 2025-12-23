@@ -59,7 +59,7 @@ async function deleteNieuwsItem(id, title) {
   const response = await fetch(`https://builder.io/api/v1/write/nieuws/${id}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
   });
 
@@ -78,7 +78,7 @@ async function addNieuwsItem(item) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify({
       name: item.titel,
@@ -108,6 +108,7 @@ async function main() {
     for (const item of existingNieuws) {
       await deleteNieuwsItem(item.id, item.data?.titel || item.name);
     }
+
     console.log('');
   }
 

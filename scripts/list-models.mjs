@@ -23,9 +23,9 @@ async function listModels() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
-    body: JSON.stringify({ query }),
+    body: JSON.stringify({query}),
   });
 
   const data = await response.json();
@@ -51,6 +51,7 @@ async function listModels() {
         console.log(`    - ${field.name}: ${field.type}`);
       }
     }
+
     console.log();
   }
 }

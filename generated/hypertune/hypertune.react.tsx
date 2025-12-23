@@ -59,7 +59,7 @@ export function HypertuneSourceProvider({
     key: typeof window === "undefined" ? "ssr" : "client",
     initDataProvider: typeof window === "undefined" ? null : undefined,
     remoteLogging: { mode: typeof window === "undefined" ? "off" : undefined },
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
+     
     localLogger: typeof window === "undefined" ? () => {} : undefined,
     ...createSourceOptions,
   });

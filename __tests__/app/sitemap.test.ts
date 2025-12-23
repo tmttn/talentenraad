@@ -2,37 +2,37 @@ import sitemap from '../../app/sitemap';
 import {siteConfig} from '../../app/lib/seo';
 
 describe('sitemap', () => {
-	beforeEach(() => {
-		jest.useFakeTimers();
-		jest.setSystemTime(new Date('2024-01-15'));
-	});
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2024-01-15'));
+  });
 
-	afterEach(() => {
-		jest.useRealTimers();
-	});
+  afterEach(() => {
+    jest.useRealTimers();
+  });
 
-	it('returns array with home page entry', () => {
-		const result = sitemap();
+  it('returns array with home page entry', () => {
+    const result = sitemap();
 
-		expect(result).toHaveLength(1);
-		expect(result[0].url).toBe(siteConfig.url);
-	});
+    expect(result).toHaveLength(1);
+    expect(result[0].url).toBe(siteConfig.url);
+  });
 
-	it('sets correct priority for home page', () => {
-		const result = sitemap();
+  it('sets correct priority for home page', () => {
+    const result = sitemap();
 
-		expect(result[0].priority).toBe(1);
-	});
+    expect(result[0].priority).toBe(1);
+  });
 
-	it('sets weekly change frequency', () => {
-		const result = sitemap();
+  it('sets weekly change frequency', () => {
+    const result = sitemap();
 
-		expect(result[0].changeFrequency).toBe('weekly');
-	});
+    expect(result[0].changeFrequency).toBe('weekly');
+  });
 
-	it('includes lastModified date', () => {
-		const result = sitemap();
+  it('includes lastModified date', () => {
+    const result = sitemap();
 
-		expect(result[0].lastModified).toBeInstanceOf(Date);
-	});
+    expect(result[0].lastModified).toBeInstanceOf(Date);
+  });
 });

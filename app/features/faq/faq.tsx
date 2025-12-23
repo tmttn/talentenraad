@@ -1,16 +1,16 @@
 'use client';
 
 import {
-	useEffect, useState, useRef, useCallback, type KeyboardEvent,
+  useEffect, useState, useRef, useCallback, type KeyboardEvent,
 } from 'react';
 import {ChevronDown, HelpCircle} from 'lucide-react';
 import {Container, Stack} from '@components/ui/layout';
 import {useFlag} from '@lib/flags-client';
 
 const faqButtonClassName = [
-	'faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4',
-	'hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2',
-	'focus-visible:ring-focus focus-visible:ring-offset-2',
+  'faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4',
+  'hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2',
+  'focus-visible:ring-focus focus-visible:ring-offset-2',
 ].join(' ');
 
 /**
@@ -75,219 +75,219 @@ const faqStyles = `
 `;
 
 type FaqItem = {
-	id: string;
-	data: {
-		vraag: string;
-		antwoord: string;
-		volgorde?: number;
-	};
+  id: string;
+  data: {
+    vraag: string;
+    antwoord: string;
+    volgorde?: number;
+  };
 };
 
 // Generate JSON-LD structured data for FAQPage schema
 function generateFaqStructuredData(faqs: FaqItem[]) {
-	return {
-		'@context': 'https://schema.org',
-		'@type': 'FAQPage',
-		mainEntity: faqs.map(faq => ({
-			'@type': 'Question',
-			name: faq.data.vraag,
-			acceptedAnswer: {
-				'@type': 'Answer',
-				text: faq.data.antwoord,
-			},
-		})),
-	};
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map(faq => ({
+      '@type': 'Question',
+      name: faq.data.vraag,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.data.antwoord,
+      },
+    })),
+  };
 }
 
 // Use environment variable for API key
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '3706422a8e454ceebe64acdc5a1475ba';
 
 function Faq() {
-	const isEnabled = useFlag('faqSection');
-	const [faqs, setFaqs] = useState<FaqItem[]>([]);
-	const [loading, setLoading] = useState(true);
-	const [openIndex, setOpenIndex] = useState<number | undefined>(undefined);
-	const [statusMessage, setStatusMessage] = useState<string>('');
-	const buttonRefs = useRef<Array<HTMLButtonElement | undefined>>([]);
+  const isEnabled = useFlag('faqSection');
+  const [faqs, setFaqs] = useState<FaqItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [openIndex, setOpenIndex] = useState<number | undefined>(undefined);
+  const [statusMessage, setStatusMessage] = useState<string>('');
+  const buttonRefs = useRef<Array<HTMLButtonElement | undefined>>([]);
 
-	// Keyboard navigation handler for accordion
-	const handleKeyDown = useCallback((event: KeyboardEvent<HTMLButtonElement>, index: number) => {
-		const {key} = event;
-		const totalItems = faqs.length;
+  // Keyboard navigation handler for accordion
+  const handleKeyDown = useCallback((event: KeyboardEvent<HTMLButtonElement>, index: number) => {
+    const {key} = event;
+    const totalItems = faqs.length;
 
-		let newIndex: number | undefined;
+    let newIndex: number | undefined;
 
-		switch (key) {
-			case 'ArrowDown': {
-				event.preventDefault();
-				newIndex = index < totalItems - 1 ? index + 1 : 0;
-				break;
-			}
+    switch (key) {
+      case 'ArrowDown': {
+        event.preventDefault();
+        newIndex = index < totalItems - 1 ? index + 1 : 0;
+        break;
+      }
 
-			case 'ArrowUp': {
-				event.preventDefault();
-				newIndex = index > 0 ? index - 1 : totalItems - 1;
-				break;
-			}
+      case 'ArrowUp': {
+        event.preventDefault();
+        newIndex = index > 0 ? index - 1 : totalItems - 1;
+        break;
+      }
 
-			case 'Home': {
-				event.preventDefault();
-				newIndex = 0;
-				break;
-			}
+      case 'Home': {
+        event.preventDefault();
+        newIndex = 0;
+        break;
+      }
 
-			case 'End': {
-				event.preventDefault();
-				newIndex = totalItems - 1;
-				break;
-			}
+      case 'End': {
+        event.preventDefault();
+        newIndex = totalItems - 1;
+        break;
+      }
 
-			default: {
-				break;
-			}
-		}
+      default: {
+        break;
+      }
+    }
 
-		if (newIndex !== undefined) {
-			buttonRefs.current[newIndex]?.focus();
-		}
-	}, [faqs.length]);
+    if (newIndex !== undefined) {
+      buttonRefs.current[newIndex]?.focus();
+    }
+  }, [faqs.length]);
 
-	useEffect(() => {
-		async function fetchFaqs() {
-			try {
-				const url = new URL('https://cdn.builder.io/api/v3/content/faq');
-				url.searchParams.set('apiKey', builderApiKey);
-				url.searchParams.set('limit', '20');
-				url.searchParams.set('sort.data.volgorde', '1');
-				url.searchParams.set('cachebust', 'true');
+  useEffect(() => {
+    async function fetchFaqs() {
+      try {
+        const url = new URL('https://cdn.builder.io/api/v3/content/faq');
+        url.searchParams.set('apiKey', builderApiKey);
+        url.searchParams.set('limit', '20');
+        url.searchParams.set('sort.data.volgorde', '1');
+        url.searchParams.set('cachebust', 'true');
 
-				const response = await fetch(url.toString(), {cache: 'no-store'});
+        const response = await fetch(url.toString(), {cache: 'no-store'});
 
-				// Gracefully handle 404 - content type may not exist yet
-				if (!response.ok) {
-					setLoading(false);
-					return;
-				}
+        // Gracefully handle 404 - content type may not exist yet
+        if (!response.ok) {
+          setLoading(false);
+          return;
+        }
 
-				const data = await response.json() as {results?: FaqItem[]};
+        const data = await response.json() as {results?: FaqItem[]};
 
-				if (data.results) {
-					setFaqs(data.results);
-				}
-			} catch {
-				// Silently fail - FAQs will show empty state
-			} finally {
-				setLoading(false);
-			}
-		}
+        if (data.results) {
+          setFaqs(data.results);
+        }
+      } catch {
+        // Silently fail - FAQs will show empty state
+      } finally {
+        setLoading(false);
+      }
+    }
 
-		void fetchFaqs();
-	}, []);
+    void fetchFaqs();
+  }, []);
 
-	const toggleFaq = (index: number) => {
-		const isOpening = openIndex !== index;
-		setOpenIndex(isOpening ? index : undefined);
-		// Announce state change to screen readers
-		const faqTitle = faqs[index]?.data.vraag ?? '';
-		setStatusMessage(isOpening ? `${faqTitle} geopend` : `${faqTitle} gesloten`);
-	};
+  const toggleFaq = (index: number) => {
+    const isOpening = openIndex !== index;
+    setOpenIndex(isOpening ? index : undefined);
+    // Announce state change to screen readers
+    const faqTitle = faqs[index]?.data.vraag ?? '';
+    setStatusMessage(isOpening ? `${faqTitle} geopend` : `${faqTitle} gesloten`);
+  };
 
-	if (loading) {
-		return (
-			<Container size='md' className='animate-pulse'>
-				<Stack gap='md'>
-					{[1, 2, 3].map(i => (
-						<div key={i} className='h-16 bg-gray-200 rounded' />
-					))}
-				</Stack>
-			</Container>
-		);
-	}
+  if (loading) {
+    return (
+      <Container size='md' className='animate-pulse'>
+        <Stack gap='md'>
+          {[1, 2, 3].map(i => (
+            <div key={i} className='h-16 bg-gray-200 rounded' />
+          ))}
+        </Stack>
+      </Container>
+    );
+  }
 
-	if (faqs.length === 0) {
-		return (
-			<Container size='md'>
-				<div className='text-center py-section-sm bg-gradient-to-br from-white to-gray-50 rounded-modal border-2 border-dashed border-gray-200'>
-					<div className='w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center'>
-						<HelpCircle className='h-10 w-10 text-primary' aria-hidden='true' />
-					</div>
-					<p className='text-gray-500'>Geen veelgestelde vragen gevonden</p>
-				</div>
-			</Container>
-		);
-	}
+  if (faqs.length === 0) {
+    return (
+      <Container size='md'>
+        <div className='text-center py-section-sm bg-gradient-to-br from-white to-gray-50 rounded-modal border-2 border-dashed border-gray-200'>
+          <div className='w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center'>
+            <HelpCircle className='h-10 w-10 text-primary' aria-hidden='true' />
+          </div>
+          <p className='text-gray-500'>Geen veelgestelde vragen gevonden</p>
+        </div>
+      </Container>
+    );
+  }
 
-	// Check feature flag
-	if (!isEnabled) {
-		return null;
-	}
+  // Check feature flag
+  if (!isEnabled) {
+    return null;
+  }
 
-	return (
-		<Container size='md'>
-			<style dangerouslySetInnerHTML={{__html: faqStyles}} />
-			{faqs.length > 0 && (
-				<script
-					type='application/ld+json'
-					dangerouslySetInnerHTML={{
-						__html: JSON.stringify(generateFaqStructuredData(faqs)),
-					}}
-				/>
-			)}
-			<div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
-				{statusMessage}
-			</div>
+  return (
+    <Container size='md'>
+      <style dangerouslySetInnerHTML={{__html: faqStyles}} />
+      {faqs.length > 0 && (
+        <script
+          type='application/ld+json'
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateFaqStructuredData(faqs)),
+          }}
+        />
+      )}
+      <div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
+        {statusMessage}
+      </div>
 
-			<Stack gap='md' as='div' className='faq-accordion' role='group' aria-label='Veelgestelde vragen accordeon'>
-				{faqs.map((faq, index) => (
-					<div
-						key={faq.id}
-						className='faq-item bg-white rounded-card shadow-subtle overflow-hidden hover:shadow-base transition-shadow duration-base'
-						style={{animationDelay: `${index * 0.08}s`}}
-					>
-						<button
-							ref={element => {
-								buttonRefs.current[index] = element ?? undefined;
-							}}
-							type='button'
-							onClick={() => {
-								toggleFaq(index);
-							}}
-							onKeyDown={event => {
-								handleKeyDown(event, index);
-							}}
-							className={faqButtonClassName}
-							aria-expanded={openIndex === index}
-							aria-controls={`faq-answer-${index}`}
-							id={`faq-button-${index}`}
-						>
-							<span className='font-semibold text-gray-900'>{faq.data.vraag}</span>
-							<ChevronDown
-								className={`faq-chevron h-5 w-5 text-primary flex-shrink-0 ${openIndex === index ? 'open' : ''}`}
-								aria-hidden='true'
-							/>
-						</button>
-						<div
-							id={`faq-answer-${index}`}
-							role='region'
-							aria-labelledby={`faq-button-${index}`}
-							className={`faq-content-wrapper ${openIndex === index ? 'open' : ''}`}
-							aria-hidden={openIndex !== index}
-						>
-							<div className='faq-content-inner'>
-								<div className='faq-content-text px-6 pb-4 text-gray-700'>
-									<p>{faq.data.antwoord}</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				))}
-			</Stack>
-		</Container>
-	);
+      <Stack gap='md' as='div' className='faq-accordion' role='group' aria-label='Veelgestelde vragen accordeon'>
+        {faqs.map((faq, index) => (
+          <div
+            key={faq.id}
+            className='faq-item bg-white rounded-card shadow-subtle overflow-hidden hover:shadow-base transition-shadow duration-base'
+            style={{animationDelay: `${index * 0.08}s`}}
+          >
+            <button
+              ref={element => {
+                buttonRefs.current[index] = element ?? undefined;
+              }}
+              type='button'
+              onClick={() => {
+                toggleFaq(index);
+              }}
+              onKeyDown={event => {
+                handleKeyDown(event, index);
+              }}
+              className={faqButtonClassName}
+              aria-expanded={openIndex === index}
+              aria-controls={`faq-answer-${index}`}
+              id={`faq-button-${index}`}
+            >
+              <span className='font-semibold text-gray-900'>{faq.data.vraag}</span>
+              <ChevronDown
+                className={`faq-chevron h-5 w-5 text-primary flex-shrink-0 ${openIndex === index ? 'open' : ''}`}
+                aria-hidden='true'
+              />
+            </button>
+            <div
+              id={`faq-answer-${index}`}
+              role='region'
+              aria-labelledby={`faq-button-${index}`}
+              className={`faq-content-wrapper ${openIndex === index ? 'open' : ''}`}
+              aria-hidden={openIndex !== index}
+            >
+              <div className='faq-content-inner'>
+                <div className='faq-content-text px-6 pb-4 text-gray-700'>
+                  <p>{faq.data.antwoord}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </Stack>
+    </Container>
+  );
 }
 
 export const FaqInfo = {
-	name: 'FAQ',
-	component: Faq,
-	inputs: [],
+  name: 'FAQ',
+  component: Faq,
+  inputs: [],
 };

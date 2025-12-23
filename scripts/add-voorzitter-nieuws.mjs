@@ -14,7 +14,7 @@ async function addNieuwsItem() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify({
       name: nieuwsItem.titel,

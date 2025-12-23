@@ -1,9 +1,9 @@
 import type {Metadata} from 'next';
 
 export const metadata: Metadata = {
-	title: 'Section Preview - Talentenraad',
-	description: 'Builder.io section preview',
-	robots: 'noindex, nofollow',
+  title: 'Section Preview - Talentenraad',
+  description: 'Builder.io section preview',
+  robots: 'noindex, nofollow',
 };
 
 /**
@@ -13,13 +13,13 @@ export const metadata: Metadata = {
  * No header, footer, or site navigation - just the section content.
  */
 export default function BuilderPreviewLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	return (
-		<div className='builder-preview min-h-screen'>
-			{children}
-		</div>
-	);
+  return (
+    <div className='builder-preview min-h-screen'>
+      {children}
+    </div>
+  );
 }

@@ -29,46 +29,46 @@ import {PhotoGalleryInfo} from '@features/gallery/photo-gallery';
 import {SponsorBannerInfo} from '@features/sponsors/sponsor-banner';
 
 type BuilderContentProperties = {
-	content: BuilderContentType | null;
-	apiKey: string;
-	model: string;
+  content: BuilderContentType | null;
+  apiKey: string;
+  model: string;
 };
 
 export function BuilderContent({content, apiKey, model}: Readonly<BuilderContentProperties>) {
-	return (
-		<Content
-			content={content}
-			apiKey={apiKey}
-			model={model}
-			customComponents={[
-				SiteHeaderInfo,
-				SiteFooterInfo,
-				HeroInfo,
-				EventCardInfo,
-				ContactFormInfo,
-				NewsCardInfo,
-				CalendarSectionInfo,
-				TeamMemberInfo,
-				CtaBannerInfo,
-				InfoCardInfo,
-				ActivitiesListInfo,
-				TeamGridInfo,
-				FeatureGridInfo,
-				SectionInfo,
-				NewsListInfo,
-				AnnouncementBannerInfo,
-				FaqInfo,
-				DecorationInfo,
-				DividerInfo,
-				ActivitiesArchiveInfo,
-				HomepageDashboardInfo,
-				NewsletterSignupInfo,
-				UnifiedCtaInfo,
-				CtaButtonInfo,
-				TypographyInfo,
-				PhotoGalleryInfo,
-				SponsorBannerInfo,
-			]}
-		/>
-	);
+  return (
+    <Content
+      content={content}
+      apiKey={apiKey}
+      model={model}
+      customComponents={[
+        SiteHeaderInfo,
+        SiteFooterInfo,
+        HeroInfo,
+        EventCardInfo,
+        ContactFormInfo,
+        NewsCardInfo,
+        CalendarSectionInfo,
+        TeamMemberInfo,
+        CtaBannerInfo,
+        InfoCardInfo,
+        ActivitiesListInfo,
+        TeamGridInfo,
+        FeatureGridInfo,
+        SectionInfo,
+        NewsListInfo,
+        AnnouncementBannerInfo,
+        FaqInfo,
+        DecorationInfo,
+        DividerInfo,
+        ActivitiesArchiveInfo,
+        HomepageDashboardInfo,
+        NewsletterSignupInfo,
+        UnifiedCtaInfo,
+        CtaButtonInfo,
+        TypographyInfo,
+        PhotoGalleryInfo,
+        SponsorBannerInfo,
+      ]}
+    />
+  );
 }

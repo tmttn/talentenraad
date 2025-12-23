@@ -3,18 +3,18 @@ import {notFound} from 'next/navigation';
 import {BuilderContent} from '@components/builder/builder-content';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {
-	builderPublicApiKey,
-	fetchBuilderContent,
-	canShowBuilderContent,
-	extractSeoData,
-	ConfigurationError,
-	type PageSearchParameters,
+  builderPublicApiKey,
+  fetchBuilderContent,
+  canShowBuilderContent,
+  extractSeoData,
+  ConfigurationError,
+  type PageSearchParameters,
 } from '@lib/builder-utils';
 import {
-	generateMetadata as generateSeoMetadata,
-	generateBreadcrumbSchema,
-	JsonLd,
-	siteConfig,
+  generateMetadata as generateSeoMetadata,
+  generateBreadcrumbSchema,
+  JsonLd,
+  siteConfig,
 } from '@lib/seo';
 
 // Enable ISR with fast revalidation for quick content updates
@@ -22,76 +22,76 @@ import {
 export const revalidate = 5;
 
 type PageProperties = {
-	params: Promise<{page: string[]}>;
-	searchParams: Promise<PageSearchParameters>;
+  params: Promise<{page: string[]}>;
+  searchParams: Promise<PageSearchParameters>;
 };
 
 export async function generateMetadata({params, searchParams}: PageProperties): Promise<Metadata> {
-	const parameters = await params;
-	const searchParameters = await searchParams;
-	const urlPath = '/' + (parameters?.page?.join('/') ?? '');
+  const parameters = await params;
+  const searchParameters = await searchParams;
+  const urlPath = '/' + (parameters?.page?.join('/') ?? '');
 
-	if (!builderPublicApiKey) {
-		return {title: siteConfig.name};
-	}
+  if (!builderPublicApiKey) {
+    return {title: siteConfig.name};
+  }
 
-	const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
+  const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
 
-	// Return minimal metadata for 404 pages (proxy handles the actual 404 status)
-	if (!canShowBuilderContent(content, searchParameters)) {
-		return {
-			title: 'Pagina niet gevonden',
-			robots: {index: false, follow: false},
-		};
-	}
+  // Return minimal metadata for 404 pages (proxy handles the actual 404 status)
+  if (!canShowBuilderContent(content, searchParameters)) {
+    return {
+      title: 'Pagina niet gevonden',
+      robots: {index: false, follow: false},
+    };
+  }
 
-	const seoData = extractSeoData(content);
+  const seoData = extractSeoData(content);
 
-	// Generate a readable title from the URL if no SEO title is set
-	const fallbackTitle = parameters?.page?.at(-1)?.replaceAll('-', ' ').replaceAll(/\b\w/g, char => char.toUpperCase()) ?? siteConfig.name;
+  // Generate a readable title from the URL if no SEO title is set
+  const fallbackTitle = parameters?.page?.at(-1)?.replaceAll('-', ' ').replaceAll(/\b\w/g, char => char.toUpperCase()) ?? siteConfig.name;
 
-	return generateSeoMetadata({
-		title: seoData.title ?? fallbackTitle,
-		description: seoData.description ?? siteConfig.description,
-		url: urlPath,
-		image: seoData.image,
-		noIndex: seoData.noIndex,
-	});
+  return generateSeoMetadata({
+    title: seoData.title ?? fallbackTitle,
+    description: seoData.description ?? siteConfig.description,
+    url: urlPath,
+    image: seoData.image,
+    noIndex: seoData.noIndex,
+  });
 }
 
 export default async function Page(properties: Readonly<PageProperties>) {
-	const parameters = await properties.params;
-	const urlPath = '/' + (parameters?.page?.join('/') ?? '');
+  const parameters = await properties.params;
+  const urlPath = '/' + (parameters?.page?.join('/') ?? '');
 
-	if (!builderPublicApiKey) {
-		return <ConfigurationError />;
-	}
+  if (!builderPublicApiKey) {
+    return <ConfigurationError />;
+  }
 
-	const searchParameters = await properties.searchParams;
+  const searchParameters = await properties.searchParams;
 
-	// Fetch content - proxy.ts handles 404 detection, but we keep notFound() as fallback
-	const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
+  // Fetch content - proxy.ts handles 404 detection, but we keep notFound() as fallback
+  const {content} = await fetchBuilderContent(urlPath, searchParameters, builderPublicApiKey);
 
-	if (!canShowBuilderContent(content, searchParameters)) {
-		notFound();
-	}
+  if (!canShowBuilderContent(content, searchParameters)) {
+    notFound();
+  }
 
-	// Generate breadcrumb schema from URL segments
-	const segments = urlPath.split('/').filter(Boolean);
-	const breadcrumbItems = [{name: 'Home', url: '/'}];
-	let currentPath = '';
-	for (const segment of segments) {
-		currentPath += `/${segment}`;
-		const segmentName = segment.replaceAll('-', ' ').replaceAll(/\b\w/g, char => char.toUpperCase());
-		breadcrumbItems.push({name: segmentName, url: currentPath});
-	}
+  // Generate breadcrumb schema from URL segments
+  const segments = urlPath.split('/').filter(Boolean);
+  const breadcrumbItems = [{name: 'Home', url: '/'}];
+  let currentPath = '';
+  for (const segment of segments) {
+    currentPath += `/${segment}`;
+    const segmentName = segment.replaceAll('-', ' ').replaceAll(/\b\w/g, char => char.toUpperCase());
+    breadcrumbItems.push({name: segmentName, url: currentPath});
+  }
 
-	const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems);
+  const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems);
 
-	return (
-		<PageWithAnnouncements content={content ?? undefined}>
-			<JsonLd data={breadcrumbSchema} />
-			<BuilderContent content={content ?? null} apiKey={builderPublicApiKey} model='page' />
-		</PageWithAnnouncements>
-	);
+  return (
+    <PageWithAnnouncements content={content ?? undefined}>
+      <JsonLd data={breadcrumbSchema} />
+      <BuilderContent content={content ?? null} apiKey={builderPublicApiKey} model='page' />
+    </PageWithAnnouncements>
+  );
 }

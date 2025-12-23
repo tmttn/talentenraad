@@ -129,9 +129,7 @@ const newActiviteiten = [
 async function deleteOldActivities() {
   console.log('Fetching existing activities...');
 
-  const response = await fetch(
-    `https://cdn.builder.io/api/v3/content/${MODEL_NAME}?apiKey=${PUBLIC_KEY}&limit=100`
-  );
+  const response = await fetch(`https://cdn.builder.io/api/v3/content/${MODEL_NAME}?apiKey=${PUBLIC_KEY}&limit=100`);
   const data = await response.json();
 
   if (data.results && data.results.length > 0) {
@@ -144,9 +142,9 @@ async function deleteOldActivities() {
           {
             method: 'DELETE',
             headers: {
-              'Authorization': `Bearer ${PRIVATE_KEY}`,
+              Authorization: `Bearer ${PRIVATE_KEY}`,
             },
-          }
+          },
         );
 
         if (deleteResponse.ok) {
@@ -169,7 +167,7 @@ async function addActiviteit(activiteit) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${PRIVATE_KEY}`,
+        Authorization: `Bearer ${PRIVATE_KEY}`,
       },
       body: JSON.stringify(activiteit),
     });
@@ -198,7 +196,7 @@ async function main() {
     if (result) {
       console.log(`  ✓ Created with ID: ${result.id}`);
     } else {
-      console.log(`  ✗ Failed to create`);
+      console.log('  ✗ Failed to create');
     }
   }
 

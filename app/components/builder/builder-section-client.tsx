@@ -27,36 +27,36 @@ import {PhotoGalleryInfo} from '@features/gallery/photo-gallery';
 
 // All custom components available for sections
 const customComponents = [
-	HeroInfo,
-	CtaBannerInfo,
-	InfoCardInfo,
-	SectionInfo,
-	FaqInfo,
-	ActivitiesListInfo,
-	NewsListInfo,
-	DecorationInfo,
-	DividerInfo,
-	AnnouncementBannerInfo,
-	TeamGridInfo,
-	FeatureGridInfo,
-	ContactFormInfo,
-	CalendarSectionInfo,
-	EventCardInfo,
-	NewsCardInfo,
-	TeamMemberInfo,
-	ActivitiesArchiveInfo,
-	HomepageDashboardInfo,
-	NewsletterSignupInfo,
-	UnifiedCtaInfo,
-	CtaButtonInfo,
-	TypographyInfo,
-	PhotoGalleryInfo,
+  HeroInfo,
+  CtaBannerInfo,
+  InfoCardInfo,
+  SectionInfo,
+  FaqInfo,
+  ActivitiesListInfo,
+  NewsListInfo,
+  DecorationInfo,
+  DividerInfo,
+  AnnouncementBannerInfo,
+  TeamGridInfo,
+  FeatureGridInfo,
+  ContactFormInfo,
+  CalendarSectionInfo,
+  EventCardInfo,
+  NewsCardInfo,
+  TeamMemberInfo,
+  ActivitiesArchiveInfo,
+  HomepageDashboardInfo,
+  NewsletterSignupInfo,
+  UnifiedCtaInfo,
+  CtaButtonInfo,
+  TypographyInfo,
+  PhotoGalleryInfo,
 ];
 
 type BuilderSectionClientProperties = {
-	content: BuilderContent;
-	model: string;
-	apiKey: string;
+  content: BuilderContent;
+  model: string;
+  apiKey: string;
 };
 
 /**
@@ -66,16 +66,16 @@ type BuilderSectionClientProperties = {
  * This is a lightweight client component that handles the interactive parts.
  */
 export function BuilderSectionClient({
-	content,
-	model,
-	apiKey,
+  content,
+  model,
+  apiKey,
 }: Readonly<BuilderSectionClientProperties>) {
-	return (
-		<Content
-			content={content}
-			model={model}
-			apiKey={apiKey}
-			customComponents={customComponents}
-		/>
-	);
+  return (
+    <Content
+      content={content}
+      model={model}
+      apiKey={apiKey}
+      customComponents={customComponents}
+    />
+  );
 }

@@ -2,9 +2,7 @@ const PRIVATE_KEY = 'bpk-4537158022f148049234c9ffbe759373';
 const PUBLIC_KEY = '3706422a8e454ceebe64acdc5a1475ba';
 
 async function getAllPages() {
-  const response = await fetch(
-    `https://cdn.builder.io/api/v3/content/page?apiKey=${PUBLIC_KEY}&limit=20&includeUnpublished=true`
-  );
+  const response = await fetch(`https://cdn.builder.io/api/v3/content/page?apiKey=${PUBLIC_KEY}&limit=20&includeUnpublished=true`);
   const data = await response.json();
   return data.results || [];
 }
@@ -14,7 +12,7 @@ async function archivePage(id, name) {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify({
       published: 'archived',
@@ -36,7 +34,7 @@ async function updateKalenderPage(id) {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify({
       data: {
@@ -94,7 +92,7 @@ async function updateKalenderPage(id) {
     return false;
   }
 
-  console.log(`  ✓ Updated Kalender page`);
+  console.log('  ✓ Updated Kalender page');
   return true;
 }
 
@@ -104,9 +102,9 @@ async function main() {
   const pages = await getAllPages();
 
   console.log('Found pages:');
-  pages.forEach(page => {
+  for (const page of pages) {
     console.log(`  - ${page.data?.url || 'no url'}: ${page.name}`);
-  });
+  }
 
   // Find activiteiten page to archive
   const activiteitenPage = pages.find(p => p.data?.url === '/activiteiten');

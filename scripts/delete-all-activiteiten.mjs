@@ -2,9 +2,7 @@ const PRIVATE_KEY = 'bpk-4537158022f148049234c9ffbe759373';
 const PUBLIC_KEY = '3706422a8e454ceebe64acdc5a1475ba';
 
 async function getAllActiviteiten() {
-  const response = await fetch(
-    `https://cdn.builder.io/api/v3/content/activiteit?apiKey=${PUBLIC_KEY}&limit=100`
-  );
+  const response = await fetch(`https://cdn.builder.io/api/v3/content/activiteit?apiKey=${PUBLIC_KEY}&limit=100`);
   const data = await response.json();
   return data.results || [];
 }
@@ -13,7 +11,7 @@ async function deleteActiviteit(id, titel) {
   const response = await fetch(`https://builder.io/api/v1/write/activiteit/${id}`, {
     method: 'DELETE',
     headers: {
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
   });
 

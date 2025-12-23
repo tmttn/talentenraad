@@ -8,5 +8,5 @@ import type {ReactNode} from 'react';
  * to properly catch errors and 404s in this route segment.
  */
 export default function AdminLayout({children}: Readonly<{children: ReactNode}>) {
-	return children;
+  return children;
 }

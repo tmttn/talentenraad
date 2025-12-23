@@ -5,8 +5,8 @@ import * as Sentry from '@sentry/nextjs';
 import {ServerErrorPage} from '@components/error-pages';
 
 type ErrorProperties = {
-	error: Error & {digest?: string};
-	reset: () => void;
+  error: Error & {digest?: string};
+  reset: () => void;
 };
 
 /**
@@ -16,10 +16,10 @@ type ErrorProperties = {
  * a user-friendly error page with retry option.
  */
 export default function Error({error, reset}: Readonly<ErrorProperties>) {
-	useEffect(() => {
-		// Log error to Sentry
-		Sentry.captureException(error);
-	}, [error]);
+  useEffect(() => {
+    // Log error to Sentry
+    Sentry.captureException(error);
+  }, [error]);
 
-	return <ServerErrorPage reset={reset} />;
+  return <ServerErrorPage reset={reset} />;
 }

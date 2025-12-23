@@ -1,13 +1,13 @@
 import type {Metadata} from 'next';
 
 export const metadata: Metadata = {
-	title: 'Nieuwe activiteit',
+  title: 'Nieuwe activiteit',
 };
 
 export default function NewActivityLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>): React.ReactNode {
-	return children;
+  return children;
 }

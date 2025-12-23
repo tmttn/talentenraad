@@ -140,7 +140,7 @@ async function updatePage(page) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${PRIVATE_KEY}`,
+        Authorization: `Bearer ${PRIVATE_KEY}`,
       },
       body: JSON.stringify(page.content),
     });

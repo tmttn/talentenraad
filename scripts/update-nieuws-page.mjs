@@ -1,9 +1,7 @@
 const PRIVATE_KEY = 'bpk-4537158022f148049234c9ffbe759373';
 
 async function getPageId(url) {
-  const response = await fetch(
-    `https://cdn.builder.io/api/v3/content/page?apiKey=3706422a8e454ceebe64acdc5a1475ba&query.data.url=${url}`
-  );
+  const response = await fetch(`https://cdn.builder.io/api/v3/content/page?apiKey=3706422a8e454ceebe64acdc5a1475ba&query.data.url=${url}`);
   const data = await response.json();
   return data.results?.[0]?.id;
 }
@@ -65,7 +63,7 @@ async function main() {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify(nieuwsPage.content),
   });

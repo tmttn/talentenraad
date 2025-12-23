@@ -102,11 +102,11 @@ async function createModel() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify({
       query: createModelMutation,
-      variables: { body: nieuwsModel },
+      variables: {body: nieuwsModel},
     }),
   });
 
@@ -118,6 +118,7 @@ async function createModel() {
       console.log('  ℹ️  Model already exists, continuing...');
       return true;
     }
+
     console.error('  ✗ Error creating model:', result.errors[0].message);
     return false;
   }
@@ -131,7 +132,7 @@ async function addNieuwsItem(item) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify({
       name: item.titel,

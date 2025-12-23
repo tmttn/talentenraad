@@ -9,33 +9,33 @@ const SEASONAL_DECORATIONS_KEY = 'seasonal_decorations';
 const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 
 export async function getSeasonalDecorationsConfig(): Promise<SeasonalDecorationsConfig> {
-	// Skip database calls during build - return defaults
-	if (isBuildPhase) {
-		return defaultSeasonalConfig;
-	}
+  // Skip database calls during build - return defaults
+  if (isBuildPhase) {
+    return defaultSeasonalConfig;
+  }
 
-	try {
-		// Check if db.query.siteSettings exists before querying
-		if (!db.query?.siteSettings) {
-			return defaultSeasonalConfig;
-		}
+  try {
+    // Check if db.query.siteSettings exists before querying
+    if (!db.query?.siteSettings) {
+      return defaultSeasonalConfig;
+    }
 
-		const setting = await db.query.siteSettings.findFirst({
-			where: eq(siteSettings.key, SEASONAL_DECORATIONS_KEY),
-		});
+    const setting = await db.query.siteSettings.findFirst({
+      where: eq(siteSettings.key, SEASONAL_DECORATIONS_KEY),
+    });
 
-		if (setting?.value) {
-			// Validate the structure before returning
-			const value = setting.value as SeasonalDecorationsConfig;
-			if (typeof value.enabled === 'boolean' && value.decorations) {
-				return value;
-			}
-		}
-	} catch {
-		// Silently fail during runtime - will use defaults
-	}
+    if (setting?.value) {
+      // Validate the structure before returning
+      const value = setting.value as SeasonalDecorationsConfig;
+      if (typeof value.enabled === 'boolean' && value.decorations) {
+        return value;
+      }
+    }
+  } catch {
+    // Silently fail during runtime - will use defaults
+  }
 
-	return defaultSeasonalConfig;
+  return defaultSeasonalConfig;
 }
 
 /**
@@ -45,17 +45,17 @@ export async function getSeasonalDecorationsConfig(): Promise<SeasonalDecoration
  * - Individual decorations (ChristmasLights, Icicles) are rendered by their respective components
  */
 export async function SeasonalDecorationsServer({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-	const config = await getSeasonalDecorationsConfig();
+  const config = await getSeasonalDecorationsConfig();
 
-	return (
-		<SeasonalDecorationsProvider config={config}>
-			<SeasonalStyles />
-			<Snowfall />
-			{children}
-		</SeasonalDecorationsProvider>
-	);
+  return (
+    <SeasonalDecorationsProvider config={config}>
+      <SeasonalStyles />
+      <Snowfall />
+      {children}
+    </SeasonalDecorationsProvider>
+  );
 }

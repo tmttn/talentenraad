@@ -2,9 +2,7 @@ const PRIVATE_KEY = 'bpk-4537158022f148049234c9ffbe759373';
 const PUBLIC_KEY = '3706422a8e454ceebe64acdc5a1475ba';
 
 async function getAllActiviteiten() {
-  const response = await fetch(
-    `https://cdn.builder.io/api/v3/content/activiteit?apiKey=${PUBLIC_KEY}&limit=100&includeUnpublished=true`
-  );
+  const response = await fetch(`https://cdn.builder.io/api/v3/content/activiteit?apiKey=${PUBLIC_KEY}&limit=100&includeUnpublished=true`);
   const data = await response.json();
   return data.results || [];
 }
@@ -15,7 +13,7 @@ async function archiveActiviteit(id, titel) {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify({
       published: 'archived',

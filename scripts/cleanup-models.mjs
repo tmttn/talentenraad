@@ -29,9 +29,9 @@ async function listModels() {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
-    body: JSON.stringify({ query: listModelsQuery }),
+    body: JSON.stringify({query: listModelsQuery}),
   });
 
   const result = await response.json();
@@ -49,11 +49,11 @@ async function deleteModel(id, name) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify({
       query: deleteModelMutation,
-      variables: { id },
+      variables: {id},
     }),
   });
 

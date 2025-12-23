@@ -4,25 +4,25 @@ import {getContent} from '@lib/builder-admin';
 import {EditNewsForm} from './edit-news-form';
 
 export const metadata: Metadata = {
-	title: 'Artikel bewerken',
+  title: 'Artikel bewerken',
 };
 
 type PageProps = {
-	params: Promise<{id: string}>;
+  params: Promise<{id: string}>;
 };
 
 export default async function EditNewsPage({params}: PageProps) {
-	const {id} = await params;
-	const newsItem = await getContent('nieuws', id);
+  const {id} = await params;
+  const newsItem = await getContent('nieuws', id);
 
-	if (!newsItem) {
-		notFound();
-	}
+  if (!newsItem) {
+    notFound();
+  }
 
-	return (
-		<div>
-			<h1 className='text-3xl font-bold text-gray-800 mb-8'>Artikel bewerken</h1>
-			<EditNewsForm newsItem={newsItem} />
-		</div>
-	);
+  return (
+    <div>
+      <h1 className='text-3xl font-bold text-gray-800 mb-8'>Artikel bewerken</h1>
+      <EditNewsForm newsItem={newsItem} />
+    </div>
+  );
 }

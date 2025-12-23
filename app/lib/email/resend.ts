@@ -4,46 +4,44 @@ import {Resend} from 'resend';
 let resend: Resend | null = null;
 
 function getResendClient(): Resend {
-	if (!resend) {
-		resend = new Resend(process.env.RESEND_API_KEY);
-	}
+  resend ??= new Resend(process.env.RESEND_API_KEY);
 
-	return resend;
+  return resend;
 }
 
 type ContactNotificationData = {
-	name: string;
-	email: string;
-	phone?: string;
-	subject: string;
-	message: string;
-	submissionId: string;
+  name: string;
+  email: string;
+  phone?: string;
+  subject: string;
+  message: string;
+  submissionId: string;
 };
 
 const subjectLabels: Record<string, string> = {
-	vraag: 'Algemene vraag',
-	activiteit: 'Vraag over activiteit',
-	lidmaatschap: 'Lid worden',
-	sponsoring: 'Sponsoring',
-	anders: 'Anders',
+  vraag: 'Algemene vraag',
+  activiteit: 'Vraag over activiteit',
+  lidmaatschap: 'Lid worden',
+  sponsoring: 'Sponsoring',
+  anders: 'Anders',
 };
 
 type InvitationEmailData = {
-	email: string;
-	name?: string;
-	inviterName?: string;
+  email: string;
+  name?: string;
+  inviterName?: string;
 };
 
 export async function sendInvitationEmail(data: InvitationEmailData) {
-	const siteUrl = process.env.APP_BASE_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'https://talentenraad.be';
-	const loginUrl = `${siteUrl}/admin/login`;
-	const greeting = data.name ? `Beste ${data.name}` : 'Beste';
+  const siteUrl = process.env.APP_BASE_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'https://talentenraad.be';
+  const loginUrl = `${siteUrl}/admin/login`;
+  const greeting = data.name ? `Beste ${data.name}` : 'Beste';
 
-	await getResendClient().emails.send({
-		from: 'Talentenraad <noreply@notifications.talentenraad.be>',
-		to: data.email,
-		subject: 'Uitnodiging voor Talentenraad Admin',
-		html: `
+  await getResendClient().emails.send({
+    from: 'Talentenraad <noreply@notifications.talentenraad.be>',
+    to: data.email,
+    subject: 'Uitnodiging voor Talentenraad Admin',
+    html: `
 			<h2>Welkom bij Talentenraad!</h2>
 			<p>${greeting},</p>
 			<p>Je bent uitgenodigd om toegang te krijgen tot het admin dashboard van Talentenraad${data.inviterName ? ` door ${data.inviterName}` : ''}.</p>
@@ -60,19 +58,19 @@ export async function sendInvitationEmail(data: InvitationEmailData) {
 				Als je deze uitnodiging niet verwacht had, kun je deze email negeren.
 			</p>
 		`,
-	});
+  });
 }
 
 export async function sendContactNotification(data: ContactNotificationData) {
-	const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL ?? 'voorzitterouderraad@talentenhuis.be';
-	const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://talentenraad.be';
-	const subjectLabel = subjectLabels[data.subject] ?? data.subject;
+  const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL ?? 'voorzitterouderraad@talentenhuis.be';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://talentenraad.be';
+  const subjectLabel = subjectLabels[data.subject] ?? data.subject;
 
-	await getResendClient().emails.send({
-		from: 'Talentenraad <noreply@notifications.talentenraad.be>',
-		to: adminEmail,
-		subject: `Nieuw contactbericht: ${subjectLabel}`,
-		html: `
+  await getResendClient().emails.send({
+    from: 'Talentenraad <noreply@notifications.talentenraad.be>',
+    to: adminEmail,
+    subject: `Nieuw contactbericht: ${subjectLabel}`,
+    html: `
 			<h2>Nieuw contactbericht ontvangen</h2>
 			<p><strong>Van:</strong> ${data.name} (${data.email})</p>
 			${data.phone ? `<p><strong>Telefoon:</strong> ${data.phone}</p>` : ''}
@@ -83,5 +81,5 @@ export async function sendContactNotification(data: ContactNotificationData) {
 			<hr />
 			<p><a href="${siteUrl}/admin/submissions/${data.submissionId}">Bekijk in admin dashboard</a></p>
 		`,
-	});
+  });
 }

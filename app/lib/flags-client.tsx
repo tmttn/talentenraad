@@ -8,8 +8,8 @@ import {flagFallbacks} from './flag-defaults';
 const FlagsContext = createContext<FlagValues>(flagFallbacks);
 
 type FlagsProviderProps = {
-	flags: FlagValues;
-	children: ReactNode;
+  flags: FlagValues;
+  children: ReactNode;
 };
 
 /**
@@ -25,7 +25,7 @@ type FlagsProviderProps = {
  *   }
  */
 export function FlagsProvider({flags, children}: FlagsProviderProps) {
-	return <FlagsContext.Provider value={flags}>{children}</FlagsContext.Provider>;
+  return <FlagsContext.Provider value={flags}>{children}</FlagsContext.Provider>;
 }
 
 /**
@@ -36,7 +36,7 @@ export function FlagsProvider({flags, children}: FlagsProviderProps) {
  *   if (flags.pushNotifications) { ... }
  */
 export function useFlags(): FlagValues {
-	return useContext(FlagsContext);
+  return useContext(FlagsContext);
 }
 
 /**
@@ -46,6 +46,6 @@ export function useFlags(): FlagValues {
  *   const isPushEnabled = useFlag('pushNotifications');
  */
 export function useFlag<K extends keyof FlagValues>(key: K): FlagValues[K] {
-	const flags = useContext(FlagsContext);
-	return flags[key];
+  const flags = useContext(FlagsContext);
+  return flags[key];
 }

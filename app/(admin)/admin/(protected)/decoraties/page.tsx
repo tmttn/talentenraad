@@ -3,18 +3,18 @@ import {getSeasonalDecorationsConfig} from '@components/seasonal-decorations-ser
 import {DecoratiesManager} from './decoraties-manager';
 
 export const metadata: Metadata = {
-	title: 'Decoraties',
+  title: 'Decoraties',
 };
 
 export default async function DecoratiesPage() {
-	const config = await getSeasonalDecorationsConfig();
+  const config = await getSeasonalDecorationsConfig();
 
-	return (
-		<div>
-			<h1 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-6 sm:mb-8'>
-				Seizoensdecoraties
-			</h1>
-			<DecoratiesManager initialConfig={config} />
-		</div>
-	);
+  return (
+    <div>
+      <h1 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-6 sm:mb-8'>
+        Seizoensdecoraties
+      </h1>
+      <DecoratiesManager initialConfig={config} />
+    </div>
+  );
 }

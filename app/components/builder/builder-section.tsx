@@ -30,36 +30,36 @@ import {TypographyInfo} from '@components/ui/typography';
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 const customComponents = [
-	HeroInfo,
-	CtaBannerInfo,
-	InfoCardInfo,
-	SectionInfo,
-	FaqInfo,
-	ActivitiesListInfo,
-	NewsListInfo,
-	DecorationInfo,
-	DividerInfo,
-	SiteHeaderInfo,
-	SiteFooterInfo,
-	ActivitiesArchiveInfo,
-	AnnouncementBannerInfo,
-	TeamGridInfo,
-	FeatureGridInfo,
-	ContactFormInfo,
-	CalendarSectionInfo,
-	EventCardInfo,
-	NewsCardInfo,
-	TeamMemberInfo,
-	HomepageDashboardInfo,
-	NewsletterSignupInfo,
-	UnifiedCtaInfo,
-	CtaButtonInfo,
-	TypographyInfo,
+  HeroInfo,
+  CtaBannerInfo,
+  InfoCardInfo,
+  SectionInfo,
+  FaqInfo,
+  ActivitiesListInfo,
+  NewsListInfo,
+  DecorationInfo,
+  DividerInfo,
+  SiteHeaderInfo,
+  SiteFooterInfo,
+  ActivitiesArchiveInfo,
+  AnnouncementBannerInfo,
+  TeamGridInfo,
+  FeatureGridInfo,
+  ContactFormInfo,
+  CalendarSectionInfo,
+  EventCardInfo,
+  NewsCardInfo,
+  TeamMemberInfo,
+  HomepageDashboardInfo,
+  NewsletterSignupInfo,
+  UnifiedCtaInfo,
+  CtaButtonInfo,
+  TypographyInfo,
 ];
 
 type BuilderSectionProperties = {
-	model: string;
-	url?: string;
+  model: string;
+  url?: string;
 };
 
 /**
@@ -68,43 +68,43 @@ type BuilderSectionProperties = {
  * Use this for reusable sections like announcement bars, CTAs, etc.
  */
 export function BuilderSection({model, url}: Readonly<BuilderSectionProperties>) {
-	const [content, setContent] = useState<BuilderContent | undefined>(undefined);
-	const [loading, setLoading] = useState(true);
+  const [content, setContent] = useState<BuilderContent | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
 
-	useEffect(() => {
-		async function fetchSection() {
-			try {
-				const sectionContent = await fetchOneEntry({
-					model,
-					apiKey: builderApiKey,
-					userAttributes: {
-						urlPath: url || (globalThis.window === undefined ? '/' : globalThis.location.pathname),
-					},
-				});
-				setContent(sectionContent ?? undefined);
-			} catch (error) {
-				console.error(`Error fetching section ${model}:`, error);
-			} finally {
-				setLoading(false);
-			}
-		}
+  useEffect(() => {
+    async function fetchSection() {
+      try {
+        const sectionContent = await fetchOneEntry({
+          model,
+          apiKey: builderApiKey,
+          userAttributes: {
+            urlPath: url ?? (globalThis.window === undefined ? '/' : globalThis.location.pathname),
+          },
+        });
+        setContent(sectionContent ?? undefined);
+      } catch (error) {
+        console.error(`Error fetching section ${model}:`, error);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-		void fetchSection();
-	}, [model, url]);
+    void fetchSection();
+  }, [model, url]);
 
-	// Don't render anything if loading or no content
-	if (loading || !content) {
-		return null;
-	}
+  // Don't render anything if loading or no content
+  if (loading || !content) {
+    return null;
+  }
 
-	return (
-		<Content
-			content={content}
-			model={model}
-			apiKey={builderApiKey}
-			customComponents={customComponents}
-		/>
-	);
+  return (
+    <Content
+      content={content}
+      model={model}
+      apiKey={builderApiKey}
+      customComponents={customComponents}
+    />
+  );
 }
 
 /**
@@ -112,29 +112,29 @@ export function BuilderSection({model, url}: Readonly<BuilderSectionProperties>)
  */
 
 export function AnnouncementBarSection() {
-	return <BuilderSection model='announcement-bar' />;
+  return <BuilderSection model='announcement-bar' />;
 }
 
 export function HeroSection({url}: {url?: string}) {
-	return <BuilderSection model='hero-section' url={url} />;
+  return <BuilderSection model='hero-section' url={url} />;
 }
 
 export function CTASection({url}: {url?: string}) {
-	return <BuilderSection model='cta-section' url={url} />;
+  return <BuilderSection model='cta-section' url={url} />;
 }
 
 export function FooterCTASection() {
-	return <BuilderSection model='footer-cta' />;
+  return <BuilderSection model='footer-cta' />;
 }
 
 export function FAQSection({url}: {url?: string}) {
-	return <BuilderSection model='faq-section' url={url} />;
+  return <BuilderSection model='faq-section' url={url} />;
 }
 
 export function SiteHeaderSection() {
-	return <BuilderSection model='site-header' />;
+  return <BuilderSection model='site-header' />;
 }
 
 export function SiteFooterSection() {
-	return <BuilderSection model='site-footer' />;
+  return <BuilderSection model='site-footer' />;
 }

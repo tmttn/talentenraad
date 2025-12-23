@@ -83,7 +83,7 @@ async function addActiviteit(activiteit) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${PRIVATE_KEY}`,
+        Authorization: `Bearer ${PRIVATE_KEY}`,
       },
       body: JSON.stringify(activiteit),
     });
@@ -110,7 +110,7 @@ async function main() {
     if (result) {
       console.log(`  ✓ Created with ID: ${result.id}`);
     } else {
-      console.log(`  ✗ Failed to create`);
+      console.log('  ✗ Failed to create');
     }
   }
 

@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import {NotFoundPage} from '@components/error-pages';
 
 export const metadata: Metadata = {
-	title: 'Pagina niet gevonden',
+  title: 'Pagina niet gevonden',
 };
 
 /**
@@ -13,5 +13,5 @@ export const metadata: Metadata = {
  * 404 status code via rewrite.
  */
 export default function NotFoundRoute() {
-	return <NotFoundPage />;
+  return <NotFoundPage />;
 }

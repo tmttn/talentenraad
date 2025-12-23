@@ -12,11 +12,11 @@ import {NotFoundPage} from '@components/error-pages';
  * potential errors from async data fetching that could convert a 404 into a 500.
  */
 export default function NotFound() {
-	return (
-		<div className='min-h-screen flex flex-col'>
-			<main className='flex-1'>
-				<NotFoundPage />
-			</main>
-		</div>
-	);
+  return (
+    <div className='min-h-screen flex flex-col'>
+      <main className='flex-1'>
+        <NotFoundPage />
+      </main>
+    </div>
+  );
 }

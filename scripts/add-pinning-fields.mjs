@@ -18,11 +18,11 @@ async function updateModel(modelName, newFields) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify({
       query: getQuery,
-      variables: { name: modelName },
+      variables: {name: modelName},
     }),
   });
 
@@ -41,8 +41,8 @@ async function updateModel(modelName, newFields) {
 
   // Merge existing fields with new fields
   const existingFields = model.fields || [];
-  const existingFieldNames = existingFields.map(f => f.name);
-  const fieldsToAdd = newFields.filter(f => !existingFieldNames.includes(f.name));
+  const existingFieldNames = new Set(existingFields.map(f => f.name));
+  const fieldsToAdd = newFields.filter(f => !existingFieldNames.has(f.name));
 
   if (fieldsToAdd.length === 0) {
     console.log(`  ✓ Model ${modelName} already has all fields`);
@@ -65,7 +65,7 @@ async function updateModel(modelName, newFields) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${PRIVATE_KEY}`,
+      Authorization: `Bearer ${PRIVATE_KEY}`,
     },
     body: JSON.stringify({
       query: updateQuery,

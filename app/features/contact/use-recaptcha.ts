@@ -3,22 +3,22 @@
 import {useEffect, useState, useCallback} from 'react';
 
 type GrecaptchaEnterprise = {
-	ready: (callback: () => void) => void;
-	execute: (siteKey: string, options: {action: string}) => Promise<string>;
+  ready: (callback: () => void) => void;
+  execute: (siteKey: string, options: {action: string}) => Promise<string>;
 };
 
 declare global {
-	interface Window {
-		grecaptcha?: {
-			enterprise?: GrecaptchaEnterprise;
-		};
-	}
+  interface Window {
+    grecaptcha?: {
+      enterprise?: GrecaptchaEnterprise;
+    };
+  }
 }
 
 const recaptchaScriptId = 'recaptcha-script';
 
 function getGrecaptchaEnterprise(): GrecaptchaEnterprise | undefined {
-	return window.grecaptcha?.enterprise;
+  return window.grecaptcha?.enterprise;
 }
 
 /**
@@ -26,94 +26,94 @@ function getGrecaptchaEnterprise(): GrecaptchaEnterprise | undefined {
  * Loads the reCAPTCHA Enterprise script and provides executeRecaptcha function
  */
 export function useRecaptcha() {
-	const [isReady, setIsReady] = useState(false);
-	const [error, setError] = useState<string | undefined>(undefined);
+  const [isReady, setIsReady] = useState(false);
+  const [error, setError] = useState<string | undefined>(undefined);
 
-	const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
-	useEffect(() => {
-		// Skip if no site key configured
-		if (!siteKey) {
-			console.warn('NEXT_PUBLIC_RECAPTCHA_SITE_KEY not set, reCAPTCHA disabled');
-			setIsReady(true);
-			return;
-		}
+  useEffect(() => {
+    // Skip if no site key configured
+    if (!siteKey) {
+      console.warn('NEXT_PUBLIC_RECAPTCHA_SITE_KEY not set, reCAPTCHA disabled');
+      setIsReady(true);
+      return;
+    }
 
-		// Check if already loaded
-		if (document.querySelector(`#${recaptchaScriptId}`)) {
-			const grecaptcha = getGrecaptchaEnterprise();
-			if (grecaptcha) {
-				grecaptcha.ready(() => {
-					setIsReady(true);
-				});
-				return;
-			}
+    // Check if already loaded
+    if (document.querySelector(`#${recaptchaScriptId}`)) {
+      const grecaptcha = getGrecaptchaEnterprise();
+      if (grecaptcha) {
+        grecaptcha.ready(() => {
+          setIsReady(true);
+        });
+        return;
+      }
 
-			// Script tag exists but grecaptcha not ready yet - poll until ready
-			const checkReady = setInterval(() => {
-				const g = getGrecaptchaEnterprise();
-				if (g) {
-					clearInterval(checkReady);
-					g.ready(() => {
-						setIsReady(true);
-					});
-				}
-			}, 100);
+      // Script tag exists but grecaptcha not ready yet - poll until ready
+      const checkReady = setInterval(() => {
+        const g = getGrecaptchaEnterprise();
+        if (g) {
+          clearInterval(checkReady);
+          g.ready(() => {
+            setIsReady(true);
+          });
+        }
+      }, 100);
 
-			return () => {
-				clearInterval(checkReady);
-			};
-		}
+      return () => {
+        clearInterval(checkReady);
+      };
+    }
 
-		// Load the reCAPTCHA Enterprise script
-		const script = document.createElement('script');
-		script.id = recaptchaScriptId;
-		script.src = `https://www.google.com/recaptcha/enterprise.js?render=${siteKey}`;
-		script.async = true;
-		script.defer = true;
+    // Load the reCAPTCHA Enterprise script
+    const script = document.createElement('script');
+    script.id = recaptchaScriptId;
+    script.src = `https://www.google.com/recaptcha/enterprise.js?render=${siteKey}`;
+    script.async = true;
+    script.defer = true;
 
-		script.addEventListener('load', () => {
-			getGrecaptchaEnterprise()?.ready(() => {
-				setIsReady(true);
-			});
-		});
+    script.addEventListener('load', () => {
+      getGrecaptchaEnterprise()?.ready(() => {
+        setIsReady(true);
+      });
+    });
 
-		script.addEventListener('error', () => {
-			setError('Failed to load reCAPTCHA');
-		});
+    script.addEventListener('error', () => {
+      setError('Failed to load reCAPTCHA');
+    });
 
-		document.head.append(script);
+    document.head.append(script);
 
-		return () => {
-			// Don't remove script on cleanup to avoid re-loading
-		};
-	}, [siteKey]);
+    return () => {
+      // Don't remove script on cleanup to avoid re-loading
+    };
+  }, [siteKey]);
 
-	const executeRecaptcha = useCallback(async (action: string): Promise<string | undefined> => {
-		// If no site key, return undefined (verification will be skipped server-side)
-		if (!siteKey) {
-			return undefined;
-		}
+  const executeRecaptcha = useCallback(async (action: string): Promise<string | undefined> => {
+    // If no site key, return undefined (verification will be skipped server-side)
+    if (!siteKey) {
+      return undefined;
+    }
 
-		const grecaptcha = getGrecaptchaEnterprise();
-		if (!grecaptcha) {
-			setError('reCAPTCHA not loaded');
-			return undefined;
-		}
+    const grecaptcha = getGrecaptchaEnterprise();
+    if (!grecaptcha) {
+      setError('reCAPTCHA not loaded');
+      return undefined;
+    }
 
-		try {
-			const token = await grecaptcha.execute(siteKey, {action});
-			return token;
-		} catch (executeError) {
-			console.error('reCAPTCHA execute error:', executeError);
-			setError('Failed to execute reCAPTCHA');
-			return undefined;
-		}
-	}, [siteKey]);
+    try {
+      const token = await grecaptcha.execute(siteKey, {action});
+      return token;
+    } catch (executeError) {
+      console.error('reCAPTCHA execute error:', executeError);
+      setError('Failed to execute reCAPTCHA');
+      return undefined;
+    }
+  }, [siteKey]);
 
-	return {
-		isReady,
-		error,
-		executeRecaptcha,
-	};
+  return {
+    isReady,
+    error,
+    executeRecaptcha,
+  };
 }

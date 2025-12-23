@@ -82,7 +82,7 @@ async function createModel() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${PRIVATE_KEY}`,
+        Authorization: `Bearer ${PRIVATE_KEY}`,
       },
       body: JSON.stringify({
         query: mutation,

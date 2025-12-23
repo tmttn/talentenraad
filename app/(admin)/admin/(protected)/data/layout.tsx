@@ -1,13 +1,13 @@
 import type {Metadata} from 'next';
 
 export const metadata: Metadata = {
-	title: 'Data Beheer',
+  title: 'Data Beheer',
 };
 
 export default function DataLayout({
-	children,
+  children,
 }: Readonly<{
-	children: React.ReactNode;
+  children: React.ReactNode;
 }>): React.ReactNode {
-	return children;
+  return children;
 }

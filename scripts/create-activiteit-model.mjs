@@ -1,4 +1,4 @@
-import { createAdminApiClient } from '@builder.io/admin-sdk';
+import {createAdminApiClient} from '@builder.io/admin-sdk';
 
 const PRIVATE_KEY = 'bpk-4537158022f148049234c9ffbe759373';
 
@@ -73,7 +73,7 @@ async function createActiviteitModel() {
           },
         ],
       },
-    }).get({ id: true, name: true });
+    }).get({id: true, name: true});
 
     console.log('Model created successfully!');
     console.log(JSON.stringify(result, null, 2));

@@ -1,101 +1,101 @@
-/* eslint-disable n/prefer-global/process */
+
 import 'dotenv/config';
 
 const WRITE_BASE_URL = 'https://builder.io/api/v1/write';
 const builderPrivateKey = process.env.BUILDER_PRIVATE_KEY ?? '';
 
 type BuilderBlock = {
-	'@type': string;
-	component?: {
-		name: string;
-		options: Record<string, unknown>;
-	};
-	responsiveStyles?: Record<string, Record<string, string>>;
-	children?: BuilderBlock[];
+  '@type': string;
+  component?: {
+    name: string;
+    options: Record<string, unknown>;
+  };
+  responsiveStyles?: Record<string, Record<string, string>>;
+  children?: BuilderBlock[];
 };
 
 type PageData = {
-	url: string;
-	title: string;
-	blocks: BuilderBlock[];
+  url: string;
+  title: string;
+  blocks: BuilderBlock[];
 };
 
 async function createPage(name: string, data: PageData): Promise<void> {
-	const url = `${WRITE_BASE_URL}/page`;
+  const url = `${WRITE_BASE_URL}/page`;
 
-	const body = {
-		name,
-		published: 'published',
-		data,
-	};
+  const body = {
+    name,
+    published: 'published',
+    data,
+  };
 
-	const response = await fetch(url, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${builderPrivateKey}`,
-		},
-		body: JSON.stringify(body),
-	});
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${builderPrivateKey}`,
+    },
+    body: JSON.stringify(body),
+  });
 
-	if (!response.ok) {
-		const error = await response.text();
-		throw new Error(`Failed to create page "${name}": ${error}`);
-	}
+  if (!response.ok) {
+    const error = await response.text();
+    throw new Error(`Failed to create page "${name}": ${error}`);
+  }
 
-	const result = await response.json();
-	console.log(`✓ Created page: ${name} (ID: ${result.id})`);
+  const result = await response.json();
+  console.log(`✓ Created page: ${name} (ID: ${result.id})`);
 }
 
 function createTextBlock(html: string, styles?: Record<string, string>): BuilderBlock {
-	return {
-		'@type': '@builder.io/sdk:Element',
-		component: {
-			name: 'Text',
-			options: {
-				text: html,
-			},
-		},
-		responsiveStyles: {
-			large: {
-				marginBottom: '25px',
-				...styles,
-			},
-		},
-	};
+  return {
+    '@type': '@builder.io/sdk:Element',
+    component: {
+      name: 'Text',
+      options: {
+        text: html,
+      },
+    },
+    responsiveStyles: {
+      large: {
+        marginBottom: '25px',
+        ...styles,
+      },
+    },
+  };
 }
 
 function createPageWrapper(children: BuilderBlock[]): BuilderBlock {
-	return {
-		'@type': '@builder.io/sdk:Element',
-		component: {
-			name: 'Box',
-			options: {},
-		},
-		responsiveStyles: {
-			large: {
-				maxWidth: '800px',
-				margin: '0 auto',
-				padding: '40px 20px',
-			},
-		},
-		children,
-	};
+  return {
+    '@type': '@builder.io/sdk:Element',
+    component: {
+      name: 'Box',
+      options: {},
+    },
+    responsiveStyles: {
+      large: {
+        maxWidth: '800px',
+        margin: '0 auto',
+        padding: '40px 20px',
+      },
+    },
+    children,
+  };
 }
 
 // Privacy Policy based on Belgian GDPR requirements (Article 13)
 async function createPrivacyPolicy(): Promise<void> {
-	const blocks = [
-		createPageWrapper([
-			createTextBlock('<h1 style="font-size: 2.5rem; font-weight: bold; color: #1f2937;">Privacybeleid</h1>', {marginBottom: '10px'}),
-			createTextBlock('<p style="color: #6b7280; font-style: italic;">Laatst bijgewerkt: 17 december 2025</p>', {marginBottom: '30px'}),
+  const blocks = [
+    createPageWrapper([
+      createTextBlock('<h1 style="font-size: 2.5rem; font-weight: bold; color: #1f2937;">Privacybeleid</h1>', {marginBottom: '10px'}),
+      createTextBlock('<p style="color: #6b7280; font-style: italic;">Laatst bijgewerkt: 17 december 2025</p>', {marginBottom: '30px'}),
 
-			createTextBlock(`
+      createTextBlock(`
 				<p style="color: #4b5563; line-height: 1.7;">Dit privacybeleid beschrijft hoe de Talentenraad uw persoonsgegevens verzamelt, gebruikt en beschermt in overeenstemming met de Algemene Verordening Gegevensbescherming (AVG/GDPR) en de Belgische Wet van 30 juli 2018 betreffende de bescherming van natuurlijke personen met betrekking tot de verwerking van persoonsgegevens.</p>
 			`),
 
-			// Article 13(1)(a) - Identity and contact details
-			createTextBlock(`
+      // Article 13(1)(a) - Identity and contact details
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">1. Verwerkingsverantwoordelijke</h2>
 				<p style="color: #4b5563; line-height: 1.7;">De verwerkingsverantwoordelijke voor uw persoonsgegevens is:</p>
 				<div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-top: 10px;">
@@ -110,8 +110,8 @@ async function createPrivacyPolicy(): Promise<void> {
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 15px;">De Talentenraad is een vrijwilligersorganisatie zonder rechtspersoonlijkheid. Vanwege de beperkte omvang van onze gegevensverwerking hebben wij geen Functionaris Gegevensbescherming (DPO) aangesteld. U kunt voor alle privacygerelateerde vragen contact opnemen via bovenstaand e-mailadres.</p>
 			`),
 
-			// Article 13(1)(c) - Purposes and legal basis
-			createTextBlock(`
+      // Article 13(1)(c) - Purposes and legal basis
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">2. Welke gegevens verwerken wij en waarom?</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Wij verwerken de volgende categorieën persoonsgegevens voor de onderstaande doeleinden en rechtsgronden:</p>
 
@@ -137,8 +137,8 @@ async function createPrivacyPolicy(): Promise<void> {
 				</ul>
 			`),
 
-			// Article 13(1)(e) - Recipients
-			createTextBlock(`
+      // Article 13(1)(e) - Recipients
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">3. Met wie delen wij uw gegevens?</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Uw persoonsgegevens kunnen worden gedeeld met de volgende ontvangers:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -150,8 +150,8 @@ async function createPrivacyPolicy(): Promise<void> {
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 15px;"><strong>Wij verkopen uw gegevens nooit aan derden.</strong></p>
 			`),
 
-			// Article 13(1)(f) - International transfers
-			createTextBlock(`
+      // Article 13(1)(f) - International transfers
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">4. Doorgifte buiten de EER</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Sommige van onze dienstverleners zijn gevestigd in de Verenigde Staten. Deze doorgiften vinden plaats op basis van:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -160,8 +160,8 @@ async function createPrivacyPolicy(): Promise<void> {
 				</ul>
 			`),
 
-			// Article 13(2)(a) - Retention periods
-			createTextBlock(`
+      // Article 13(2)(a) - Retention periods
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">5. Hoe lang bewaren wij uw gegevens?</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Wij bewaren uw persoonsgegevens niet langer dan noodzakelijk voor de doeleinden waarvoor ze zijn verzameld:</p>
 				<table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
@@ -184,8 +184,8 @@ async function createPrivacyPolicy(): Promise<void> {
 				</table>
 			`),
 
-			// Article 13(2)(b)(c)(d) - Rights
-			createTextBlock(`
+      // Article 13(2)(b)(c)(d) - Rights
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">6. Uw rechten</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Op grond van de AVG heeft u de volgende rechten:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -200,8 +200,8 @@ async function createPrivacyPolicy(): Promise<void> {
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 15px;">Om uw rechten uit te oefenen, kunt u contact opnemen via <a href="mailto:voorzitterouderraad@talentenhuis.be" style="color: #ec4899;">voorzitterouderraad@talentenhuis.be</a>. Wij reageren binnen 30 dagen op uw verzoek.</p>
 			`),
 
-			// Article 13(2)(e) - Statutory/contractual requirement
-			createTextBlock(`
+      // Article 13(2)(e) - Statutory/contractual requirement
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">7. Verplichte gegevens</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Het verstrekken van persoonsgegevens is niet wettelijk of contractueel verplicht. Echter:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -210,14 +210,14 @@ async function createPrivacyPolicy(): Promise<void> {
 				</ul>
 			`),
 
-			// Article 13(2)(f) - Automated decision-making
-			createTextBlock(`
+      // Article 13(2)(f) - Automated decision-making
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">8. Geautomatiseerde besluitvorming</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Wij maken geen gebruik van geautomatiseerde besluitvorming of profilering die rechtsgevolgen heeft voor u of u anderszins aanmerkelijk treft.</p>
 			`),
 
-			// Security measures
-			createTextBlock(`
+      // Security measures
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">9. Beveiliging</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Wij nemen passende technische en organisatorische maatregelen om uw persoonsgegevens te beschermen tegen ongeautoriseerde toegang, verlies of misbruik:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -227,8 +227,8 @@ async function createPrivacyPolicy(): Promise<void> {
 				</ul>
 			`),
 
-			// Article 13(2)(d) - Right to lodge complaint
-			createTextBlock(`
+      // Article 13(2)(d) - Right to lodge complaint
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">10. Klachten</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Bent u niet tevreden over de manier waarop wij met uw persoonsgegevens omgaan? Neem dan eerst contact met ons op. U heeft ook het recht om een klacht in te dienen bij de toezichthoudende autoriteit:</p>
 				<div style="background: #f9fafb; padding: 15px; border-radius: 8px; margin-top: 10px;">
@@ -243,34 +243,34 @@ async function createPrivacyPolicy(): Promise<void> {
 				</div>
 			`),
 
-			// Changes
-			createTextBlock(`
+      // Changes
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">11. Wijzigingen</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Wij kunnen dit privacybeleid van tijd tot tijd wijzigen. De actuele versie is altijd beschikbaar op deze pagina met vermelding van de datum van de laatste wijziging. Bij belangrijke wijzigingen zullen wij dit kenbaar maken via onze website.</p>
 			`),
-		]),
-	];
+    ]),
+  ];
 
-	await createPage('Privacybeleid', {
-		url: '/privacybeleid',
-		title: 'Privacybeleid - Talentenraad',
-		blocks,
-	});
+  await createPage('Privacybeleid', {
+    url: '/privacybeleid',
+    title: 'Privacybeleid - Talentenraad',
+    blocks,
+  });
 }
 
 // Cookie Policy based on Belgian DPA requirements
 async function createCookiePolicy(): Promise<void> {
-	const blocks = [
-		createPageWrapper([
-			createTextBlock('<h1 style="font-size: 2.5rem; font-weight: bold; color: #1f2937;">Cookiebeleid</h1>', {marginBottom: '10px'}),
-			createTextBlock('<p style="color: #6b7280; font-style: italic;">Laatst bijgewerkt: 17 december 2025</p>', {marginBottom: '30px'}),
+  const blocks = [
+    createPageWrapper([
+      createTextBlock('<h1 style="font-size: 2.5rem; font-weight: bold; color: #1f2937;">Cookiebeleid</h1>', {marginBottom: '10px'}),
+      createTextBlock('<p style="color: #6b7280; font-style: italic;">Laatst bijgewerkt: 17 december 2025</p>', {marginBottom: '30px'}),
 
-			createTextBlock(`
+      createTextBlock(`
 				<p style="color: #4b5563; line-height: 1.7;">Dit cookiebeleid legt uit hoe de Talentenraad cookies en vergelijkbare technologieën gebruikt op onze website talentenraad.be, in overeenstemming met de Belgische wetgeving inzake elektronische communicatie en de richtlijnen van de Gegevensbeschermingsautoriteit (GBA).</p>
 			`),
 
-			// Controller identity (Belgian DPA requirement)
-			createTextBlock(`
+      // Controller identity (Belgian DPA requirement)
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">1. Verwerkingsverantwoordelijke</h2>
 				<div style="background: #f9fafb; padding: 15px; border-radius: 8px;">
 					<p style="color: #4b5563; line-height: 1.7; margin: 0;">
@@ -281,14 +281,14 @@ async function createCookiePolicy(): Promise<void> {
 				</div>
 			`),
 
-			// What are cookies
-			createTextBlock(`
+      // What are cookies
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">2. Wat zijn cookies?</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Cookies zijn kleine tekstbestanden die op uw apparaat (computer, tablet, smartphone) worden opgeslagen wanneer u een website bezoekt. Ze worden veel gebruikt om websites te laten functioneren of efficiënter te maken, en om informatie te verstrekken aan de eigenaars van de website.</p>
 			`),
 
-			// Types of cookies with details (Belgian DPA requirement)
-			createTextBlock(`
+      // Types of cookies with details (Belgian DPA requirement)
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">3. Welke cookies gebruiken wij?</h2>
 
 				<h3 style="font-size: 1.2rem; font-weight: 600; color: #374151; margin-top: 25px; margin-bottom: 15px; padding-bottom: 8px; border-bottom: 2px solid #ec4899;">Strikt noodzakelijke cookies</h3>
@@ -340,8 +340,8 @@ async function createCookiePolicy(): Promise<void> {
 				<p style="color: #6b7280; font-size: 0.9rem; margin-top: 10px;"><strong>Rechtsgrond:</strong> Toestemming (Art. 6(1)(a) AVG)</p>
 			`),
 
-			// Third-party access (Belgian DPA requirement)
-			createTextBlock(`
+      // Third-party access (Belgian DPA requirement)
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">4. Derde partijen met toegang tot cookies</h2>
 				<p style="color: #4b5563; line-height: 1.7;">De volgende derde partijen kunnen gegevens ontvangen via cookies op onze website:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -349,8 +349,8 @@ async function createCookiePolicy(): Promise<void> {
 				</ul>
 			`),
 
-			// Consent management
-			createTextBlock(`
+      // Consent management
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">5. Uw toestemming beheren</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Bij uw eerste bezoek aan onze website verschijnt een cookiebanner waarin wij uw toestemming vragen voor niet-noodzakelijke cookies.</p>
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 10px;"><strong>U kunt uw keuze op elk moment wijzigen</strong> door te klikken op de link "Cookie-instellingen" onderaan elke pagina van onze website.</p>
@@ -361,8 +361,8 @@ async function createCookiePolicy(): Promise<void> {
 				</ul>
 			`),
 
-			// How to delete cookies (Belgian DPA requirement)
-			createTextBlock(`
+      // How to delete cookies (Belgian DPA requirement)
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">6. Cookies verwijderen via uw browser</h2>
 				<p style="color: #4b5563; line-height: 1.7;">U kunt ook cookies beheren of verwijderen via de instellingen van uw browser:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -374,8 +374,8 @@ async function createCookiePolicy(): Promise<void> {
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 15px;"><strong>Let op:</strong> Het verwijderen of blokkeren van cookies kan invloed hebben op de werking van onze website.</p>
 			`),
 
-			// User rights
-			createTextBlock(`
+      // User rights
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">7. Uw rechten</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Met betrekking tot de gegevens die via cookies worden verzameld, heeft u de volgende rechten:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -386,39 +386,39 @@ async function createCookiePolicy(): Promise<void> {
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 15px;">Voor meer informatie over uw privacyrechten, zie ons <a href="/privacybeleid" style="color: #ec4899;">privacybeleid</a>.</p>
 			`),
 
-			// Contact
-			createTextBlock(`
+      // Contact
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">8. Contact</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Heeft u vragen over ons cookiebeleid? Neem contact met ons op via <a href="mailto:voorzitterouderraad@talentenhuis.be" style="color: #ec4899;">voorzitterouderraad@talentenhuis.be</a>.</p>
 			`),
 
-			// Changes
-			createTextBlock(`
+      // Changes
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">9. Wijzigingen</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Dit cookiebeleid kan worden aangepast. Controleer deze pagina regelmatig voor de meest actuele versie. De datum van de laatste wijziging staat bovenaan vermeld.</p>
 			`),
-		]),
-	];
+    ]),
+  ];
 
-	await createPage('Cookiebeleid', {
-		url: '/cookiebeleid',
-		title: 'Cookiebeleid - Talentenraad',
-		blocks,
-	});
+  await createPage('Cookiebeleid', {
+    url: '/cookiebeleid',
+    title: 'Cookiebeleid - Talentenraad',
+    blocks,
+  });
 }
 
 // Terms of Service
 async function createTermsOfService(): Promise<void> {
-	const blocks = [
-		createPageWrapper([
-			createTextBlock('<h1 style="font-size: 2.5rem; font-weight: bold; color: #1f2937;">Algemene Voorwaarden</h1>', {marginBottom: '10px'}),
-			createTextBlock('<p style="color: #6b7280; font-style: italic;">Laatst bijgewerkt: 17 december 2025</p>', {marginBottom: '30px'}),
+  const blocks = [
+    createPageWrapper([
+      createTextBlock('<h1 style="font-size: 2.5rem; font-weight: bold; color: #1f2937;">Algemene Voorwaarden</h1>', {marginBottom: '10px'}),
+      createTextBlock('<p style="color: #6b7280; font-style: italic;">Laatst bijgewerkt: 17 december 2025</p>', {marginBottom: '30px'}),
 
-			createTextBlock(`
+      createTextBlock(`
 				<p style="color: #4b5563; line-height: 1.7;">Deze algemene voorwaarden zijn van toepassing op het gebruik van de website talentenraad.be en deelname aan activiteiten georganiseerd door de Talentenraad, de ouderraad van basisschool Het Talentenhuis.</p>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">1. Identiteit</h2>
 				<div style="background: #f9fafb; padding: 15px; border-radius: 8px;">
 					<p style="color: #4b5563; line-height: 1.7; margin: 0;">
@@ -433,7 +433,7 @@ async function createTermsOfService(): Promise<void> {
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 15px;">De Talentenraad is een vrijwilligersorganisatie zonder rechtspersoonlijkheid, verbonden aan basisschool Het Talentenhuis.</p>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">2. Doel van de website</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Deze website heeft als doel:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -444,7 +444,7 @@ async function createTermsOfService(): Promise<void> {
 				</ul>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">3. Intellectuele eigendom</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Alle content op deze website, waaronder teksten, afbeeldingen, logo's, grafische elementen en software, is eigendom van de Talentenraad of wordt gebruikt met toestemming van de rechthebbenden.</p>
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 10px;">Het is niet toegestaan om zonder voorafgaande schriftelijke toestemming:</p>
@@ -455,7 +455,7 @@ async function createTermsOfService(): Promise<void> {
 				</ul>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">4. Aansprakelijkheid</h2>
 				<p style="color: #4b5563; line-height: 1.7;">De Talentenraad streeft ernaar correcte en actuele informatie te verstrekken, maar kan niet garanderen dat alle informatie te allen tijde volledig, juist en up-to-date is.</p>
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 10px;"><strong>De Talentenraad is niet aansprakelijk voor:</strong></p>
@@ -468,7 +468,7 @@ async function createTermsOfService(): Promise<void> {
 				</ul>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">5. Activiteiten en inschrijvingen</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Bij inschrijving voor activiteiten georganiseerd door de Talentenraad gelden de volgende voorwaarden:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -481,7 +481,7 @@ async function createTermsOfService(): Promise<void> {
 				</ul>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">6. Gedragsregels</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Bij het gebruik van de website en deelname aan activiteiten verwachten wij dat u:</p>
 				<ul style="color: #4b5563; line-height: 1.7; margin-left: 20px; margin-top: 10px;">
@@ -494,62 +494,62 @@ async function createTermsOfService(): Promise<void> {
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 10px;">De Talentenraad behoudt het recht om personen die deze regels overtreden uit te sluiten van activiteiten.</p>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">7. Privacy</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Wij respecteren uw privacy en verwerken persoonsgegevens in overeenstemming met de Algemene Verordening Gegevensbescherming (AVG/GDPR). Voor meer informatie verwijzen wij naar ons <a href="/privacybeleid" style="color: #ec4899;">privacybeleid</a>.</p>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">8. Cookies</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Deze website maakt gebruik van cookies. Voor meer informatie over welke cookies wij gebruiken en hoe u deze kunt beheren, verwijzen wij naar ons <a href="/cookiebeleid" style="color: #ec4899;">cookiebeleid</a>.</p>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">9. Wijzigingen</h2>
 				<p style="color: #4b5563; line-height: 1.7;">De Talentenraad behoudt het recht om deze algemene voorwaarden te allen tijde te wijzigen. Wijzigingen worden op deze pagina gepubliceerd met vermelding van de datum van de laatste wijziging.</p>
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 10px;">Door na een wijziging gebruik te blijven maken van de website, accepteert u de gewijzigde voorwaarden.</p>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">10. Toepasselijk recht en geschillen</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Op deze algemene voorwaarden en het gebruik van de website is <strong>Belgisch recht</strong> van toepassing.</p>
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 10px;">Bij geschillen zullen partijen eerst trachten in onderling overleg tot een oplossing te komen. Indien dit niet lukt, zijn de rechtbanken van het gerechtelijk arrondissement Limburg bevoegd.</p>
 			`),
 
-			createTextBlock(`
+      createTextBlock(`
 				<h2 style="font-size: 1.5rem; font-weight: 600; color: #374151; margin-bottom: 15px;">11. Contact</h2>
 				<p style="color: #4b5563; line-height: 1.7;">Heeft u vragen over deze algemene voorwaarden? Neem contact met ons op:</p>
 				<p style="color: #4b5563; line-height: 1.7; margin-top: 10px;">
 					E-mail: <a href="mailto:voorzitterouderraad@talentenhuis.be" style="color: #ec4899;">voorzitterouderraad@talentenhuis.be</a>
 				</p>
 			`),
-		]),
-	];
+    ]),
+  ];
 
-	await createPage('Algemene Voorwaarden', {
-		url: '/algemene-voorwaarden',
-		title: 'Algemene Voorwaarden - Talentenraad',
-		blocks,
-	});
+  await createPage('Algemene Voorwaarden', {
+    url: '/algemene-voorwaarden',
+    title: 'Algemene Voorwaarden - Talentenraad',
+    blocks,
+  });
 }
 
 async function main(): Promise<void> {
-	if (!builderPrivateKey) {
-		console.error('Error: BUILDER_PRIVATE_KEY is not set');
-		process.exit(1);
-	}
+  if (!builderPrivateKey) {
+    console.error('Error: BUILDER_PRIVATE_KEY is not set');
+    process.exit(1);
+  }
 
-	console.log('Creating legal pages in Builder.io...\n');
+  console.log('Creating legal pages in Builder.io...\n');
 
-	try {
-		await createPrivacyPolicy();
-		await createCookiePolicy();
-		await createTermsOfService();
-		console.log('\n✓ All legal pages created successfully!');
-	} catch (error) {
-		console.error('Error creating pages:', error);
-		process.exit(1);
-	}
+  try {
+    await createPrivacyPolicy();
+    await createCookiePolicy();
+    await createTermsOfService();
+    console.log('\n✓ All legal pages created successfully!');
+  } catch (error) {
+    console.error('Error creating pages:', error);
+    process.exit(1);
+  }
 }
 
 main();

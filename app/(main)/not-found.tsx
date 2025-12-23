@@ -9,5 +9,5 @@ import {NotFoundPage} from '@components/error-pages';
  * with a 200 status before the page determines it should be a 404.
  */
 export default function NotFound() {
-	return <NotFoundPage />;
+  return <NotFoundPage />;
 }

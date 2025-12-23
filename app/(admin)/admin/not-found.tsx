@@ -8,11 +8,11 @@ import {AdminErrorPage} from '@components/error-pages';
  * the (protected) route group.
  */
 export default function AdminNotFound() {
-	return (
-		<AdminErrorPage
-			code='404'
-			title='Pagina niet gevonden'
-			description='De pagina die je zoekt bestaat niet of is verplaatst.'
-		/>
-	);
+  return (
+    <AdminErrorPage
+      code='404'
+      title='Pagina niet gevonden'
+      description='De pagina die je zoekt bestaat niet of is verplaatst.'
+    />
+  );
 }

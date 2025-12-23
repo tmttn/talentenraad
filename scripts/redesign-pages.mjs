@@ -330,9 +330,7 @@ const pages = {
 };
 
 async function getPageId(url) {
-  const response = await fetch(
-    `https://cdn.builder.io/api/v3/content/page?apiKey=${PUBLIC_KEY}&query.data.url=${url}`
-  );
+  const response = await fetch(`https://cdn.builder.io/api/v3/content/page?apiKey=${PUBLIC_KEY}&query.data.url=${url}`);
   const data = await response.json();
   return data.results?.[0]?.id;
 }
@@ -354,7 +352,7 @@ async function updatePage(pageKey, pageData) {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${PRIVATE_KEY}`,
+        Authorization: `Bearer ${PRIVATE_KEY}`,
       },
       body: JSON.stringify(pageData.content),
     });

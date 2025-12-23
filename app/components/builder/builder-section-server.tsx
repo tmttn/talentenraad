@@ -4,8 +4,8 @@ import {BuilderSectionClient} from './builder-section-client';
 const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 type BuilderSectionServerProperties = {
-	model: string;
-	urlPath?: string;
+  model: string;
+  urlPath?: string;
 };
 
 /**
@@ -15,28 +15,28 @@ type BuilderSectionServerProperties = {
  * Use this for sections that should be rendered server-side for better SEO.
  */
 export async function BuilderSectionServer({
-	model,
-	urlPath = '/',
+  model,
+  urlPath = '/',
 }: Readonly<BuilderSectionServerProperties>) {
-	const content = await fetchOneEntry({
-		model,
-		apiKey: BUILDER_API_KEY,
-		userAttributes: {
-			urlPath,
-		},
-	});
+  const content = await fetchOneEntry({
+    model,
+    apiKey: BUILDER_API_KEY,
+    userAttributes: {
+      urlPath,
+    },
+  });
 
-	if (!content) {
-		return null;
-	}
+  if (!content) {
+    return null;
+  }
 
-	return (
-		<BuilderSectionClient
-			content={content}
-			model={model}
-			apiKey={BUILDER_API_KEY}
-		/>
-	);
+  return (
+    <BuilderSectionClient
+      content={content}
+      model={model}
+      apiKey={BUILDER_API_KEY}
+    />
+  );
 }
 
 /**
@@ -44,21 +44,21 @@ export async function BuilderSectionServer({
  */
 
 export async function AnnouncementBarSectionServer() {
-	return <BuilderSectionServer model='announcement-bar' />;
+  return <BuilderSectionServer model='announcement-bar' />;
 }
 
 export async function HeroSectionServer({urlPath}: {urlPath?: string}) {
-	return <BuilderSectionServer model='hero-section' urlPath={urlPath} />;
+  return <BuilderSectionServer model='hero-section' urlPath={urlPath} />;
 }
 
 export async function CTASectionServer({urlPath}: {urlPath?: string}) {
-	return <BuilderSectionServer model='cta-section' urlPath={urlPath} />;
+  return <BuilderSectionServer model='cta-section' urlPath={urlPath} />;
 }
 
 export async function FooterCTASectionServer() {
-	return <BuilderSectionServer model='footer-cta' />;
+  return <BuilderSectionServer model='footer-cta' />;
 }
 
 export async function FAQSectionServer({urlPath}: {urlPath?: string}) {
-	return <BuilderSectionServer model='faq-section' urlPath={urlPath} />;
+  return <BuilderSectionServer model='faq-section' urlPath={urlPath} />;
 }

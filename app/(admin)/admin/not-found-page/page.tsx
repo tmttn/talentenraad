@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import {AdminErrorPage} from '@components/error-pages';
 
 export const metadata: Metadata = {
-	title: 'Pagina niet gevonden',
+  title: 'Pagina niet gevonden',
 };
 
 /**
@@ -16,11 +16,11 @@ export const metadata: Metadata = {
  * 404 for non-existent routes on Vercel.
  */
 export default function AdminNotFoundPage() {
-	return (
-		<AdminErrorPage
-			code='404'
-			title='Pagina niet gevonden'
-			description='De pagina die je zoekt bestaat niet of is verplaatst.'
-		/>
-	);
+  return (
+    <AdminErrorPage
+      code='404'
+      title='Pagina niet gevonden'
+      description='De pagina die je zoekt bestaat niet of is verplaatst.'
+    />
+  );
 }
