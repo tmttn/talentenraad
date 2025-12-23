@@ -5,12 +5,14 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import importX from 'eslint-plugin-import-x';
 import n from 'eslint-plugin-n';
+import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import globals from 'globals';
 
 export default tseslint.config(
 	{
 		ignores: [
 			'__tests__/**',
+			'e2e/**',
 			'jest.config.ts',
 			'jest.setup.tsx',
 			'commitlint.config.js',
@@ -19,6 +21,8 @@ export default tseslint.config(
 			'.vercel/**',
 			'node_modules/**',
 			'coverage/**',
+			'generated/**',
+			'proxy.ts',
 			'*.config.*',
 			'*.d.ts',
 		],
@@ -33,6 +37,7 @@ export default tseslint.config(
 			'jsx-a11y': jsxA11y,
 			'import-x': importX,
 			n,
+			'@eslint-community/eslint-comments': eslintComments,
 		},
 		linterOptions: {
 			reportUnusedDisableDirectives: 'error',
@@ -63,6 +68,10 @@ export default tseslint.config(
 			// Disable XO-specific rules
 			'import-x/extensions': 'off',
 			'n/prefer-global/process': 'off',
+			// Restrict eslint-disable usage
+			'@eslint-community/eslint-comments/no-unlimited-disable': 'error',
+			'@eslint-community/eslint-comments/no-duplicate-disable': 'error',
+			'@eslint-community/eslint-comments/require-description': ['error', {ignore: ['eslint-enable']}],
 		},
 	},
 );

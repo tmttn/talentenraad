@@ -159,7 +159,6 @@ export function FeedbackTable({feedbackItems}: FeedbackTableProps) {
 			return;
 		}
 
-		// eslint-disable-next-line no-alert
 		if (!confirm(`Weet je zeker dat je ${selectedIds.size} feedback item(s) wilt verwijderen?`)) {
 			return;
 		}

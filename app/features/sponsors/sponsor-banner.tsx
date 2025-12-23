@@ -18,7 +18,6 @@ type SponsorBannerProperties = {
 	title?: string;
 };
 
-// eslint-disable-next-line n/prefer-global/process
 const builderPublicApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '';
 
 // Track sponsor event (impression or click)

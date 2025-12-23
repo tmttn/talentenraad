@@ -186,7 +186,6 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
 			? `Weet je zeker dat je ${selectedIds.size} bericht(en) wilt verwijderen?`
 			: undefined;
 
-		// eslint-disable-next-line no-alert
 		if (confirmMessage && !confirm(confirmMessage)) {
 			return;
 		}

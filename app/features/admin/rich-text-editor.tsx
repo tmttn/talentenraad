@@ -58,7 +58,6 @@ function Toolbar({editor, isHtmlMode, onToggleHtmlMode}: ToolbarProps) {
 	}
 
 	const addLink = () => {
-		// eslint-disable-next-line no-alert
 		const url = prompt('Voer de URL in:');
 		if (url) {
 			editor.chain().focus().extendMarkRange('link').setLink({href: url}).run();

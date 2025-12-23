@@ -5,7 +5,6 @@
  * Uses alias pattern to reference semantic tokens.
  */
 
-/* eslint-disable import-x/extensions */
 import {semanticSpacing} from '../spacing';
 import {semanticShadows} from '../shadows';
 import {semanticRadius} from '../radius';

@@ -8,7 +8,6 @@
  * import { semanticSpacing, semanticShadows } from '@/app/styles/tokens'
  */
 
-/* eslint-disable import-x/extensions */
 
 // Colors
 export {

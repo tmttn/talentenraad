@@ -2,7 +2,6 @@ import {drizzle} from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from './schema';
 
-// eslint-disable-next-line n/prefer-global/process
 const connectionString = process.env.POSTGRES_URL ?? process.env.DATABASE_URL!;
 
 // Disable prefetch for serverless environments

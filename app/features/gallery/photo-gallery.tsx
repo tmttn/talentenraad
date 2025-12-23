@@ -38,7 +38,6 @@ type BuilderAsset = {
 	};
 };
 
-// eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
 
 type PhotoGalleryProperties = {
@@ -101,7 +100,6 @@ type LightboxProperties = {
 	onTouchStart: (event: React.TouchEvent) => void;
 	onTouchMove: (event: React.TouchEvent) => void;
 	onTouchEnd: () => void;
-	// eslint-disable-next-line @typescript-eslint/no-restricted-types -- React refs require null
 	thumbnailsRef: React.RefObject<HTMLDivElement | null>;
 };
 

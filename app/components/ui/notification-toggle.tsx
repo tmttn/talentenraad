@@ -20,7 +20,6 @@ export function NotificationToggle({className = ''}: Readonly<NotificationToggle
 	const handleToggle = async () => {
 		if (permission === 'denied') {
 			// Show alert about blocked notifications
-			// eslint-disable-next-line no-alert
 			alert('Je hebt notificaties geblokkeerd. Wijzig dit in je browserinstellingen.');
 			return;
 		}

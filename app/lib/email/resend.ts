@@ -5,7 +5,6 @@ let resend: Resend | null = null;
 
 function getResendClient(): Resend {
 	if (!resend) {
-		// eslint-disable-next-line n/prefer-global/process
 		resend = new Resend(process.env.RESEND_API_KEY);
 	}
 
@@ -36,7 +35,6 @@ type InvitationEmailData = {
 };
 
 export async function sendInvitationEmail(data: InvitationEmailData) {
-	// eslint-disable-next-line n/prefer-global/process
 	const siteUrl = process.env.APP_BASE_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? 'https://talentenraad.be';
 	const loginUrl = `${siteUrl}/admin/login`;
 	const greeting = data.name ? `Beste ${data.name}` : 'Beste';
@@ -66,9 +64,7 @@ export async function sendInvitationEmail(data: InvitationEmailData) {
 }
 
 export async function sendContactNotification(data: ContactNotificationData) {
-	// eslint-disable-next-line n/prefer-global/process
 	const adminEmail = process.env.ADMIN_NOTIFICATION_EMAIL ?? 'voorzitterouderraad@talentenhuis.be';
-	// eslint-disable-next-line n/prefer-global/process
 	const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://talentenraad.be';
 	const subjectLabel = subjectLabels[data.subject] ?? data.subject;
 

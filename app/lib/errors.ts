@@ -109,7 +109,6 @@ export function getErrorMessage(error: unknown): string {
 
 	if (error instanceof Error) {
 		// Don't expose internal error messages in production
-		// eslint-disable-next-line n/prefer-global/process
 		if (process.env.NODE_ENV === 'production') {
 			return 'Er is een onverwachte fout opgetreden';
 		}

@@ -1,7 +1,6 @@
 import {fetchOneEntry} from '@builder.io/sdk-react-nextjs';
 import {SiteFooter} from './site-footer';
 
-// eslint-disable-next-line n/prefer-global/process
 const BUILDER_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 type FooterData = {

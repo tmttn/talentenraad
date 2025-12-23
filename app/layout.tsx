@@ -86,7 +86,6 @@ export default function RootLayout({
 		<html lang='nl' className='overflow-auto'>
 			<head>
 				<JsonLd data={organizationSchema} />
-				{/* eslint-disable-next-line n/prefer-global/process */}
 				{(process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') && (
 					<script
 						data-project-id='cXhuDUHiYP0QQFVsZtiEudYQMB95amgg0c9tgiNr'

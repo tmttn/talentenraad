@@ -85,7 +85,6 @@ type FaqItem = {
 
 // Generate JSON-LD structured data for FAQPage schema
 function generateFaqStructuredData(faqs: FaqItem[]) {
-	/* eslint-disable @typescript-eslint/naming-convention -- JSON-LD requires @context/@type */
 	return {
 		'@context': 'https://schema.org',
 		'@type': 'FAQPage',
@@ -98,11 +97,10 @@ function generateFaqStructuredData(faqs: FaqItem[]) {
 			},
 		})),
 	};
-	/* eslint-enable @typescript-eslint/naming-convention */
 }
 
 // Use environment variable for API key
-const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '3706422a8e454ceebe64acdc5a1475ba'; // eslint-disable-line n/prefer-global/process
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '3706422a8e454ceebe64acdc5a1475ba';
 
 function Faq() {
 	const isEnabled = useFlag('faqSection');

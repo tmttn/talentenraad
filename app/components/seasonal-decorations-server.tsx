@@ -6,7 +6,6 @@ import {Snowfall, SeasonalStyles, defaultSeasonalConfig} from './seasonal-decora
 const SEASONAL_DECORATIONS_KEY = 'seasonal_decorations';
 
 // Check if we're in build/static generation phase (no DB access)
-// eslint-disable-next-line n/prefer-global/process
 const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build';
 
 export async function getSeasonalDecorationsConfig(): Promise<SeasonalDecorationsConfig> {

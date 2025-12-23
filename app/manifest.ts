@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import type {MetadataRoute} from 'next';
 import {siteConfig} from '@lib/seo';
 

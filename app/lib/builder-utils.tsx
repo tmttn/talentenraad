@@ -6,7 +6,6 @@ import {
 } from '@builder.io/sdk-react-nextjs';
 
 // Builder Public API Key set in .env file
-// eslint-disable-next-line n/prefer-global/process
 export const builderPublicApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 export type PageSearchParameters = Record<string, string>;

@@ -4,7 +4,6 @@ import {cleanupOldAuditLogs} from '@lib/audit';
 // Verify cron secret to prevent unauthorized access
 function verifyCronSecret(request: NextRequest): boolean {
 	const authHeader = request.headers.get('authorization');
-	// eslint-disable-next-line n/prefer-global/process
 	const cronSecret = process.env.CRON_SECRET;
 
 	if (!cronSecret) {

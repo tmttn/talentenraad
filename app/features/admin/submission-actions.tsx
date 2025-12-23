@@ -16,7 +16,6 @@ export function SubmissionActions({submissionId}: Readonly<SubmissionActionsProp
 			? 'Weet je zeker dat je dit bericht wilt verwijderen?'
 			: 'Weet je zeker dat je dit bericht wilt archiveren?';
 
-		// eslint-disable-next-line no-alert
 		if (!confirm(confirmMessage)) {
 			return;
 		}

@@ -7,9 +7,7 @@ import {logAudit, createAuditContext} from '@lib/audit';
 
 // Configure web-push with VAPID
 // Note: VAPID keys must be URL-safe Base64 without "=" padding
-// eslint-disable-next-line n/prefer-global/process
 const vapidPublicKey = process.env.VAPID_PUBLIC_KEY?.replaceAll('=', '');
-// eslint-disable-next-line n/prefer-global/process
 const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY?.replaceAll('=', '');
 
 let vapidConfigured = false;

@@ -8,7 +8,6 @@ type GrecaptchaEnterprise = {
 };
 
 declare global {
-	// eslint-disable-next-line @typescript-eslint/consistent-type-definitions
 	interface Window {
 		grecaptcha?: {
 			enterprise?: GrecaptchaEnterprise;
@@ -19,7 +18,6 @@ declare global {
 const recaptchaScriptId = 'recaptcha-script';
 
 function getGrecaptchaEnterprise(): GrecaptchaEnterprise | undefined {
-	// eslint-disable-next-line unicorn/prefer-global-this
 	return window.grecaptcha?.enterprise;
 }
 
@@ -31,7 +29,6 @@ export function useRecaptcha() {
 	const [isReady, setIsReady] = useState(false);
 	const [error, setError] = useState<string | undefined>(undefined);
 
-	// eslint-disable-next-line n/prefer-global/process
 	const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
 	useEffect(() => {

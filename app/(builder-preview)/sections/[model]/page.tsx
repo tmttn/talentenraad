@@ -32,7 +32,6 @@ import {HomepageDashboardInfo} from '@features/dashboard/homepage-dashboard';
 import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
 import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
 
-// eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 // All custom components available for sections

@@ -248,7 +248,6 @@ function ImagePickerModal({onSelect, onClose, currentValue}: ImagePickerModalPro
 											isSelected ? 'border-primary ring-2 ring-primary/30' : 'border-gray-200'
 										}`}
 									>
-										{/* eslint-disable-next-line @next/next/no-img-element */}
 										<img
 											src={asset.url}
 											alt={asset.name}
@@ -323,7 +322,6 @@ export function ImagePicker({value, onChange, label, helpText}: ImagePickerProps
 			{value ? (
 				<div className='relative'>
 					<div className='border-2 border-gray-300 rounded-button overflow-hidden'>
-						{/* eslint-disable-next-line @next/next/no-img-element */}
 						<img
 							src={value}
 							alt='Geselecteerde afbeelding'

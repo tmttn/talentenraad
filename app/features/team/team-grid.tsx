@@ -31,7 +31,7 @@ type TeamGridProperties = {
 };
 
 // Use environment variable for API key
-const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY; // eslint-disable-line n/prefer-global/process
+const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
 
 function TeamGrid({
 	columns = 3,

@@ -29,7 +29,6 @@ import {PhotoGalleryInfo} from '@features/gallery/photo-gallery';
 import {SponsorBannerInfo} from '@features/sponsors/sponsor-banner';
 
 type BuilderContentProperties = {
-	// eslint-disable-next-line @typescript-eslint/no-restricted-types
 	content: BuilderContentType | null;
 	apiKey: string;
 	model: string;

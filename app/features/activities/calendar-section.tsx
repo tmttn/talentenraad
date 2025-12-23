@@ -6,7 +6,6 @@ import {AnimatedLink} from '@components/ui';
 import {Stack} from '@components/ui/layout';
 import {useFlag} from '@lib/flags-client';
 
-// eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 type CalendarEvent = {

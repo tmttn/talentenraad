@@ -13,7 +13,6 @@ import {
 } from '@lib/seo';
 import {clapsButton} from '@lib/flags';
 
-// eslint-disable-next-line n/prefer-global/process
 const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 const proseClassName = [

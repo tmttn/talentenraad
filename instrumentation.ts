@@ -1,4 +1,3 @@
-/* eslint-disable n/prefer-global/process */
 
 import * as Sentry from '@sentry/nextjs';
 import type {Instrumentation} from 'next';
