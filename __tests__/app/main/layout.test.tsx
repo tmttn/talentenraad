@@ -11,6 +11,11 @@
  * This file verifies the module can be imported correctly.
  */
 
+// Mock AdminEditModeWrapper to avoid auth0 ESM import issues
+jest.mock('../../../app/components/builder/admin-edit-mode-wrapper', () => ({
+  AdminEditModeWrapper: ({children}: {children: React.ReactNode}) => children,
+}));
+
 import MainSiteLayout from '../../../app/(main)/layout';
 
 describe('MainSiteLayout', () => {

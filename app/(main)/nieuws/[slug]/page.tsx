@@ -5,6 +5,7 @@ import {Calendar} from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {ClapButton} from '@components/claps';
+import {EditableText} from '@components/builder';
 import {
   generateMetadata as generateSeoMetadata,
   generateArticleSchema,
@@ -165,12 +166,22 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
               <Calendar className='h-4 w-4' />
               {formatDate(item.data.datum)}
             </time>
-            <h1 className='text-3xl md:text-4xl font-bold text-gray-800 mb-4'>
-              {item.data.titel}
-            </h1>
-            <p className='text-xl text-gray-600 leading-relaxed'>
-              {item.data.samenvatting}
-            </p>
+            <EditableText
+              contentId={item.id}
+              model='nieuws'
+              field='titel'
+              value={item.data.titel}
+              as='h1'
+              className='text-3xl md:text-4xl font-bold text-gray-800 mb-4'
+            />
+            <EditableText
+              contentId={item.id}
+              model='nieuws'
+              field='samenvatting'
+              value={item.data.samenvatting}
+              as='p'
+              className='text-xl text-gray-600 leading-relaxed'
+            />
           </header>
 
           {/* Featured Image */}
@@ -188,9 +199,14 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
 
           {/* Content */}
           {item.data.inhoud && (
-            <div
+            <EditableText
+              contentId={item.id}
+              model='nieuws'
+              field='inhoud'
+              value={item.data.inhoud}
+              as='div'
               className={proseClassName}
-              dangerouslySetInnerHTML={{__html: item.data.inhoud}}
+              richText
             />
           )}
 

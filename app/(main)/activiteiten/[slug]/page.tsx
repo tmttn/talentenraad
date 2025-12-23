@@ -4,6 +4,7 @@ import {Calendar, Clock, MapPin} from 'lucide-react';
 import {AnimatedButton, AnimatedLink, AddToCalendarButton} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {ClapButton} from '@components/claps';
+import {EditableText} from '@components/builder';
 import {
   generateMetadata as generateSeoMetadata,
   generateEventSchema,
@@ -220,9 +221,14 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
                     </span>
                   )}
                 </div>
-                <h1 className='text-3xl md:text-4xl font-bold text-gray-800'>
-                  {item.data.titel}
-                </h1>
+                <EditableText
+                  contentId={item.id}
+                  model='activiteit'
+                  field='titel'
+                  value={item.data.titel}
+                  as='h1'
+                  className='text-3xl md:text-4xl font-bold text-gray-800'
+                />
               </div>
             </div>
           </header>
@@ -283,7 +289,14 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
           {item.data.inhoud && (
             <div className='prose prose-lg max-w-none prose-headings:text-gray-800 prose-p:text-gray-600'>
               <h2>Over deze activiteit</h2>
-              <div dangerouslySetInnerHTML={{__html: item.data.inhoud}} />
+              <EditableText
+                contentId={item.id}
+                model='activiteit'
+                field='inhoud'
+                value={item.data.inhoud}
+                as='div'
+                richText
+              />
             </div>
           )}
 

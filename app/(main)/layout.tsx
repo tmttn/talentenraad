@@ -10,7 +10,8 @@ import {
 } from '@components/seasonal-decorations-context';
 import {Snowfall, SeasonalStyles} from '@components/seasonal-decorations';
 import {ConditionalFeedbackButton} from '@components/feedback';
-import {EditModeButton} from '@components/builder/edit-mode-button';
+import {EditModeButton} from '@components/builder';
+import {AdminEditModeWrapper} from '@components/builder/admin-edit-mode-wrapper';
 import {seasonalDecorations, cookieBanner, getAllFlags} from '@lib/flags';
 import {FlagsProvider} from '@lib/flags-client';
 
@@ -76,18 +77,18 @@ export default async function MainSiteLayout({
   return (
     <FlagsProvider flags={flags}>
       <CookieConsentProvider>
-        <SafeSeasonalDecorations>
-          {children}
-          <Suspense fallback={<SiteFooterSkeleton />}>
-            <SiteFooterServer />
-          </Suspense>
-        </SafeSeasonalDecorations>
-        <ConditionalCookieBanner />
-        <ConditionalFeedbackButton />
-        <Suspense fallback={null}>
+        <AdminEditModeWrapper>
+          <SafeSeasonalDecorations>
+            {children}
+            <Suspense fallback={<SiteFooterSkeleton />}>
+              <SiteFooterServer />
+            </Suspense>
+          </SafeSeasonalDecorations>
+          <ConditionalCookieBanner />
+          <ConditionalFeedbackButton />
           <EditModeButton />
-        </Suspense>
-        <Toaster position='bottom-left' richColors closeButton />
+          <Toaster position='bottom-left' richColors closeButton />
+        </AdminEditModeWrapper>
       </CookieConsentProvider>
     </FlagsProvider>
   );
