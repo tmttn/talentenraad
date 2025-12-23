@@ -238,22 +238,40 @@ export function BlockManager({
         <div className='flex items-center justify-between px-4 py-3 border-b border-gray-200'>
           <div className='flex items-center gap-2'>
             <Layers className='w-5 h-5 text-primary' />
-            <h2 className='font-semibold text-gray-800'>Pagina blokken</h2>
+            <div>
+              <h2 className='font-semibold text-gray-800'>Pagina blokken</h2>
+              <p className='text-xs text-gray-500'>Beheer de secties op deze pagina</p>
+            </div>
           </div>
           <button
             type='button'
             onClick={onClose}
             className='p-1 rounded hover:bg-gray-100 transition-colors'
+            title='Sluiten'
           >
             <X className='w-5 h-5 text-gray-500' />
           </button>
         </div>
 
+        {/* Instructions */}
+        <div className='px-4 py-2 bg-blue-50 border-b border-blue-100'>
+          <p className='text-xs text-blue-700'>
+            <strong>Tip:</strong> Sleep blokken om te herschikken. Klik op{' '}
+            <Settings className='w-3 h-3 inline' /> om instellingen te wijzigen.
+          </p>
+        </div>
+
         {/* Block list */}
         <div className='flex-1 overflow-y-auto p-4'>
           {localBlocks.length === 0 ? (
-            <div className='text-center py-8 text-gray-500'>
-              <p className='mb-4'>Geen blokken op deze pagina</p>
+            <div className='text-center py-8'>
+              <div className='w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center'>
+                <Layers className='w-8 h-8 text-gray-400' />
+              </div>
+              <h3 className='font-medium text-gray-700 mb-2'>Geen blokken</h3>
+              <p className='text-sm text-gray-500 mb-4'>
+                Deze pagina heeft nog geen content blokken. Voeg je eerste blok toe om te beginnen.
+              </p>
               <button
                 type='button'
                 onClick={() => {
@@ -321,10 +339,16 @@ export function BlockManager({
 
         {/* Footer with info */}
         <div className='px-4 py-3 border-t border-gray-200 bg-gray-50'>
-          <p className='text-xs text-gray-500'>
-            Sleep blokken om te herschikken. Wijzigingen worden opgeslagen wanneer je op
-            &quot;Opslaan&quot; klikt.
-          </p>
+          <div className='flex items-start gap-2'>
+            <div className='w-4 h-4 mt-0.5 flex-shrink-0'>
+              <svg viewBox='0 0 20 20' fill='currentColor' className='text-gray-400'>
+                <path fillRule='evenodd' d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z' clipRule='evenodd' />
+              </svg>
+            </div>
+            <p className='text-xs text-gray-500'>
+              Wijzigingen worden pas definitief opgeslagen wanneer je op <strong>&quot;Opslaan&quot;</strong> klikt in de bovenste balk.
+            </p>
+          </div>
         </div>
       </div>
 

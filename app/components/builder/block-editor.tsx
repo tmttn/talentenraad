@@ -29,9 +29,11 @@ type FieldConfig = {
   label: string;
   type: FieldType;
   options?: string[];
+  placeholder?: string;
+  helpText?: string;
 };
 
-// Field configurations for known components
+// Field configurations for known components with helpful descriptions
 const componentFieldConfigs: Record<string, FieldConfig[]> = {
   Section: [
     {
@@ -39,72 +41,212 @@ const componentFieldConfigs: Record<string, FieldConfig[]> = {
       label: 'Achtergrond',
       type: 'select',
       options: ['white', 'gray', 'primary', 'secondary'],
+      helpText: 'Kies de achtergrondkleur van deze sectie',
     },
     {
       key: 'paddingY',
-      label: 'Verticale padding',
+      label: 'Verticale ruimte',
       type: 'select',
       options: ['none', 'small', 'medium', 'large'],
+      helpText: 'Ruimte boven en onder de inhoud',
     },
   ],
   Hero: [
-    {key: 'title', label: 'Titel', type: 'text'},
-    {key: 'subtitle', label: 'Ondertitel', type: 'text'},
+    {
+      key: 'title',
+      label: 'Titel',
+      type: 'text',
+      placeholder: 'Bijv. Welkom bij onze website',
+      helpText: 'De hoofdtekst van de hero',
+    },
+    {
+      key: 'subtitle',
+      label: 'Ondertitel',
+      type: 'text',
+      placeholder: 'Bijv. Ontdek wat wij doen',
+      helpText: 'Optionele tekst onder de titel',
+    },
     {
       key: 'size',
       label: 'Grootte',
       type: 'select',
       options: ['small', 'medium', 'large'],
+      helpText: 'Bepaalt de hoogte van de hero',
     },
-    {key: 'imageUrl', label: 'Afbeelding URL', type: 'text'},
+    {
+      key: 'imageUrl',
+      label: 'Afbeelding URL',
+      type: 'text',
+      placeholder: 'https://...',
+      helpText: 'URL van de achtergrondafbeelding',
+    },
   ],
   Typography: [
-    {key: 'text', label: 'Tekst', type: 'textarea'},
+    {
+      key: 'text',
+      label: 'Tekst',
+      type: 'textarea',
+      placeholder: 'Voer hier je tekst in...',
+      helpText: 'De tekst die wordt weergegeven',
+    },
     {
       key: 'variant',
-      label: 'Variant',
+      label: 'Stijl',
       type: 'select',
       options: ['h1', 'h2', 'h3', 'h4', 'body', 'small'],
+      helpText: 'h1-h4 zijn koppen, body is normale tekst',
     },
   ],
   CtaBanner: [
-    {key: 'title', label: 'Titel', type: 'text'},
-    {key: 'description', label: 'Beschrijving', type: 'textarea'},
-    {key: 'buttonText', label: 'Knoptekst', type: 'text'},
-    {key: 'buttonUrl', label: 'Knop URL', type: 'text'},
+    {
+      key: 'title',
+      label: 'Titel',
+      type: 'text',
+      placeholder: 'Bijv. Neem contact op',
+      helpText: 'De opvallende tekst',
+    },
+    {
+      key: 'description',
+      label: 'Beschrijving',
+      type: 'textarea',
+      placeholder: 'Bijv. Wij helpen je graag verder...',
+      helpText: 'Ondersteunende tekst',
+    },
+    {
+      key: 'buttonText',
+      label: 'Knoptekst',
+      type: 'text',
+      placeholder: 'Bijv. Meer info',
+      helpText: 'Tekst op de actieknop',
+    },
+    {
+      key: 'buttonUrl',
+      label: 'Knop URL',
+      type: 'text',
+      placeholder: '/contact',
+      helpText: 'Waar de knop naartoe linkt',
+    },
   ],
   CTAButton: [
-    {key: 'text', label: 'Tekst', type: 'text'},
-    {key: 'href', label: 'URL', type: 'text'},
+    {
+      key: 'text',
+      label: 'Tekst',
+      type: 'text',
+      placeholder: 'Bijv. Klik hier',
+      helpText: 'De tekst op de knop',
+    },
+    {
+      key: 'href',
+      label: 'URL',
+      type: 'text',
+      placeholder: '/pagina of https://...',
+      helpText: 'Waar de knop naartoe linkt',
+    },
     {
       key: 'variant',
-      label: 'Variant',
+      label: 'Stijl',
       type: 'select',
       options: ['primary', 'secondary', 'outline'],
+      helpText: 'Het uiterlijk van de knop',
     },
   ],
   AnnouncementBanner: [
-    {key: 'text', label: 'Tekst', type: 'text'},
-    {key: 'linkText', label: 'Link tekst', type: 'text'},
-    {key: 'linkUrl', label: 'Link URL', type: 'text'},
+    {
+      key: 'text',
+      label: 'Tekst',
+      type: 'text',
+      placeholder: 'Bijv. Nieuw: onze zomerprogramma\'s',
+      helpText: 'De aankondigingstekst',
+    },
+    {
+      key: 'linkText',
+      label: 'Link tekst',
+      type: 'text',
+      placeholder: 'Bijv. Lees meer',
+      helpText: 'Tekst van de link',
+    },
+    {
+      key: 'linkUrl',
+      label: 'Link URL',
+      type: 'text',
+      placeholder: '/nieuws/...',
+      helpText: 'Waar de link naartoe gaat',
+    },
   ],
   ActivitiesList: [
-    {key: 'limit', label: 'Aantal', type: 'number'},
-    {key: 'showPast', label: 'Toon afgelopen', type: 'boolean'},
+    {
+      key: 'limit',
+      label: 'Aantal activiteiten',
+      type: 'number',
+      helpText: 'Hoeveel activiteiten er getoond worden',
+    },
+    {
+      key: 'showPast',
+      label: 'Toon afgelopen activiteiten',
+      type: 'boolean',
+      helpText: 'Ook activiteiten uit het verleden tonen',
+    },
   ],
   NewsList: [
-    {key: 'limit', label: 'Aantal', type: 'number'},
+    {
+      key: 'limit',
+      label: 'Aantal nieuwsberichten',
+      type: 'number',
+      helpText: 'Hoeveel nieuwsberichten er getoond worden',
+    },
   ],
   TeamMember: [
-    {key: 'name', label: 'Naam', type: 'text'},
-    {key: 'role', label: 'Rol', type: 'text'},
-    {key: 'imageUrl', label: 'Foto URL', type: 'text'},
-    {key: 'bio', label: 'Bio', type: 'textarea'},
+    {
+      key: 'name',
+      label: 'Naam',
+      type: 'text',
+      placeholder: 'Bijv. Jan Jansen',
+      helpText: 'Volledige naam van het teamlid',
+    },
+    {
+      key: 'role',
+      label: 'Rol',
+      type: 'text',
+      placeholder: 'Bijv. Voorzitter',
+      helpText: 'Functie of rol',
+    },
+    {
+      key: 'imageUrl',
+      label: 'Foto URL',
+      type: 'text',
+      placeholder: 'https://...',
+      helpText: 'URL van de profielfoto',
+    },
+    {
+      key: 'bio',
+      label: 'Bio',
+      type: 'textarea',
+      placeholder: 'Korte beschrijving...',
+      helpText: 'Korte beschrijving van het teamlid',
+    },
   ],
   InfoCard: [
-    {key: 'title', label: 'Titel', type: 'text'},
-    {key: 'description', label: 'Beschrijving', type: 'textarea'},
-    {key: 'icon', label: 'Icoon', type: 'text'},
+    {
+      key: 'title',
+      label: 'Titel',
+      type: 'text',
+      placeholder: 'Bijv. Over ons',
+      helpText: 'De titel van de kaart',
+    },
+    {
+      key: 'description',
+      label: 'Beschrijving',
+      type: 'textarea',
+      placeholder: 'Beschrijf hier...',
+      helpText: 'De inhoud van de kaart',
+    },
+    {
+      key: 'icon',
+      label: 'Icoon',
+      type: 'text',
+      placeholder: 'Bijv. star, heart, users',
+      helpText: 'Naam van het Lucide icoon',
+    },
   ],
 };
 
@@ -181,8 +323,14 @@ export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
   const renderField = (key: string, value: unknown, config?: FieldConfig) => {
     const label = config?.label ?? formatLabel(key);
     const type = config?.type ?? getFieldType(value);
+    const placeholder = config?.placeholder ?? '';
+    const helpText = config?.helpText;
 
     const fieldId = `field-${key}`;
+
+    const helpTextElement = helpText ? (
+      <p className='mt-1 text-xs text-gray-500'>{helpText}</p>
+    ) : null;
 
     switch (type) {
       case 'text': {
@@ -195,11 +343,13 @@ export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
               id={fieldId}
               type='text'
               value={String(value ?? '')}
+              placeholder={placeholder}
               onChange={e => {
                 handleChange(key, e.target.value);
               }}
-              className='w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/30'
+              className='w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-gray-400'
             />
+            {helpTextElement}
           </div>
         );
       }
@@ -213,12 +363,14 @@ export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
             <textarea
               id={fieldId}
               value={String(value ?? '')}
+              placeholder={placeholder}
               onChange={e => {
                 handleChange(key, e.target.value);
               }}
               rows={3}
-              className='w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/30'
+              className='w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/30 placeholder:text-gray-400'
             />
+            {helpTextElement}
           </div>
         );
       }
@@ -233,11 +385,13 @@ export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
               id={fieldId}
               type='number'
               value={Number(value ?? 0)}
+              placeholder={placeholder}
               onChange={e => {
                 handleChange(key, Number.parseInt(e.target.value, 10));
               }}
               className='w-full px-3 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-2 focus:ring-primary/30'
             />
+            {helpTextElement}
           </div>
         );
       }
@@ -256,6 +410,7 @@ export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
               />
               <span className='text-sm font-medium text-gray-700'>{label}</span>
             </label>
+            {helpText && <p className='mt-1 text-xs text-gray-500 ml-6'>{helpText}</p>}
           </div>
         );
       }
@@ -278,6 +433,7 @@ export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
                 <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
+            {helpTextElement}
           </div>
         );
       }

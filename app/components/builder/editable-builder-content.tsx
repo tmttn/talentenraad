@@ -151,23 +151,35 @@ export function EditableBuilderContent({
   // In edit mode, render with potentially modified blocks
   return (
     <div className='relative'>
-      {/* Floating button to open block manager */}
-      <button
-        type='button'
-        onClick={() => {
-          setIsBlockManagerOpen(true);
-        }}
-        className='fixed bottom-24 right-6 z-40 flex items-center gap-2 px-4 py-2 bg-gray-700 text-white rounded-button shadow-lg hover:bg-gray-800 transition-colors'
-        title='Blokken beheren'
-      >
-        <Layers className='w-4 h-4' />
-        <span>Blokken</span>
-        {localBlocks.length > 0 && (
-          <span className='bg-white/20 px-1.5 py-0.5 rounded text-xs'>
-            {localBlocks.length}
-          </span>
-        )}
-      </button>
+      {/* Floating action panel */}
+      <div className='fixed bottom-6 right-6 z-40 flex flex-col gap-2'>
+        {/* Block manager button - prominent */}
+        <button
+          type='button'
+          onClick={() => {
+            setIsBlockManagerOpen(true);
+          }}
+          className='flex items-center gap-2 px-4 py-3 bg-primary text-white rounded-button shadow-lg hover:bg-primary-hover transition-all hover:scale-105 group'
+          title='Blokken beheren - Voeg secties toe, verwijder of herschik'
+        >
+          <Layers className='w-5 h-5' />
+          <div className='flex flex-col items-start'>
+            <span className='font-medium'>Blokken beheren</span>
+            <span className='text-xs text-white/70 group-hover:text-white/90'>
+              {localBlocks.length} {localBlocks.length === 1 ? 'sectie' : 'secties'} op deze pagina
+            </span>
+          </div>
+        </button>
+
+        {/* Help tooltip */}
+        <div className='bg-gray-800 text-white text-xs px-3 py-2 rounded-button shadow-lg'>
+          <p className='font-medium mb-1'>Snelle tips:</p>
+          <ul className='text-gray-300 space-y-0.5'>
+            <li>• Klik direct op tekst om te bewerken</li>
+            <li>• Sleep blokken om te herschikken</li>
+          </ul>
+        </div>
+      </div>
 
       {/* Render content with modified blocks */}
       <Content

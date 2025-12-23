@@ -139,7 +139,7 @@ describe('BlockEditor', () => {
       <BlockEditor block={activitiesBlock} onSave={mockOnSave} onClose={mockOnClose} />,
     );
 
-    const limitInput = screen.getByLabelText('Aantal');
+    const limitInput = screen.getByLabelText('Aantal activiteiten');
     expect(limitInput).toHaveAttribute('type', 'number');
     expect(limitInput).toHaveValue(5);
   });
@@ -160,7 +160,7 @@ describe('BlockEditor', () => {
       <BlockEditor block={activitiesBlock} onSave={mockOnSave} onClose={mockOnClose} />,
     );
 
-    const checkbox = screen.getByRole('checkbox', {name: 'Toon afgelopen'});
+    const checkbox = screen.getByRole('checkbox', {name: 'Toon afgelopen activiteiten'});
     expect(checkbox).toBeChecked();
   });
 

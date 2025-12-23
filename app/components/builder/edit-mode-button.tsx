@@ -1,13 +1,14 @@
 'use client';
 
-import {Pencil, X} from 'lucide-react';
+import {Pencil} from 'lucide-react';
 import {useEditModeOptional} from './edit-mode-context';
 
 /**
  * EditModeButton - Toggle button for inline editing mode
  *
  * When clicked, enables inline editing on the page.
- * Only visible when EditModeProvider indicates user is admin.
+ * Only visible when EditModeProvider indicates user is admin and not already in edit mode.
+ * Exit is handled by the EditModeToolbar.
  */
 export function EditModeButton() {
   const editMode = useEditModeOptional();
@@ -17,39 +18,27 @@ export function EditModeButton() {
     return null;
   }
 
-  const {isEditMode, enterEditMode, exitEditMode, hasUnsavedChanges} = editMode;
+  const {isEditMode, enterEditMode} = editMode;
 
-  // If in edit mode, show a smaller exit button (main controls are in toolbar)
+  // Don't show button when already in edit mode (toolbar handles exit)
   if (isEditMode) {
-    const exitButtonClasses = [
-      'fixed bottom-40 right-6 z-50 flex items-center gap-2 px-4 py-2',
-      'rounded-button shadow-lg transition-colors bg-gray-600 hover:bg-gray-700',
-      'text-white disabled:opacity-50 disabled:cursor-not-allowed',
-    ].join(' ');
-
-    return (
-      <button
-        type='button'
-        onClick={exitEditMode}
-        disabled={hasUnsavedChanges}
-        className={exitButtonClasses}
-        title={hasUnsavedChanges ? 'Sla eerst wijzigingen op' : 'Stop bewerken'}
-      >
-        <X className='w-4 h-4' />
-        <span className='hidden sm:inline'>Stop bewerken</span>
-      </button>
-    );
+    return null;
   }
 
   return (
     <button
       type='button'
       onClick={enterEditMode}
-      className='fixed bottom-40 right-6 z-50 flex items-center gap-2 px-4 py-2 rounded-button shadow-lg transition-colors bg-primary hover:bg-primary-hover text-white'
-      title='Bewerk pagina'
+      className='fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3 rounded-button shadow-lg transition-all bg-primary hover:bg-primary-hover hover:scale-105 text-white group'
+      title='Start met bewerken van deze pagina'
     >
-      <Pencil className='w-4 h-4' />
-      <span className='hidden sm:inline'>Bewerken</span>
+      <Pencil className='w-5 h-5' />
+      <div className='flex flex-col items-start'>
+        <span className='font-medium'>Pagina bewerken</span>
+        <span className='text-xs text-white/70 group-hover:text-white/90'>
+          Klik om tekst en secties aan te passen
+        </span>
+      </div>
     </button>
   );
 }

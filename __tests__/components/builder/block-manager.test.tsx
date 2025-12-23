@@ -164,7 +164,7 @@ describe('BlockManager', () => {
       />,
     );
 
-    expect(screen.getByText('Geen blokken op deze pagina')).toBeInTheDocument();
+    expect(screen.getByText('Geen blokken')).toBeInTheDocument();
     expect(screen.getByText('Eerste blok toevoegen')).toBeInTheDocument();
   });
 
