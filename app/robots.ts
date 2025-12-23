@@ -1,4 +1,6 @@
 import type {MetadataRoute} from 'next';
+// eslint-disable-next-line import-x/extensions
+import {siteConfig} from '@/lib/seo';
 
 export default function robots(): MetadataRoute.Robots {
 	return {
@@ -6,6 +8,6 @@ export default function robots(): MetadataRoute.Robots {
 			userAgent: '*',
 			allow: '/',
 		},
-		sitemap: 'https://talentenraad.vercel.app/sitemap.xml',
+		sitemap: `${siteConfig.url}/sitemap.xml`,
 	};
 }

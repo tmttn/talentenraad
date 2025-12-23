@@ -1,4 +1,5 @@
 import sitemap from '../../app/sitemap';
+import {siteConfig} from '../../app/lib/seo';
 
 describe('sitemap', () => {
 	beforeEach(() => {
@@ -14,7 +15,7 @@ describe('sitemap', () => {
 		const result = sitemap();
 
 		expect(result).toHaveLength(1);
-		expect(result[0].url).toBe('https://talentenraad.vercel.app');
+		expect(result[0].url).toBe(siteConfig.url);
 	});
 
 	it('sets correct priority for home page', () => {

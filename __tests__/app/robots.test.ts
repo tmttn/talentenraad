@@ -1,4 +1,5 @@
 import robots from '../../app/robots';
+import {siteConfig} from '../../app/lib/seo';
 
 describe('robots', () => {
 	it('returns correct robots configuration', () => {
@@ -9,7 +10,7 @@ describe('robots', () => {
 				userAgent: '*',
 				allow: '/',
 			},
-			sitemap: 'https://talentenraad.vercel.app/sitemap.xml',
+			sitemap: `${siteConfig.url}/sitemap.xml`,
 		});
 	});
 
@@ -28,6 +29,6 @@ describe('robots', () => {
 	it('includes sitemap URL', () => {
 		const result = robots();
 
-		expect(result.sitemap).toBe('https://talentenraad.vercel.app/sitemap.xml');
+		expect(result.sitemap).toBe(`${siteConfig.url}/sitemap.xml`);
 	});
 });

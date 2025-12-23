@@ -1,7 +1,9 @@
 import type {MetadataRoute} from 'next';
+// eslint-disable-next-line import-x/extensions
+import {siteConfig} from '@/lib/seo';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-	const baseUrl = 'https://talentenraad.vercel.app';
+	const baseUrl = siteConfig.url;
 
 	return [
 		{
