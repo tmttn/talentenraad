@@ -58,6 +58,7 @@ export function InlineRichTextEditor({
 }: InlineRichTextEditorProps) {
   const editMode = useEditModeOptional();
   const originalValueRef = useRef(value);
+  const hasLocalChangesRef = useRef(false);
   const [isFocused, setIsFocused] = useState(false);
   const [toolbarPosition, setToolbarPosition] = useState({top: 0, left: 0});
   const containerRef = useRef<HTMLDivElement>(null);
@@ -96,6 +97,7 @@ export function InlineRichTextEditor({
 
         // Register the change if value changed
         if (editMode && newValue !== originalValueRef.current) {
+          hasLocalChangesRef.current = true;
           editMode.registerChange({
             contentId,
             model,
@@ -128,11 +130,17 @@ export function InlineRichTextEditor({
     if (editor) {
       editor.setEditable(editMode?.isEditMode ?? false);
     }
+
+    // Reset local changes flag when exiting edit mode
+    if (!editMode?.isEditMode) {
+      hasLocalChangesRef.current = false;
+    }
   }, [editor, editMode?.isEditMode]);
 
-  // Update content when value prop changes (but not during editing)
+  // Only update content from props if we don't have local changes
+  // This prevents reverting user edits when the component re-renders
   useEffect(() => {
-    if (editor && !isFocused && value !== editor.getHTML()) {
+    if (editor && !isFocused && !hasLocalChangesRef.current && value !== editor.getHTML()) {
       editor.commands.setContent(value);
       originalValueRef.current = value;
     }

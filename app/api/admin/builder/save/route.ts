@@ -43,10 +43,24 @@ export async function POST(request: NextRequest) {
 
     const currentContent = await currentResponse.json() as {data: Record<string, unknown>};
 
+    // Process fields - parse JSON for blocks field
+    const processedFields: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(fields)) {
+      if (key === 'blocks' && typeof value === 'string') {
+        try {
+          processedFields[key] = JSON.parse(value);
+        } catch {
+          processedFields[key] = value;
+        }
+      } else {
+        processedFields[key] = value;
+      }
+    }
+
     // Merge the new fields into the existing data
     const updatedData = {
       ...currentContent.data,
-      ...fields,
+      ...processedFields,
     };
 
     // Update the content via Builder.io Write API

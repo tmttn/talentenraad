@@ -8,6 +8,7 @@ export {AdminEditModeClient} from './admin-edit-mode-client';
 export {EditableBuilderContent} from './editable-builder-content';
 export {ComponentPicker} from './component-picker';
 export {BlockControls, AddBlockButton} from './block-controls';
+export {BlockManager} from './block-manager';
 
 // Note: AdminEditModeWrapper is a server component and should be imported directly:
 // import {AdminEditModeWrapper} from '@components/builder/admin-edit-mode-wrapper';

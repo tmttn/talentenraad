@@ -40,14 +40,23 @@ export function EditableText({
   const [isEditing, setIsEditing] = useState(false);
   const elementRef = useRef<HTMLElement | null>(null);
   const originalValueRef = useRef(value);
+  const hasLocalChangesRef = useRef(false);
 
-  // Update local value when prop changes (but not during editing)
+  // Only update local value from props if we don't have local changes
+  // This prevents reverting user edits when the component re-renders
   useEffect(() => {
-    if (!isEditing) {
+    if (!isEditing && !hasLocalChangesRef.current) {
       setLocalValue(value);
       originalValueRef.current = value;
     }
   }, [value, isEditing]);
+
+  // Reset local changes flag when exiting edit mode
+  useEffect(() => {
+    if (!editMode?.isEditMode) {
+      hasLocalChangesRef.current = false;
+    }
+  }, [editMode?.isEditMode]);
 
   // If not in edit mode context or not an admin, render normally
   if (!editMode?.isEditMode) {
@@ -86,6 +95,7 @@ export function EditableText({
     setIsEditing(false);
     const newValue = elementRef.current?.textContent ?? localValue;
     setLocalValue(newValue);
+    hasLocalChangesRef.current = true;
 
     // Register the change
     editMode.registerChange({
