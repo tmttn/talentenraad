@@ -7,6 +7,7 @@ import {
   type KeyboardEvent,
 } from 'react';
 import {useEditModeOptional} from './edit-mode-context';
+import {InlineRichTextEditor} from './inline-rich-text-editor';
 
 type EditableTextProps = {
   /** The content ID from Builder.io */
@@ -62,6 +63,19 @@ export function EditableText({
     return <Tag className={className}>{value}</Tag>;
   }
 
+  // Use rich text editor for HTML content in edit mode
+  if (richText) {
+    return (
+      <InlineRichTextEditor
+        contentId={contentId}
+        model={model}
+        field={field}
+        value={value}
+        className={className}
+      />
+    );
+  }
+
   const handleClick = () => {
     if (!isEditing) {
       setIsEditing(true);
@@ -78,7 +92,7 @@ export function EditableText({
       contentId,
       model,
       field,
-      value: richText ? (elementRef.current?.innerHTML ?? newValue) : newValue,
+      value: newValue,
       originalValue: originalValueRef.current,
     });
   };
@@ -88,15 +102,11 @@ export function EditableText({
       // Revert changes
       setLocalValue(originalValueRef.current);
       if (elementRef.current) {
-        if (richText) {
-          elementRef.current.innerHTML = originalValueRef.current;
-        } else {
-          elementRef.current.textContent = originalValueRef.current;
-        }
+        elementRef.current.textContent = originalValueRef.current;
       }
 
       setIsEditing(false);
-    } else if (event.key === 'Enter' && !richText) {
+    } else if (event.key === 'Enter') {
       // Save on Enter for single-line text
       event.preventDefault();
       elementRef.current?.blur();
@@ -115,21 +125,6 @@ export function EditableText({
   const setRef = (element: HTMLElement | null) => {
     elementRef.current = element;
   };
-
-  if (richText) {
-    return (
-      <Tag
-        ref={setRef}
-        className={editableClasses}
-        contentEditable
-        suppressContentEditableWarning
-        onClick={handleClick}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        dangerouslySetInnerHTML={{__html: localValue}}
-      />
-    );
-  }
 
   return (
     <Tag

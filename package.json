@@ -28,6 +28,7 @@
     "@sentry/nextjs": "^10.0.0",
     "@serwist/next": "^9.3.0",
     "@tailwindcss/typography": "^0.5.19",
+    "@tiptap/extension-bubble-menu": "^3.14.0",
     "@tiptap/extension-link": "^3.13.0",
     "@tiptap/extension-underline": "^3.13.0",
     "@tiptap/pm": "^3.13.0",
@@ -107,7 +108,14 @@
       "generated/**"
     ],
     "rules": {
-      "@eslint-community/eslint-comments/require-description": ["error", {"ignore": ["eslint-enable"]}],
+      "@eslint-community/eslint-comments/require-description": [
+        "error",
+        {
+          "ignore": [
+            "eslint-enable"
+          ]
+        }
+      ],
       "@eslint-community/eslint-comments/no-unlimited-disable": "error",
       "@eslint-community/eslint-comments/no-duplicate-disable": "error",
       "n/prefer-global/process": "off",
@@ -119,12 +127,23 @@
       "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/promise-function-async": "off",
       "@typescript-eslint/no-confusing-void-expression": "off",
-      "@stylistic/jsx-quotes": ["error", "prefer-single"],
+      "@stylistic/jsx-quotes": [
+        "error",
+        "prefer-single"
+      ],
       "new-cap": "off",
       "no-await-in-loop": "off",
       "unicorn/prevent-abbreviations": "off",
       "unicorn/prefer-global-this": "off",
-      "unicorn/filename-case": ["error", {"cases": {"kebabCase": true, "pascalCase": true}}],
+      "unicorn/filename-case": [
+        "error",
+        {
+          "cases": {
+            "kebabCase": true,
+            "pascalCase": true
+          }
+        }
+      ],
       "unicorn/no-nested-ternary": "off",
       "unicorn/no-array-reduce": "off",
       "unicorn/prefer-query-selector": "off",

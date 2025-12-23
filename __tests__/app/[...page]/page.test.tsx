@@ -18,8 +18,8 @@ jest.mock('../../../app/lib/builder-utils', () => ({
 	ConfigurationError: () => <div>Configuration Error</div>,
 }));
 
-jest.mock('../../../app/components/builder/builder-content', () => ({
-	BuilderContent: ({content}: {content: unknown}) => (
+jest.mock('../../../app/components/builder/editable-builder-content', () => ({
+	EditableBuilderContent: ({content}: {content: unknown}) => (
 		<div data-testid='builder-content'>{content ? 'Has Content' : 'No Content'}</div>
 	),
 }));

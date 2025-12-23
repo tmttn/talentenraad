@@ -5,7 +5,12 @@ import {
   db, users, submissions, auditLogs, pushSubscriptions, notificationHistory,
 } from '@lib/db';
 import {isNull, eq} from 'drizzle-orm';
-import type {ContentType, ExportData, ExportMetadata, BuilderContentType} from '@lib/data-export';
+import type {
+  ContentType,
+  ExportData,
+  ExportMetadata,
+  BuilderContentType,
+} from '@lib/data-export';
 
 const builderModels = new Set<ContentType>(['nieuws', 'activiteit', 'aankondiging', 'sponsor']);
 

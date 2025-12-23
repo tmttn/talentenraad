@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import {notFound} from 'next/navigation';
-import {BuilderContent} from '@components/builder/builder-content';
+import {EditableBuilderContent} from '@components/builder/editable-builder-content';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {
   builderPublicApiKey,
@@ -91,7 +91,7 @@ export default async function Page(properties: Readonly<PageProperties>) {
   return (
     <PageWithAnnouncements content={content ?? undefined}>
       <JsonLd data={breadcrumbSchema} />
-      <BuilderContent content={content ?? null} apiKey={builderPublicApiKey} model='page' />
+      <EditableBuilderContent content={content ?? null} apiKey={builderPublicApiKey} model='page' />
     </PageWithAnnouncements>
   );
 }
