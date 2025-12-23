@@ -162,14 +162,17 @@ export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
     const label = config?.label ?? formatLabel(key);
     const type = config?.type ?? getFieldType(value);
 
+    const fieldId = `field-${key}`;
+
     switch (type) {
       case 'text': {
         return (
           <div key={key} className='mb-4'>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>
+            <label htmlFor={fieldId} className='block text-sm font-medium text-gray-700 mb-1'>
               {label}
             </label>
             <input
+              id={fieldId}
               type='text'
               value={String(value ?? '')}
               onChange={e => {
@@ -184,10 +187,11 @@ export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
       case 'textarea': {
         return (
           <div key={key} className='mb-4'>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>
+            <label htmlFor={fieldId} className='block text-sm font-medium text-gray-700 mb-1'>
               {label}
             </label>
             <textarea
+              id={fieldId}
               value={String(value ?? '')}
               onChange={e => {
                 handleChange(key, e.target.value);
@@ -202,10 +206,11 @@ export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
       case 'number': {
         return (
           <div key={key} className='mb-4'>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>
+            <label htmlFor={fieldId} className='block text-sm font-medium text-gray-700 mb-1'>
               {label}
             </label>
             <input
+              id={fieldId}
               type='number'
               value={Number(value ?? 0)}
               onChange={e => {
@@ -238,10 +243,11 @@ export function BlockEditor({block, onSave, onClose}: BlockEditorProps) {
       case 'select': {
         return (
           <div key={key} className='mb-4'>
-            <label className='block text-sm font-medium text-gray-700 mb-1'>
+            <label htmlFor={fieldId} className='block text-sm font-medium text-gray-700 mb-1'>
               {label}
             </label>
             <select
+              id={fieldId}
               value={String(value ?? '')}
               onChange={e => {
                 handleChange(key, e.target.value);

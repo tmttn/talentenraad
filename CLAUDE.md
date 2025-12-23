@@ -103,6 +103,22 @@ When creating Builder.io models:
 - Always verify the model exists after creation by listing models
 - Include `helperText` (description) for all models and fields
 
+## Configuration Restrictions (CRITICAL)
+
+**DO NOT modify the following files without explicit user permission:**
+
+- `jest.config.ts` - Test configuration including coverage thresholds
+- `xo.config.cjs` or `.xo-config.json` - ESLint/XO linter configuration
+- `.eslintrc.*` - Any ESLint configuration files
+- `tsconfig.json` - TypeScript configuration
+
+**Coverage thresholds are set to 50% and must NOT be lowered.** If tests fail due to coverage:
+1. Write additional tests to increase coverage
+2. Do NOT reduce the threshold values
+3. Ask the user for guidance if coverage cannot be reasonably achieved
+
+This rule exists to maintain code quality standards. Circumventing these rules by modifying configuration is strictly prohibited.
+
 ## Common Mistakes to Avoid
 
 1. Committing without running linter first
@@ -112,3 +128,4 @@ When creating Builder.io models:
 5. Not escaping `()` in jest glob patterns
 6. Assuming Builder.io models exist without verifying
 7. Forgetting helperText/description on Builder.io models
+8. Modifying test/linter configuration to bypass failing checks

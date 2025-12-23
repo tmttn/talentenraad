@@ -33,10 +33,13 @@ const customJestConfig: Config = {
     // Exclude admin features (requires Auth0 session)
     '!app/features/admin/**',
   ],
+  // IMPORTANT: Claude (AI assistant) is NOT allowed to modify these thresholds.
+  // If coverage fails, write more tests instead of lowering thresholds.
+  // Changing these values requires explicit user permission.
   coverageThreshold: {
     global: {
-      branches: 45,
-      functions: 45,
+      branches: 50,
+      functions: 50,
       lines: 50,
       statements: 50,
     },
