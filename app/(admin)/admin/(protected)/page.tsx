@@ -273,18 +273,17 @@ function SeoQuickOverview({news, activities}: Readonly<{news: NewsItem[]; activi
       href='/admin/seo'
       className='block bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow overflow-hidden group'
     >
-      <div className='p-4 sm:p-5'>
-        <div className='flex items-center justify-between mb-4'>
-          <div className='flex items-center gap-2'>
-            <Search className='w-5 h-5 text-primary' />
-            <h3 className='font-semibold text-gray-800'>SEO Overzicht</h3>
-          </div>
-          <div className='flex items-center gap-2 text-primary-text text-sm font-medium group-hover:underline'>
-            Volledig dashboard
-            <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform' />
-          </div>
+      <div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
+        <h2 className='font-semibold text-gray-800 flex items-center gap-2'>
+          <Search className='w-4 h-4 text-primary' />
+          SEO Overzicht
+        </h2>
+        <div className='flex items-center gap-2 text-primary-text text-sm font-medium group-hover:underline'>
+          Volledig dashboard
+          <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform' />
         </div>
-
+      </div>
+      <div className='p-4 sm:p-5'>
         <div className='grid grid-cols-4 gap-4'>
           {/* Score Ring */}
           <div className='flex flex-col items-center'>
@@ -319,6 +318,55 @@ function SeoQuickOverview({news, activities}: Readonly<{news: NewsItem[]; activi
         )}
       </div>
     </Link>
+  );
+}
+
+function ClapsOverview({clapsStats}: Readonly<{clapsStats: ClapsStats}>) {
+  return (
+    <div className='bg-white rounded-card shadow-base overflow-hidden'>
+      <div className='p-4 sm:p-5 border-b border-gray-100'>
+        <h2 className='font-semibold text-gray-800 flex items-center gap-2'>
+          <Heart className='w-4 h-4 text-pink-500 fill-pink-500' />
+          Bezoekers Claps
+        </h2>
+      </div>
+      <div className='p-4 sm:p-5'>
+        <div className='grid grid-cols-3 gap-4'>
+          {/* Total Claps */}
+          <div className='flex flex-col items-center'>
+            <div className='w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center'>
+              <span className='text-xl font-bold text-pink-600'>{clapsStats.totalClaps}</span>
+            </div>
+            <p className='text-xs text-gray-500 mt-2'>Totaal</p>
+          </div>
+
+          {/* News Claps */}
+          <div className='flex flex-col items-center justify-center'>
+            <div className='flex items-center gap-1 text-blue-600'>
+              <Newspaper className='w-4 h-4' />
+              <p className='text-2xl font-bold'>{clapsStats.newsClaps}</p>
+            </div>
+            <p className='text-xs text-gray-500'>Nieuws</p>
+          </div>
+
+          {/* Activities Claps */}
+          <div className='flex flex-col items-center justify-center'>
+            <div className='flex items-center gap-1 text-green-600'>
+              <Calendar className='w-4 h-4' />
+              <p className='text-2xl font-bold'>{clapsStats.activitiesClaps}</p>
+            </div>
+            <p className='text-xs text-gray-500'>Activiteiten</p>
+          </div>
+        </div>
+
+        {clapsStats.totalClaps > 0 && (
+          <div className='mt-4 flex items-center gap-2 text-sm text-pink-700 bg-pink-50 px-3 py-2 rounded-button'>
+            <Heart className='w-4 h-4 fill-pink-500' />
+            <span>Bezoekers waarderen je content!</span>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -382,56 +430,6 @@ function QuickLinks() {
             <p className='text-xs text-gray-500'>Bekijk live site</p>
           </div>
         </Link>
-      </div>
-    </div>
-  );
-}
-
-function ClapsOverview({clapsStats}: Readonly<{clapsStats: ClapsStats}>) {
-  return (
-    <div className='bg-white rounded-card shadow-base overflow-hidden'>
-      <div className='p-4 sm:p-5'>
-        <div className='flex items-center justify-between mb-4'>
-          <div className='flex items-center gap-2'>
-            <Heart className='w-5 h-5 text-pink-500 fill-pink-500' />
-            <h3 className='font-semibold text-gray-800'>Bezoekers Claps</h3>
-          </div>
-        </div>
-
-        <div className='grid grid-cols-3 gap-4'>
-          {/* Total Claps */}
-          <div className='flex flex-col items-center'>
-            <div className='w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center'>
-              <span className='text-xl font-bold text-pink-600'>{clapsStats.totalClaps}</span>
-            </div>
-            <p className='text-xs text-gray-500 mt-2'>Totaal</p>
-          </div>
-
-          {/* News Claps */}
-          <div className='flex flex-col items-center justify-center'>
-            <div className='flex items-center gap-1 text-blue-600'>
-              <Newspaper className='w-4 h-4' />
-              <p className='text-2xl font-bold'>{clapsStats.newsClaps}</p>
-            </div>
-            <p className='text-xs text-gray-500'>Nieuws</p>
-          </div>
-
-          {/* Activities Claps */}
-          <div className='flex flex-col items-center justify-center'>
-            <div className='flex items-center gap-1 text-green-600'>
-              <Calendar className='w-4 h-4' />
-              <p className='text-2xl font-bold'>{clapsStats.activitiesClaps}</p>
-            </div>
-            <p className='text-xs text-gray-500'>Activiteiten</p>
-          </div>
-        </div>
-
-        {clapsStats.totalClaps > 0 && (
-          <div className='mt-4 flex items-center gap-2 text-sm text-pink-700 bg-pink-50 px-3 py-2 rounded-button'>
-            <Heart className='w-4 h-4 fill-pink-500' />
-            <span>Bezoekers waarderen je content!</span>
-          </div>
-        )}
       </div>
     </div>
   );
