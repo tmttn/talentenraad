@@ -21,7 +21,6 @@ import {
   Sparkles,
   Search,
   TrendingUp,
-  ChevronRight,
   Heart,
 } from 'lucide-react';
 import {db, submissions} from '@lib/db';
@@ -278,9 +277,9 @@ function SeoQuickOverview({news, activities}: Readonly<{news: NewsItem[]; activi
           <Search className='w-4 h-4 text-primary' />
           SEO Overzicht
         </h2>
-        <div className='flex items-center gap-2 text-primary-text text-sm font-medium group-hover:underline'>
-          Volledig dashboard
-          <ChevronRight className='w-4 h-4 group-hover:translate-x-1 transition-transform' />
+        <div className='text-primary-text text-sm hover:underline flex items-center gap-1'>
+          Alles bekijken
+          <ArrowRight className='w-3 h-3' />
         </div>
       </div>
       <div className='p-4 sm:p-5'>
