@@ -11,8 +11,8 @@ import {ActivitiesArchiveInfo} from '../../../app/features/activities/activities
 const ActivitiesArchive = ActivitiesArchiveInfo.component;
 
 describe('ActivitiesArchive', () => {
-  const pastDate = new Date();
-  pastDate.setDate(pastDate.getDate() - 30);
+  // Use a date guaranteed to be in the current year
+  const pastDate = new Date(new Date().getFullYear(), 0, 2);
   const pastDateString = pastDate.toISOString().split('T')[0];
 
   const pastDate2 = new Date();
