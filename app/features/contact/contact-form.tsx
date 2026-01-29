@@ -3,7 +3,7 @@
 import {
   useState,
   Suspense,
-  type FormEvent,
+  type SyntheticEvent,
   type ChangeEvent,
 } from 'react';
 import {useSearchParams} from 'next/navigation';
@@ -338,7 +338,7 @@ function ContactFormInner({
     }
   };
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setStatusMessage('');
 

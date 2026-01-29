@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, type FormEvent} from 'react';
+import {useState, type SyntheticEvent} from 'react';
 
 type NewsletterSignupProperties = {
   buttonText?: string;
@@ -31,7 +31,7 @@ function NewsletterSignup({
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
     event.preventDefault();
     setStatus('loading');
 

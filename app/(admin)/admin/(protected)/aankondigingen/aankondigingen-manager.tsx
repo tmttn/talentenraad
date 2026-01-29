@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  useState, useMemo, type FormEvent, type ChangeEvent,
+  useState, useMemo, type SyntheticEvent, type ChangeEvent,
 } from 'react';
 import {useRouter} from 'next/navigation';
 import {
@@ -100,7 +100,7 @@ export function AankondigingenManager({announcements}: AankondigingenManagerProp
     setError(null);
   };
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
     setError(null);

@@ -1,6 +1,6 @@
 'use client';
 
-import {useState, type FormEvent, type ChangeEvent} from 'react';
+import {useState, type SyntheticEvent, type ChangeEvent} from 'react';
 import {useRouter} from 'next/navigation';
 import {toast} from 'sonner';
 import {Loader2, AlertCircle} from 'lucide-react';
@@ -56,7 +56,7 @@ export function ContentForm({
     onValuesChange?.(newData);
   };
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
     setError(null);

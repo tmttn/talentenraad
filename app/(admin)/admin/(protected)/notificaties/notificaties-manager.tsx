@@ -49,7 +49,7 @@ export function NotificatiesManager() {
     void fetchData();
   }, []);
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault();
 
     if (!title.trim() || !body.trim()) {

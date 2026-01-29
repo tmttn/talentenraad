@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  useState, useMemo, type FormEvent, type ChangeEvent,
+  useState, useMemo, type SyntheticEvent, type ChangeEvent,
 } from 'react';
 import {toast} from 'sonner';
 import {
@@ -94,7 +94,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
     setFormData(emptyForm);
   };
 
-  const handleSubmit = async (event: FormEvent) => {
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
     setIsSubmitting(true);
 
