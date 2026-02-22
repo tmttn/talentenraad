@@ -26,7 +26,7 @@ jobs:
 
     - name: Install commitlint
       run: |
-        npm install --save-dev @commitlint/config-conventional @commitlint/cli
+        npm install --save-dev --legacy-peer-deps @commitlint/config-conventional @commitlint/cli
 
     - name: Validate current commit (push)
       if: github.event_name == 'push'
