@@ -58,8 +58,8 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
     "@builder.io/cli": "^1.2.10",
-    "@commitlint/cli": "^20.2.0",
-    "@commitlint/config-conventional": "^20.2.0",
+    "@commitlint/cli": "^21.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
     "@eslint-community/eslint-plugin-eslint-comments": "^4.5.0",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^10.0.0",
