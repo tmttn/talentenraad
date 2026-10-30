@@ -1,5 +1,25 @@
 # Claude Code Project Rules
 
+## Revival (sinds oktober 2026) — LEES DIT EERST
+
+De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claude er zelfstandig mee kan werken. Beslissingen (genomen door Tom):
+
+- **Hosting:** Docker-container op een kleine VPS (bv. Hetzner) met Caddy voor HTTPS. Geen Vercel-specifieke features meer (geen `@vercel/*`, Edge Config, Vercel Cron).
+- **Content:** Markdown met frontmatter **in deze repo** (`content/`), plus een lichte editor in de admin die via de GitHub API commits maakt, zodat niet-technische ouders kunnen redigeren zonder GitHub-account.
+- **Weg:** Builder.io, Hypertune/feature flags, Sentry, Vercel Analytics/Speed Insights, push-notificaties en claps, SonarCloud. Ook Auth0 (→ magic-link login per e-mail) en Resend (→ gewone SMTP).
+- **Database:** alleen nog voor gebruikers, inzendingen, audit logs en feedback; doel is SQLite via Drizzle.
+- **Design systeem:** "Talentenraad Beverst" op claude.ai (Design System-artifact): tokens, merkboek en de UI-componenten uit `app/components/ui/`. Lees het README daarvan vóór je UI bouwt; nieuwe componenten volgen die tokens. `color-accent` haalt maar 3,6:1 op wit: gebruik `color-accent-hover` voor kleine tekst.
+
+### Stappenplan
+1. [ ] Builder.io-content exporteren: `node scripts/export-builder-content.mjs` (keys in `.env.local`) → `content-export/` committen.
+2. [ ] Contentmodel in `content/` (Markdown + frontmatter) en migratiescript vanuit `content-export/`.
+3. [ ] Pagina's lezen uit `content/` i.p.v. Builder.io; Builder-code en `scripts/*builder*` verwijderen.
+4. [ ] Auth0 → magic links; Resend → SMTP; flags, Sentry, push, claps, Vercel-pakketten eruit.
+5. [ ] Postgres → SQLite; `Dockerfile` + `compose.yaml` (app + Caddy); deploy via GitHub Actions.
+6. [ ] Admin-editor die content als commits wegschrijft.
+
+Tot stap 3 klaar is, gelden de Builder.io-secties hieronder nog voor de bestaande code; daarna mogen ze weg.
+
 ## Pre-commit Checklist (MANDATORY)
 
 Before ANY commit, ALWAYS run these commands and fix all issues:
