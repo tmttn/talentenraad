@@ -52,7 +52,6 @@ describe('NewsletterSignup', () => {
     });
 
     // Should show success message
-    // Should show success message
     expect(await screen.findByText(/bedankt voor je inschrijving/i)).toBeInTheDocument();
   });
 

@@ -26,6 +26,25 @@ describe('copyContentAssets', () => {
     expect(fs.existsSync(path.join(tmp, 'content/site.yaml'))).toBe(false);
   });
 
+  it.each(['pagina.html', 'logo.svg', 'script.js'])('refuses %s', async name => {
+    const source = path.join(tmp, 'src');
+    fs.mkdirSync(source);
+    fs.writeFileSync(path.join(source, name), 'x');
+    fs.writeFileSync(path.join(source, 'ok.PNG'), 'x');
+    await expect(copyContentAssets(source, path.join(tmp, 'out'))).rejects.toThrow(name);
+  });
+
+  it('accepts image extensions case-insensitively', async () => {
+    const source = path.join(tmp, 'src');
+    fs.mkdirSync(source);
+    for (const name of ['a.JPG', 'b.jpeg', 'c.png', 'd.webp', 'e.gif', 'f.avif', 'g.md', 'h.yaml']) {
+      fs.writeFileSync(path.join(source, name), 'x');
+    }
+
+    const result = await copyContentAssets(source, path.join(tmp, 'out'));
+    expect(result.sort()).toEqual(['a.JPG', 'b.jpeg', 'c.png', 'd.webp', 'e.gif', 'f.avif']);
+  });
+
   it('removes stale files from the destination first', async () => {
     fs.mkdirSync(path.join(tmp, 'content'), {recursive: true});
     fs.writeFileSync(path.join(tmp, 'content/oud.png'), 'x');

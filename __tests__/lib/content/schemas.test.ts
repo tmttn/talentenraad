@@ -14,9 +14,12 @@ const cta = {titel: 'C', tekst: 'T', knoppen: [{tekst: 'A', link: '/a'}]};
 
 describe('datumSchema', () => {
   it('normalizes dates and strings', () => {
-    expect(datumSchema.parse(new Date('2025-02-07T00:00:00Z'))).toBe('2025-02-07');
     expect(datumSchema.parse('2025-02-07')).toBe('2025-02-07');
     expect(() => datumSchema.parse('7 februari')).toThrow();
+    expect(() => datumSchema.parse('2025-02-30')).toThrow(/Ongeldige datum/);
+    expect(() => datumSchema.parse('2025-13-01')).toThrow();
+    expect(datumSchema.parse('2024-02-29')).toBe('2024-02-29');
+    expect(() => datumSchema.parse(new Date('2025-02-07T00:00:00Z'))).toThrow();
   });
 });
 
@@ -28,7 +31,7 @@ describe('collection schemas', () => {
   });
 
   it('parses nieuws, faq, tekst', () => {
-    expect(nieuwsSchema.parse({titel: 'X', datum: new Date('2025-01-01T00:00:00Z'), samenvatting: 'Y'}))
+    expect(nieuwsSchema.parse({titel: 'X', datum: '2025-01-01', samenvatting: 'Y'}))
       .toMatchObject({datum: '2025-01-01', aliassen: [], concept: false});
     expect(faqSchema.parse({vraag: 'Q'}).volgorde).toBe(99);
     expect(tekstSchema.parse({titel: 'T', beschrijving: 'B'}).concept).toBe(false);

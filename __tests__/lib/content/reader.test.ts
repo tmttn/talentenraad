@@ -1,5 +1,5 @@
 // @vitest-environment node
-import {cpSync, mkdtempSync, rmSync, writeFileSync} from 'node:fs';
+import {cpSync, mkdirSync, mkdtempSync, rmSync, writeFileSync} from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import {afterEach, describe, expect, it} from 'vitest';
@@ -65,5 +65,53 @@ describe('foutafhandeling', () => {
     cpSync(fixtures, tmp, {recursive: true});
     writeFileSync(path.join(tmp, 'activiteiten/kapot.md'), '---\ndatum: 2026-01-01\ncategorie: feest\nsamenvatting: x\n---\n');
     expect(() => createContentReader(tmp!).getActiviteiten()).toThrow(/activiteiten\/kapot.*titel/s);
+  });
+
+  const copy = () => {
+    tmp = mkdtempSync(path.join(os.tmpdir(), 'content-'));
+    cpSync(fixtures, tmp, {recursive: true});
+    return tmp;
+  };
+
+  it('faalt wanneer een map geen index.md heeft', () => {
+    const dir = copy();
+    mkdirSync(path.join(dir, 'nieuws/zonder-index'));
+    writeFileSync(path.join(dir, 'nieuws/zonder-index/Index.md'), '---\ntitel: x\n---\n');
+    expect(() => createContentReader(dir).getNieuws()).toThrow('nieuws/zonder-index: index.md ontbreekt');
+  });
+
+  it('faalt bij een slug met hoofdletters of spaties', () => {
+    const dir = copy();
+    mkdirSync(path.join(dir, 'nieuws/Mijn Bericht'));
+    writeFileSync(path.join(dir, 'nieuws/Mijn Bericht/index.md'), '---\ntitel: x\n---\n');
+    expect(() => createContentReader(dir).getNieuws()).toThrow(/nieuws\/Mijn Bericht.*slug/);
+    rmSync(path.join(dir, 'nieuws/Mijn Bericht'), {recursive: true});
+    writeFileSync(path.join(dir, 'faq/Vraag 3.md'), '---\nvraag: x\n---\n');
+    expect(() => createContentReader(dir).getFaq()).toThrow(/faq\/Vraag 3\.md.*slug/);
+  });
+
+  it('noemt het pad bij een yaml-syntaxfout', () => {
+    const dir = copy();
+    writeFileSync(path.join(dir, 'faq/kapot.md'), '---\nvraag: "niet gesloten\n---\n');
+    expect(() => createContentReader(dir).getFaq()).toThrow(/^faq\/kapot\.md: /);
+    writeFileSync(path.join(dir, 'site.yaml'), 'a: "kapot\n');
+    expect(() => createContentReader(dir).getSite()).toThrow(/^site\.yaml: /);
+  });
+
+  it('noemt het pad bij een niet-geregistreerde frontmatter-engine', () => {
+    const dir = copy();
+    writeFileSync(path.join(dir, 'faq/engine.md'), '---toml\nvraag = "x"\n---\n');
+    expect(() => createContentReader(dir).getFaq()).toThrow(/^faq\/engine\.md: /);
+  });
+
+  it('cachet tenzij cache: false', () => {
+    const dir = copy();
+    const cachedReader = createContentReader(dir);
+    const freshReader = createContentReader(dir, {cache: false});
+    expect(cachedReader.getFaq()).toHaveLength(2);
+    expect(freshReader.getFaq()).toHaveLength(2);
+    writeFileSync(path.join(dir, 'faq/vraag-3.md'), '---\nvraag: Derde?\nvolgorde: 3\n---\nx\n');
+    expect(cachedReader.getFaq()).toHaveLength(2);
+    expect(freshReader.getFaq()).toHaveLength(3);
   });
 });

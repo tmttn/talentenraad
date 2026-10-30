@@ -118,7 +118,7 @@ function migrateTeam(): number {
       rol: data.rol,
       categorie: data.categorie,
       volgorde: data.volgorde,
-    }, '');
+    }, htmlToMarkdown(text(data.beschrijving)));
   }
 
   return members.length;

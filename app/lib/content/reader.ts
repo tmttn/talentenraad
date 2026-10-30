@@ -3,6 +3,7 @@ import path from 'node:path';
 import type {z} from 'zod';
 import {type ContentImage, readMarkdownFile, readYamlFile, resolveImage} from './files';
 import {renderMarkdown} from './markdown';
+import {slugify} from './slugify';
 import {
   activiteitSchema,
   faqSchema,
@@ -32,7 +33,7 @@ type PaginaResolved<K extends PaginaNaam> = K extends 'sponsors'
   : PaginaFrontmatter<K>;
 export type Pagina<K extends PaginaNaam = PaginaNaam> = PaginaResolved<K> & {html: string};
 
-export type ContentReaderOptions = {includeConcepts?: boolean};
+export type ContentReaderOptions = {includeConcepts?: boolean; cache?: boolean};
 
 type RawEntry = {file: string; slug: string; entryDir: string};
 
@@ -42,7 +43,13 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
   const includeConcepts = options.includeConcepts ?? false;
   const cache = new Map<string, unknown>();
 
+  const useCache = options.cache ?? true;
+
   const cached = <T>(key: string, load: () => T): T => {
+    if (!useCache) {
+      return load();
+    }
+
     if (!cache.has(key)) {
       cache.set(key, load());
     }
@@ -61,6 +68,23 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
     return result.data as z.infer<S>;
   };
 
+  const withPath = <T>(file: string, read: () => T): T => {
+    try {
+      return read();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      throw new Error(`${relative(file)}: ${message}`, {cause: error});
+    }
+  };
+
+  const readMarkdown = (file: string) => withPath(file, () => readMarkdownFile(file));
+
+  const assertSlug = (slug: string, fullPath: string) => {
+    if (slug !== slugify(slug)) {
+      throw new Error(`${relative(fullPath)}: slug "${slug}" is ongeldig (alleen kleine letters, cijfers en streepjes)`);
+    }
+  };
+
   const findEntries = (dir: string): RawEntry[] => {
     const absolute = path.join(rootDir, dir);
     if (!existsSync(absolute)) {
@@ -71,11 +95,14 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
     for (const name of readdirSync(absolute).sort()) {
       const full = path.join(absolute, name);
       if (statSync(full).isDirectory()) {
-        const index = path.join(full, 'index.md');
-        if (existsSync(index)) {
-          entries.push({file: index, slug: name, entryDir: `${dir}/${name}`});
+        if (!readdirSync(full).includes('index.md')) {
+          throw new Error(`${dir}/${name}: index.md ontbreekt`);
         }
+
+        assertSlug(name, full);
+        entries.push({file: path.join(full, 'index.md'), slug: name, entryDir: `${dir}/${name}`});
       } else if (name.endsWith('.md')) {
+        assertSlug(name.slice(0, -3), full);
         entries.push({file: full, slug: name.slice(0, -3), entryDir: dir});
       }
     }
@@ -102,7 +129,7 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
   ): Array<R & {slug: string; html: string}> => cached(dir, () => {
     const items: Array<R & {slug: string; html: string}> = [];
     for (const entry of findEntries(dir)) {
-      const {data, body} = readMarkdownFile(entry.file);
+      const {data, body} = readMarkdown(entry.file);
       const parsed = parse(schema, data, entry.file);
       if (parsed.concept && !includeConcepts) {
         continue;
@@ -130,7 +157,7 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
     getSite(): Site {
       return cached('site', () => {
         const file = path.join(rootDir, 'site.yaml');
-        return parse(siteSchema, readYamlFile(file), file);
+        return parse(siteSchema, withPath(file, () => readYamlFile(file)), file);
       });
     },
 
@@ -143,7 +170,7 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
           throw new Error(`paginas/${naam}: pagina niet gevonden`);
         }
 
-        const {data, body} = readMarkdownFile(file);
+        const {data, body} = readMarkdown(file);
         const parsed = parse(paginaSchemas[naam] as z.ZodType<Record<string, unknown>>, data, file);
         const entryDir = relative(path.dirname(file));
         if (naam === 'sponsors') {

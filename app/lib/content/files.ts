@@ -2,7 +2,7 @@ import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import {imageSize} from 'image-size';
-import {load} from 'js-yaml';
+import {CORE_SCHEMA, load} from 'js-yaml';
 
 export type ContentImage = {src: string; width: number; height: number};
 
@@ -21,19 +21,35 @@ export function resolveImage(rootDir: string, entryDir: string, ref: string): Co
     throw new Error(`Afbeelding "${ref}" niet gevonden in ${entryDir}`);
   }
 
-  const {width, height} = imageSize(buffer);
+  let width: number;
+  let height: number;
+  try {
+    ({width, height} = imageSize(buffer));
+  } catch (error) {
+    throw new Error(`Afbeelding "${ref}" in ${entryDir} is geen geldige afbeelding: ${(error as Error).message}`, {cause: error});
+  }
+
   const posix = relative.split(path.sep).join('/');
   return {src: `/content/${entryDir}/${posix}`, width, height};
 }
+
+// CORE_SCHEMA keeps unquoted dates as strings, so no Date objects, rollover or timezone shifts.
+const parseYaml = (source: string): unknown => load(source, {schema: CORE_SCHEMA});
 
 export function readMarkdownFile(file: string): {data: Record<string, unknown>; body: string} {
   const disabled = () => {
     throw new Error(`Uitvoerbare frontmatter is niet toegestaan: ${file}`);
   };
-  const parsed = matter(readFileSync(file, 'utf8'), {engines: {js: disabled, javascript: disabled}});
+  const parsed = matter(readFileSync(file, 'utf8'), {
+    engines: {
+      yaml: {parse: source => parseYaml(source) as object, stringify: () => ''},
+      js: disabled,
+      javascript: disabled,
+    },
+  });
   return {data: parsed.data, body: parsed.content};
 }
 
 export function readYamlFile(file: string): unknown {
-  return load(readFileSync(file, 'utf8'));
+  return parseYaml(readFileSync(file, 'utf8'));
 }
