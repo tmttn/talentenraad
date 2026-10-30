@@ -4,6 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_OPTIONS='--no-node-snapshot --trace-deprecation' next dev",
+    "prebuild": "node scripts/copy-content-assets.mjs",
+    "predev": "node scripts/copy-content-assets.mjs",
     "build": "cross-env NODE_OPTIONS='--no-node-snapshot' next build",
     "start": "cross-env NODE_OPTIONS='--no-node-snapshot' next start",
     "lint": "eslint .",

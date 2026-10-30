@@ -56,3 +56,6 @@ next-env.d.ts
 
 # Subagent-werkruimte (logboek, briefs)
 /.superpowers/
+
+# Gekopieerde content-afbeeldingen (scripts/copy-content-assets.mjs)
+/public/content/
