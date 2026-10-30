@@ -4,9 +4,9 @@
 
 **Goal:** Content uit de lokale Builder-export als gevalideerde Markdown/YAML in `content/` zetten, met een typed loader die stap 3 kan gebruiken.
 
-**Architecture:** Zod-schema's definiëren het model; een kleine server-side loader in `app/lib/content/` leest `content/` van schijf bij de build. Een eenmalig migratiescript (`scripts/migrate-content/`, TypeScript via `tsx`) zet `content-export/` om en valideert het resultaat met dezelfde loader. Een Jest-test valideert de echte `content/` bij elke commit.
+**Architecture:** Zod-schema's definiëren het model; een kleine server-side loader in `app/lib/content/` leest `content/` van schijf bij de build. Een eenmalig migratiescript (`scripts/migrate-content/`, TypeScript via `tsx`) zet `content-export/` om en valideert het resultaat met dezelfde loader. Een Vitest-test valideert de echte `content/` bij elke commit. Eerst wordt Jest vervangen door Vitest (Task 0, Tom: "Je mag de jest setup weggooien en vitest gebruiken").
 
-**Tech Stack:** Next.js 16, TypeScript strict, zod 4, gray-matter, js-yaml, marked + sanitize-html, image-size 1, turndown, tsx, Jest.
+**Tech Stack:** Next.js 16, TypeScript strict, zod 4, gray-matter, js-yaml, unified (remark-parse, remark-gfm, remark-rehype, rehype-sanitize, rehype-stringify), image-size, turndown, tsx, Vitest.
 
 **Spec:** `docs/superpowers/specs/2026-10-30-contentmodel-design.md`
 
@@ -20,7 +20,7 @@
 - Pre-commit hook (lint, type-check, test:coverage) moet slagen; geen `--no-verify`; coverage-drempel 50% niet aanraken.
 - Codestijl van de repo: enkele quotes, 2 spaties, `??`, `item => …`.
 
-**Afwijking van de spec (Claude's keuze):** Markdown → HTML met `marked` + `sanitize-html` i.p.v. `remark`/`rehype`. De unified-pakketten zijn ESM-only en breken in de bestaande Jest-setup (`next/jest`, CJS); de spec liet de pluginkeuze aan de bouwer.
+- Coverage-drempel: 50% voor branches, functions, lines, statements, met dezelfde uitsluitingen als `jest.config.ts`; provider `istanbul` (zelfde telling als Jest).
 
 ## Review Focus
 
@@ -29,6 +29,39 @@
 3. **Afbeelding waarnaar frontmatter verwijst bestaat niet**: build faalt met pad, geen stille `undefined`. Test in Task 2.
 4. **HTML in Markdown-body** (`<script>`, `onerror=`) wordt gestript. Test in Task 2.
 5. **Slug-botsing** (twee items met dezelfde schone slug of een alias die een bestaande slug is): migratie faalt. Test in Task 5.
+
+---
+
+### Task 0: Jest → Vitest
+
+**Files:**
+- Create: `vitest.config.mts`, `vitest.setup.tsx`
+- Delete: `jest.config.ts`, `jest.setup.tsx`, `jest.env.setup.ts`
+- Modify: alle `__tests__/**` die `jest.*` gebruiken; `package.json` (scripts, deps); `.husky/pre-commit`; `.github/workflows/ci.yml` (indien Jest-specifiek); `eslint.config.mjs` (override `jest.*` → `vitest.*`); `CLAUDE.md` (secties "Jest Configuration", "After Refactoring", "Configuration Restrictions", "Common Mistakes", projectregels die `jest.config.ts` noemen)
+
+**Interfaces:**
+- Produces: `npm test` = `vitest run`, `npm run test:coverage` = `vitest run --coverage`; per-bestand node-omgeving via `// @vitest-environment node`. Latere taken gebruiken `npx vitest run <pad>`.
+
+- [ ] **Step 1: Baseline vastleggen** — `npm run test:coverage` onder Jest; noteer aantal tests (880) en de vier coverage-percentages.
+
+- [ ] **Step 2: Deps** — `npm uninstall jest jest-environment-jsdom && npm install -D vitest @vitest/coverage-istanbul @vitejs/plugin-react vite-tsconfig-paths jsdom`. `@testing-library/jest-dom` blijft (import `@testing-library/jest-dom/vitest`).
+
+- [ ] **Step 3: `vitest.config.mts`** — plugins `react()` en `tsconfigPaths()`; `test: {environment: 'jsdom', globals: true, setupFiles: ['./vitest.setup.tsx'], include: ['__tests__/**/*.test.{ts,tsx}'], env: {NEXT_PUBLIC_BUILDER_API_KEY: 'test-builder-api-key'}}`; `coverage: {provider: 'istanbul', include: ['app/**/*.{ts,tsx}'], exclude: <exact de uitsluitingen uit jest.config.ts>, thresholds: {branches: 50, functions: 50, lines: 50, statements: 50}}`. Neem de commentaarregel over dat Claude de drempels niet mag verlagen.
+
+- [ ] **Step 4: `vitest.setup.tsx`** — inhoud van `jest.setup.tsx` met `jest.` → `vi.`; mock-factories die buiten-variabelen gebruiken (bv. `mockFlagValues`) via `vi.hoisted`.
+
+- [ ] **Step 5: Tests omzetten** — mechanisch `jest.fn|mock|spyOn|useFakeTimers|advanceTimersByTime|…` → `vi.*`, `jest.Mock` → `Mock` / `jest.Mocked<T>` → `Mocked<T>` (import type uit `vitest`). Handwerk:
+  - `jest.mock`-factories die naar variabelen in het testbestand verwijzen → `vi.hoisted`.
+  - `jest.requireActual(x)` → `await vi.importActual<typeof import('x')>(x)` in een `async`-factory.
+  - `jest.resetModules`/`isolateModules` (6×) → `vi.resetModules()` + dynamische `await import()`.
+  - `require()` in tests (2×) → `await import()`.
+  - Default-export-mocks: Vitest verwacht `{default: …}`; `__esModule: true` mag weg.
+
+- [ ] **Step 6: Verifieer** — `npm run test:coverage`: zelfde aantal tests als de baseline, allemaal groen, coverage ≥ 50% op alle vier. Een test die alleen onder Vitest faalt: oorzaak zoeken, test niet verwijderen of overslaan. Lukt dat niet: stoppen en Tom vragen.
+
+- [ ] **Step 7: Scripts en documentatie** — `package.json`: `"test": "vitest run"`, `"test:watch": "vitest"`, `"test:coverage": "vitest run --coverage"`; hook en CI gebruiken die scripts; CLAUDE.md: Jest-secties vervangen door Vitest-equivalent, `vitest.config.mts` in de lijst met beschermde bestanden i.p.v. `jest.config.ts`; de regel over het escapen van `(main)` in globs geldt ook voor `coverage.exclude`.
+
+- [ ] **Step 8: Checklist + commit** — `npm run lint && npm run type-check && npm run test:coverage && npm run build`; commit `test: migrate from Jest to Vitest`.
 
 ---
 
@@ -48,7 +81,7 @@
 
 - [ ] **Step 1: Installeer deps**
 
-Run: `npm install zod@^4 gray-matter js-yaml marked sanitize-html image-size@^1 && npm install -D tsx turndown @types/js-yaml @types/sanitize-html @types/turndown`
+Run: `npm install zod@^4 gray-matter js-yaml unified remark-parse remark-gfm remark-rehype rehype-sanitize rehype-stringify image-size && npm install -D tsx turndown @types/js-yaml @types/turndown`
 Expected: geen `ERESOLVE`; `npm ls zod` toont 4.x.
 
 - [ ] **Step 2: Schrijf falende tests**
@@ -78,7 +111,7 @@ expect(() => paginaSchemas.home.parse({titel: 'T', beschrijving: 'B', hero: {tit
 expect(siteSchema.shape.aankondiging.shape.type.options).toEqual(['info', 'waarschuwing', 'belangrijk']);
 ```
 
-- [ ] **Step 3: Run, verwacht FAIL** — `npx jest __tests__/lib/content` → "Cannot find module".
+- [ ] **Step 3: Run, verwacht FAIL** — `npx vitest run __tests__/lib/content` → "Cannot find module".
 
 - [ ] **Step 4: Implementeer `slugify.ts` en `schemas.ts`**
 
@@ -93,7 +126,7 @@ Schema-velden exact uit de spec. Vastgelegde details:
 - `site.aankondiging.type`: `z.enum(['info', 'waarschuwing', 'belangrijk'])` (uit `app/features/marketing/announcement-banner.tsx:18`).
 - `datumSchema`: `Date` → `toISOString().slice(0, 10)`; string moet `/^\d{4}-\d{2}-\d{2}$/` matchen.
 
-- [ ] **Step 5: Run, verwacht PASS** — `npx jest __tests__/lib/content`
+- [ ] **Step 5: Run, verwacht PASS** — `npx vitest run __tests__/lib/content`
 
 - [ ] **Step 6: Commit** — `feat(content): add content schemas and slugify`
 
@@ -104,7 +137,7 @@ Schema-velden exact uit de spec. Vastgelegde details:
 **Files:**
 - Create: `app/lib/content/markdown.ts`, `app/lib/content/files.ts`
 - Create: `__tests__/fixtures/content/…` (kleine fixture-boom, zie Task 3; hier minstens één map met `index.md` + 2×2 px `foto.png`)
-- Test: `__tests__/lib/content/markdown.test.ts`, `__tests__/lib/content/files.test.ts` (beide `/** @jest-environment node */`)
+- Test: `__tests__/lib/content/markdown.test.ts`, `__tests__/lib/content/files.test.ts` (beide `// @vitest-environment node`)
 
 **Interfaces:**
 - Consumes: niets uit Task 1 behalve types.
@@ -130,7 +163,7 @@ expect(() => resolveImage(fixtures, 'activiteiten/met-foto', '../../site.yaml'))
 
 - [ ] **Step 2: Run, verwacht FAIL**
 
-- [ ] **Step 3: Implementeer** — `marked.parse` (sync) + `sanitize-html` met de defaults plus `img` (`src`, `alt`) en `h1`–`h4`; `image-size` voor afmetingen; `gray-matter` voor Markdown, `js-yaml` voor YAML.
+- [ ] **Step 3: Implementeer** — `unified().use(remarkParse).use(remarkGfm).use(remarkRehype).use(rehypeSanitize).use(rehypeStringify).processSync()` (synchroon; `rehype-sanitize` met het default GitHub-schema); `imageSize(readFileSync(pad))` uit `image-size` (v2-API) voor afmetingen; raw HTML in Markdown valt weg (`remark-rehype` zonder `allowDangerousHtml`), sanitize is een tweede vangnet; `gray-matter` voor Markdown, `js-yaml` voor YAML.
 
 - [ ] **Step 4: Run, verwacht PASS**
 
@@ -143,7 +176,7 @@ expect(() => resolveImage(fixtures, 'activiteiten/met-foto', '../../site.yaml'))
 **Files:**
 - Create: `app/lib/content/reader.ts`, `app/lib/content/index.ts`
 - Create: `__tests__/fixtures/content/` (volledige mini-boom: `site.yaml`, alle 6 `paginas/*.md`, 1 `teksten/*.md`, 3 activiteiten waarvan 1 `concept: true` en 1 met foto, 2 nieuws, 3 teamleden, 2 faq)
-- Test: `__tests__/lib/content/reader.test.ts` (`/** @jest-environment node */`)
+- Test: `__tests__/lib/content/reader.test.ts` (`// @vitest-environment node`)
 
 **Interfaces:**
 - Consumes: schema's (Task 1), `readMarkdownFile`, `readYamlFile`, `resolveImage`, `renderMarkdown` (Task 2).
@@ -193,7 +226,7 @@ expect(() => createContentReader(tmp).getActiviteiten()).toThrow(/activiteiten\/
 **Files:**
 - Create: `scripts/copy-content-assets.mjs`
 - Modify: `package.json` (`prebuild`, `predev`), `.gitignore` (`/public/content/`)
-- Test: `__tests__/scripts/copy-content-assets.test.ts` (`/** @jest-environment node */`)
+- Test: `__tests__/scripts/copy-content-assets.test.ts` (`// @vitest-environment node`)
 
 **Interfaces:**
 - Produces: `copyContentAssets(contentDir: string, publicDir: string): Promise<string[]>` (export uit het `.mjs`; retourneert gekopieerde relatieve paden). Kopieert alle niet-`.md`/`.yaml`-bestanden met behoud van pad naar `publicDir/content/`, na eerst `publicDir/content/` te wissen. Script draait het met `content` en `public` als het direct wordt aangeroepen.
@@ -284,7 +317,7 @@ en `body` = Markdown van de InfoCard-`description`. Plus een test voor `/privacy
 - [ ] **Step 2: Draai** `npm run migrate:content`
 Expected: `activiteiten 4, nieuws 2, team 11, faq 2, paginas 6, teksten 3`, geen fouten.
 
-- [ ] **Step 3: Schrijf `content.test.ts`** (`/** @jest-environment node */`): laadt de echte `content/` met `includeConcepts: true`, roept alle getters aan (zoals Step 1.8), en `expect(findDisallowedEmails(alleTekst, allowlist)).toEqual([])`. Run: `npx jest __tests__/content` → PASS.
+- [ ] **Step 3: Schrijf `content.test.ts`** (`// @vitest-environment node`): laadt de echte `content/` met `includeConcepts: true`, roept alle getters aan (zoals Step 1.8), en `expect(findDisallowedEmails(alleTekst, allowlist)).toEqual([])`. Run: `npx vitest run __tests__/content` → PASS.
 
 - [ ] **Step 4: Handmatige controle** (resultaat rapporteren aan Tom):
   - `grep -rn 'ouder' content/` → niets; rekeningnummer staat er nog.
