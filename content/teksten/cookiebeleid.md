@@ -25,29 +25,10 @@ Cookies zijn kleine tekstbestanden die op uw apparaat (computer, tablet, smartph
 
 Deze cookies zijn essentieel voor het functioneren van de website. Hiervoor is geen toestemming vereist.
 
-Naam
-
-Doel
-
-Bewaartermijn
-
-Partij
-
-cookie-consent
-
-Onthoudt uw cookievoorkeuren
-
-1 jaar
-
-Eerste partij
-
-cookie-preferences
-
-Slaat gedetailleerde voorkeuren op
-
-1 jaar
-
-Eerste partij
+| Naam | Doel | Bewaartermijn | Partij |
+| --- | --- | --- | --- |
+| cookie-consent | Onthoudt uw cookievoorkeuren | 1 jaar | Eerste partij |
+| cookie-preferences | Slaat gedetailleerde voorkeuren op | 1 jaar | Eerste partij |
 
 **Rechtsgrond:** Legitiem belang - noodzakelijk voor de werking van de website (Art. 6(1)(f) AVG)
 
@@ -55,29 +36,10 @@ Eerste partij
 
 Deze cookies helpen ons te begrijpen hoe bezoekers onze website gebruiken. **Deze cookies worden alleen geplaatst na uw uitdrukkelijke toestemming.**
 
-Naam
-
-Doel
-
-Bewaartermijn
-
-Partij
-
-Vercel Analytics
-
-Verzamelt geanonimiseerde bezoekersstatistieken (paginaweergaven, verwijzingen). Geen persoonlijke identificatie.
-
-Sessie
-
-Derde partij (Vercel)
-
-Vercel Speed Insights
-
-Meet laadtijden en prestaties van pagina's voor optimalisatie.
-
-Sessie
-
-Derde partij (Vercel)
+| Naam | Doel | Bewaartermijn | Partij |
+| --- | --- | --- | --- |
+| Vercel Analytics | Verzamelt geanonimiseerde bezoekersstatistieken (paginaweergaven, verwijzingen). Geen persoonlijke identificatie. | Sessie | Derde partij (Vercel) |
+| Vercel Speed Insights | Meet laadtijden en prestaties van pagina's voor optimalisatie. | Sessie | Derde partij (Vercel) |
 
 **Rechtsgrond:** Toestemming (Art. 6(1)(a) AVG)
 

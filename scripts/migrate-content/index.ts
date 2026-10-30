@@ -10,7 +10,7 @@ import {paginaSchemas, type PaginaNaam} from '../../app/lib/content/schemas';
 import {slugify} from '../../app/lib/content/slugify';
 import {mapPagina, type BuilderPage} from './pages';
 import {
-  assertUniqueSlugs, findDisallowedEmails, htmlToMarkdown, slugsFor, stripPersonalEmails,
+  assertUniqueSlugs, findDisallowedEmails, fixMededelingLineBreak, htmlToMarkdown, slugsFor, stripPersonalEmails,
 } from './transform';
 
 const allowlist = ['voorzitterouderraad@talentenhuis.be', 'contact@apd-gba.be'];
@@ -101,7 +101,7 @@ function migrateDated(collectie: 'activiteiten' | 'nieuws', entries: Entry[], as
         aliassen,
       }
       : {titel, datum: data.datum, samenvatting: data.samenvatting, afbeelding, aliassen};
-    writeMarkdown(`${collectie}/${slug}/index.md`, frontmatter, htmlToMarkdown(text(data.inhoud)));
+    writeMarkdown(`${collectie}/${slug}/index.md`, frontmatter, fixMededelingLineBreak(htmlToMarkdown(text(data.inhoud))));
   }
 
   assertUniqueSlugs(slugItems);

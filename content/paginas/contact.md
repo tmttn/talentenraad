@@ -10,4 +10,7 @@ formulier:
 infokaart:
   titel: Contactgegevens
 ---
-Je kan ons ook bereiken via e-mail: voorzitterouderraad@talentenhuis.be Of spreek ons gerust aan op school!
+Je kan ons ook bereiken via e-mail:  
+voorzitterouderraad@talentenhuis.be
+
+Of spreek ons gerust aan op school!

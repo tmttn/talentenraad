@@ -1,4 +1,5 @@
 import TurndownService from 'turndown';
+import {tables} from 'turndown-plugin-gfm';
 import {legacySlug, slugify} from '../../app/lib/content/slugify';
 
 export type ExtractedBlock = {
@@ -10,10 +11,19 @@ export type ExtractedBlock = {
 const emailPattern = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
 
 const turndown = new TurndownService({headingStyle: 'atx', bulletListMarker: '-'});
+turndown.use(tables);
 
 export function htmlToMarkdown(html: string): string {
   // Turndown escapes "1." after a heading marker; that is needless inside headings.
   return turndown.turndown(html).replaceAll(/^(#{1,6} \d+)\\\./gm, '$1.').trim();
+}
+
+/**
+ * Known source defect: in the Moederdag activity the bank account number runs straight into
+ * "Mededeling:". Inserts a hard line break between a digit and a directly following "Mededeling:".
+ */
+export function fixMededelingLineBreak(markdown: string): string {
+  return markdown.replaceAll(/(\d)(Mededeling:)/g, '$1  \n$2');
 }
 
 function isAllowed(address: string, allowlist: string[]): boolean {

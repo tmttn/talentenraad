@@ -25,4 +25,6 @@ leden:
     Naast het bestuur bestaat de Talentenraad uit een enthousiaste groep actieve
     ouders.
 ---
-De Talentenraad vormt de brug tussen ouders en school. We organiseren activiteiten die de schoolgemeenschap samenbrengen en ondersteunen projecten die alle kinderen ten goede komen. Via evenementen, sponsors en acties willen we samen school maken en ouders samenbrengen. "Samen Talentenhuis, samen Talentenraad!"
+De Talentenraad vormt de brug tussen ouders en school. We organiseren activiteiten die de schoolgemeenschap samenbrengen en ondersteunen projecten die alle kinderen ten goede komen. Via evenementen, sponsors en acties willen we samen school maken en ouders samenbrengen.
+
+"Samen Talentenhuis, samen Talentenraad!"

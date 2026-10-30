@@ -3,6 +3,7 @@ import {
   assertUniqueSlugs,
   extractTexts,
   findDisallowedEmails,
+  fixMededelingLineBreak,
   htmlToMarkdown,
   slugsFor,
   stripPersonalEmails,
@@ -93,5 +94,27 @@ describe('extractTexts', () => {
       {component: 'Typography', options: {text: 'Lead', variant: 'lead'}, text: 'Lead'},
       {component: 'NewsList', options: {limit: 3}},
     ]);
+  });
+});
+
+describe('htmlToMarkdown tables', () => {
+  it('converts a table with thead/tbody to a GFM table', () => {
+    const md = htmlToMarkdown('<table><thead><tr><th>Naam</th><th>Doel</th></tr></thead><tbody><tr><td>a</td><td>b</td></tr></tbody></table>');
+    expect(md).toBe('| Naam | Doel |\n| --- | --- |\n| a | b |');
+  });
+
+  it('converts a table without thead whose first row has th cells', () => {
+    const md = htmlToMarkdown('<table><tr><th>Naam</th><th>Doel</th></tr><tr><td>a</td><td>b</td></tr></table>');
+    expect(md).toBe('| Naam | Doel |\n| --- | --- |\n| a | b |');
+  });
+});
+
+describe('fixMededelingLineBreak', () => {
+  it('inserts a break when Mededeling directly follows a digit', () => {
+    expect(fixMededelingLineBreak('Rekening: 123 456Mededeling: naam')).toBe('Rekening: 123 456  \nMededeling: naam');
+  });
+
+  it('leaves correctly separated text alone', () => {
+    expect(fixMededelingLineBreak('Rekening: 123\n\nMededeling: naam')).toBe('Rekening: 123\n\nMededeling: naam');
   });
 });

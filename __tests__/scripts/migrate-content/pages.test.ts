@@ -88,6 +88,31 @@ describe('mapPagina', () => {
     expect(tekstSchema.safeParse((result as {frontmatter: unknown}).frontmatter).success).toBe(true);
   });
 
+  it('keeps paragraph breaks of plain-text InfoCard descriptions', () => {
+    const entry: BuilderPage = {
+      name: 'Contact',
+      data: {url: '/contact', blocks: [
+        {component: {name: 'Hero', options: {}}, children: [text('<h1>Contact</h1>'), text('<p>Vraag?</p>')]},
+        {children: [text('<h2>Bericht</h2>'), text('<p>Vul in</p>'), {component: {name: 'ContactForm', options: {}}}]},
+        {component: {name: 'InfoCard', options: {title: 'Gegevens', description: 'Eerste alinea.\n\nTweede alinea\nmet regel.'}}},
+      ]},
+    };
+    expect(mapPagina('/contact', entry)).toMatchObject({body: 'Eerste alinea.\n\nTweede alinea  \nmet regel.'});
+  });
+
+  it('cuts the fallback description of a text page at a sentence boundary', () => {
+    const lang = `${'woord '.repeat(10).trim()}. Tweede zin ${'woord '.repeat(40)}einde.`;
+    const entry: BuilderPage = {
+      name: 'Cookiebeleid',
+      data: {url: '/cookiebeleid', blocks: [{component: {name: 'Box', options: {}}, children: [
+        text('<h1>Cookiebeleid</h1>'),
+        text(`<p>${lang}</p>`),
+      ]}]},
+    };
+    const result = mapPagina('/cookiebeleid', entry) as {frontmatter: {beschrijving: string}};
+    expect(result.frontmatter.beschrijving).toBe(`${'woord '.repeat(10).trim()}.`);
+  });
+
   it('maps the sponsors page with empty-state texts and an options-based CTA', () => {
     const section = (kop: string, leeg: string) => ({component: {name: 'Section', options: {}}, children: [text(`<h2>${kop}</h2>`), text(`<p>${leeg}</p>`)]});
     const entry: BuilderPage = {

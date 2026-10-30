@@ -66,21 +66,11 @@ Sommige van onze dienstverleners zijn gevestigd in de Verenigde Staten. Deze doo
 
 Wij bewaren uw persoonsgegevens niet langer dan noodzakelijk voor de doeleinden waarvoor ze zijn verzameld:
 
-Gegevens
-
-Bewaartermijn
-
-Contactformulier berichten
-
-1 jaar na afhandeling vraag
-
-Activiteiteninschrijvingen
-
-1 jaar na datum activiteit
-
-Website analytics
-
-26 maanden (geanonimiseerd)
+| Gegevens | Bewaartermijn |
+| --- | --- |
+| Contactformulier berichten | 1 jaar na afhandeling vraag |
+| Activiteiteninschrijvingen | 1 jaar na datum activiteit |
+| Website analytics | 26 maanden (geanonimiseerd) |
 
 ## 6. Uw rechten
 

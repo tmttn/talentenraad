@@ -83,14 +83,32 @@ function cta(blocks: ExtractedBlock[]) {
   return {titel, tekst, knoppen};
 }
 
+/** Plain-text descriptions (no HTML tags) keep their paragraph breaks; HTML goes through Turndown. */
+function descriptionToMarkdown(description: string): string {
+  if (/<[a-z][^>]*>/i.test(description)) {
+    return htmlToMarkdown(description);
+  }
+
+  return description
+    .split(/\n\s*\n/)
+    .map(paragraph => paragraph.trim().split(/\s*\n\s*/).join('  \n'))
+    .filter(paragraph => paragraph !== '')
+    .join('\n\n');
+}
+
 function infokaart(blocks: ExtractedBlock[]): {titel: string; body: string} {
   const card = blocks[indexOf(blocks, component('InfoCard'), 'InfoCard')]!;
-  return {titel: str(card.options.title), body: htmlToMarkdown(str(card.options.description))};
+  return {titel: str(card.options.title), body: descriptionToMarkdown(str(card.options.description))};
 }
 
 function metaDescription(text: string): string {
   if (text.length <= 160) {
     return text;
+  }
+
+  const sentence = /^[\s\S]{1,159}?[.!?](?=\s|$)/.exec(text);
+  if (sentence) {
+    return sentence[0];
   }
 
   return `${text.slice(0, 160).replace(/\s+\S*$/, '')}…`;

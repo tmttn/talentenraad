@@ -23,4 +23,5 @@ Bestellen voor: dinsdag 29 april 2025
 
 Allergenen info: onze manden bevatten gluten, ei en lactose
 
-Bankrekening: BE62 7340 6932 1461Mededeling: naam + voornaam van het kind + klas
+Bankrekening: BE62 7340 6932 1461  
+Mededeling: naam + voornaam van het kind + klas
