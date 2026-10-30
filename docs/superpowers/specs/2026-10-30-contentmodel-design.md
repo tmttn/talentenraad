@@ -186,6 +186,7 @@ Afbeeldingen staan in `content/`, niet in `public/`. Een `prebuild`-script kopie
 - Neemt alleen gepubliceerde entries en alleen teamleden met `actief: true`; onderdelen zonder data (de 23 lege sectiemodellen, de Builder-trackingpixel) slaat het over.
 - Pagina-teksten haalt het uit de block-boom van `page.json` per URL; `Typography`/`Text`-blokken worden velden volgens de tabel hierboven.
 - HTML (`inhoud`, `Text`-blokken, `antwoord`) → Markdown met `turndown`.
+- Persoonlijke e-mailadressen van ouders gaan eruit (Tom): in "Moederdag Ontbijtmanden 2025" verdwijnt "Contact: ouder@voorbeeld.be"; de rest van de tekst (rekeningnummer, mededeling) blijft. Het script faalt als er na migratie nog een e-mailadres in `content/` staat buiten een allowlist (`voorzitterouderraad@talentenhuis.be`, `contact@apd-gba.be`).
 - Afbeeldingen: Builder-URL → bestand via `_assets.json`, gekopieerd naar de map van het item.
 - Na schrijven valideert het alles met dezelfde zod-schema's (via de loader) en meldt het wat het niet kon plaatsen.
 - Na de commit van `content/` heeft het script zijn werk gedaan; het script gaat weg in stap 3, de lokale `content-export/` mag Tom bewaren of wissen.
