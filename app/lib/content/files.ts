@@ -7,30 +7,33 @@ import {load} from 'js-yaml';
 export type ContentImage = {src: string; width: number; height: number};
 
 export function resolveImage(rootDir: string, entryDir: string, ref: string): ContentImage {
-	const base = path.resolve(rootDir, entryDir);
-	const file = path.resolve(base, ref);
-	const relative = path.relative(base, file);
-	if (relative === '' || relative.startsWith('..') || path.isAbsolute(relative) || path.isAbsolute(ref)) {
-		throw new Error(`Afbeelding "${ref}" ligt buiten ${entryDir}`);
-	}
+  const base = path.resolve(rootDir, entryDir);
+  const file = path.resolve(base, ref);
+  const relative = path.relative(base, file);
+  if (relative === '' || relative.startsWith('..') || path.isAbsolute(relative) || path.isAbsolute(ref)) {
+    throw new Error(`Afbeelding "${ref}" ligt buiten ${entryDir}`);
+  }
 
-	let buffer: Uint8Array;
-	try {
-		buffer = readFileSync(file);
-	} catch {
-		throw new Error(`Afbeelding "${ref}" niet gevonden in ${entryDir}`);
-	}
+  let buffer: Uint8Array;
+  try {
+    buffer = readFileSync(file);
+  } catch {
+    throw new Error(`Afbeelding "${ref}" niet gevonden in ${entryDir}`);
+  }
 
-	const {width, height} = imageSize(buffer);
-	const posix = relative.split(path.sep).join('/');
-	return {src: `/content/${entryDir}/${posix}`, width, height};
+  const {width, height} = imageSize(buffer);
+  const posix = relative.split(path.sep).join('/');
+  return {src: `/content/${entryDir}/${posix}`, width, height};
 }
 
 export function readMarkdownFile(file: string): {data: Record<string, unknown>; body: string} {
-	const parsed = matter(readFileSync(file, 'utf8'));
-	return {data: parsed.data, body: parsed.content};
+  const disabled = () => {
+    throw new Error(`Uitvoerbare frontmatter is niet toegestaan: ${file}`);
+  };
+  const parsed = matter(readFileSync(file, 'utf8'), {engines: {js: disabled, javascript: disabled}});
+  return {data: parsed.data, body: parsed.content};
 }
 
 export function readYamlFile(file: string): unknown {
-	return load(readFileSync(file, 'utf8'));
+  return load(readFileSync(file, 'utf8'));
 }

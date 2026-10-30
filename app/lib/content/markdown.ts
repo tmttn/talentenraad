@@ -6,12 +6,12 @@ import remarkRehype from 'remark-rehype';
 import {unified} from 'unified';
 
 const processor = unified()
-	.use(remarkParse)
-	.use(remarkGfm)
-	.use(remarkRehype)
-	.use(rehypeSanitize)
-	.use(rehypeStringify);
+  .use(remarkParse)
+  .use(remarkGfm)
+  .use(remarkRehype)
+  .use(rehypeSanitize)
+  .use(rehypeStringify);
 
 export function renderMarkdown(markdown: string): string {
-	return String(processor.processSync(markdown));
+  return String(processor.processSync(markdown));
 }
