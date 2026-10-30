@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 // Mock Auth0Client before importing the module
 vi.mock('@auth0/nextjs-auth0/server', () => ({
   Auth0Client: vi.fn(),

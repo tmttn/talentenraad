@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import type {ReactNode} from 'react';
 import {render, screen, waitFor} from '@testing-library/react';
 import {NewsListInfo} from '../../../app/features/news/news-list';

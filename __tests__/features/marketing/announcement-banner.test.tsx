@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {
   render, screen, waitFor, fireEvent,
 } from '@testing-library/react';

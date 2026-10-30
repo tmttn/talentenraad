@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {SiteHeader, SiteHeaderInfo} from '../../app/components/layout/site-header';
 

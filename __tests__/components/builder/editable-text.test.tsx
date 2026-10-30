@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {EditableText} from '@components/builder/editable-text';
 

@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {EventCardInfo} from '../../../app/features/activities/event-card';
 

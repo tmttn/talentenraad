@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {SiteFooter, SiteFooterInfo} from '../../app/components/layout/site-footer';
 

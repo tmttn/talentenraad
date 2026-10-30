@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {render, screen, fireEvent} from '@testing-library/react';
 import {BlockManager} from '@components/builder/block-manager';
 

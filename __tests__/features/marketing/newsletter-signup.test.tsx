@@ -7,7 +7,7 @@ const NewsletterSignup = NewsletterSignupInfo.component;
 
 describe('NewsletterSignup', () => {
   beforeEach(() => {
-    vi.useFakeTimers();
+    vi.useFakeTimers({shouldAdvanceTime: true});
   });
 
   afterEach(() => {
@@ -48,12 +48,12 @@ describe('NewsletterSignup', () => {
 
     // Advance timers
     await act(async () => {
-      vi.advanceTimersByTime(1000);
+      await vi.advanceTimersByTimeAsync(1000);
     });
 
     // Should show success message
-    // waitFor does not advance Vitest's fake timers, and the act above already flushed the update
-    expect(screen.getByText(/bedankt voor je inschrijving/i)).toBeInTheDocument();
+    // Should show success message
+    expect(await screen.findByText(/bedankt voor je inschrijving/i)).toBeInTheDocument();
   });
 
   it('clears email input after successful submission', async () => {
@@ -64,10 +64,12 @@ describe('NewsletterSignup', () => {
     fireEvent.click(screen.getByRole('button', {name: /inschrijven/i}));
 
     await act(async () => {
-      vi.advanceTimersByTime(1000);
+      await vi.advanceTimersByTimeAsync(1000);
     });
 
-    expect(emailInput.value).toBe('');
+    await waitFor(() => {
+      expect(emailInput.value).toBe('');
+    });
   });
 
   it('disables form during submission', async () => {
@@ -83,7 +85,7 @@ describe('NewsletterSignup', () => {
     expect(submitButton).toBeDisabled();
 
     await act(async () => {
-      vi.advanceTimersByTime(1000);
+      await vi.advanceTimersByTimeAsync(1000);
     });
   });
 

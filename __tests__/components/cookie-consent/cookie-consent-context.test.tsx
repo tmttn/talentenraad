@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {render, screen, act} from '@testing-library/react';
 import {CookieConsentProvider, useCookieConsent} from '../../../app/components/cookie-consent/cookie-consent-context';
 

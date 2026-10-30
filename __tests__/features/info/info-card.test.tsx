@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {InfoCardInfo} from '../../../app/features/info/info-card';
 

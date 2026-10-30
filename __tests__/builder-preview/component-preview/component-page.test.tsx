@@ -1,6 +1,6 @@
-import type {Mock} from 'vitest';
 'use client';
 
+import type {Mock} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
 import {useSearchParams} from 'next/navigation';
 

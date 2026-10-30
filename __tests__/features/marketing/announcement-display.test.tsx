@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {render, screen, fireEvent} from '@testing-library/react';
 import {AnnouncementDisplay, type AnnouncementData} from '../../../app/features/marketing/announcement-display';
 

@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import type {ReactNode} from 'react';
 import {
   render, screen, waitFor, fireEvent,

@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 /**
  * Tests for MainSiteLayout
  *

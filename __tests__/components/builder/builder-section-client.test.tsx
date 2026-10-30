@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {render} from '@testing-library/react';
 import {BuilderSectionClient} from '../../../app/components/builder/builder-section-client';
 

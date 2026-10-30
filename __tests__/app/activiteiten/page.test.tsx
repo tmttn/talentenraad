@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import ActivityDetailPage, {generateMetadata} from '../../../app/(main)/activiteiten/[slug]/page';
 

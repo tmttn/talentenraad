@@ -1,4 +1,3 @@
-import type {Mock} from 'vitest';
 import {verifyRecaptcha} from '../../app/lib/recaptcha';
 
 // Mock global fetch
