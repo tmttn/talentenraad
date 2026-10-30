@@ -88,18 +88,29 @@ function infokaart(blocks: ExtractedBlock[]): {titel: string; body: string} {
   return {titel: str(card.options.title), body: htmlToMarkdown(str(card.options.description))};
 }
 
+function metaDescription(text: string): string {
+  if (text.length <= 160) {
+    return text;
+  }
+
+  return `${text.slice(0, 160).replace(/\s+\S*$/, '')}…`;
+}
+
 function mapTekst(slug: string, entry: BuilderPage): Result {
-  const texts = extractTexts(entry.data.blocks).filter(block => block.component === 'Text');
-  const [first, second, ...rest] = texts;
+  const [heading, ...rest] = extractTexts(entry.data.blocks).filter(block => block.component === 'Text');
   const body = rest
     .map(block => htmlToMarkdown(str(block.options.text)))
     .filter(part => part !== '')
     .join('\n\n');
+  const intro = rest.find(block => {
+    const html = str(block.options.text).trim();
+    return /^<p[\s>]/.test(html) && html.split('<p').length === 2 && !(block.text ?? '').startsWith('Laatst bijgewerkt');
+  });
   return {
     tekst: slug,
     frontmatter: {
-      titel: first?.text ?? entry.name,
-      beschrijving: entry.data.description ?? second?.text ?? '',
+      titel: entry.data.title ?? `${entry.name} - Talentenraad`,
+      beschrijving: entry.data.description ?? metaDescription(intro?.text ?? heading?.text ?? entry.name),
     },
     body,
   };

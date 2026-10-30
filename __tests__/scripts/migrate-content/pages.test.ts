@@ -82,8 +82,8 @@ describe('mapPagina', () => {
     const result = mapPagina('/privacybeleid', entry);
     expect(result).toEqual({
       tekst: 'privacybeleid',
-      frontmatter: {titel: 'Privacybeleid', beschrijving: 'Laatst bijgewerkt: 1 januari 2025'},
-      body: 'Intro _tekst_\n\n## 1. Kop\n\nInhoud',
+      frontmatter: {titel: 'Privacybeleid - Talentenraad', beschrijving: 'Intro tekst'},
+      body: 'Laatst bijgewerkt: 1 januari 2025\n\nIntro _tekst_\n\n## 1. Kop\n\nInhoud',
     });
     expect(tekstSchema.safeParse((result as {frontmatter: unknown}).frontmatter).success).toBe(true);
   });
