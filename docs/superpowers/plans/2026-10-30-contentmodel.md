@@ -320,7 +320,7 @@ Expected: `activiteiten 4, nieuws 2, team 11, faq 2, paginas 6, teksten 3`, geen
 - [ ] **Step 3: Schrijf `content.test.ts`** (`// @vitest-environment node`): laadt de echte `content/` met `includeConcepts: true`, roept alle getters aan (zoals Step 1.8), en `expect(findDisallowedEmails(alleTekst, allowlist)).toEqual([])`. Run: `npx vitest run __tests__/content` → PASS.
 
 - [ ] **Step 4: Handmatige controle** (resultaat rapporteren aan Tom):
-  - `grep -rn 'ouder' content/` → niets; rekeningnummer staat er nog.
+  - `grep -rn '@icloud' content/` → niets; rekeningnummer staat er nog.
   - `content/activiteiten/de-talentenfuif-2025-komt-eraan/` bevat `afbeelding.jpg` en `aliassen: ['-de-talentenfuif-2025-komt-eraan']`.
   - Per pagina: elke tekst uit de Builder-pagina (zie spec-tabel) is terug te vinden in het `.md`-bestand. Steekproef met `diff` van platte tekst niet nodig; lees de 6 bestanden.
   - Geen naam van een inactief lid in `content/` (`grep` op de 9 namen uit de lokale `teamlid.json`).
