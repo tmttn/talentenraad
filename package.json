@@ -10,7 +10,6 @@
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "test:xo": "xo --ignore='__tests__/**' --ignore='e2e/**' --ignore='scripts/**' --ignore='generated/**' --ignore='*.config.*' --ignore='jest.*.tsx' --ignore='instrumentation.ts'",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:a11y": "playwright test accessibility.spec.ts",
@@ -60,9 +59,6 @@
     "@builder.io/cli": "^1.2.10",
     "@commitlint/cli": "^21.0.0",
     "@commitlint/config-conventional": "^21.0.0",
-    "@eslint-community/eslint-plugin-eslint-comments": "^4.5.0",
-    "@eslint/eslintrc": "^3.3.3",
-    "@eslint/js": "^10.0.0",
     "@playwright/test": "^1.57.0",
     "@serwist/turbopack": "^9.3.0",
     "@tailwindcss/postcss": "^4.1.18",
@@ -78,12 +74,8 @@
     "daisyui": "^5.5.13",
     "drizzle-kit": "^0.31.8",
     "esbuild-wasm": "^0.28.0",
-    "eslint": "^10.0.0",
+    "eslint": "^9.39.5",
     "eslint-config-next": "16.2.9",
-    "eslint-plugin-import-x": "^4.16.1",
-    "eslint-plugin-n": "^18.0.0",
-    "eslint-plugin-unicorn": "^69.0.0",
-    "globals": "^17.0.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
     "jest-environment-jsdom": "^30.2.0",
@@ -91,87 +83,7 @@
     "serwist": "^9.3.0",
     "tailwindcss": "^4.0.8",
     "ts-node": "^10.9.2",
-    "typescript": "^6.0.0-dev",
-    "typescript-eslint": "^8.0.0",
-    "xo": "^3.0.0"
-  },
-  "xo": {
-    "space": true,
-    "ignores": [
-      "__tests__/**",
-      "e2e/**",
-      "playwright.config.ts",
-      "jest.config.ts",
-      "jest.setup.tsx",
-      "jest.env.setup.ts",
-      "commitlint.config.js",
-      "eslint.config.mjs",
-      "scripts/**",
-      "proxy.ts",
-      "instrumentation.ts",
-      "public/sw.js",
-      "generated/**"
-    ],
-    "rules": {
-      "@eslint-community/eslint-comments/require-description": [
-        "error",
-        {
-          "ignore": [
-            "eslint-enable"
-          ]
-        }
-      ],
-      "@eslint-community/eslint-comments/no-unlimited-disable": "error",
-      "@eslint-community/eslint-comments/no-duplicate-disable": "error",
-      "n/prefer-global/process": "off",
-      "import-x/extensions": "off",
-      "@typescript-eslint/naming-convention": "off",
-      "@typescript-eslint/consistent-type-definitions": "off",
-      "@typescript-eslint/no-restricted-types": "off",
-      "@typescript-eslint/no-unsafe-call": "off",
-      "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/promise-function-async": "off",
-      "@typescript-eslint/no-confusing-void-expression": "off",
-      "@stylistic/jsx-quotes": [
-        "error",
-        "prefer-single"
-      ],
-      "new-cap": "off",
-      "no-await-in-loop": "off",
-      "unicorn/prevent-abbreviations": "off",
-      "unicorn/prefer-global-this": "off",
-      "unicorn/filename-case": [
-        "error",
-        {
-          "cases": {
-            "kebabCase": true,
-            "pascalCase": true
-          }
-        }
-      ],
-      "unicorn/no-nested-ternary": "off",
-      "unicorn/no-array-reduce": "off",
-      "unicorn/prefer-query-selector": "off",
-      "import-x/first": "off",
-      "import-x/no-duplicates": "off",
-      "import-x/no-unassigned-import": "off",
-      "no-void": "off",
-      "no-alert": "off",
-      "@stylistic/no-mixed-operators": "off",
-      "@stylistic/multiline-ternary": "off",
-      "@stylistic/function-paren-newline": "off",
-      "promise/prefer-await-to-then": "off",
-      "@typescript-eslint/no-base-to-string": "off",
-      "@typescript-eslint/use-unknown-in-catch-callback-variable": "off",
-      "@typescript-eslint/no-empty-function": "off",
-      "@typescript-eslint/member-ordering": "off",
-      "@typescript-eslint/no-unsafe-argument": "off",
-      "promise/param-names": "off",
-      "no-restricted-globals": "off",
-      "unicorn/prefer-code-point": "off",
-      "unicorn/prefer-single-call": "off",
-      "unicorn/prefer-set-has": "off"
-    }
+    "typescript": "^6.0.0-dev"
   },
   "overrides": {
     "@eslint/plugin-kit": "^0.7.0",

@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {eq} from 'drizzle-orm';
 import {db, submissions} from '@lib/db';
@@ -50,12 +51,12 @@ export default async function SubmissionDetailPage({params}: Readonly<PageProper
   return (
     <div className='max-w-3xl'>
       <div className='mb-6'>
-        <a
+        <Link
           href='/admin/submissions'
           className='text-gray-500 hover:text-gray-700 text-sm font-medium'
         >
           &larr; Terug naar berichten
-        </a>
+        </Link>
       </div>
 
       <div className='bg-white rounded-card shadow-base overflow-hidden'>

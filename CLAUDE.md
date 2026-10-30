@@ -25,10 +25,13 @@ Tot stap 3 klaar is, gelden de Builder.io-secties hieronder nog voor de bestaand
 Before ANY commit, ALWAYS run these commands and fix all issues:
 
 ```bash
-npm run test:xo    # XO linter - must pass with 0 errors
-npm test           # Jest tests - all must pass
-npm run build      # Next.js build - must succeed
+npm run lint        # ESLint (eslint-config-next) - 0 errors
+npm run type-check  # tsc --noEmit - 0 errors
+npm test            # Jest tests - all must pass
+npm run build       # Next.js build - must succeed
 ```
+
+De husky pre-commit hook draait lint, type-check en tests met coverage; de build draait in CI.
 
 Do NOT commit if any of these fail. Fix all issues first.
 
@@ -41,14 +44,16 @@ After completing a working unit of code:
 
 Always commit and push after finishing a task, don't wait for the user to ask.
 
-## XO Linter Rules
+## Linting en codestijl
 
-This project uses XO with strict TypeScript settings:
+XO is eruit (oktober 2026): de stijlregels gaven duizenden meldingen zonder bugs te vangen. ESLint draait alleen `eslint-config-next` (core-web-vitals + typescript): React hooks, Next.js en TypeScript-fouten. Types bewaakt `tsc` in strict mode.
 
-- **No parentheses around single arrow function params**: Use `item => item.id` not `(item) => item.id`
-- **Use nullish coalescing**: Use `value ?? fallback` not `value || fallback`
-- **No unsafe any**: Always type API responses with `as TypeName`
-- **camelCase variables**: Use `builderApiKey` not `BUILDER_API_KEY`
+Niet afgedwongen, wel de stijl van de bestaande code; volg die:
+
+- `item => item.id`, geen haakjes rond een enkele arrow-parameter
+- `value ?? fallback` i.p.v. `value || fallback`
+- API-responses typen met `as TypeName`, geen `any`
+- camelCase-variabelen, enkele quotes, 2 spaties
 
 ## Jest Configuration
 
@@ -128,8 +133,7 @@ When creating Builder.io models:
 **DO NOT modify the following files without explicit user permission:**
 
 - `jest.config.ts` - Test configuration including coverage thresholds
-- `xo.config.cjs` or `.xo-config.json` - ESLint/XO linter configuration
-- `.eslintrc.*` - Any ESLint configuration files
+- `eslint.config.mjs` - ESLint configuration
 - `tsconfig.json` - TypeScript configuration
 
 **Coverage thresholds are set to 50% and must NOT be lowered.** If tests fail due to coverage:
@@ -144,8 +148,7 @@ This rule exists to maintain code quality standards. Circumventing these rules b
 1. Committing without running linter first
 2. Forgetting to update test imports after moving files
 3. Using `||` instead of `??` for optional values
-4. Adding parentheses around single arrow function parameters
-5. Not escaping `()` in jest glob patterns
-6. Assuming Builder.io models exist without verifying
-7. Forgetting helperText/description on Builder.io models
-8. Modifying test/linter configuration to bypass failing checks
+4. Not escaping `()` in jest glob patterns
+5. Assuming Builder.io models exist without verifying
+6. Forgetting helperText/description on Builder.io models
+7. Modifying test/linter configuration to bypass failing checks

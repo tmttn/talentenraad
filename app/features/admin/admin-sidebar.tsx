@@ -258,6 +258,7 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
             <p className='text-gray-500 text-xs truncate'>{user.email}</p>
           </div>
         </div>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- API-route; <Link> zou logout prefetchen */}
         <a
           href='/api/admin/auth/logout'
           title={isCollapsed ? 'Uitloggen' : undefined}
