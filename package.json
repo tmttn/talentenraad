@@ -10,6 +10,7 @@
     "start": "cross-env NODE_OPTIONS='--no-node-snapshot' next start",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
+    "migrate:content": "tsx scripts/migrate-content/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
