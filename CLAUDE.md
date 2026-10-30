@@ -11,7 +11,7 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 - **Design systeem:** "Talentenraad Beverst" op claude.ai (Design System-artifact): tokens, merkboek en de UI-componenten uit `app/components/ui/`. Lees het README daarvan vóór je UI bouwt; nieuwe componenten volgen die tokens. `color-accent` haalt maar 3,6:1 op wit: gebruik `color-accent-hover` voor kleine tekst.
 
 ### Stappenplan
-1. [ ] Builder.io-content exporteren: `node scripts/export-builder-content.mjs` (keys in `.env.local`) → `content-export/` committen.
+1. [x] Builder.io-content exporteren: `node scripts/export-builder-content.mjs` (keys in `.env.local`) → `content-export/`. **Alleen lokaal, niet committen**: bevat persoonsgegevens en de repo is publiek. Content freeze in Builder tot stap 3.
 2. [ ] Contentmodel in `content/` (Markdown + frontmatter) en migratiescript vanuit `content-export/`.
 3. [ ] Pagina's lezen uit `content/` i.p.v. Builder.io; Builder-code en `scripts/*builder*` verwijderen.
 4. [ ] Auth0 → magic links; Resend → SMTP; flags, Sentry, push, claps, Vercel-pakketten eruit.
