@@ -7,11 +7,11 @@ const NewsletterSignup = NewsletterSignupInfo.component;
 
 describe('NewsletterSignup', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('renders email input', () => {
@@ -48,13 +48,12 @@ describe('NewsletterSignup', () => {
 
     // Advance timers
     await act(async () => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
 
     // Should show success message
-    await waitFor(() => {
-      expect(screen.getByText(/bedankt voor je inschrijving/i)).toBeInTheDocument();
-    });
+    // waitFor does not advance Vitest's fake timers, and the act above already flushed the update
+    expect(screen.getByText(/bedankt voor je inschrijving/i)).toBeInTheDocument();
   });
 
   it('clears email input after successful submission', async () => {
@@ -65,12 +64,10 @@ describe('NewsletterSignup', () => {
     fireEvent.click(screen.getByRole('button', {name: /inschrijven/i}));
 
     await act(async () => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
 
-    await waitFor(() => {
-      expect(emailInput.value).toBe('');
-    });
+    expect(emailInput.value).toBe('');
   });
 
   it('disables form during submission', async () => {
@@ -86,7 +83,7 @@ describe('NewsletterSignup', () => {
     expect(submitButton).toBeDisabled();
 
     await act(async () => {
-      jest.advanceTimersByTime(1000);
+      vi.advanceTimersByTime(1000);
     });
   });
 

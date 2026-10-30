@@ -1,3 +1,4 @@
+import type {Mock} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
 import {
   BuilderSection,
@@ -11,10 +12,10 @@ import {
 } from '../../../app/components/builder/builder-section';
 
 // Mock Builder.io SDK
-const mockFetchOneEntry = jest.fn();
-jest.mock('@builder.io/sdk-react-nextjs', () => ({
+const mockFetchOneEntry = vi.fn();
+vi.mock('@builder.io/sdk-react-nextjs', () => ({
   fetchOneEntry: (...args: unknown[]) => mockFetchOneEntry(...args),
-  Content: jest.fn(({model}) => (
+  Content: vi.fn(({model}) => (
     <div data-testid='builder-content' data-model={model}>
       Mock Builder Content
     </div>
@@ -23,7 +24,7 @@ jest.mock('@builder.io/sdk-react-nextjs', () => ({
 
 describe('BuilderSection', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('shows nothing while loading', () => {
@@ -63,7 +64,7 @@ describe('BuilderSection', () => {
   });
 
   it('handles fetch errors gracefully', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     mockFetchOneEntry.mockRejectedValue(new Error('Fetch failed'));
 
     const {container} = render(<BuilderSection model='test-model' />);
@@ -93,7 +94,7 @@ describe('BuilderSection', () => {
 
 describe('Specific Section Components', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockFetchOneEntry.mockResolvedValue({id: 'test-id', data: {}});
   });
 

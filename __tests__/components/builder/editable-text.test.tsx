@@ -1,8 +1,9 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {EditableText} from '@components/builder/editable-text';
 
 // Mock InlineRichTextEditor
-jest.mock('@components/builder/inline-rich-text-editor', () => ({
+vi.mock('@components/builder/inline-rich-text-editor', () => ({
   InlineRichTextEditor: ({value, className}: {value: string; className: string}) => (
     <div data-testid='rich-text-editor' className={className}>
       {value}
@@ -13,10 +14,10 @@ jest.mock('@components/builder/inline-rich-text-editor', () => ({
 // Mock edit mode context
 const mockEditMode = {
   isEditMode: false,
-  registerChange: jest.fn(),
+  registerChange: vi.fn(),
 };
 
-jest.mock('@components/builder/edit-mode-context', () => ({
+vi.mock('@components/builder/edit-mode-context', () => ({
   useEditModeOptional: () => mockEditMode,
 }));
 
@@ -29,7 +30,7 @@ describe('EditableText', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockEditMode.isEditMode = false;
   });
 

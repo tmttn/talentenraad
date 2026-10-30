@@ -1,26 +1,27 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {SiteFooterServer} from '../../../app/components/layout/site-footer-server';
 
 // Mock the Builder.io SDK
-jest.mock('@builder.io/sdk-react-nextjs', () => ({
-  fetchOneEntry: jest.fn(),
+vi.mock('@builder.io/sdk-react-nextjs', () => ({
+  fetchOneEntry: vi.fn(),
 }));
 
 // Mock cookie consent
-jest.mock('@components/cookie-consent', () => ({
+vi.mock('@components/cookie-consent', () => ({
   useCookieConsent: () => ({
-    openPreferences: jest.fn(),
+    openPreferences: vi.fn(),
   }),
 }));
 
 // Import the mocked module
 import {fetchOneEntry} from '@builder.io/sdk-react-nextjs';
 
-const mockFetchOneEntry = fetchOneEntry as jest.MockedFunction<typeof fetchOneEntry>;
+const mockFetchOneEntry = fetchOneEntry as Mock<typeof fetchOneEntry>;
 
 describe('SiteFooterServer', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders SiteFooter with data from Builder.io', async () => {
@@ -57,7 +58,7 @@ describe('SiteFooterServer', () => {
   });
 
   it('renders SiteFooter with defaults when Builder.io throws error', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation();
     mockFetchOneEntry.mockRejectedValueOnce(new Error('API Error'));
 
     const Component = await SiteFooterServer();

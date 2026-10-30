@@ -1,3 +1,4 @@
+import type {Mock} from 'vitest';
 import type {ReactNode} from 'react';
 import {
   render, screen, waitFor, fireEvent,
@@ -5,7 +6,7 @@ import {
 import {FaqInfo} from '../../../app/features/faq/faq';
 
 // Mock the layout components
-jest.mock('@components/ui/layout', () => ({
+vi.mock('@components/ui/layout', () => ({
   Container: ({children, className}: {children: ReactNode; className?: string}) => (
     <div className={`container ${className ?? ''}`}>{children}</div>
   ),
@@ -17,7 +18,7 @@ jest.mock('@components/ui/layout', () => ({
 const FAQ = FaqInfo.component;
 
 // Mock fetch globally
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('FAQ', () => {

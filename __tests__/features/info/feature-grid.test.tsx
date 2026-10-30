@@ -1,8 +1,9 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {FeatureGridInfo} from '../../../app/features/info/feature-grid';
 
 // Mock the UI components
-jest.mock('../../../app/components/ui', () => ({
+vi.mock('../../../app/components/ui', () => ({
   AnimatedLink: ({href, children}: {href: string; children: React.ReactNode}) => (
     <a href={href}>{children}</a>
   ),

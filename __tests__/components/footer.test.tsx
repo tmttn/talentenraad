@@ -1,8 +1,9 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {SiteFooter, SiteFooterInfo} from '../../app/components/layout/site-footer';
 
 // Mock icons
-jest.mock('@components/ui', () => ({
+vi.mock('@components/ui', () => ({
   FacebookIcon: () => <span data-testid='facebook-icon' />,
   InstagramIcon: () => <span data-testid='instagram-icon' />,
   LinkedinIcon: () => <span data-testid='linkedin-icon' />,
@@ -11,8 +12,8 @@ jest.mock('@components/ui', () => ({
 }));
 
 // Mock cookie consent
-const mockOpenPreferences = jest.fn();
-jest.mock('@components/cookie-consent', () => ({
+const mockOpenPreferences = vi.fn();
+vi.mock('@components/cookie-consent', () => ({
   useCookieConsent: () => ({
     openPreferences: mockOpenPreferences,
   }),

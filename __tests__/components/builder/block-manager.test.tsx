@@ -1,8 +1,9 @@
+import type {Mock} from 'vitest';
 import {render, screen, fireEvent} from '@testing-library/react';
 import {BlockManager} from '@components/builder/block-manager';
 
 // Mock the dependencies
-jest.mock('@components/builder/component-picker', () => ({
+vi.mock('@components/builder/component-picker', () => ({
   ComponentPicker: ({isOpen, onClose, onSelect}: {
     isOpen: boolean;
     onClose: () => void;
@@ -29,7 +30,7 @@ jest.mock('@components/builder/component-picker', () => ({
   ) : null,
 }));
 
-jest.mock('@components/builder/block-editor', () => ({
+vi.mock('@components/builder/block-editor', () => ({
   BlockEditor: ({block, onSave, onClose}: {
     block: unknown;
     onSave: (block: unknown) => void;
@@ -57,8 +58,8 @@ jest.mock('@components/builder/block-editor', () => ({
 }));
 
 describe('BlockManager', () => {
-  const mockOnBlocksChange = jest.fn();
-  const mockOnClose = jest.fn();
+  const mockOnBlocksChange = vi.fn();
+  const mockOnClose = vi.fn();
 
   const defaultBlocks = [
     {
@@ -74,7 +75,7 @@ describe('BlockManager', () => {
   ];
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders nothing when not open', () => {

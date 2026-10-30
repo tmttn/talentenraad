@@ -1,12 +1,13 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {SeasonalDecorationsServer, getSeasonalDecorationsConfig} from '../../app/components/seasonal-decorations-server';
 
 // Mock the database module
-jest.mock('@/lib/db', () => ({
+vi.mock('@/lib/db', () => ({
   db: {
     query: {
       siteSettings: {
-        findFirst: jest.fn(),
+        findFirst: vi.fn(),
       },
     },
   },
@@ -14,12 +15,12 @@ jest.mock('@/lib/db', () => ({
 }));
 
 // Mock drizzle-orm
-jest.mock('drizzle-orm', () => ({
-  eq: jest.fn((a, b) => ({a, b})),
+vi.mock('drizzle-orm', () => ({
+  eq: vi.fn((a, b) => ({a, b})),
 }));
 
 // Mock child components
-jest.mock('../../app/components/seasonal-decorations-context', () => ({
+vi.mock('../../app/components/seasonal-decorations-context', () => ({
   SeasonalDecorationsProvider: ({children, config}: {children: React.ReactNode; config: unknown}) => (
     <div data-testid='decorations-provider' data-config={JSON.stringify(config)}>
       {children}
@@ -27,7 +28,7 @@ jest.mock('../../app/components/seasonal-decorations-context', () => ({
   ),
 }));
 
-jest.mock('../../app/components/seasonal-decorations', () => ({
+vi.mock('../../app/components/seasonal-decorations', () => ({
   Snowfall: () => <div data-testid='snowfall'>Snowfall</div>,
   SeasonalStyles: () => <style data-testid='seasonal-styles' />,
   defaultSeasonalConfig: {
@@ -46,11 +47,11 @@ jest.mock('../../app/components/seasonal-decorations', () => ({
 // Import the mocked db
 import {db} from '@lib/db';
 
-const mockFindFirst = db.query.siteSettings.findFirst as jest.Mock;
+const mockFindFirst = db.query.siteSettings.findFirst as Mock;
 
 describe('getSeasonalDecorationsConfig', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('returns config from database when available', async () => {
@@ -117,7 +118,7 @@ describe('getSeasonalDecorationsConfig', () => {
 
 describe('SeasonalDecorationsServer', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders children within provider', async () => {

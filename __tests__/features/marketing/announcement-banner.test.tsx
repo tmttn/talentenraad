@@ -1,10 +1,11 @@
+import type {Mock} from 'vitest';
 import {
   render, screen, waitFor, fireEvent,
 } from '@testing-library/react';
 import {AnnouncementBanner} from '../../../app/features/marketing/announcement-banner';
 
 // Mock the UI components
-jest.mock('../../../app/components/ui', () => ({
+vi.mock('../../../app/components/ui', () => ({
   InfoIcon: () => <svg data-testid='icon-info' />,
   WarningIcon: () => <svg data-testid='icon-warning' />,
   StarIcon: () => <svg data-testid='icon-star' />,
@@ -12,7 +13,7 @@ jest.mock('../../../app/components/ui', () => ({
 }));
 
 // Mock fetch globally
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('AnnouncementBanner', () => {

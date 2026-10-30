@@ -27,7 +27,7 @@ Before ANY commit, ALWAYS run these commands and fix all issues:
 ```bash
 npm run lint        # ESLint (eslint-config-next) - 0 errors
 npm run type-check  # tsc --noEmit - 0 errors
-npm test            # Jest tests - all must pass
+npm test            # Vitest tests - all must pass
 npm run build       # Next.js build - must succeed
 ```
 
@@ -55,22 +55,22 @@ Niet afgedwongen, wel de stijl van de bestaande code; volg die:
 - API-responses typen met `as TypeName`, geen `any`
 - camelCase-variabelen, enkele quotes, 2 spaties
 
-## Jest Configuration
+## Vitest Configuration
 
-- **Escape special chars in glob patterns**: Route groups like `(main)` must be escaped as `\\(main\\)` in jest.config.ts
+- **Escape special chars in glob patterns**: Route groups like `(main)` must be escaped as `\\(main\\)` in vitest.config.mts (also applies to `coverage.exclude`)
 - **Update test imports after moving files**: When files move to route groups, update all test import paths
 
 ## Project Structure
 
 - `app/(main)/` - Main site pages with header/footer layout
 - `app/(builder-preview)/` - Isolated Builder.io preview pages (no header/footer)
-- `__tests__/` - Jest test files mirroring app structure
+- `__tests__/` - Vitest test files mirroring app structure
 
 ## After Refactoring
 
 When moving files or creating route groups:
 1. Update ALL related test import paths
-2. Update jest.config.ts coverage exclusions (escape parentheses)
+2. Update vitest.config.mts coverage exclusions (escape parentheses)
 3. Run full test suite before committing
 
 ## Builder.io API Usage
@@ -132,7 +132,7 @@ When creating Builder.io models:
 
 **DO NOT modify the following files without explicit user permission:**
 
-- `jest.config.ts` - Test configuration including coverage thresholds
+- `vitest.config.mts` - Test configuration including coverage thresholds
 - `eslint.config.mjs` - ESLint configuration
 - `tsconfig.json` - TypeScript configuration
 
@@ -148,7 +148,7 @@ This rule exists to maintain code quality standards. Circumventing these rules b
 1. Committing without running linter first
 2. Forgetting to update test imports after moving files
 3. Using `||` instead of `??` for optional values
-4. Not escaping `()` in jest glob patterns
+4. Not escaping `()` in Vitest glob patterns
 5. Assuming Builder.io models exist without verifying
 6. Forgetting helperText/description on Builder.io models
 7. Modifying test/linter configuration to bypass failing checks

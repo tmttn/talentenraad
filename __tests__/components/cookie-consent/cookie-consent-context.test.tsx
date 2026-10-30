@@ -1,3 +1,4 @@
+import type {Mock} from 'vitest';
 import {render, screen, act} from '@testing-library/react';
 import {CookieConsentProvider, useCookieConsent} from '../../../app/components/cookie-consent/cookie-consent-context';
 
@@ -45,7 +46,7 @@ function TestConsumer() {
 describe('CookieConsentContext', () => {
   beforeEach(() => {
     localStorageMock.clear();
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('useCookieConsent outside provider', () => {

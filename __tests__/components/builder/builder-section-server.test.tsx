@@ -1,3 +1,4 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {
   BuilderSectionServer,
@@ -9,14 +10,14 @@ import {
 } from '../../../app/components/builder/builder-section-server';
 
 // Mock Builder.io SDK
-const mockFetchOneEntry = jest.fn();
-jest.mock('@builder.io/sdk-react-nextjs', () => ({
+const mockFetchOneEntry = vi.fn();
+vi.mock('@builder.io/sdk-react-nextjs', () => ({
   fetchOneEntry: (...args: unknown[]) => mockFetchOneEntry(...args),
 }));
 
 // Mock the client component
-jest.mock('../../../app/components/builder/builder-section-client', () => ({
-  BuilderSectionClient: jest.fn(({model}) => (
+vi.mock('../../../app/components/builder/builder-section-client', () => ({
+  BuilderSectionClient: vi.fn(({model}) => (
     <div data-testid='builder-section-client' data-model={model}>
       Rendered Section
     </div>
@@ -25,7 +26,7 @@ jest.mock('../../../app/components/builder/builder-section-client', () => ({
 
 describe('BuilderSectionServer', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders BuilderSectionClient when content is found', async () => {
@@ -76,7 +77,7 @@ describe('BuilderSectionServer', () => {
 
 describe('Section Server Components', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockFetchOneEntry.mockResolvedValue({id: 'test-id', data: {}});
   });
 

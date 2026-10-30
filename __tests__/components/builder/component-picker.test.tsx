@@ -2,11 +2,11 @@ import {render, screen, fireEvent} from '@testing-library/react';
 import {ComponentPicker} from '@components/builder/component-picker';
 
 describe('ComponentPicker', () => {
-  const mockOnClose = jest.fn();
-  const mockOnSelect = jest.fn();
+  const mockOnClose = vi.fn();
+  const mockOnSelect = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders nothing when not open', () => {

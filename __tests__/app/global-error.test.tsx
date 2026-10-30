@@ -2,15 +2,15 @@ import {render, screen, fireEvent} from '@testing-library/react';
 import * as Sentry from '@sentry/nextjs';
 import GlobalError from '../../app/global-error';
 
-jest.mock('@sentry/nextjs', () => ({
-  captureException: jest.fn(),
+vi.mock('@sentry/nextjs', () => ({
+  captureException: vi.fn(),
 }));
 
 describe('GlobalError', () => {
-  const mockReset = jest.fn();
+  const mockReset = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders error message in Dutch', () => {

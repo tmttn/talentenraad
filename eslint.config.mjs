@@ -26,8 +26,8 @@ export default defineConfig([
     },
   },
   {
-    // CommonJS-config en jest.mock-factories gebruiken require().
-    files: ['**/*.js', '**/*.cjs', '__tests__/**', 'jest.*'],
+    // CommonJS-config en test-bestanden gebruiken require().
+    files: ['**/*.js', '**/*.cjs', '__tests__/**', 'vitest.*'],
     rules: {
       '@typescript-eslint/no-require-imports': 'off',
     },

@@ -1,8 +1,9 @@
+import type {Mock} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 // Mock fetch
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 // Import component after mock setup
@@ -45,7 +46,7 @@ describe('ActivitiesArchive', () => {
   ];
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockFetch.mockResolvedValue({
       ok: true,
       json: async () => ({results: mockActivities}),
@@ -192,7 +193,7 @@ describe('ActivitiesArchive', () => {
   });
 
   it('handles fetch error gracefully', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation();
     mockFetch.mockRejectedValue(new Error('Network error'));
 
     const {container} = render(<ActivitiesArchive />);

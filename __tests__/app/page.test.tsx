@@ -6,22 +6,22 @@
 
 import {render, screen} from '@testing-library/react';
 
-const mockFetchBuilderContent = jest.fn();
+const mockFetchBuilderContent = vi.fn();
 
-jest.mock('../../app/lib/builder-utils', () => ({
+vi.mock('../../app/lib/builder-utils', () => ({
   builderPublicApiKey: 'test-api-key',
   fetchBuilderContent: (...args: unknown[]) => mockFetchBuilderContent(...args),
   extractSeoData: () => ({}),
   ConfigurationError: () => <div>Configuration Error</div>,
 }));
 
-jest.mock('../../app/components/builder/builder-content', () => ({
+vi.mock('../../app/components/builder/builder-content', () => ({
   BuilderContent: ({content}: {content: unknown}) => (
     <div data-testid='builder-content'>{content ? 'Has Content' : 'No Content'}</div>
   ),
 }));
 
-jest.mock('../../app/components/layout/page-with-announcements', () => ({
+vi.mock('../../app/components/layout/page-with-announcements', () => ({
   PageWithAnnouncements: ({children}: {children: React.ReactNode}) => <>{children}</>,
 }));
 
@@ -29,7 +29,7 @@ import Page from '../../app/(main)/page';
 
 describe('Home Page', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders page content when content exists', async () => {
@@ -69,8 +69,8 @@ describe('Home Page', () => {
   });
 
   it('renders ConfigurationError when API key is missing', async () => {
-    jest.resetModules();
-    jest.doMock('../../app/lib/builder-utils', () => ({
+    vi.resetModules();
+    vi.doMock('../../app/lib/builder-utils', () => ({
       builderPublicApiKey: undefined,
       fetchBuilderContent: mockFetchBuilderContent,
       extractSeoData: () => ({}),

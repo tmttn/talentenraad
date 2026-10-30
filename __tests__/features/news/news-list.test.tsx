@@ -1,9 +1,10 @@
+import type {Mock} from 'vitest';
 import type {ReactNode} from 'react';
 import {render, screen, waitFor} from '@testing-library/react';
 import {NewsListInfo} from '../../../app/features/news/news-list';
 
 // Mock the UI components
-jest.mock('../../../app/components/ui', () => ({
+vi.mock('../../../app/components/ui', () => ({
   linkStyles: '.animated-link { transition: all 0.2s; }',
   CalendarIcon: () => <svg data-testid='icon-calendar' />,
   PinnedIcon: () => <svg data-testid='icon-pinned' />,
@@ -14,7 +15,7 @@ jest.mock('../../../app/components/ui', () => ({
 }));
 
 // Mock the layout components
-jest.mock('@components/ui/layout', () => ({
+vi.mock('@components/ui/layout', () => ({
   Container: ({children, className}: {children: React.ReactNode; className?: string}) => (
     <div className={`container ${className ?? ''}`}>{children}</div>
   ),
@@ -29,7 +30,7 @@ jest.mock('@components/ui/layout', () => ({
 const NewsList = NewsListInfo.component;
 
 // Mock fetch globally
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('NewsList', () => {
@@ -189,7 +190,7 @@ describe('NewsList', () => {
 
   it('handles fetch error gracefully', async () => {
     mockFetch.mockRejectedValue(new Error('Fetch failed'));
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const {container} = render(<NewsList />);
 

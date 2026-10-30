@@ -2,8 +2,8 @@ import {render, screen, fireEvent} from '@testing-library/react';
 import {BlockEditor} from '@components/builder/block-editor';
 
 describe('BlockEditor', () => {
-  const mockOnSave = jest.fn();
-  const mockOnClose = jest.fn();
+  const mockOnSave = vi.fn();
+  const mockOnClose = vi.fn();
 
   const defaultBlock = {
     '@type': '@builder.io/sdk:Element' as const,
@@ -18,7 +18,7 @@ describe('BlockEditor', () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders the modal with component name', () => {

@@ -1,3 +1,4 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {isPreviewing, isEditing} from '@builder.io/sdk-react-nextjs';
 import {
@@ -8,16 +9,16 @@ import {
 } from '../../app/lib/builder-utils';
 
 // Get mocked functions
-const mockIsPreviewing = isPreviewing as jest.MockedFunction<typeof isPreviewing>;
-const mockIsEditing = isEditing as jest.MockedFunction<typeof isEditing>;
+const mockIsPreviewing = isPreviewing as Mock<typeof isPreviewing>;
+const mockIsEditing = isEditing as Mock<typeof isEditing>;
 
 // Mock global fetch
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('builder-utils', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('ConfigurationError', () => {

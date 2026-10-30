@@ -1,23 +1,24 @@
+import type {Mock} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
 import SectionPreviewPage from '../../../app/(builder-preview)/sections/[model]/page';
 
 // Mock next/navigation
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useSearchParams: () => ({
     entries: () => [],
   }),
 }));
 
 // Mock Builder.io SDK
-const mockFetchOneEntry = jest.fn();
-const mockIsPreviewing = jest.fn();
-const mockIsEditing = jest.fn();
+const mockFetchOneEntry = vi.fn();
+const mockIsPreviewing = vi.fn();
+const mockIsEditing = vi.fn();
 
-jest.mock('@builder.io/sdk-react-nextjs', () => ({
+vi.mock('@builder.io/sdk-react-nextjs', () => ({
   fetchOneEntry: (...args: unknown[]) => mockFetchOneEntry(...args),
   isPreviewing: (...args: unknown[]) => mockIsPreviewing(...args),
   isEditing: (...args: unknown[]) => mockIsEditing(...args),
-  Content: jest.fn(({model}) => (
+  Content: vi.fn(({model}) => (
     <div data-testid='builder-content' data-model={model}>
       Builder Content
     </div>
@@ -26,7 +27,7 @@ jest.mock('@builder.io/sdk-react-nextjs', () => ({
 
 describe('SectionPreviewPage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockIsPreviewing.mockReturnValue(false);
     mockIsEditing.mockReturnValue(false);
   });
@@ -101,7 +102,7 @@ describe('SectionPreviewPage', () => {
   });
 
   it('handles fetch errors gracefully', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     mockFetchOneEntry.mockRejectedValue(new Error('Network error'));
 
     const params = Promise.resolve({model: 'test-section'});

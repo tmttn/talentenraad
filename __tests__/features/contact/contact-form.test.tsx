@@ -1,3 +1,4 @@
+import type {Mock} from 'vitest';
 import {
   render, screen, fireEvent, waitFor,
 } from '@testing-library/react';
@@ -6,7 +7,7 @@ import {ContactFormInfo} from '../../../app/features/contact/contact-form';
 const ContactForm = ContactFormInfo.component;
 
 // Mock fetch globally
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('ContactForm', () => {

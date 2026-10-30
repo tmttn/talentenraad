@@ -1,10 +1,11 @@
+import type {Mock} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
 import {TeamGridInfo} from '../../../app/features/team/team-grid';
 
 const TeamGrid = TeamGridInfo.component;
 
 // Mock fetch globally
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('TeamGrid', () => {
@@ -211,7 +212,7 @@ describe('TeamGrid', () => {
 
   it('handles fetch error gracefully', async () => {
     mockFetch.mockRejectedValue(new Error('Fetch failed'));
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     render(<TeamGrid />);
 

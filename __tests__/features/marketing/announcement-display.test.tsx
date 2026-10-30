@@ -1,8 +1,9 @@
+import type {Mock} from 'vitest';
 import {render, screen, fireEvent} from '@testing-library/react';
 import {AnnouncementDisplay, type AnnouncementData} from '../../../app/features/marketing/announcement-display';
 
 // Mock the UI components
-jest.mock('../../../app/components/ui', () => ({
+vi.mock('../../../app/components/ui', () => ({
   InfoIcon: () => <svg data-testid='icon-info' />,
   WarningIcon: () => <svg data-testid='icon-warning' />,
   StarIcon: () => <svg data-testid='icon-star' />,
@@ -98,7 +99,7 @@ describe('AnnouncementDisplay', () => {
 
   describe('dismiss button', () => {
     it('shows dismiss button when onDismiss is provided', () => {
-      const onDismiss = jest.fn();
+      const onDismiss = vi.fn();
 
       render(<AnnouncementDisplay announcement={baseAnnouncement} onDismiss={onDismiss} />);
 
@@ -112,7 +113,7 @@ describe('AnnouncementDisplay', () => {
     });
 
     it('calls onDismiss when dismiss button is clicked', () => {
-      const onDismiss = jest.fn();
+      const onDismiss = vi.fn();
 
       render(<AnnouncementDisplay announcement={baseAnnouncement} onDismiss={onDismiss} />);
 

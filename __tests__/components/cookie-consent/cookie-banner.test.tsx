@@ -1,12 +1,13 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {CookieBanner} from '../../../app/components/cookie-consent/cookie-banner';
 
 // Mock the cookie consent context
-const mockAcceptAll = jest.fn();
-const mockRejectAll = jest.fn();
+const mockAcceptAll = vi.fn();
+const mockRejectAll = vi.fn();
 
-jest.mock('../../../app/components/cookie-consent/cookie-consent-context', () => ({
+vi.mock('../../../app/components/cookie-consent/cookie-consent-context', () => ({
   useCookieConsent: () => ({
     showBanner: true,
     acceptAll: mockAcceptAll,
@@ -16,7 +17,7 @@ jest.mock('../../../app/components/cookie-consent/cookie-consent-context', () =>
 
 describe('CookieBanner', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders the banner with correct content', () => {
@@ -78,22 +79,22 @@ describe('CookieBanner', () => {
 // Separate test suite for hidden banner
 describe('CookieBanner when hidden', () => {
   beforeEach(() => {
-    jest.resetModules();
-    jest.clearAllMocks();
+    vi.resetModules();
+    vi.clearAllMocks();
   });
 
-  it('returns null when showBanner is false', () => {
+  it('returns null when showBanner is false', async () => {
     // Re-mock with showBanner: false
-    jest.doMock('../../../app/components/cookie-consent/cookie-consent-context', () => ({
+    vi.doMock('../../../app/components/cookie-consent/cookie-consent-context', () => ({
       useCookieConsent: () => ({
         showBanner: false,
-        acceptAll: jest.fn(),
-        rejectAll: jest.fn(),
+        acceptAll: vi.fn(),
+        rejectAll: vi.fn(),
       }),
     }));
 
     // Need to re-import with the new mock
-    const {CookieBanner: HiddenCookieBanner} = jest.requireActual('../../../app/components/cookie-consent/cookie-banner');
+    const {CookieBanner: HiddenCookieBanner} = await vi.importActual<typeof import('../../../app/components/cookie-consent/cookie-banner')>('../../../app/components/cookie-consent/cookie-banner');
 
     // For this test, we'll verify the conditional rendering logic directly
     // The component returns null when showBanner is false

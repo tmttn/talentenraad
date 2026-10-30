@@ -1,3 +1,4 @@
+import type {Mock} from 'vitest';
 import {
   render, screen, fireEvent, waitFor,
 } from '@testing-library/react';
@@ -5,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import {PhotoGalleryInfo} from '../../../app/features/gallery/photo-gallery';
 
 // Mock scrollIntoView which is not available in JSDOM
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
 const PhotoGallery = PhotoGalleryInfo.component;
 
@@ -24,7 +25,7 @@ const mockAssets = {
 };
 
 // Mock fetch globally
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 globalThis.fetch = mockFetch;
 
 // Mock environment variable
@@ -32,7 +33,7 @@ const originalEnv = process.env;
 
 describe('PhotoGallery', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     document.body.style.overflow = '';
     process.env = {...originalEnv, NEXT_PUBLIC_BUILDER_API_KEY: 'test-api-key'};
     mockFetch.mockResolvedValue({

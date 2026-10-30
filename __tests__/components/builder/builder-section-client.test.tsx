@@ -1,9 +1,10 @@
+import type {Mock} from 'vitest';
 import {render} from '@testing-library/react';
 import {BuilderSectionClient} from '../../../app/components/builder/builder-section-client';
 
 // Mock Builder.io Content component
-jest.mock('@builder.io/sdk-react-nextjs', () => ({
-  Content: jest.fn(({content, model}) => (
+vi.mock('@builder.io/sdk-react-nextjs', () => ({
+  Content: vi.fn(({content, model}) => (
     <div data-testid='builder-content' data-model={model}>
       {content?.data?.title ?? 'Mock Content'}
     </div>

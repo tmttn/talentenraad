@@ -1,3 +1,4 @@
+import type {Mock} from 'vitest';
 /**
  * Tests for MainSiteLayout
  *
@@ -12,7 +13,7 @@
  */
 
 // Mock AdminEditModeWrapper to avoid auth0 ESM import issues
-jest.mock('../../../app/components/builder/admin-edit-mode-wrapper', () => ({
+vi.mock('../../../app/components/builder/admin-edit-mode-wrapper', () => ({
   AdminEditModeWrapper: ({children}: {children: React.ReactNode}) => children,
 }));
 

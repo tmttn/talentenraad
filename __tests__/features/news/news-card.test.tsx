@@ -1,8 +1,9 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {NewsCardInfo} from '../../../app/features/news/news-card';
 
 // Mock the UI components
-jest.mock('../../../app/components/ui', () => ({
+vi.mock('../../../app/components/ui', () => ({
   linkStyles: '.animated-link { transition: all 0.2s; }',
   ClockIcon: () => <svg data-testid='icon-clock' />,
   ArrowRightIcon: () => <svg data-testid='icon-arrow-right' />,

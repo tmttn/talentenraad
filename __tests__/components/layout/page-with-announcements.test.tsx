@@ -1,14 +1,15 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import {PageWithAnnouncements} from '../../../app/components/layout/page-with-announcements';
 
 // Mock builder-utils
-jest.mock('../../../app/lib/builder-utils', () => ({
-  fetchGlobalAnnouncement: jest.fn(),
-  extractPageAnnouncement: jest.fn(),
+vi.mock('../../../app/lib/builder-utils', () => ({
+  fetchGlobalAnnouncement: vi.fn(),
+  extractPageAnnouncement: vi.fn(),
 }));
 
 // Mock child components
-jest.mock('@features/marketing/announcements-container', () => ({
+vi.mock('@features/marketing/announcements-container', () => ({
   AnnouncementsContainer: ({globalAnnouncement, pageAnnouncement}: {globalAnnouncement?: unknown; pageAnnouncement?: unknown}) => (
     <div data-testid='announcements-container'>
       {globalAnnouncement && <div data-testid='global-announcement'>Global</div>}
@@ -17,19 +18,19 @@ jest.mock('@features/marketing/announcements-container', () => ({
   ),
 }));
 
-jest.mock('@components/layout/site-header-server', () => ({
+vi.mock('@components/layout/site-header-server', () => ({
   SiteHeaderServer: () => <header data-testid='site-header'>Header</header>,
 }));
 
 // Import the mocked modules
 import {fetchGlobalAnnouncement, extractPageAnnouncement} from '../../../app/lib/builder-utils';
 
-const mockFetchGlobalAnnouncement = fetchGlobalAnnouncement as jest.MockedFunction<typeof fetchGlobalAnnouncement>;
-const mockExtractPageAnnouncement = extractPageAnnouncement as jest.MockedFunction<typeof extractPageAnnouncement>;
+const mockFetchGlobalAnnouncement = fetchGlobalAnnouncement as Mock<typeof fetchGlobalAnnouncement>;
+const mockExtractPageAnnouncement = extractPageAnnouncement as Mock<typeof extractPageAnnouncement>;
 
 describe('PageWithAnnouncements', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders children within main content area', async () => {

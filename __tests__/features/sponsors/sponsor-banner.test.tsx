@@ -1,14 +1,15 @@
+import type {Mock} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
 import {SponsorBannerInfo} from '../../../app/features/sponsors/sponsor-banner';
 
 const SponsorBanner = SponsorBannerInfo.component;
 
 // Mock fetch for sponsor data
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 // Mock IntersectionObserver
-const mockIntersectionObserver = jest.fn();
+const mockIntersectionObserver = vi.fn();
 mockIntersectionObserver.mockReturnValue({
   observe: () => null,
   unobserve: () => null,
@@ -18,7 +19,7 @@ window.IntersectionObserver = mockIntersectionObserver;
 
 describe('SponsorBanner', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockFetch.mockReset();
   });
 

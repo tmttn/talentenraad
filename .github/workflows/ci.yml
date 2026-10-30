@@ -108,7 +108,7 @@ jobs:
     - name: Install dependencies
       run: npm install --legacy-peer-deps
 
-    - name: Run Jest tests with coverage
+    - name: Run Vitest tests with coverage
       run: npm run test:coverage
 
     - name: Display coverage summary
@@ -246,5 +246,5 @@ jobs:
         echo "### Analysis Scope" >> $GITHUB_STEP_SUMMARY
         echo "- Code quality metrics and technical debt" >> $GITHUB_STEP_SUMMARY
         echo "- Security vulnerabilities and hotspots" >> $GITHUB_STEP_SUMMARY
-        echo "- Code coverage from Jest test suite" >> $GITHUB_STEP_SUMMARY
+        echo "- Code coverage from Vitest test suite" >> $GITHUB_STEP_SUMMARY
         echo "- Maintainability and reliability ratings" >> $GITHUB_STEP_SUMMARY

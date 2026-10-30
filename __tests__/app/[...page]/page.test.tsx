@@ -7,10 +7,10 @@
 
 import {render, screen} from '@testing-library/react';
 
-const mockFetchBuilderContent = jest.fn();
-const mockCanShowBuilderContent = jest.fn();
+const mockFetchBuilderContent = vi.fn();
+const mockCanShowBuilderContent = vi.fn();
 
-jest.mock('../../../app/lib/builder-utils', () => ({
+vi.mock('../../../app/lib/builder-utils', () => ({
 	builderPublicApiKey: 'test-api-key',
 	fetchBuilderContent: (...args: unknown[]) => mockFetchBuilderContent(...args),
 	canShowBuilderContent: (...args: unknown[]) => mockCanShowBuilderContent(...args),
@@ -18,25 +18,25 @@ jest.mock('../../../app/lib/builder-utils', () => ({
 	ConfigurationError: () => <div>Configuration Error</div>,
 }));
 
-jest.mock('../../../app/components/builder/editable-builder-content', () => ({
+vi.mock('../../../app/components/builder/editable-builder-content', () => ({
 	EditableBuilderContent: ({content}: {content: unknown}) => (
 		<div data-testid='builder-content'>{content ? 'Has Content' : 'No Content'}</div>
 	),
 }));
 
-jest.mock('../../../app/components/layout/page-with-announcements', () => ({
+vi.mock('../../../app/components/layout/page-with-announcements', () => ({
 	PageWithAnnouncements: ({children}: {children: React.ReactNode}) => <>{children}</>,
 }));
 
-jest.mock('../../../app/lib/seo', () => ({
-	generateMetadata: jest.fn(),
+vi.mock('../../../app/lib/seo', () => ({
+	generateMetadata: vi.fn(),
 	generateBreadcrumbSchema: () => ({}),
 	JsonLd: () => null,
 	siteConfig: {name: 'Test', description: 'Test desc'},
 }));
 
-jest.mock('next/navigation', () => ({
-	notFound: jest.fn(),
+vi.mock('next/navigation', () => ({
+	notFound: vi.fn(),
 }));
 
 import Page from '../../../app/(main)/[...page]/page';
@@ -44,7 +44,7 @@ import {notFound} from 'next/navigation';
 
 describe('[...page] Dynamic Route', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockCanShowBuilderContent.mockReturnValue(true);
 	});
 
@@ -121,14 +121,14 @@ describe('[...page] Dynamic Route', () => {
 
 describe('[...page] without API key', () => {
 	beforeEach(() => {
-		jest.resetModules();
+		vi.resetModules();
 	});
 
 	it('renders ConfigurationError when API key is missing', async () => {
-		jest.doMock('../../../app/lib/builder-utils', () => ({
+		vi.doMock('../../../app/lib/builder-utils', () => ({
 			builderPublicApiKey: undefined,
 			fetchBuilderContent: mockFetchBuilderContent,
-			canShowBuilderContent: jest.fn().mockReturnValue(true),
+			canShowBuilderContent: vi.fn().mockReturnValue(true),
 			extractSeoData: () => ({}),
 			ConfigurationError: () => <div>Configuration Error</div>,
 		}));

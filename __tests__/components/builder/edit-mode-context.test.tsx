@@ -1,3 +1,4 @@
+import type {Mock} from 'vitest';
 import {render, screen, fireEvent, waitFor, act} from '@testing-library/react';
 import {useState} from 'react';
 import {
@@ -119,8 +120,8 @@ function TestOptionalConsumer() {
 
 describe('EditModeContext', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
-    global.fetch = jest.fn();
+    vi.clearAllMocks();
+    global.fetch = vi.fn();
   });
 
   it('provides default values', () => {
@@ -236,7 +237,7 @@ describe('EditModeContext', () => {
 
   it('useEditMode throws error outside provider', () => {
     // Suppress console.error for this test
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     expect(() => {
       render(<TestConsumer />);
@@ -281,7 +282,7 @@ describe('EditModeContext', () => {
   });
 
   it('saveAllChanges calls API and clears changes on success', async () => {
-    (global.fetch as jest.Mock).mockResolvedValue({ok: true});
+    (global.fetch as Mock).mockResolvedValue({ok: true});
 
     render(
       <EditModeProvider isAdmin={true}>
@@ -309,7 +310,7 @@ describe('EditModeContext', () => {
   });
 
   it('saveAllChanges groups changes by contentId', async () => {
-    (global.fetch as jest.Mock).mockResolvedValue({ok: true});
+    (global.fetch as Mock).mockResolvedValue({ok: true});
 
     render(
       <EditModeProvider isAdmin={true}>
@@ -335,7 +336,7 @@ describe('EditModeContext', () => {
   });
 
   it('saveAllChanges returns false on API failure', async () => {
-    (global.fetch as jest.Mock).mockResolvedValue({ok: false});
+    (global.fetch as Mock).mockResolvedValue({ok: false});
 
     render(
       <EditModeProvider isAdmin={true}>
@@ -357,8 +358,8 @@ describe('EditModeContext', () => {
   });
 
   it('saveAllChanges handles fetch error', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    (global.fetch as Mock).mockRejectedValue(new Error('Network error'));
 
     render(
       <EditModeProvider isAdmin={true}>

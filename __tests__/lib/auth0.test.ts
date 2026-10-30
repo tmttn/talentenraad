@@ -1,6 +1,7 @@
+import type {Mock} from 'vitest';
 // Mock Auth0Client before importing the module
-jest.mock('@auth0/nextjs-auth0/server', () => ({
-  Auth0Client: jest.fn(),
+vi.mock('@auth0/nextjs-auth0/server', () => ({
+  Auth0Client: vi.fn(),
 }));
 
 import {isAdminEmail} from '../../app/lib/auth0';
@@ -9,7 +10,7 @@ describe('isAdminEmail', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    jest.resetModules();
+    vi.resetModules();
     process.env = {...originalEnv};
   });
 

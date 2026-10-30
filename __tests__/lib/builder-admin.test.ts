@@ -1,3 +1,4 @@
+import type {Mock} from 'vitest';
 import {
   listContent,
   getContent,
@@ -9,12 +10,12 @@ import {
 } from '../../app/lib/builder-admin';
 
 // Mock global fetch
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('builder-admin', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('listContent', () => {

@@ -1,12 +1,13 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import RootLayout, {metadata} from '../../app/layout';
 
 // Mock Vercel analytics
-jest.mock('@vercel/analytics/react', () => ({
+vi.mock('@vercel/analytics/react', () => ({
   Analytics: () => null,
 }));
 
-jest.mock('@vercel/speed-insights/next', () => ({
+vi.mock('@vercel/speed-insights/next', () => ({
   SpeedInsights: () => null,
 }));
 

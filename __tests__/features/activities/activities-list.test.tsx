@@ -1,11 +1,12 @@
+import type {Mock} from 'vitest';
 import {render, screen, waitFor} from '@testing-library/react';
 
 // Mock fetch
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 // Mock AnimatedLink
-jest.mock('@components/ui', () => ({
+vi.mock('@components/ui', () => ({
   AnimatedLink: ({href, children, size}: {href: string; children: React.ReactNode; size?: string}) => (
     <a href={href} data-size={size}>{children}</a>
   ),
@@ -51,7 +52,7 @@ describe('ActivitiesList', () => {
   ];
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
     mockFetch.mockResolvedValue({
       ok: true,
       json: async () => ({results: mockActivities}),
@@ -193,7 +194,7 @@ describe('ActivitiesList', () => {
   });
 
   it('handles fetch error gracefully', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation();
     mockFetch.mockRejectedValue(new Error('Network error'));
 
     render(<ActivitiesList />);

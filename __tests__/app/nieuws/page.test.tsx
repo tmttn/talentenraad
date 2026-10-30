@@ -1,33 +1,34 @@
+import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
 import NewsDetailPage, {generateMetadata} from '../../../app/(main)/nieuws/[slug]/page';
 
 // Mock next/navigation
-jest.mock('next/navigation', () => ({
-  notFound: jest.fn(() => {
+vi.mock('next/navigation', () => ({
+  notFound: vi.fn(() => {
     throw new Error('NEXT_NOT_FOUND');
   }),
 }));
 
 // Mock components
-jest.mock('@components/ui', () => ({
+vi.mock('@components/ui', () => ({
   AnimatedLink: ({children, href}: {children: React.ReactNode; href: string}) => (
     <a href={href} data-testid='animated-link'>{children}</a>
   ),
 }));
 
-jest.mock('@components/layout/page-with-announcements', () => ({
+vi.mock('@components/layout/page-with-announcements', () => ({
   PageWithAnnouncements: ({children}: {children: React.ReactNode}) => (
     <div data-testid='page-with-announcements'>{children}</div>
   ),
 }));
 
 // Mock flags
-jest.mock('@/lib/flags', () => ({
-  clapsButton: jest.fn().mockResolvedValue(true),
+vi.mock('@/lib/flags', () => ({
+  clapsButton: vi.fn().mockResolvedValue(true),
 }));
 
 // Mock fetch
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 const mockNewsItem = {
@@ -43,7 +44,7 @@ const mockNewsItem = {
 
 describe('NewsDetailPage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders news item details when found', async () => {
@@ -83,7 +84,7 @@ describe('NewsDetailPage', () => {
   });
 
   it('calls notFound when news item is not found', async () => {
-    const {notFound} = require('next/navigation');
+    const {notFound} = await import('next/navigation');
     mockFetch.mockResolvedValue({
       json: () => Promise.resolve({results: []}),
     });
@@ -178,7 +179,7 @@ describe('NewsDetailPage', () => {
 
 describe('generateMetadata', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('returns news item title and description', async () => {
