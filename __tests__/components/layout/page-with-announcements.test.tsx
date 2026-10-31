@@ -1,18 +1,23 @@
-import type {Mock} from 'vitest';
 import {render, screen} from '@testing-library/react';
+import {content} from '@lib/content';
+import {fixtureSite} from '../../fixtures/site';
 import {PageWithAnnouncements} from '../../../app/components/layout/page-with-announcements';
 
-// Mock builder-utils
+vi.mock('@lib/content', () => ({content: {getSite: vi.fn()}}));
+
 vi.mock('../../../app/lib/builder-utils', () => ({
-  fetchGlobalAnnouncement: vi.fn(),
   extractPageAnnouncement: vi.fn(),
 }));
 
-// Mock child components
 vi.mock('@features/marketing/announcements-container', () => ({
-  AnnouncementsContainer: ({globalAnnouncement, pageAnnouncement}: {globalAnnouncement?: unknown; pageAnnouncement?: unknown}) => (
+  AnnouncementsContainer: ({globalAnnouncement, pageAnnouncement}: {
+    globalAnnouncement?: {tekst: string; link?: string; linkTekst?: string};
+    pageAnnouncement?: unknown;
+  }) => (
     <div data-testid='announcements-container'>
-      {globalAnnouncement && <div data-testid='global-announcement'>Global</div>}
+      {globalAnnouncement && (
+        <div data-testid='global-announcement' data-link={globalAnnouncement.link}>{globalAnnouncement.tekst}</div>
+      )}
       {pageAnnouncement && <div data-testid='page-announcement'>Page</div>}
     </div>
   ),
@@ -22,138 +27,49 @@ vi.mock('@components/layout/site-header-server', () => ({
   SiteHeaderServer: () => <header data-testid='site-header'>Header</header>,
 }));
 
-// Import the mocked modules
-import {fetchGlobalAnnouncement, extractPageAnnouncement} from '../../../app/lib/builder-utils';
-
-const mockFetchGlobalAnnouncement = fetchGlobalAnnouncement as Mock<typeof fetchGlobalAnnouncement>;
-const mockExtractPageAnnouncement = extractPageAnnouncement as Mock<typeof extractPageAnnouncement>;
-
 describe('PageWithAnnouncements', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    vi.mocked(content.getSite).mockReturnValue(fixtureSite);
   });
 
   it('renders children within main content area', async () => {
-    mockFetchGlobalAnnouncement.mockResolvedValueOnce(undefined);
-    mockExtractPageAnnouncement.mockReturnValueOnce(undefined);
-
-    const Component = await PageWithAnnouncements({
+    render(await PageWithAnnouncements({
       content: undefined,
       children: <div data-testid='child-content'>Child Content</div>,
-    });
-    render(Component);
+    }));
 
-    expect(screen.getByTestId('child-content')).toBeInTheDocument();
     expect(screen.getByRole('main')).toContainElement(screen.getByTestId('child-content'));
   });
 
   it('renders SiteHeaderServer', async () => {
-    mockFetchGlobalAnnouncement.mockResolvedValueOnce(undefined);
-    mockExtractPageAnnouncement.mockReturnValueOnce(undefined);
-
-    const Component = await PageWithAnnouncements({
-      content: undefined,
-      children: <div>Content</div>,
-    });
-    render(Component);
+    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
 
     expect(screen.getByTestId('site-header')).toBeInTheDocument();
   });
 
-  it('renders AnnouncementsContainer', async () => {
-    mockFetchGlobalAnnouncement.mockResolvedValueOnce(undefined);
-    mockExtractPageAnnouncement.mockReturnValueOnce(undefined);
+  it('passes the active announcement from site content', async () => {
+    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
 
-    const Component = await PageWithAnnouncements({
-      content: undefined,
-      children: <div>Content</div>,
-    });
-    render(Component);
-
-    expect(screen.getByTestId('announcements-container')).toBeInTheDocument();
+    expect(screen.getByTestId('global-announcement')).toHaveTextContent('Fictieve aankondiging');
+    expect(screen.getByTestId('global-announcement')).toHaveAttribute('data-link', '/meer');
   });
 
-  it('passes global announcement to AnnouncementsContainer', async () => {
-    mockFetchGlobalAnnouncement.mockResolvedValueOnce({
-      tekst: 'Global message',
-      type: 'info',
-      link: '/link',
-      linkTekst: 'Click here',
-      actief: true,
-    });
-    mockExtractPageAnnouncement.mockReturnValueOnce(undefined);
-
-    const Component = await PageWithAnnouncements({
-      content: undefined,
-      children: <div>Content</div>,
-    });
-    render(Component);
-
-    expect(screen.getByTestId('global-announcement')).toBeInTheDocument();
-  });
-
-  it('passes page announcement to AnnouncementsContainer', async () => {
-    mockFetchGlobalAnnouncement.mockResolvedValueOnce(undefined);
-    mockExtractPageAnnouncement.mockReturnValueOnce({
-      tekst: 'Page message',
-      type: 'waarschuwing',
+  it('renders no global announcement when aankondiging.actief is false', async () => {
+    vi.mocked(content.getSite).mockReturnValue({
+      ...fixtureSite,
+      aankondiging: {...fixtureSite.aankondiging, actief: false},
     });
 
-    const Component = await PageWithAnnouncements({
-      content: {data: {}} as never,
-      children: <div>Content</div>,
-    });
-    render(Component);
+    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
 
-    expect(screen.getByTestId('page-announcement')).toBeInTheDocument();
-  });
-
-  it('renders both announcements when both exist', async () => {
-    mockFetchGlobalAnnouncement.mockResolvedValueOnce({
-      tekst: 'Global',
-      type: 'info',
-      actief: true,
-    });
-    mockExtractPageAnnouncement.mockReturnValueOnce({
-      tekst: 'Page',
-      type: 'belangrijk',
-    });
-
-    const Component = await PageWithAnnouncements({
-      content: {data: {}} as never,
-      children: <div>Content</div>,
-    });
-    render(Component);
-
-    expect(screen.getByTestId('global-announcement')).toBeInTheDocument();
-    expect(screen.getByTestId('page-announcement')).toBeInTheDocument();
+    expect(screen.queryByTestId('global-announcement')).not.toBeInTheDocument();
   });
 
   it('has correct accessibility attributes on main element', async () => {
-    mockFetchGlobalAnnouncement.mockResolvedValueOnce(undefined);
-    mockExtractPageAnnouncement.mockReturnValueOnce(undefined);
-
-    const Component = await PageWithAnnouncements({
-      content: undefined,
-      children: <div>Content</div>,
-    });
-    render(Component);
+    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
 
     const main = screen.getByRole('main');
     expect(main).toHaveAttribute('id', 'main-content');
     expect(main).toHaveAttribute('tabIndex', '-1');
-  });
-
-  it('extracts page announcement from content', async () => {
-    const mockContent = {data: {paginaAankondiging: {actief: true, tekst: 'Test'}}} as never;
-    mockFetchGlobalAnnouncement.mockResolvedValueOnce(undefined);
-    mockExtractPageAnnouncement.mockReturnValueOnce({tekst: 'Test', type: 'info'});
-
-    await PageWithAnnouncements({
-      content: mockContent,
-      children: <div>Content</div>,
-    });
-
-    expect(mockExtractPageAnnouncement).toHaveBeenCalledWith(mockContent);
   });
 });

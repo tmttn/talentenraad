@@ -22,7 +22,7 @@ type NavigationGroup = {
 };
 
 type SocialLink = {
-  platform: 'facebook' | 'instagram' | 'twitter' | 'youtube';
+  platform: string;
   url: string;
 };
 

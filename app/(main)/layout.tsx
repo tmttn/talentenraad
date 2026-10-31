@@ -10,8 +10,6 @@ import {
 } from '@components/seasonal-decorations-context';
 import {Snowfall, SeasonalStyles} from '@components/seasonal-decorations';
 import {ConditionalFeedbackButton} from '@components/feedback';
-import {EditModeButton} from '@components/builder';
-import {AdminEditModeWrapper} from '@components/builder/admin-edit-mode-wrapper';
 import {seasonalDecorations, cookieBanner, getAllFlags} from '@lib/flags';
 import {FlagsProvider} from '@lib/flags-client';
 
@@ -30,7 +28,7 @@ async function SafeSeasonalDecorations({children}: {children: React.ReactNode}) 
     const fetchedConfig: SeasonalDecorationsConfig = await getSeasonalDecorationsConfig();
     config = fetchedConfig;
   } catch {
-    // Silently fall back to default config if database is unavailable
+    // Silently fall back to default config if content is unavailable
   }
 
   return (
@@ -77,18 +75,15 @@ export default async function MainSiteLayout({
   return (
     <FlagsProvider flags={flags}>
       <CookieConsentProvider>
-        <AdminEditModeWrapper>
-          <SafeSeasonalDecorations>
-            {children}
-            <Suspense fallback={<SiteFooterSkeleton />}>
-              <SiteFooterServer />
-            </Suspense>
-          </SafeSeasonalDecorations>
-          <ConditionalCookieBanner />
-          <ConditionalFeedbackButton />
-          <EditModeButton />
-          <Toaster position='bottom-left' richColors closeButton />
-        </AdminEditModeWrapper>
+        <SafeSeasonalDecorations>
+          {children}
+          <Suspense fallback={<SiteFooterSkeleton />}>
+            <SiteFooterServer />
+          </Suspense>
+        </SafeSeasonalDecorations>
+        <ConditionalCookieBanner />
+        <ConditionalFeedbackButton />
+        <Toaster position='bottom-left' richColors closeButton />
       </CookieConsentProvider>
     </FlagsProvider>
   );

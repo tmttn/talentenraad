@@ -9,7 +9,7 @@ type CtaBannerProperties = {
   children?: ReactNode;
 };
 
-function CtaBanner({
+export function CtaBanner({
   variant = 'default',
   children,
 }: Readonly<CtaBannerProperties>) {

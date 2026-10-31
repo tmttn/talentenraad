@@ -1,63 +1,23 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {
   Info,
   AlertTriangle,
   Star,
   X,
 } from 'lucide-react';
-import {useFlag} from '@lib/flags-client';
 
-type Announcement = {
-  id: string;
-  data: {
-    tekst: string;
-    link?: string;
-    linkTekst?: string;
-    type: 'info' | 'waarschuwing' | 'belangrijk';
-    actief: boolean;
-  };
+type AnnouncementBannerProperties = {
+  tekst: string;
+  type: 'info' | 'waarschuwing' | 'belangrijk';
+  link?: string;
 };
 
-const builderApiKey = '3706422a8e454ceebe64acdc5a1475ba';
-
-export function AnnouncementBanner() {
-  const isEnabled = useFlag('announcementBanner');
-  const [announcement, setAnnouncement] = useState<Announcement | undefined>(undefined);
+export function AnnouncementBanner({tekst, type, link}: Readonly<AnnouncementBannerProperties>) {
   const [isVisible, setIsVisible] = useState(true);
 
-  useEffect(() => {
-    async function fetchAnnouncement() {
-      try {
-        const url = new URL('https://cdn.builder.io/api/v3/content/aankondiging');
-        url.searchParams.set('apiKey', builderApiKey);
-        url.searchParams.set('limit', '1');
-        url.searchParams.set('query.data.actief', 'true');
-        url.searchParams.set('cachebust', 'true');
-
-        const response = await fetch(url.toString(), {cache: 'no-store'});
-
-        // Gracefully handle 404 - content type may not exist yet
-        if (!response.ok) {
-          return;
-        }
-
-        const data = await response.json() as {results?: Announcement[]};
-
-        if (data.results && data.results.length > 0) {
-          setAnnouncement(data.results[0]);
-        }
-      } catch {
-        // Silently fail - announcements are optional
-      }
-    }
-
-    void fetchAnnouncement();
-  }, []);
-
-  // Check feature flag and visibility
-  if (!isEnabled || !announcement || !isVisible) {
+  if (!isVisible) {
     return null;
   }
 
@@ -76,7 +36,7 @@ export function AnnouncementBanner() {
     },
   };
 
-  const style = typeStyles[announcement.data.type] || typeStyles.info;
+  const style = typeStyles[type] ?? typeStyles.info;
 
   return (
     <div className={`${style.bg} text-white`} role='alert'>
@@ -84,13 +44,13 @@ export function AnnouncementBanner() {
         <div className='flex items-center gap-3 flex-1'>
           <span className='flex-shrink-0' aria-hidden='true'>{style.icon}</span>
           <p className='text-sm font-medium'>
-            {announcement.data.tekst}
-            {announcement.data.link && announcement.data.linkTekst && (
+            {tekst}
+            {link && (
               <a
-                href={announcement.data.link}
+                href={link}
                 className='ml-2 underline hover:no-underline font-bold'
               >
-                {announcement.data.linkTekst} →
+                Meer info →
               </a>
             )}
           </p>
