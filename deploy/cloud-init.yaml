@@ -1,0 +1,49 @@
+#cloud-config
+# Eerste opstart van de Talentenraad-server (Hetzner, Ubuntu 24.04).
+# Publieke sleutels zijn niet geheim; privésleutels en .env staan nooit in de repo.
+
+package_update: true
+package_upgrade: true
+packages:
+  - ca-certificates
+  - curl
+  - ufw
+  - unattended-upgrades
+  - fail2ban
+
+users:
+  - name: deploy
+    groups: [sudo]
+    shell: /bin/bash
+    sudo: "ALL=(ALL) NOPASSWD:ALL"
+    lock_passwd: true
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDLf1SLHGqZm1AsxGxGyDickcdTFtnwa4yVBCBlGRb6k talentenraad-deploy
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE3Y/Xk35fEl6NUGxz9a2fdMsXAgPZRzZR9Xg+l3x+cU tom
+
+write_files:
+  - path: /etc/ssh/sshd_config.d/10-hardening.conf
+    content: |
+      PermitRootLogin no
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+  - path: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+
+runcmd:
+  - curl -fsSL https://get.docker.com | sh
+  - usermod -aG docker deploy
+  - mkdir -p /opt/talentenraad
+  - chown deploy:deploy /opt/talentenraad
+  - chmod 750 /opt/talentenraad
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 22/tcp
+  - ufw allow 80/tcp
+  - ufw allow 443/tcp
+  - ufw allow 443/udp
+  - ufw --force enable
+  - systemctl enable --now fail2ban
+  - systemctl restart ssh
