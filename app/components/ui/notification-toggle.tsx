@@ -2,18 +2,16 @@
 
 import {Loader2} from 'lucide-react';
 import {usePushNotifications} from '@lib/hooks/use-push-notifications';
-import {useFlag} from '@lib/flags-client';
 
 type NotificationToggleProperties = {
   className?: string;
 };
 
 export function NotificationToggle({className = ''}: Readonly<NotificationToggleProperties>) {
-  const isEnabled = useFlag('pushNotifications');
   const {isSupported, isSubscribed, isLoading, permission, subscribe, unsubscribe} = usePushNotifications();
 
-  // Don't render if feature flag is disabled or not supported
-  if (!isEnabled || !isSupported) {
+  // Don't render if not supported
+  if (!isSupported) {
     return null;
   }
 

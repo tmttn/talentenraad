@@ -5,7 +5,6 @@ import {Archive, ChevronDown} from 'lucide-react';
 import {Container, Stack} from '@components/ui/layout';
 import type {Activiteit} from '@lib/content';
 import {parseLocalDate} from '@lib/dates';
-import {useFlag} from '@lib/flags-client';
 
 type ActivitiesArchiveProperties = {
   /** Local date (YYYY-MM-DD) computed on the server, so hydration matches the static HTML. */
@@ -25,7 +24,6 @@ function ActivitiesArchive({
   limit = 20,
   showYear = true,
 }: Readonly<ActivitiesArchiveProperties>) {
-  const isEnabled = useFlag('activitiesArchive');
   const [isExpanded, setIsExpanded] = useState(false);
   const activities = activiteiten
     .filter(activity => activity.datum < today)
@@ -54,11 +52,6 @@ function ActivitiesArchive({
   };
 
   if (activities.length === 0) {
-    return null;
-  }
-
-  // Check feature flag
-  if (!isEnabled) {
     return null;
   }
 

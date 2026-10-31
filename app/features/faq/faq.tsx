@@ -6,7 +6,6 @@ import {
 import {ChevronDown, HelpCircle} from 'lucide-react';
 import {Container, Stack} from '@components/ui/layout';
 import type {FaqItem} from '@lib/content';
-import {useFlag} from '@lib/flags-client';
 import {serializeJsonLd} from '@lib/seo';
 
 const faqButtonClassName = [
@@ -99,7 +98,6 @@ function generateFaqStructuredData(faqs: FaqItem[]) {
 }
 
 function Faq({items}: Readonly<FaqProperties>) {
-  const isEnabled = useFlag('faqSection');
   const faqs = items;
   const [openIndex, setOpenIndex] = useState<number | undefined>(undefined);
   const [statusMessage, setStatusMessage] = useState<string>('');
@@ -166,11 +164,6 @@ function Faq({items}: Readonly<FaqProperties>) {
         </div>
       </Container>
     );
-  }
-
-  // Check feature flag
-  if (!isEnabled) {
-    return null;
   }
 
   return (

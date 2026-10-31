@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  useState, useEffect, useCallback, useMemo,
+  useState, useEffect, useCallback,
 } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -19,8 +19,6 @@ import {
   LogOut,
   type LucideIcon,
 } from 'lucide-react';
-import {useFlags} from '@lib/flags-client';
-import type {FlagValues} from '@generated/hypertune/hypertune';
 
 type UnreadCounts = {
   unreadFeedback: number;
@@ -42,40 +40,31 @@ type NavItem = {
   href: string;
   label: string;
   icon: LucideIcon;
-  flag?: keyof FlagValues;
 };
 
 const navItems: NavItem[] = [
   {href: '/admin', label: 'Dashboard', icon: Home},
   {
-    href: '/admin/submissions', label: 'Berichten', icon: Mail, flag: 'adminSubmissions',
+    href: '/admin/submissions', label: 'Berichten', icon: Mail,
   },
   {
-    href: '/admin/notificaties', label: 'Notificaties', icon: Bell, flag: 'adminNotifications',
+    href: '/admin/notificaties', label: 'Notificaties', icon: Bell,
   },
   {
-    href: '/admin/gebruikers', label: 'Gebruikers', icon: Users, flag: 'adminUsers',
+    href: '/admin/gebruikers', label: 'Gebruikers', icon: Users,
   },
   {
-    href: '/admin/audit-logs', label: 'Audit Logs', icon: History, flag: 'adminAuditLogs',
+    href: '/admin/audit-logs', label: 'Audit Logs', icon: History,
   },
 ];
 
 export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperties>) {
   const pathname = usePathname();
-  const flags = useFlags();
 
   // Calculate total unread for the Berichten nav item
   const totalUnread = (unreadCounts?.unreadFeedback ?? 0) + (unreadCounts?.unreadSubmissions ?? 0);
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-
-  // Filter nav items based on feature flags
-  const visibleNavItems = useMemo(
-    () =>
-      navItems.filter(item => !item.flag || flags[item.flag]),
-    [flags],
-  );
 
   // Load collapsed state from localStorage on mount
   useEffect(() => {
@@ -162,7 +151,7 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
       </div>
       <nav className={`flex-1 ${isCollapsed ? 'lg:p-2' : 'p-4'} overflow-y-auto`}>
         <ul className='space-y-1'>
-          {visibleNavItems.map(item => {
+          {navItems.map(item => {
             const Icon = item.icon;
             const showBadge = item.href === '/admin/submissions' && totalUnread > 0;
             return (

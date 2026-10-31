@@ -13,7 +13,6 @@ import {
 } from '@lib/seo';
 import {content} from '@lib/content';
 import {parseLocalDate, todayString} from '@lib/dates';
-import {clapsButton} from '@lib/flags';
 
 function formatDate(dateString: string) {
   const date = parseLocalDate(dateString);
@@ -97,8 +96,6 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
     {name: 'Kalender', url: '/kalender'},
     {name: item.titel, url: `/activiteiten/${item.slug}`},
   ]);
-
-  const showClaps = await clapsButton();
 
   return (
     <PageWithAnnouncements>
@@ -209,11 +206,9 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
           )}
 
           {/* Clap button */}
-          {showClaps && (
-            <div className='mt-8 flex items-center justify-center'>
-              <ClapButton contentType='activiteit' contentId={item.slug} />
-            </div>
-          )}
+                    <div className='mt-8 flex items-center justify-center'>
+            <ClapButton contentType='activiteit' contentId={item.slug} />
+          </div>
 
           {/* CTA for future events */}
           {!isPast && (

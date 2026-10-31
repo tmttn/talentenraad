@@ -9,7 +9,6 @@ import {AnimatedLink} from '@components/ui';
 import {Container, Stack} from '@components/ui/layout';
 import type {Activiteit} from '@lib/content';
 import {parseLocalDate} from '@lib/dates';
-import {useFlag} from '@lib/flags-client';
 
 const articleClassName = [
   'flex items-start gap-6 bg-white p-4 rounded-card shadow-base hover:shadow-elevated transition-shadow',
@@ -36,7 +35,6 @@ function ActivitiesList({
   showLocation = true,
   showDescription = false,
 }: Readonly<ActivitiesListProperties>) {
-  const isEnabled = useFlag('activitiesList');
   const activities = activiteiten
     .filter(activity => activity.datum >= today)
     .sort((a, b) => a.datum.localeCompare(b.datum))
@@ -48,11 +46,6 @@ function ActivitiesList({
     const month = date.toLocaleDateString('nl-BE', {month: 'short'}).toUpperCase();
     return {day, month};
   };
-
-  // Check feature flag
-  if (!isEnabled) {
-    return null;
-  }
 
   return (
     <section className='py-16 px-6'>

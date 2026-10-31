@@ -3,7 +3,6 @@
 import type {ReactNode} from 'react';
 import {Container} from '@components/ui/layout';
 import {brandColors, gradients} from '@styles/tokens';
-import {useFlag} from '@lib/flags-client';
 
 type HeroProperties = {
   backgroundImage?: string;
@@ -33,11 +32,6 @@ export function Hero({
   size = 'medium',
   children,
 }: Readonly<HeroProperties>) {
-  const isEnabled = useFlag('heroBanner');
-
-  if (!isEnabled) {
-    return null;
-  }
 
   return (
     <section

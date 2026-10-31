@@ -18,10 +18,6 @@ vi.mock('@lib/content', () => ({
   content: {getNieuwsItem: vi.fn(), getNieuws: vi.fn()},
 }));
 
-vi.mock('@lib/flags', () => ({
-  clapsButton: vi.fn().mockResolvedValue(false),
-}));
-
 vi.mock('@components/claps', () => ({
   ClapButton: () => <div data-testid='clap-button' />,
 }));

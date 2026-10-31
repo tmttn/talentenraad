@@ -10,7 +10,6 @@ import {linkStyles} from '@components/ui';
 import {Container, Stack, Grid} from '@components/ui/layout';
 import type {NieuwsItem} from '@lib/content';
 import {parseLocalDate} from '@lib/dates';
-import {useFlag} from '@lib/flags-client';
 
 const articleListClassName = [
   'bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow group overflow-hidden',
@@ -42,7 +41,6 @@ function NewsList({
   layout = 'list',
   showImages = true,
 }: Readonly<NewsListProperties>) {
-  const isEnabled = useFlag('newsList');
   const newsItems = [...nieuws]
     .sort((a, b) => b.datum.localeCompare(a.datum))
     .slice(0, limit);
@@ -55,11 +53,6 @@ function NewsList({
       year: 'numeric',
     });
   };
-
-  // Check feature flag
-  if (!isEnabled) {
-    return null;
-  }
 
   const renderGridLayout = () => (
     <Grid cols={1} colsMd={2} colsLg={3} gap='md' as='div' aria-label='Nieuwsberichten'>

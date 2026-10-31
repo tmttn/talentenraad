@@ -11,7 +11,6 @@ import {
   CheckCircle, XCircle, Send, Loader2,
 } from 'lucide-react';
 import {Container, Grid} from '@components/ui/layout';
-import {useFlags} from '@lib/flags-client';
 import {useRecaptcha} from './use-recaptcha';
 
 /**
@@ -493,18 +492,10 @@ function ContactFormWithParameters(props: Readonly<ContactFormProperties>) {
   return <ContactFormInner {...props} defaultSubject={defaultSubject} />;
 }
 
-// Main exported component with Suspense boundary and feature flag check
+// Main exported component with Suspense boundary
 export function ContactForm(props: Readonly<ContactFormProperties>) {
-  const flags = useFlags();
-
-  // Check if contact form is enabled
-  if (!flags.contactForm) {
-    return null;
-  }
-
-  // Override props with flag values (flags take precedence over props)
-  const showPhone = props.showPhone && flags.contactFormPhone;
-  const showSubject = props.showSubject !== false && flags.contactFormSubject;
+  const showPhone = props.showPhone;
+  const showSubject = props.showSubject !== false;
 
   return (
     <Suspense fallback={<ContactFormSkeleton />}>

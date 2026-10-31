@@ -13,7 +13,6 @@ import {
 } from '@lib/seo';
 import {content} from '@lib/content';
 import {parseLocalDate} from '@lib/dates';
-import {clapsButton} from '@lib/flags';
 
 const proseClassName = [
   'prose prose-lg max-w-none prose-headings:text-gray-800 prose-headings:font-bold',
@@ -83,8 +82,6 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
     {name: item.titel, url: `/nieuws/${item.slug}`},
   ]);
 
-  const showClaps = await clapsButton();
-
   return (
     <PageWithAnnouncements>
       <JsonLd data={articleSchema} />
@@ -137,11 +134,9 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
           )}
 
           {/* Clap button */}
-          {showClaps && (
-            <div className='mt-8 flex items-center justify-center'>
-              <ClapButton contentType='nieuws' contentId={item.slug} />
-            </div>
-          )}
+                    <div className='mt-8 flex items-center justify-center'>
+            <ClapButton contentType='nieuws' contentId={item.slug} />
+          </div>
 
           {/* Back link */}
           <div className='mt-12 pt-8 border-t border-gray-200'>

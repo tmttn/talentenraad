@@ -2,7 +2,6 @@
 
 import {Container, Grid} from '@components/ui/layout';
 import type {Teamlid} from '@lib/content';
-import {useFlag} from '@lib/flags-client';
 
 type TeamGridProperties = {
   leden: Teamlid[];
@@ -15,7 +14,6 @@ function TeamGrid({
   columns,
   showDescription,
 }: Readonly<TeamGridProperties>) {
-  const isEnabled = useFlag('teamGrid');
   const teamMembers = leden.map(lid => ({
     name: lid.naam,
     role: lid.rol,
@@ -53,11 +51,6 @@ function TeamGrid({
         Geen teamleden gevonden
       </Container>
     );
-  }
-
-  // Check feature flag
-  if (!isEnabled) {
-    return null;
   }
 
   return (

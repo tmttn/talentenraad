@@ -8,8 +8,6 @@ import {auth0, isAdminEmail} from '@lib/auth0';
 import {
   db, users, auditLogs, feedback, submissions,
 } from '@lib/db';
-import {getAllFlags} from '@lib/flags';
-import {FlagsProvider} from '@lib/flags-client';
 import {AdminSidebar} from '@features/admin/admin-sidebar';
 import {SessionValidator} from '@features/admin/session-validator';
 
@@ -142,14 +140,9 @@ export default async function AdminProtectedLayout({
   // Log login event (with deduplication)
   await logLoginEvent(userEmail, session.user.name);
 
-  // Get feature flags and unread counts in parallel
-  const [flags, unreadCounts] = await Promise.all([
-    getAllFlags(),
-    getUnreadCounts(),
-  ]);
+  const unreadCounts = await getUnreadCounts();
 
   return (
-    <FlagsProvider flags={flags}>
       <div className='min-h-screen bg-gray-50 flex'>
         <Toaster position='top-right' richColors closeButton />
         <SessionValidator />
@@ -167,6 +160,5 @@ export default async function AdminProtectedLayout({
           </div>
         </main>
       </div>
-    </FlagsProvider>
   );
 }

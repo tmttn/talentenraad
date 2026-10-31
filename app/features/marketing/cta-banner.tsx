@@ -2,7 +2,6 @@
 
 import type {ReactNode} from 'react';
 import {Container} from '@components/ui/layout';
-import {useFlag} from '@lib/flags-client';
 
 type CtaBannerProperties = {
   variant?: 'default' | 'accent' | 'light';
@@ -13,11 +12,6 @@ export function CtaBanner({
   variant = 'default',
   children,
 }: Readonly<CtaBannerProperties>) {
-  const isEnabled = useFlag('ctaBanner');
-
-  if (!isEnabled) {
-    return null;
-  }
 
   const variants = {
     default: 'bg-gray-900',

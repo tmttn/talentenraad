@@ -10,25 +10,21 @@ import {
 } from '@components/seasonal-decorations-context';
 import {Snowfall, SeasonalStyles} from '@components/seasonal-decorations';
 import {ConditionalFeedbackButton} from '@components/feedback';
-import {seasonalDecorations, cookieBanner, getAllFlags} from '@lib/flags';
-import {FlagsProvider} from '@lib/flags-client';
+import {content} from '@lib/content';
 
 // Dynamically import the server component to prevent build-time errors
 async function SafeSeasonalDecorations({children}: {children: React.ReactNode}) {
-  // Check feature flag first
-  const isEnabled = await seasonalDecorations();
-  if (!isEnabled) {
-    return <>{children}</>;
-  }
-
   let config: SeasonalDecorationsConfig = defaultSeasonalConfig;
 
   try {
-    const {getSeasonalDecorationsConfig} = await import('@components/seasonal-decorations-server');
-    const fetchedConfig: SeasonalDecorationsConfig = await getSeasonalDecorationsConfig();
-    config = fetchedConfig;
+    const site = await content.getSite();
+    config = site.decoraties;
   } catch {
-    // Silently fall back to default config if content is unavailable
+    // Silently fall back to default config (disabled) if content is unavailable
+  }
+
+  if (!config.enabled) {
+    return <>{children}</>;
   }
 
   return (
@@ -40,34 +36,20 @@ async function SafeSeasonalDecorations({children}: {children: React.ReactNode}) 
   );
 }
 
-// Conditionally render cookie banner based on feature flag
-async function ConditionalCookieBanner() {
-  const isEnabled = await cookieBanner();
-  if (!isEnabled) {
-    return null;
-  }
-
-  return <CookieBanner />;
-}
-
 /**
  * Main Site Layout
  *
  * Layout wrapper that provides:
- * - Cookie consent management (controlled by cookieBanner flag)
- * - Seasonal decorations context (controlled by seasonalDecorations flag)
+ * - Cookie consent management
+ * - Seasonal decorations context (controlled by decoraties.enabled in site.yaml)
  * - Site footer with loading skeleton
  */
-export default async function MainSiteLayout({
+export default function MainSiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Get all flags for client-side components
-  const flags = await getAllFlags();
-
   return (
-    <FlagsProvider flags={flags}>
       <CookieConsentProvider>
         <SafeSeasonalDecorations>
           {children}
@@ -75,10 +57,9 @@ export default async function MainSiteLayout({
             <SiteFooterServer />
           </Suspense>
         </SafeSeasonalDecorations>
-        <ConditionalCookieBanner />
+        <CookieBanner />
         <ConditionalFeedbackButton />
         <Toaster position='bottom-left' richColors closeButton />
       </CookieConsentProvider>
-    </FlagsProvider>
   );
 }

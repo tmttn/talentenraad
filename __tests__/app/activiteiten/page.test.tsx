@@ -18,10 +18,6 @@ vi.mock('@lib/content', () => ({
   content: {getActiviteit: vi.fn(), getActiviteiten: vi.fn()},
 }));
 
-vi.mock('@lib/flags', () => ({
-  clapsButton: vi.fn().mockResolvedValue(false),
-}));
-
 vi.mock('@components/claps', () => ({
   ClapButton: () => <div data-testid='clap-button' />,
 }));
@@ -87,9 +83,7 @@ describe('ActivityDetailPage', () => {
     expect(screen.queryByText('Over deze activiteit')).not.toBeInTheDocument();
   });
 
-  it('shows the clap button when the flag is on', async () => {
-    const flags = await import('@lib/flags');
-    vi.mocked(flags.clapsButton).mockResolvedValueOnce(true);
+  it('shows the clap button', async () => {
     getActiviteit.mockReturnValue(makeActiviteit());
     await render_('voorbeeldfeest');
     expect(screen.getByTestId('clap-button')).toBeInTheDocument();

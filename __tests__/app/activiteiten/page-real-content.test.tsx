@@ -10,7 +10,7 @@ const {notFound, permanentRedirect} = vi.hoisted(() => ({
 }));
 
 vi.mock('next/navigation', () => ({notFound, permanentRedirect}));
-vi.mock('@lib/flags', () => ({clapsButton: vi.fn().mockResolvedValue(false)}));
+vi.mock('@components/claps', () => ({ClapButton: () => <div data-testid='clap-button' />}));
 vi.mock('@components/layout/page-with-announcements', () => ({
   PageWithAnnouncements: ({children}: {children: React.ReactNode}) => <div>{children}</div>,
 }));
