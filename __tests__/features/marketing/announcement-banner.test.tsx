@@ -14,10 +14,16 @@ describe('AnnouncementBanner', () => {
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
-  it('renders a link when link is given', () => {
+  it('renders a link with linkTekst when both are given', () => {
+    render(<AnnouncementBanner tekst='Met link' type='info' link='/more-info' linkTekst='Lees verder' />);
+
+    expect(screen.getByRole('link', {name: /lees verder/i})).toHaveAttribute('href', '/more-info');
+  });
+
+  it('renders no link when linkTekst is missing', () => {
     render(<AnnouncementBanner tekst='Met link' type='info' link='/more-info' />);
 
-    expect(screen.getByRole('link', {name: /meer info/i})).toHaveAttribute('href', '/more-info');
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
   it.each([

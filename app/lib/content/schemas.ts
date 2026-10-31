@@ -82,6 +82,7 @@ export const siteSchema = z.object({
     tekst: z.string(),
     type: z.enum(['info', 'waarschuwing', 'belangrijk']),
     link: z.string().optional(),
+    linkTekst: z.string().optional(),
   }),
 });
 

@@ -23,7 +23,7 @@ export async function PageWithAnnouncements({content, children}: PageWithAnnounc
       tekst: aankondiging.tekst,
       type: aankondiging.type,
       link: aankondiging.link,
-      linkTekst: aankondiging.link ? 'Meer info' : undefined,
+      linkTekst: aankondiging.linkTekst,
     }
     : undefined;
 

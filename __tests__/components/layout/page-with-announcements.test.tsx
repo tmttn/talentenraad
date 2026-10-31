@@ -16,7 +16,7 @@ vi.mock('@features/marketing/announcements-container', () => ({
   }) => (
     <div data-testid='announcements-container'>
       {globalAnnouncement && (
-        <div data-testid='global-announcement' data-link={globalAnnouncement.link}>{globalAnnouncement.tekst}</div>
+        <div data-testid='global-announcement' data-link={globalAnnouncement.link} data-linktekst={globalAnnouncement.linkTekst}>{globalAnnouncement.tekst}</div>
       )}
       {pageAnnouncement && <div data-testid='page-announcement'>Page</div>}
     </div>
@@ -52,6 +52,23 @@ describe('PageWithAnnouncements', () => {
 
     expect(screen.getByTestId('global-announcement')).toHaveTextContent('Fictieve aankondiging');
     expect(screen.getByTestId('global-announcement')).toHaveAttribute('data-link', '/meer');
+  });
+
+  it('passes linkTekst through from site content', async () => {
+    vi.mocked(content.getSite).mockReturnValue({
+      ...fixtureSite,
+      aankondiging: {...fixtureSite.aankondiging, linkTekst: 'Lees verder'},
+    });
+
+    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
+
+    expect(screen.getByTestId('global-announcement')).toHaveAttribute('data-linktekst', 'Lees verder');
+  });
+
+  it('passes no linkTekst when none is set (old behaviour: no link shown)', async () => {
+    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
+
+    expect(screen.getByTestId('global-announcement')).not.toHaveAttribute('data-linktekst');
   });
 
   it('renders no global announcement when aankondiging.actief is false', async () => {

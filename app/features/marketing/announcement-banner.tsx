@@ -12,9 +12,10 @@ type AnnouncementBannerProperties = {
   tekst: string;
   type: 'info' | 'waarschuwing' | 'belangrijk';
   link?: string;
+  linkTekst?: string;
 };
 
-export function AnnouncementBanner({tekst, type, link}: Readonly<AnnouncementBannerProperties>) {
+export function AnnouncementBanner({tekst, type, link, linkTekst}: Readonly<AnnouncementBannerProperties>) {
   const [isVisible, setIsVisible] = useState(true);
 
   if (!isVisible) {
@@ -45,12 +46,12 @@ export function AnnouncementBanner({tekst, type, link}: Readonly<AnnouncementBan
           <span className='flex-shrink-0' aria-hidden='true'>{style.icon}</span>
           <p className='text-sm font-medium'>
             {tekst}
-            {link && (
+            {link && linkTekst && (
               <a
                 href={link}
                 className='ml-2 underline hover:no-underline font-bold'
               >
-                Meer info →
+                {linkTekst} →
               </a>
             )}
           </p>
