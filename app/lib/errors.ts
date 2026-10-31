@@ -2,7 +2,7 @@
  * Custom Error Classes
  *
  * Use these error classes for consistent error handling across the application.
- * These integrate well with Next.js error boundaries and Sentry.
+ * These integrate well with Next.js error boundaries.
  */
 
 /**

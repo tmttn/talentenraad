@@ -11,7 +11,7 @@ type SectionProperties = {
   width?: 'narrow' | 'default' | 'wide' | 'full';
 };
 
-function Section({
+export function Section({
   children,
   background = 'white',
   align = 'center',
@@ -106,45 +106,3 @@ function Section({
     </section>
   );
 }
-
-export const SectionInfo = {
-  name: 'Section',
-  component: Section,
-  canHaveChildren: true,
-  inputs: [
-    {
-      name: 'background',
-      type: 'string',
-      enum: ['white', 'light', 'dark', 'accent', 'secondary', 'tertiary', 'gradient'],
-      defaultValue: 'white',
-      helperText: 'Achtergrondkleur: accent=roze, secondary=groen, tertiary=oranje',
-    },
-    {
-      name: 'align',
-      type: 'string',
-      enum: ['left', 'center'],
-      defaultValue: 'center',
-    },
-    {
-      name: 'size',
-      type: 'string',
-      enum: ['small', 'medium', 'large'],
-      defaultValue: 'medium',
-      helperText: 'Verticale padding',
-    },
-    {
-      name: 'decoration',
-      type: 'string',
-      enum: ['none', 'dots', 'waves', 'circles'],
-      defaultValue: 'none',
-      helperText: 'Decoratief element voor visuele interesse',
-    },
-    {
-      name: 'width',
-      type: 'string',
-      enum: ['narrow', 'default', 'wide', 'full'],
-      defaultValue: 'default',
-      helperText: 'Maximale breedte van de content',
-    },
-  ],
-};

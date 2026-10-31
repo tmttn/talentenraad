@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, verifyAdmin} from '@lib/auth0';
+import {getSession} from '@lib/auth/session';
 import {db, submissions} from '@lib/db';
 import {inArray} from 'drizzle-orm';
 import {logAudit, createAuditContext} from '@lib/audit';
@@ -10,16 +10,11 @@ type BulkActionRequest = {
 };
 
 export async function PATCH(request: NextRequest) {
-  const session = await auth0.getSession();
+  // Authenticated admins only (getSession also checks admin access)
+  const session = await getSession();
 
-  // Check authentication
-  if (!session?.user) {
+  if (!session) {
     return NextResponse.json({error: 'Unauthorized'}, {status: 401});
-  }
-
-  // Check admin access
-  if (!await verifyAdmin(session.user.email)) {
-    return NextResponse.json({error: 'Forbidden'}, {status: 403});
   }
 
   try {

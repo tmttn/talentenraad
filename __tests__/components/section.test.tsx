@@ -1,8 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {SectionInfo} from '../../app/components/section';
-
-// Get the Section component from the info export
-const Section = SectionInfo.component;
+import {Section} from '../../app/components/section';
 
 describe('Section', () => {
   it('renders children', () => {
@@ -128,11 +125,4 @@ describe('Section', () => {
     });
   });
 
-  it('has correct SectionInfo export properties', () => {
-    expect(SectionInfo.name).toBe('Section');
-    expect(SectionInfo.component).toBeDefined();
-    expect(SectionInfo.canHaveChildren).toBe(true);
-    expect(SectionInfo.inputs).toBeDefined();
-    expect(SectionInfo.inputs.length).toBeGreaterThan(0);
-  });
 });

@@ -3,7 +3,6 @@
 import type {ReactNode} from 'react';
 import {Container} from '@components/ui/layout';
 import {brandColors, gradients} from '@styles/tokens';
-import {useFlag} from '@lib/flags-client';
 
 type HeroProperties = {
   backgroundImage?: string;
@@ -28,16 +27,11 @@ function getBackgroundStyle(backgroundImage?: string) {
   return gradients.primary;
 }
 
-function Hero({
+export function Hero({
   backgroundImage,
   size = 'medium',
   children,
 }: Readonly<HeroProperties>) {
-  const isEnabled = useFlag('heroBanner');
-
-  if (!isEnabled) {
-    return null;
-  }
 
   return (
     <section
@@ -58,24 +52,3 @@ function Hero({
     </section>
   );
 }
-
-export const HeroInfo = {
-  name: 'Hero',
-  component: Hero,
-  inputs: [
-    {
-      name: 'backgroundImage',
-      type: 'file',
-      allowedFileTypes: ['jpeg', 'jpg', 'png', 'webp'],
-      helperText: 'Achtergrondafbeelding (optioneel)',
-    },
-    {
-      name: 'size',
-      type: 'string',
-      enum: ['compact', 'small', 'medium', 'large'],
-      defaultValue: 'medium',
-      helperText: 'compact: zeer klein voor subpagina\'s, small: klein, medium: standaard, large: groot',
-    },
-  ],
-  canHaveChildren: true,
-};

@@ -1,7 +1,6 @@
 'use client';
 
 import {useEffect} from 'react';
-import * as Sentry from '@sentry/nextjs';
 import {AdminErrorPage} from '@components/error-pages';
 
 type ErrorProperties = {
@@ -17,8 +16,7 @@ type ErrorProperties = {
  */
 export default function AdminError({error, reset}: Readonly<ErrorProperties>) {
   useEffect(() => {
-    // Log error to Sentry
-    Sentry.captureException(error);
+    console.error(error);
   }, [error]);
 
   return (

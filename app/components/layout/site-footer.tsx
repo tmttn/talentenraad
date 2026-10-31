@@ -22,7 +22,7 @@ type NavigationGroup = {
 };
 
 type SocialLink = {
-  platform: 'facebook' | 'instagram' | 'twitter' | 'youtube';
+  platform: string;
   url: string;
 };
 
@@ -187,7 +187,7 @@ export function SiteFooter({
               onClick={openPreferences}
               className='text-gray-700 hover:text-primary transition-colors'
             >
-              Cookie-instellingen
+              Cookiemelding
             </button>
           </div>
 
@@ -222,105 +222,3 @@ export function SiteFooter({
     </footer>
   );
 }
-
-export const SiteFooterInfo = {
-  name: 'SiteFooter',
-  component: SiteFooter,
-  inputs: [
-    {
-      name: 'logoUrl',
-      type: 'file',
-      allowedFileTypes: ['jpeg', 'jpg', 'png', 'svg', 'webp'],
-      helperText: 'Logo afbeelding',
-      defaultValue: '/Logo.png',
-    },
-    {
-      name: 'tagline',
-      type: 'longText',
-      helperText: 'Korte beschrijving onder het logo',
-      defaultValue: 'De ouderraad van Het Talentenhuis\nSchool met een hart voor ieder kind',
-    },
-    {
-      name: 'address',
-      type: 'object',
-      helperText: 'Adres informatie',
-      subFields: [
-        {
-          name: 'street',
-          type: 'string',
-          helperText: 'Straat en huisnummer',
-        },
-        {
-          name: 'city',
-          type: 'string',
-          helperText: 'Postcode en plaats',
-        },
-      ],
-      defaultValue: {street: 'Zonhoevestraat 32', city: '3740 Bilzen-Hoeselt'},
-    },
-    {
-      name: 'email',
-      type: 'email',
-      helperText: 'Contact e-mailadres',
-      defaultValue: 'voorzitterouderraad@talentenhuis.be',
-    },
-    {
-      name: 'navigationGroups',
-      type: 'list',
-      helperText: 'Navigatie groepen',
-      subFields: [
-        {
-          name: 'title',
-          type: 'string',
-          helperText: 'Groep titel',
-          required: true,
-        },
-        {
-          name: 'links',
-          type: 'list',
-          helperText: 'Links in deze groep',
-          subFields: [
-            {
-              name: 'text',
-              type: 'string',
-              helperText: 'Link tekst',
-              required: true,
-            },
-            {
-              name: 'url',
-              type: 'url',
-              helperText: 'Link URL',
-              required: true,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      name: 'socialLinks',
-      type: 'list',
-      helperText: 'Sociale media links',
-      subFields: [
-        {
-          name: 'platform',
-          type: 'string',
-          enum: ['facebook', 'instagram', 'twitter', 'youtube'],
-          helperText: 'Social media platform',
-          required: true,
-        },
-        {
-          name: 'url',
-          type: 'url',
-          helperText: 'Profiel URL',
-          required: true,
-        },
-      ],
-    },
-    {
-      name: 'copyrightText',
-      type: 'string',
-      helperText: 'Copyright tekst (jaar wordt automatisch toegevoegd)',
-      defaultValue: 'Talentenraad Het Talentenhuis. Alle rechten voorbehouden.',
-    },
-  ],
-};

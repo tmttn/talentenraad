@@ -51,7 +51,7 @@ describe('AnimatedButton', () => {
     });
 
     it('calls onClick when clicked', () => {
-      const handleClick = jest.fn();
+      const handleClick = vi.fn();
       render(<AnimatedButton onClick={handleClick}>Click</AnimatedButton>);
       const button = screen.getByRole('button');
       fireEvent.click(button);
@@ -59,7 +59,7 @@ describe('AnimatedButton', () => {
     });
 
     it('does not call onClick when disabled', () => {
-      const handleClick = jest.fn();
+      const handleClick = vi.fn();
       render(<AnimatedButton onClick={handleClick} disabled>
         Click
       </AnimatedButton>);

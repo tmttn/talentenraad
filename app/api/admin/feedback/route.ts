@@ -1,12 +1,17 @@
 import {NextResponse} from 'next/server';
 import {inArray, isNull} from 'drizzle-orm';
 import {db, feedback} from '@lib/db';
+import {getSession} from '@lib/auth/session';
 
 /**
  * PATCH /api/admin/feedback
  * Mark feedback as read
  */
 export async function PATCH(request: Request) {
+  if (!await getSession()) {
+    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  }
+
   try {
     const body = await request.json() as {action?: string; ids?: string[]};
 
@@ -46,6 +51,10 @@ export async function PATCH(request: Request) {
  * Delete multiple feedback items
  */
 export async function DELETE(request: Request) {
+  if (!await getSession()) {
+    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  }
+
   try {
     const body = await request.json() as {ids?: string[]};
 

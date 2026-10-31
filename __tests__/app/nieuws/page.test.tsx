@@ -1,206 +1,95 @@
 import {render, screen} from '@testing-library/react';
-import NewsDetailPage, {generateMetadata} from '../../../app/(main)/nieuws/[slug]/page';
+import {content} from '@lib/content';
+import NewsDetailPage, {generateMetadata, generateStaticParams} from '../../../app/(main)/nieuws/[slug]/page';
+import {makeNieuws} from '../../fixtures/content';
 
-// Mock next/navigation
-jest.mock('next/navigation', () => ({
-  notFound: jest.fn(() => {
+const {notFound, permanentRedirect} = vi.hoisted(() => ({
+  notFound: vi.fn(() => {
     throw new Error('NEXT_NOT_FOUND');
+  }),
+  permanentRedirect: vi.fn((url: string) => {
+    throw new Error(`NEXT_REDIRECT:${url}`);
   }),
 }));
 
-// Mock components
-jest.mock('@components/ui', () => ({
-  AnimatedLink: ({children, href}: {children: React.ReactNode; href: string}) => (
-    <a href={href} data-testid='animated-link'>{children}</a>
-  ),
+vi.mock('next/navigation', () => ({notFound, permanentRedirect}));
+
+vi.mock('@lib/content', () => ({
+  content: {getNieuwsItem: vi.fn(), getNieuws: vi.fn()},
 }));
 
-jest.mock('@components/layout/page-with-announcements', () => ({
-  PageWithAnnouncements: ({children}: {children: React.ReactNode}) => (
-    <div data-testid='page-with-announcements'>{children}</div>
-  ),
+vi.mock('@components/ui', () => ({
+  AnimatedLink: ({children, href}: {children: React.ReactNode; href: string}) => <a href={href}>{children}</a>,
 }));
 
-// Mock flags
-jest.mock('@/lib/flags', () => ({
-  clapsButton: jest.fn().mockResolvedValue(true),
+vi.mock('@components/layout/page-with-announcements', () => ({
+  PageWithAnnouncements: ({children}: {children: React.ReactNode}) => <div>{children}</div>,
 }));
 
-// Mock fetch
-const mockFetch = jest.fn();
-global.fetch = mockFetch;
-
-const mockNewsItem = {
-  id: 'test-news-id',
-  data: {
-    titel: 'Test Nieuwsbericht',
-    datum: '2025-03-15',
-    samenvatting: 'Dit is een samenvatting van het nieuwsbericht',
-    inhoud: '<p>Dit is de volledige inhoud van het nieuwsbericht.</p>',
-    afbeelding: 'https://example.com/news-image.jpg',
-  },
-};
+const getNieuwsItem = vi.mocked(content.getNieuwsItem);
+const renderPage = async (slug: string) => render(await NewsDetailPage({params: Promise.resolve({slug})}));
 
 describe('NewsDetailPage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
-  it('renders news item details when found', async () => {
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: [mockNewsItem]}),
-    });
-
-    const params = Promise.resolve({slug: 'test-nieuwsbericht'});
-    render(await NewsDetailPage({params}));
-
-    expect(screen.getByRole('heading', {level: 1, name: 'Test Nieuwsbericht'})).toBeInTheDocument();
-    expect(screen.getByText('Dit is een samenvatting van het nieuwsbericht')).toBeInTheDocument();
+  it('renders title, summary, date and html body', async () => {
+    getNieuwsItem.mockReturnValue(makeNieuws({titel: 'Lentebericht', datum: '2025-03-15'}));
+    await renderPage('voorbeeldbericht');
+    expect(screen.getByRole('heading', {level: 1, name: 'Lentebericht'})).toBeInTheDocument();
+    expect(screen.getByText('Een fictieve samenvatting van het bericht.')).toBeInTheDocument();
+    expect(screen.getByText('Fictieve inhoud van het bericht')).toBeInTheDocument();
+    expect(screen.getByText(/15 maart 2025/)).toBeInTheDocument();
   });
 
-  it('renders breadcrumb navigation', async () => {
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: [mockNewsItem]}),
-    });
-
-    const params = Promise.resolve({slug: 'test-nieuwsbericht'});
-    render(await NewsDetailPage({params}));
-
+  it('renders breadcrumb and back link', async () => {
+    getNieuwsItem.mockReturnValue(makeNieuws());
+    await renderPage('voorbeeldbericht');
     expect(screen.getByRole('navigation', {name: 'Breadcrumb'})).toBeInTheDocument();
-    expect(screen.getByRole('link', {name: 'Home'})).toBeInTheDocument();
-    expect(screen.getByRole('link', {name: 'Nieuws'})).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: 'Terug naar nieuws'})).toHaveAttribute('href', '/nieuws');
   });
 
-  it('renders back link', async () => {
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: [mockNewsItem]}),
-    });
+  it('renders the image only when present', async () => {
+    getNieuwsItem.mockReturnValue(makeNieuws({afbeelding: {src: '/content/nieuws/x/foto.png', width: 400, height: 300}}));
+    const {container, unmount} = await renderPage('voorbeeldbericht');
+    expect(container.querySelector('img')).toHaveAttribute('alt', 'Voorbeeldbericht');
+    unmount();
 
-    const params = Promise.resolve({slug: 'test-nieuwsbericht'});
-    render(await NewsDetailPage({params}));
-
-    expect(screen.getByText('Terug naar nieuws')).toBeInTheDocument();
+    getNieuwsItem.mockReturnValue(makeNieuws({html: ''}));
+    const second = await renderPage('voorbeeldbericht');
+    expect(second.container.querySelector('img')).not.toBeInTheDocument();
+    expect(screen.queryByText('Fictieve inhoud van het bericht')).not.toBeInTheDocument();
   });
 
-  it('calls notFound when news item is not found', async () => {
-    const {notFound} = require('next/navigation');
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: []}),
-    });
+  it('redirects an alias to the canonical url', async () => {
+    getNieuwsItem.mockReturnValue(makeNieuws({slug: 'echte-slug'}));
+    await expect(renderPage('-oude-slug')).rejects.toThrow('NEXT_REDIRECT:/nieuws/echte-slug');
+    expect(permanentRedirect).toHaveBeenCalledWith('/nieuws/echte-slug');
+  });
 
-    const params = Promise.resolve({slug: 'non-existent'});
-
-    await expect(NewsDetailPage({params})).rejects.toThrow('NEXT_NOT_FOUND');
+  it('calls notFound for an unknown slug', async () => {
+    getNieuwsItem.mockReturnValue(undefined);
+    await expect(renderPage('bestaat-niet')).rejects.toThrow('NEXT_NOT_FOUND');
     expect(notFound).toHaveBeenCalled();
-  });
-
-  it('renders image when available', async () => {
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: [mockNewsItem]}),
-    });
-
-    const params = Promise.resolve({slug: 'test-nieuwsbericht'});
-    render(await NewsDetailPage({params}));
-
-    const image = screen.getByRole('img', {name: 'Test Nieuwsbericht'});
-    expect(image).toBeInTheDocument();
-  });
-
-  it('renders without image when not available', async () => {
-    const newsWithoutImage = {
-      ...mockNewsItem,
-      data: {
-        ...mockNewsItem.data,
-        afbeelding: undefined,
-      },
-    };
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: [newsWithoutImage]}),
-    });
-
-    const params = Promise.resolve({slug: 'test-nieuwsbericht'});
-    render(await NewsDetailPage({params}));
-
-    expect(screen.queryByRole('img', {name: 'Test Nieuwsbericht'})).not.toBeInTheDocument();
-  });
-
-  it('renders HTML content', async () => {
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: [mockNewsItem]}),
-    });
-
-    const params = Promise.resolve({slug: 'test-nieuwsbericht'});
-    render(await NewsDetailPage({params}));
-
-    expect(screen.getByText('Dit is de volledige inhoud van het nieuwsbericht.')).toBeInTheDocument();
-  });
-
-  it('renders without content when not available', async () => {
-    const newsWithoutContent = {
-      ...mockNewsItem,
-      data: {
-        ...mockNewsItem.data,
-        inhoud: undefined,
-      },
-    };
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: [newsWithoutContent]}),
-    });
-
-    const params = Promise.resolve({slug: 'test-nieuwsbericht'});
-    const {container} = render(await NewsDetailPage({params}));
-
-    expect(container.querySelector('.prose')).not.toBeInTheDocument();
-  });
-
-  it('finds news item by slug generated from title', async () => {
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: [mockNewsItem]}),
-    });
-
-    const params = Promise.resolve({slug: 'test-nieuwsbericht'});
-    render(await NewsDetailPage({params}));
-
-    expect(screen.getByRole('heading', {level: 1, name: 'Test Nieuwsbericht'})).toBeInTheDocument();
-  });
-
-  it('finds news item by id', async () => {
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: [mockNewsItem]}),
-    });
-
-    const params = Promise.resolve({slug: 'test-news-id'});
-    render(await NewsDetailPage({params}));
-
-    expect(screen.getByRole('heading', {level: 1, name: 'Test Nieuwsbericht'})).toBeInTheDocument();
   });
 });
 
-describe('generateMetadata', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+describe('NewsDetailPage metadata and params', () => {
+  it('builds metadata from title and summary', async () => {
+    getNieuwsItem.mockReturnValue(makeNieuws({titel: 'Lentebericht'}));
+    const metadata = await generateMetadata({params: Promise.resolve({slug: 'voorbeeldbericht'})});
+    expect(metadata.title).toEqual({absolute: 'Lentebericht | Talentenraad'});
+    expect(metadata.description).toBe('Een fictieve samenvatting van het bericht.');
   });
 
-  it('returns news item title and description', async () => {
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: [mockNewsItem]}),
-    });
-
-    const params = Promise.resolve({slug: 'test-nieuwsbericht'});
-    const metadata = await generateMetadata({params});
-
-    expect(metadata.title).toBe('Test Nieuwsbericht | Talentenraad');
-    expect(metadata.description).toBe('Dit is een samenvatting van het nieuwsbericht');
+  it('falls back when the item is unknown', async () => {
+    getNieuwsItem.mockReturnValue(undefined);
+    expect(await generateMetadata({params: Promise.resolve({slug: 'x'})})).toEqual({title: 'Nieuws niet gevonden'});
   });
 
-  it('returns fallback title when news item not found', async () => {
-    mockFetch.mockResolvedValue({
-      json: () => Promise.resolve({results: []}),
-    });
-
-    const params = Promise.resolve({slug: 'non-existent'});
-    const metadata = await generateMetadata({params});
-
-    expect(metadata.title).toBe('Nieuws niet gevonden');
+  it('generates static params from real slugs', () => {
+    vi.mocked(content.getNieuws).mockReturnValue([makeNieuws({slug: 'a'}), makeNieuws({slug: 'b'})]);
+    expect(generateStaticParams()).toEqual([{slug: 'a'}, {slug: 'b'}]);
   });
 });

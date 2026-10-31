@@ -3,8 +3,8 @@ import {useRecaptcha} from '../../../app/features/contact/use-recaptcha';
 
 describe('useRecaptcha', () => {
   const originalEnv = process.env;
-  const mockExecute = jest.fn();
-  const mockReady = jest.fn(callback => callback());
+  const mockExecute = vi.fn();
+  const mockReady = vi.fn(callback => callback());
 
   // Helper to set up grecaptcha.enterprise mock
   function setupGrecaptchaMock() {
@@ -17,8 +17,8 @@ describe('useRecaptcha', () => {
   }
 
   beforeEach(() => {
-    jest.resetModules();
-    jest.clearAllMocks();
+    vi.resetModules();
+    vi.clearAllMocks();
     process.env = {...originalEnv};
 
     // Reset window.grecaptcha
@@ -38,7 +38,7 @@ describe('useRecaptcha', () => {
   describe('when NEXT_PUBLIC_RECAPTCHA_SITE_KEY is not set', () => {
     it('sets isReady to true immediately', async () => {
       delete process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation();
 
       const {result} = renderHook(() => useRecaptcha());
 
@@ -52,7 +52,7 @@ describe('useRecaptcha', () => {
 
     it('executeRecaptcha returns undefined', async () => {
       delete process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
-      jest.spyOn(console, 'warn').mockImplementation();
+      vi.spyOn(console, 'warn').mockImplementation();
 
       const {result} = renderHook(() => useRecaptcha());
 
@@ -183,7 +183,7 @@ describe('useRecaptcha', () => {
       });
 
       it('handles execution errors', async () => {
-        const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+        const consoleSpy = vi.spyOn(console, 'error').mockImplementation();
         mockExecute.mockRejectedValue(new Error('Execute failed'));
 
         setupGrecaptchaMock();

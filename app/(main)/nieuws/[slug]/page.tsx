@@ -1,20 +1,17 @@
-import {notFound} from 'next/navigation';
+import {notFound, permanentRedirect} from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import {Calendar} from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
-import {ClapButton} from '@components/claps';
-import {EditableText} from '@components/builder';
 import {
   generateMetadata as generateSeoMetadata,
   generateArticleSchema,
   generateBreadcrumbSchema,
   JsonLd,
 } from '@lib/seo';
-import {clapsButton} from '@lib/flags';
-
-const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
+import {content} from '@lib/content';
+import {parseLocalDate} from '@lib/dates';
 
 const proseClassName = [
   'prose prose-lg max-w-none prose-headings:text-gray-800 prose-headings:font-bold',
@@ -23,64 +20,8 @@ const proseClassName = [
   'prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-800',
 ].join(' ');
 
-type NewsItem = {
-  id: string;
-  data: {
-    titel: string;
-    datum: string;
-    samenvatting: string;
-    inhoud?: string;
-    afbeelding?: string;
-  };
-};
-
-type BuilderResponse = {
-  results?: NewsItem[];
-};
-
-// Dynamic rendering to avoid SSG issues with Builder.io components
-export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-
-async function getNewsItem(slug: string): Promise<NewsItem | undefined> {
-  try {
-    const url = new URL('https://cdn.builder.io/api/v3/content/nieuws');
-    url.searchParams.set('apiKey', builderApiKey);
-    url.searchParams.set('limit', '100');
-
-    const response = await fetch(url.toString(), {next: {revalidate: 5}});
-    const data = await response.json() as BuilderResponse;
-
-    if (!data.results) {
-      return undefined;
-    }
-
-    // Find item by ID or by slug generated from title
-    const item = data.results.find(newsItem => {
-      const itemSlug = generateSlug(newsItem.data.titel);
-      return newsItem.id === slug || itemSlug === slug;
-    });
-
-    return item;
-  } catch (error) {
-    console.error('Error fetching news item:', error);
-    return undefined;
-  }
-}
-
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replaceAll(/[\u0300-\u036F]/g, '') // Remove diacritics
-    .replaceAll(/[^a-z\d\s-]/g, '') // Remove special chars
-    .replaceAll(/\s+/g, '-') // Replace spaces with -
-    .replaceAll(/-+/g, '-') // Replace multiple - with single -
-    .trim();
-}
-
 function formatDate(dateString: string) {
-  const date = new Date(dateString);
+  const date = parseLocalDate(dateString);
   return date.toLocaleDateString('nl-BE', {
     weekday: 'long',
     day: 'numeric',
@@ -89,23 +30,25 @@ function formatDate(dateString: string) {
   });
 }
 
+export function generateStaticParams() {
+  return content.getNieuws().map(item => ({slug: item.slug}));
+}
+
 export async function generateMetadata({params}: {params: Promise<{slug: string}>}) {
   const {slug} = await params;
-  const item = await getNewsItem(slug);
+  const item = content.getNieuwsItem(slug);
 
   if (!item) {
     return {title: 'Nieuws niet gevonden'};
   }
 
-  const itemSlug = generateSlug(item.data.titel);
-
   return generateSeoMetadata({
-    title: item.data.titel,
-    description: item.data.samenvatting,
-    url: `/nieuws/${itemSlug}`,
-    image: item.data.afbeelding,
+    title: item.titel,
+    description: item.samenvatting,
+    url: `/nieuws/${item.slug}`,
+    image: item.afbeelding?.src,
     type: 'article',
-    publishedTime: item.data.datum,
+    publishedTime: item.datum,
   });
 }
 
@@ -115,30 +58,31 @@ type PageProperties = {
 
 export default async function NewsDetailPage({params}: Readonly<PageProperties>) {
   const {slug} = await params;
-  const item = await getNewsItem(slug);
+  const item = content.getNieuwsItem(slug);
 
   if (!item) {
     notFound();
   }
 
-  const itemSlug = generateSlug(item.data.titel);
+  if (item.slug !== slug) {
+    permanentRedirect(`/nieuws/${item.slug}`);
+  }
+
   const articleSchema = generateArticleSchema({
-    title: item.data.titel,
-    description: item.data.samenvatting,
-    url: `/nieuws/${itemSlug}`,
-    image: item.data.afbeelding,
-    datePublished: item.data.datum,
+    title: item.titel,
+    description: item.samenvatting,
+    url: `/nieuws/${item.slug}`,
+    image: item.afbeelding?.src,
+    datePublished: item.datum,
   });
   const breadcrumbSchema = generateBreadcrumbSchema([
     {name: 'Home', url: '/'},
     {name: 'Nieuws', url: '/nieuws'},
-    {name: item.data.titel, url: `/nieuws/${itemSlug}`},
+    {name: item.titel, url: `/nieuws/${item.slug}`},
   ]);
 
-  const showClaps = await clapsButton();
-
   return (
-    <PageWithAnnouncements content={undefined}>
+    <PageWithAnnouncements>
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
       <article className='py-12 px-6'>
@@ -155,7 +99,7 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
               </li>
               <li>/</li>
               <li className='text-gray-800 font-medium truncate max-w-[200px]'>
-                {item.data.titel}
+                {item.titel}
               </li>
             </ol>
           </nav>
@@ -164,32 +108,18 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
           <header className='mb-8'>
             <time className='text-sm text-primary font-semibold flex items-center gap-2 mb-4'>
               <Calendar className='h-4 w-4' />
-              {formatDate(item.data.datum)}
+              {formatDate(item.datum)}
             </time>
-            <EditableText
-              contentId={item.id}
-              model='nieuws'
-              field='titel'
-              value={item.data.titel}
-              as='h1'
-              className='text-3xl md:text-4xl font-bold text-gray-800 mb-4'
-            />
-            <EditableText
-              contentId={item.id}
-              model='nieuws'
-              field='samenvatting'
-              value={item.data.samenvatting}
-              as='p'
-              className='text-xl text-gray-600 leading-relaxed'
-            />
+            <h1 className='text-3xl md:text-4xl font-bold text-gray-800 mb-4'>{item.titel}</h1>
+            <p className='text-xl text-gray-600 leading-relaxed'>{item.samenvatting}</p>
           </header>
 
           {/* Featured Image */}
-          {item.data.afbeelding && (
+          {item.afbeelding && (
             <div className='relative aspect-video rounded-modal overflow-hidden mb-8'>
               <Image
-                src={item.data.afbeelding}
-                alt={item.data.titel}
+                src={item.afbeelding.src}
+                alt={item.titel}
                 fill
                 className='object-cover'
                 priority
@@ -198,23 +128,8 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
           )}
 
           {/* Content */}
-          {item.data.inhoud && (
-            <EditableText
-              contentId={item.id}
-              model='nieuws'
-              field='inhoud'
-              value={item.data.inhoud}
-              as='div'
-              className={proseClassName}
-              richText
-            />
-          )}
-
-          {/* Clap button */}
-          {showClaps && (
-            <div className='mt-8 flex items-center justify-center'>
-              <ClapButton contentType='nieuws' contentId={item.id} />
-            </div>
+          {item.html.trim() && (
+            <div className={proseClassName} dangerouslySetInnerHTML={{__html: item.html}} />
           )}
 
           {/* Back link */}

@@ -1,8 +1,8 @@
 import {render, screen} from '@testing-library/react';
-import {InfoCardInfo} from '../../../app/features/info/info-card';
+import {InfoCard} from '../../../app/features/info/info-card';
 
 // Mock the UI components
-jest.mock('../../../app/components/ui', () => ({
+vi.mock('../../../app/components/ui', () => ({
   AnimatedLink: ({href, children}: {href: string; children: React.ReactNode}) => (
     <a href={href}>{children}</a>
   ),
@@ -20,8 +20,6 @@ jest.mock('../../../app/components/ui', () => ({
   PhoneIcon: () => <svg data-testid='icon-phone' />,
 }));
 
-const InfoCard = InfoCardInfo.component;
-
 describe('InfoCard', () => {
   const defaultProps = {
     title: 'Test Title',
@@ -32,6 +30,12 @@ describe('InfoCard', () => {
     render(<InfoCard {...defaultProps} />);
     expect(screen.getByRole('heading', {name: 'Test Title'})).toBeInTheDocument();
     expect(screen.getByText('Test description text')).toBeInTheDocument();
+  });
+
+  it('renders html instead of description when provided', () => {
+    render(<InfoCard title='Titel' html='<p>Eerste</p><p>Tweede</p>' />);
+    expect(screen.getByText('Eerste')).toBeInTheDocument();
+    expect(screen.getByText('Tweede')).toBeInTheDocument();
   });
 
   it('renders link when provided', () => {
@@ -109,20 +113,5 @@ describe('InfoCard', () => {
       const decorativeElements = card?.querySelectorAll('.absolute');
       expect(decorativeElements?.length).toBe(0);
     });
-  });
-});
-
-describe('InfoCardInfo', () => {
-  it('exports correct component info', () => {
-    expect(InfoCardInfo.name).toBe('InfoCard');
-    expect(InfoCardInfo.component).toBeDefined();
-    expect(InfoCardInfo.inputs).toBeInstanceOf(Array);
-  });
-
-  it('has required inputs for title and description', () => {
-    const titleInput = InfoCardInfo.inputs.find(i => i.name === 'title');
-    const descriptionInput = InfoCardInfo.inputs.find(i => i.name === 'description');
-    expect(titleInput?.required).toBe(true);
-    expect(descriptionInput?.required).toBe(true);
   });
 });

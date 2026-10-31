@@ -9,14 +9,14 @@ import {
 } from '../../app/components/error-pages';
 
 // Mock window.history.back
-const mockHistoryBack = jest.fn();
+const mockHistoryBack = vi.fn();
 Object.defineProperty(window, 'history', {
   value: {back: mockHistoryBack},
 });
 
 describe('ErrorPage', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders error code and title', () => {
@@ -77,7 +77,7 @@ describe('ErrorPage', () => {
   });
 
   it('shows retry button when showRetryButton and onRetry are provided', () => {
-    const mockRetry = jest.fn();
+    const mockRetry = vi.fn();
     render(<ErrorPage
       code='500'
       title='Test'
@@ -151,7 +151,7 @@ describe('ServerErrorPage', () => {
   });
 
   it('shows retry button when reset is provided', () => {
-    const mockReset = jest.fn();
+    const mockReset = vi.fn();
     render(<ServerErrorPage reset={mockReset} />);
 
     const retryButton = screen.getByRole('button', {name: /probeer opnieuw/i});
@@ -191,7 +191,7 @@ describe('AdminErrorPage', () => {
   });
 
   it('shows retry button when showRetry and onRetry are provided', () => {
-    const mockRetry = jest.fn();
+    const mockRetry = vi.fn();
     render(<AdminErrorPage
       code='500'
       title='Test'

@@ -42,11 +42,21 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-# Sentry Config File
-.env.sentry-build-plugin
 
 # IntelliJ
 .idea/
 *.iml
 *.iws
 *.ipr
+
+# Builder.io-export: bevat persoonsgegevens, alleen lokaal (revival stap 1)
+/content-export/
+
+# Subagent-werkruimte (logboek, briefs)
+/.superpowers/
+
+# Gekopieerde content-afbeeldingen (scripts/copy-content-assets.mjs)
+/public/content/
+
+# local SQLite database
+/data/

@@ -1,15 +1,15 @@
 import {verifyRecaptcha} from '../../app/lib/recaptcha';
 
 // Mock global fetch
-const mockFetch = jest.fn();
+const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
 describe('verifyRecaptcha', () => {
   const originalEnv = process.env;
 
   beforeEach(() => {
-    jest.resetModules();
-    jest.clearAllMocks();
+    vi.resetModules();
+    vi.clearAllMocks();
     process.env = {...originalEnv};
   });
 
@@ -19,7 +19,7 @@ describe('verifyRecaptcha', () => {
 
   it('returns success when RECAPTCHA_SECRET_KEY is not set (dev mode)', async () => {
     delete process.env.RECAPTCHA_SECRET_KEY;
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation();
 
     const result = await verifyRecaptcha('test-token');
 
@@ -111,7 +111,7 @@ describe('verifyRecaptcha', () => {
 
   it('returns failure when fetch throws error', async () => {
     process.env.RECAPTCHA_SECRET_KEY = 'test-secret';
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation();
     mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
     const result = await verifyRecaptcha('test-token');

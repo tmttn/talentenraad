@@ -1,16 +1,14 @@
 import {type NextRequest} from 'next/server';
-import {eq, lt} from 'drizzle-orm';
-import {
-  db, auditLogs, users, type AuditActionType,
-} from '@lib/db';
+import {lt} from 'drizzle-orm';
+import {db, auditLogs, type AuditActionType} from '@lib/db';
 
 type AuditContext = {
   request: NextRequest;
   session: {
     user: {
+      id?: string;
       email?: string | null;
       name?: string | null;
-      sub?: string;
     };
   } | null;
 };
@@ -74,14 +72,7 @@ export async function logAudit({
     const userEmail = context.session?.user?.email?.toLowerCase() ?? 'unknown';
     const userName = context.session?.user?.name ?? null;
 
-    // Look up user ID from database
-    let userId: string | null = null;
-    if (userEmail !== 'unknown') {
-      const user = await db.query.users.findFirst({
-        where: eq(users.email, userEmail),
-      });
-      userId = user?.id ?? null;
-    }
+    const userId = context.session?.user?.id ?? null;
 
     await db.insert(auditLogs).values({
       actionType,

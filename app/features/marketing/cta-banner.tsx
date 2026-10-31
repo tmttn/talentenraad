@@ -2,22 +2,16 @@
 
 import type {ReactNode} from 'react';
 import {Container} from '@components/ui/layout';
-import {useFlag} from '@lib/flags-client';
 
 type CtaBannerProperties = {
   variant?: 'default' | 'accent' | 'light';
   children?: ReactNode;
 };
 
-function CtaBanner({
+export function CtaBanner({
   variant = 'default',
   children,
 }: Readonly<CtaBannerProperties>) {
-  const isEnabled = useFlag('ctaBanner');
-
-  if (!isEnabled) {
-    return null;
-  }
 
   const variants = {
     default: 'bg-gray-900',
@@ -35,18 +29,3 @@ function CtaBanner({
     </section>
   );
 }
-
-export const CtaBannerInfo = {
-  name: 'CTABanner',
-  component: CtaBanner,
-  inputs: [
-    {
-      name: 'variant',
-      type: 'string',
-      enum: ['default', 'accent', 'light'],
-      defaultValue: 'default',
-      helperText: 'default: donkergrijs, accent: primaire kleur gradient, light: lichtgrijs',
-    },
-  ],
-  canHaveChildren: true,
-};

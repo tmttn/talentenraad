@@ -1,7 +1,5 @@
 import {render} from '@testing-library/react';
-import {CtaBannerInfo} from '../../../app/features/marketing/cta-banner';
-
-const CTABanner = CtaBannerInfo.component;
+import {CtaBanner as CTABanner} from '../../../app/features/marketing/cta-banner';
 
 describe('CTABanner', () => {
   it('renders section element', () => {
@@ -41,26 +39,6 @@ describe('CTABanner', () => {
     const {container} = render(<CTABanner />);
     const section = container.querySelector('section');
     expect(section).toHaveClass('py-12', 'md:py-16');
-  });
-});
-
-describe('CtaBannerInfo', () => {
-  it('exports correct component info', () => {
-    expect(CtaBannerInfo.name).toBe('CTABanner');
-    expect(CtaBannerInfo.component).toBeDefined();
-    expect(CtaBannerInfo.inputs).toBeInstanceOf(Array);
-  });
-
-  it('has variant input', () => {
-    const variantInput = CtaBannerInfo.inputs.find(i => i.name === 'variant');
-    expect(variantInput).toBeDefined();
-    expect(variantInput?.enum).toContain('default');
-    expect(variantInput?.enum).toContain('accent');
-    expect(variantInput?.enum).toContain('light');
-  });
-
-  it('has canHaveChildren enabled', () => {
-    expect(CtaBannerInfo.canHaveChildren).toBe(true);
   });
 });
 

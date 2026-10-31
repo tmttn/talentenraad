@@ -1,0 +1,29 @@
+naam: Talentenraad
+lijst:
+  - a
+  - b
+navigatie:
+  - {tekst: Home, link: /}
+footer:
+  tagline: Tag
+  adres: {straat: Straat 1, gemeente: Beverst}
+  email: a@b.be
+  groepen:
+    - titel: G
+      links:
+        - {tekst: L, link: /l}
+  sociaal:
+    - {platform: facebook, link: 'https://fb.com'}
+  copyright: c
+cta:
+  titel: T
+  tekst: X
+  knop: {tekst: K, link: /k}
+decoraties:
+  enabled: false
+  season: none
+  decorations: {christmasLights: false, snowfall: false, icicles: false, gingerbreadMan: false, christmasBalls: false}
+aankondiging:
+  actief: false
+  tekst: ''
+  type: info

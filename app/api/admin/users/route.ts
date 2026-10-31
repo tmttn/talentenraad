@@ -1,26 +1,15 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, isAdminEmail} from '@lib/auth0';
+import {getSession} from '@lib/auth/session';
 import {db, users} from '@lib/db';
 import {eq} from 'drizzle-orm';
-import {sendInvitationEmail} from '@lib/email/resend';
+import {sendInvitationEmail} from '@lib/email/messages';
 import {logAudit, createAuditContext} from '@lib/audit';
 
 export async function GET() {
-  const session = await auth0.getSession();
+  const session = await getSession();
 
-  if (!session?.user) {
+  if (!session) {
     return NextResponse.json({error: 'Unauthorized'}, {status: 401});
-  }
-
-  if (!isAdminEmail(session.user.email)) {
-    // Also check if user is admin in database
-    const currentUser = await db.query.users.findFirst({
-      where: eq(users.email, session.user.email?.toLowerCase() ?? ''),
-    });
-
-    if (!currentUser?.isAdmin) {
-      return NextResponse.json({error: 'Forbidden'}, {status: 403});
-    }
   }
 
   try {
@@ -36,20 +25,10 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await auth0.getSession();
+  const session = await getSession();
 
-  if (!session?.user) {
+  if (!session) {
     return NextResponse.json({error: 'Unauthorized'}, {status: 401});
-  }
-
-  if (!isAdminEmail(session.user.email)) {
-    const currentUser = await db.query.users.findFirst({
-      where: eq(users.email, session.user.email?.toLowerCase() ?? ''),
-    });
-
-    if (!currentUser?.isAdmin) {
-      return NextResponse.json({error: 'Forbidden'}, {status: 403});
-    }
   }
 
   try {
@@ -101,14 +80,14 @@ export async function POST(request: NextRequest) {
       await sendInvitationEmail({
         email: newUser.email,
         name: newUser.name ?? undefined,
-        inviterName: session.user.name ?? session.user.email ?? undefined,
+        inviterName: session.user.name ?? session.user.email,
       });
     } catch (error) {
       console.error('Failed to send invitation email:', error);
       return NextResponse.json({
         success: true,
         user: newUser,
-        warning: 'Gebruiker aangemaakt maar uitnodigingsmail kon niet worden verstuurd. Controleer de Resend configuratie.',
+        warning: 'Gebruiker aangemaakt maar uitnodigingsmail kon niet worden verstuurd. Controleer de SMTP-configuratie.',
       });
     }
 

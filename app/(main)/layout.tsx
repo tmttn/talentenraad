@@ -10,27 +10,21 @@ import {
 } from '@components/seasonal-decorations-context';
 import {Snowfall, SeasonalStyles} from '@components/seasonal-decorations';
 import {ConditionalFeedbackButton} from '@components/feedback';
-import {EditModeButton} from '@components/builder';
-import {AdminEditModeWrapper} from '@components/builder/admin-edit-mode-wrapper';
-import {seasonalDecorations, cookieBanner, getAllFlags} from '@lib/flags';
-import {FlagsProvider} from '@lib/flags-client';
+import {content} from '@lib/content';
 
-// Dynamically import the server component to prevent build-time errors
+// Reads the site config; falls back to no decorations when content is unavailable (e.g. at build time)
 async function SafeSeasonalDecorations({children}: {children: React.ReactNode}) {
-  // Check feature flag first
-  const isEnabled = await seasonalDecorations();
-  if (!isEnabled) {
-    return <>{children}</>;
-  }
-
   let config: SeasonalDecorationsConfig = defaultSeasonalConfig;
 
   try {
-    const {getSeasonalDecorationsConfig} = await import('@components/seasonal-decorations-server');
-    const fetchedConfig: SeasonalDecorationsConfig = await getSeasonalDecorationsConfig();
-    config = fetchedConfig;
+    const site = await content.getSite();
+    config = site.decoraties;
   } catch {
-    // Silently fall back to default config if database is unavailable
+    // Silently fall back to default config (disabled) if content is unavailable
+  }
+
+  if (!config.enabled) {
+    return <>{children}</>;
   }
 
   return (
@@ -42,54 +36,30 @@ async function SafeSeasonalDecorations({children}: {children: React.ReactNode}) 
   );
 }
 
-// Conditionally render cookie banner based on feature flag
-async function ConditionalCookieBanner() {
-  const isEnabled = await cookieBanner();
-  if (!isEnabled) {
-    return null;
-  }
-
-  return <CookieBanner />;
-}
-
 /**
  * Main Site Layout
  *
  * Layout wrapper that provides:
- * - Cookie consent management (controlled by cookieBanner flag)
- * - Seasonal decorations context (controlled by seasonalDecorations flag)
+ * - Cookie consent management
+ * - Seasonal decorations context (controlled by decoraties.enabled in site.yaml)
  * - Site footer with loading skeleton
- *
- * Header and announcements are rendered via PageWithAnnouncements component in each page.
- * This allows page-specific announcements to be fetched from page content.
- *
- * Note: 404 detection is handled in proxy.ts before page rendering, so async
- * wrappers here don't interfere with 404 status codes.
  */
-export default async function MainSiteLayout({
+export default function MainSiteLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Get all flags for client-side components
-  const flags = await getAllFlags();
-
   return (
-    <FlagsProvider flags={flags}>
       <CookieConsentProvider>
-        <AdminEditModeWrapper>
-          <SafeSeasonalDecorations>
-            {children}
-            <Suspense fallback={<SiteFooterSkeleton />}>
-              <SiteFooterServer />
-            </Suspense>
-          </SafeSeasonalDecorations>
-          <ConditionalCookieBanner />
-          <ConditionalFeedbackButton />
-          <EditModeButton />
-          <Toaster position='bottom-left' richColors closeButton />
-        </AdminEditModeWrapper>
+        <SafeSeasonalDecorations>
+          {children}
+          <Suspense fallback={<SiteFooterSkeleton />}>
+            <SiteFooterServer />
+          </Suspense>
+        </SafeSeasonalDecorations>
+        <CookieBanner />
+        <ConditionalFeedbackButton />
+        <Toaster position='bottom-left' richColors closeButton />
       </CookieConsentProvider>
-    </FlagsProvider>
   );
 }

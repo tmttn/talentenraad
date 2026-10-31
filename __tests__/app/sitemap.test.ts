@@ -3,12 +3,12 @@ import {siteConfig} from '../../app/lib/seo';
 
 describe('sitemap', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
-    jest.setSystemTime(new Date('2024-01-15'));
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2024-01-15'));
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('returns array with home page entry', () => {

@@ -1,247 +1,82 @@
-import {render, screen, waitFor} from '@testing-library/react';
+import {render, screen} from '@testing-library/react';
+import {ActivitiesList} from '../../../app/features/activities/activities-list';
+import {makeActiviteit} from '../../fixtures/content';
 
-// Mock fetch
-const mockFetch = jest.fn();
-global.fetch = mockFetch;
-
-// Mock AnimatedLink
-jest.mock('@components/ui', () => ({
-  AnimatedLink: ({href, children, size}: {href: string; children: React.ReactNode; size?: string}) => (
-    <a href={href} data-size={size}>{children}</a>
-  ),
-}));
-
-// Import component after mock setup
-import {ActivitiesListInfo} from '../../../app/features/activities/activities-list';
-
-const ActivitiesList = ActivitiesListInfo.component;
+const activiteiten = [
+  makeActiviteit({titel: 'Voorbij', slug: 'voorbij', datum: '2025-02-28'}),
+  makeActiviteit({
+    titel: 'Vandaag', slug: 'vandaag', datum: '2025-03-01', categorie: 'kalender',
+  }),
+  makeActiviteit({
+    titel: 'Later', slug: 'later', datum: '2025-04-20', categorie: 'activiteit',
+  }),
+  makeActiviteit({
+    titel: 'Eerst', slug: 'eerst', datum: '2025-03-05', samenvatting: 'x'.repeat(200),
+  }),
+];
 
 describe('ActivitiesList', () => {
-  // Use a fixed date string to avoid timezone issues
-  const futureDateString = '2025-06-15';
-  const futureDateDay = 15;
-
-  const futureDate2String = '2025-06-22';
-
-  const mockActivities = [
-    {
-      id: '1',
-      data: {
-        titel: 'Upcoming Activity',
-        datum: futureDateString,
-        tijd: '14:00',
-        locatie: 'Amsterdam',
-        samenvatting: 'A fun event',
-        categorie: 'kalender',
-        vastgepind: false,
-      },
-    },
-    {
-      id: '2',
-      data: {
-        titel: 'Pinned Activity',
-        datum: futureDate2String,
-        tijd: '10:00',
-        locatie: 'Rotterdam',
-        samenvatting: 'An important pinned event',
-        categorie: 'feest',
-        vastgepind: true,
-      },
-    },
-  ];
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({results: mockActivities}),
-    });
+  it('shows only upcoming activities (today counts), earliest first', () => {
+    render(<ActivitiesList today='2025-03-01' activiteiten={activiteiten} />);
+    const titles = screen.getAllByRole('heading', {level: 3}).map(heading => heading.textContent);
+    expect(titles).toEqual(['Vandaag', 'Eerst', 'Later']);
+    expect(screen.queryByText('Voorbij')).not.toBeInTheDocument();
   });
 
-  it('shows loading state initially', () => {
-    render(<ActivitiesList />);
-
-    expect(screen.getByRole('region', {name: /worden geladen/i})).toHaveAttribute('aria-busy', 'true');
+  it('respects the limit', () => {
+    render(<ActivitiesList today='2025-03-01' activiteiten={activiteiten} limit={2} />);
+    expect(screen.getAllByRole('listitem')).toHaveLength(2);
   });
 
-  it('renders activities list', async () => {
-    render(<ActivitiesList />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Upcoming Activity')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('Pinned Activity')).toBeInTheDocument();
+  it('links to the item slug', () => {
+    render(<ActivitiesList today='2025-03-01' activiteiten={activiteiten} />);
+    expect(screen.getByRole('link', {name: /Later/})).toHaveAttribute('href', '/activiteiten/later');
   });
 
-  it('sorts pinned activities first', async () => {
-    render(<ActivitiesList />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Pinned Activity')).toBeInTheDocument();
-    });
-
-    const activities = screen.getAllByRole('listitem');
-    // Pinned activity should appear first
-    expect(activities[0]).toHaveTextContent('Pinned Activity');
+  it('formats the date in Dutch', () => {
+    render(<ActivitiesList today='2025-03-01' activiteiten={[makeActiviteit({datum: '2025-03-05'})]} />);
+    expect(screen.getByText('5')).toBeInTheDocument();
+    expect(screen.getByText('MRT')).toBeInTheDocument();
   });
 
-  it('shows pinned icon for pinned activities', async () => {
-    render(<ActivitiesList />);
-
-    await waitFor(() => {
-      expect(screen.getByLabelText('Vastgepind')).toBeInTheDocument();
-    });
+  it('shows time and location, and hides location when asked', () => {
+    const {rerender} = render(<ActivitiesList today='2025-03-01' activiteiten={activiteiten} />);
+    expect(screen.getAllByText('14:00').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Voorbeeldzaal').length).toBeGreaterThan(0);
+    rerender(<ActivitiesList today='2025-03-01' activiteiten={activiteiten} showLocation={false} />);
+    expect(screen.queryByText('Voorbeeldzaal')).not.toBeInTheDocument();
   });
 
-  it('displays time when available', async () => {
-    render(<ActivitiesList />);
-
-    await waitFor(() => {
-      expect(screen.getByText('14:00')).toBeInTheDocument();
-    });
+  it('shows a truncated description only when asked', () => {
+    const {rerender} = render(<ActivitiesList today='2025-03-01' activiteiten={activiteiten} />);
+    expect(screen.queryByText(/^x+\.\.\.$/)).not.toBeInTheDocument();
+    rerender(<ActivitiesList today='2025-03-01' activiteiten={activiteiten} showDescription />);
+    expect(screen.getByText(`${'x'.repeat(150)}...`)).toBeInTheDocument();
   });
 
-  it('displays location when showLocation is true', async () => {
-    render(<ActivitiesList showLocation={true} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Amsterdam')).toBeInTheDocument();
-    });
+  it('shows a view-all link unless disabled', () => {
+    const {rerender} = render(<ActivitiesList today='2025-03-01' activiteiten={activiteiten} />);
+    expect(screen.getByRole('link', {name: /Bekijk alle activiteiten/})).toHaveAttribute('href', '/kalender');
+    rerender(<ActivitiesList today='2025-03-01' activiteiten={activiteiten} showViewAll={false} />);
+    expect(screen.queryByText(/Bekijk alle activiteiten/)).not.toBeInTheDocument();
   });
 
-  it('hides location when showLocation is false', async () => {
-    render(<ActivitiesList showLocation={false} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Upcoming Activity')).toBeInTheDocument();
-    });
-
-    expect(screen.queryByText('Amsterdam')).not.toBeInTheDocument();
+  it('renders category badges', () => {
+    render(<ActivitiesList today='2025-03-01' activiteiten={activiteiten} />);
+    expect(screen.getByText('kalender')).toHaveClass('bg-category-calendar-bg');
+    expect(screen.getByText('activiteit')).toHaveClass('bg-category-activity-bg');
+    expect(screen.getByText('feest')).toHaveClass('bg-category-event-bg');
   });
 
-  it('displays description when showDescription is true', async () => {
-    render(<ActivitiesList showDescription={true} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('A fun event')).toBeInTheDocument();
-    });
+  it('shows the empty state for an empty list', () => {
+    render(<ActivitiesList today='2025-03-01' activiteiten={[]} />);
+    expect(screen.getByText('Nog geen activiteiten gepland')).toBeInTheDocument();
+    expect(screen.queryByText(/Bekijk alle activiteiten/)).not.toBeInTheDocument();
   });
 
-  it('hides description when showDescription is false', async () => {
-    render(<ActivitiesList showDescription={false} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Upcoming Activity')).toBeInTheDocument();
-    });
-
-    expect(screen.queryByText('A fun event')).not.toBeInTheDocument();
+  it('shows the empty state when everything is in the past', () => {
+    render(<ActivitiesList today='2025-03-01' activiteiten={[activiteiten[0]]} />);
+    expect(screen.getByText('Nog geen activiteiten gepland')).toBeInTheDocument();
   });
 
-  it('shows view all link when showViewAll is true', async () => {
-    render(<ActivitiesList showViewAll={true} viewAllLink='/activiteiten' />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Upcoming Activity')).toBeInTheDocument();
-    });
-
-    expect(screen.getByRole('link', {name: /bekijk alle activiteiten/i})).toHaveAttribute('href', '/activiteiten');
-  });
-
-  it('hides view all link when showViewAll is false', async () => {
-    render(<ActivitiesList showViewAll={false} />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Upcoming Activity')).toBeInTheDocument();
-    });
-
-    expect(screen.queryByRole('link', {name: /bekijk alle activiteiten/i})).not.toBeInTheDocument();
-  });
-
-  it('displays category badges with correct styling', async () => {
-    render(<ActivitiesList />);
-
-    await waitFor(() => {
-      expect(screen.getByText('kalender')).toBeInTheDocument();
-    });
-
-    expect(screen.getByText('feest')).toBeInTheDocument();
-  });
-
-  it('renders activity links with correct slug', async () => {
-    render(<ActivitiesList />);
-
-    await waitFor(() => {
-      const link = screen.getByRole('link', {name: /Upcoming Activity/});
-      expect(link).toHaveAttribute('href', '/activiteiten/upcoming-activity');
-    });
-  });
-
-  it('shows empty state when no activities', async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({results: []}),
-    });
-
-    render(<ActivitiesList />);
-
-    await waitFor(() => {
-      expect(screen.getByText(/Nog geen activiteiten gepland/)).toBeInTheDocument();
-    });
-
-    expect(screen.getByRole('link', {name: /Heb je een idee/})).toBeInTheDocument();
-  });
-
-  it('handles fetch error gracefully', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-    mockFetch.mockRejectedValue(new Error('Network error'));
-
-    render(<ActivitiesList />);
-
-    await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalled();
-    });
-
-    consoleSpy.mockRestore();
-  });
-
-  it('filters by category when provided', async () => {
-    render(<ActivitiesList category='kalender' />);
-
-    await waitFor(() => {
-      expect(mockFetch).toHaveBeenCalled();
-    });
-
-    const url = mockFetch.mock.calls[0][0] as string;
-    // URL contains URL-encoded $ as %24
-    expect(url).toContain('query.data.categorie.%24eq=kalender');
-  });
-
-  it('formats date correctly in Dutch', async () => {
-    render(<ActivitiesList />);
-
-    await waitFor(() => {
-      expect(screen.getByText('Upcoming Activity')).toBeInTheDocument();
-    });
-
-    // Check that the date day is displayed
-    expect(screen.getByText(String(futureDateDay))).toBeInTheDocument();
-  });
-});
-
-describe('ActivitiesListInfo', () => {
-  it('has correct component name', () => {
-    expect(ActivitiesListInfo.name).toBe('ActivitiesList');
-  });
-
-  it('has correct inputs configuration', () => {
-    expect(ActivitiesListInfo.inputs).toEqual(expect.arrayContaining([
-      expect.objectContaining({name: 'limit', type: 'number'}),
-      expect.objectContaining({name: 'category', type: 'string'}),
-      expect.objectContaining({name: 'showViewAll', type: 'boolean'}),
-      expect.objectContaining({name: 'viewAllLink', type: 'string'}),
-      expect.objectContaining({name: 'showLocation', type: 'boolean'}),
-      expect.objectContaining({name: 'showDescription', type: 'boolean'}),
-    ]));
-  });
 });

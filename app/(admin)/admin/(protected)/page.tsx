@@ -1,36 +1,18 @@
 import type {Metadata} from 'next';
+import {requireAdminSession} from '@lib/auth/require-admin';
 import {Suspense} from 'react';
 import {count, isNull, desc} from 'drizzle-orm';
 import Link from 'next/link';
 import {
   Inbox,
   Mail,
-  Plus,
-  Calendar,
-  Newspaper,
-  Megaphone,
   ArrowRight,
-  Clock,
-  MapPin,
-  Star,
-  AlertCircle,
-  Info,
   FileText,
   Users,
   Zap,
-  Sparkles,
-  Search,
-  TrendingUp,
-  Heart,
 } from 'lucide-react';
 import {db, submissions} from '@lib/db';
-import {listContent} from '@lib/builder-admin';
-import {getTotalClapsStats} from '@lib/claps-admin';
-import type {Activity as ActivityType, NewsItem, Announcement} from '@lib/builder-types';
 import {DashboardSkeleton} from '@components/skeletons';
-import {
-  analyzeSeo, getSeoScoreColor, getSeoScoreBgColor, getSeoScoreLabel,
-} from '@lib/seo';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -50,14 +32,6 @@ function getGreeting(): string {
   return 'Goedenavond';
 }
 
-function formatDate(dateString: string): string {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('nl-BE', {
-    day: 'numeric',
-    month: 'short',
-  });
-}
-
 function formatDateTime(date: Date): string {
   return date.toLocaleDateString('nl-BE', {
     day: 'numeric',
@@ -66,65 +40,6 @@ function formatDateTime(date: Date): string {
     minute: '2-digit',
   });
 }
-
-function getAnnouncementTypeColor(type: string): string {
-  switch (type) {
-    case 'belangrijk': {
-      return 'bg-red-100 text-red-800 border-red-200';
-    }
-
-    case 'waarschuwing': {
-      return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    }
-
-    default: {
-      return 'bg-blue-100 text-blue-800 border-blue-200';
-    }
-  }
-}
-
-function AnnouncementIcon({type}: {readonly type: string}) {
-  switch (type) {
-    case 'belangrijk': {
-      return <AlertCircle className='w-4 h-4' />;
-    }
-
-    case 'waarschuwing': {
-      return <AlertCircle className='w-4 h-4' />;
-    }
-
-    default: {
-      return <Info className='w-4 h-4' />;
-    }
-  }
-}
-
-function getCategoryColor(category: string): string {
-  switch (category) {
-    case 'feest': {
-      return 'bg-pink-100 text-pink-800';
-    }
-
-    case 'activiteit': {
-      return 'bg-green-100 text-green-800';
-    }
-
-    case 'nieuws': {
-      return 'bg-blue-100 text-blue-800';
-    }
-
-    default: {
-      return 'bg-gray-100 text-gray-800';
-    }
-  }
-}
-
-type ClapsStats = {
-  totalClaps: number;
-  newsClaps: number;
-  activitiesClaps: number;
-  topContent: Array<{contentType: string; contentId: string; totalClaps: number}>;
-};
 
 type DashboardData = {
   totalCount: number;
@@ -140,10 +55,6 @@ type DashboardData = {
     readAt: Date | null;
     archivedAt: Date | null;
   }>;
-  activities: ActivityType[];
-  news: NewsItem[];
-  announcements: Announcement[];
-  clapsStats: ClapsStats;
 };
 
 async function fetchDashboardData(): Promise<DashboardData> {
@@ -151,9 +62,6 @@ async function fetchDashboardData(): Promise<DashboardData> {
   let totalCount = 0;
   let unreadCount = 0;
   let recentSubmissions: DashboardData['recentSubmissions'] = [];
-  let clapsStats: ClapsStats = {
-    totalClaps: 0, newsClaps: 0, activitiesClaps: 0, topContent: [],
-  };
 
   // Skip database calls during build phase
   if (!isBuildPhase) {
@@ -172,40 +80,15 @@ async function fetchDashboardData(): Promise<DashboardData> {
 
       totalCount = totalResult.count;
       unreadCount = unreadResult.count;
-
-      // Fetch claps stats
-      clapsStats = await getTotalClapsStats();
     } catch {
       // Silently fail - dashboard will show zeros for submissions
     }
-  }
-
-  // Fetch latest content from Builder.io
-  let activities: ActivityType[] = [];
-  let news: NewsItem[] = [];
-  let announcements: Announcement[] = [];
-
-  try {
-    const [activitiesData, newsData, announcementsData] = await Promise.all([
-      listContent('activiteit'),
-      listContent('nieuws'),
-      listContent('aankondiging'),
-    ]);
-    activities = activitiesData.slice(0, 5);
-    news = newsData.slice(0, 5);
-    announcements = announcementsData.filter(a => a.data.actief);
-  } catch {
-    // Silently handle Builder.io errors - dashboard will still work
   }
 
   return {
     totalCount,
     unreadCount,
     recentSubmissions,
-    activities,
-    news,
-    announcements,
-    clapsStats,
   };
 }
 
@@ -219,153 +102,7 @@ function DashboardHeader() {
         <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>{greeting}!</h1>
         <p className='text-gray-500 mt-1'>Hier is een overzicht van je website.</p>
       </div>
-
-      {/* Quick Create Buttons */}
-      <div className='bg-white p-4 sm:p-5 rounded-card shadow-base'>
-        <h2 className='text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2'>
-          <Plus className='w-4 h-4' />
-          Snel aanmaken
-        </h2>
-        <div className='flex flex-wrap gap-2'>
-          <Link
-            href='/admin/nieuws/new'
-            className='inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary-text font-medium rounded-button hover:bg-primary/20 transition-colors text-sm'
-          >
-            <Newspaper className='w-4 h-4' />
-            Nieuwsbericht
-          </Link>
-          <Link
-            href='/admin/activiteiten/new'
-            className='inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-700 font-medium rounded-button hover:bg-green-200 transition-colors text-sm'
-          >
-            <Calendar className='w-4 h-4' />
-            Activiteit
-          </Link>
-          <Link
-            href='/admin/aankondigingen'
-            className='inline-flex items-center gap-2 px-4 py-2 bg-yellow-100 text-yellow-700 font-medium rounded-button hover:bg-yellow-200 transition-colors text-sm'
-          >
-            <Megaphone className='w-4 h-4' />
-            Aankondiging
-          </Link>
-        </div>
-      </div>
     </>
-  );
-}
-
-function SeoQuickOverview({news, activities}: Readonly<{news: NewsItem[]; activities: ActivityType[]}>) {
-  // Calculate SEO stats
-  const allItems = [
-    ...news.map(item => ({title: item.data.titel, description: item.data.samenvatting, image: item.data.afbeelding})),
-    ...activities.map(item => ({title: item.data.titel, description: item.data.samenvatting, image: item.data.afbeelding})),
-  ];
-  const analyses = allItems.map(item => analyzeSeo(item));
-  const avgScore = analyses.length > 0
-    ? Math.round(analyses.reduce((sum, a) => sum + a.score, 0) / analyses.length)
-    : 0;
-  const perfectCount = analyses.filter(a => a.score === 100).length;
-  const needsAttention = analyses.filter(a => a.score < 80).length;
-
-  return (
-    <Link
-      href='/admin/seo'
-      className='block bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow overflow-hidden group'
-    >
-      <div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
-        <h2 className='font-semibold text-gray-800 flex items-center gap-2'>
-          <Search className='w-4 h-4 text-primary' />
-          SEO Overzicht
-        </h2>
-        <div className='text-primary-text text-sm hover:underline flex items-center gap-1'>
-          Alles bekijken
-          <ArrowRight className='w-3 h-3' />
-        </div>
-      </div>
-      <div className='p-4 sm:p-5'>
-        <div className='grid grid-cols-4 gap-4'>
-          {/* Score Ring */}
-          <div className='flex flex-col items-center'>
-            <div className={`w-16 h-16 rounded-full flex items-center justify-center ${getSeoScoreBgColor(avgScore)}`}>
-              <span className={`text-xl font-bold ${getSeoScoreColor(avgScore)}`}>{avgScore}</span>
-            </div>
-            <p className='text-xs text-gray-500 mt-2'>Gem. Score</p>
-          </div>
-
-          {/* Stats */}
-          <div className='flex flex-col items-center justify-center'>
-            <p className='text-2xl font-bold text-gray-800'>{allItems.length}</p>
-            <p className='text-xs text-gray-500'>Content items</p>
-          </div>
-
-          <div className='flex flex-col items-center justify-center'>
-            <p className='text-2xl font-bold text-green-600'>{perfectCount}</p>
-            <p className='text-xs text-gray-500'>Perfect</p>
-          </div>
-
-          <div className='flex flex-col items-center justify-center'>
-            <p className='text-2xl font-bold text-yellow-600'>{needsAttention}</p>
-            <p className='text-xs text-gray-500'>Aandacht nodig</p>
-          </div>
-        </div>
-
-        {needsAttention > 0 && (
-          <div className='mt-4 flex items-center gap-2 text-sm text-yellow-700 bg-yellow-50 px-3 py-2 rounded-button'>
-            <TrendingUp className='w-4 h-4' />
-            <span>{needsAttention} item{needsAttention === 1 ? '' : 's'} kunnen verbeterd worden</span>
-          </div>
-        )}
-      </div>
-    </Link>
-  );
-}
-
-function ClapsOverview({clapsStats}: Readonly<{clapsStats: ClapsStats}>) {
-  return (
-    <div className='bg-white rounded-card shadow-base overflow-hidden'>
-      <div className='p-4 sm:p-5 border-b border-gray-100'>
-        <h2 className='font-semibold text-gray-800 flex items-center gap-2'>
-          <Heart className='w-4 h-4 text-pink-500 fill-pink-500' />
-          Bezoekers Claps
-        </h2>
-      </div>
-      <div className='p-4 sm:p-5'>
-        <div className='grid grid-cols-3 gap-4'>
-          {/* Total Claps */}
-          <div className='flex flex-col items-center'>
-            <div className='w-16 h-16 rounded-full bg-pink-100 flex items-center justify-center'>
-              <span className='text-xl font-bold text-pink-600'>{clapsStats.totalClaps}</span>
-            </div>
-            <p className='text-xs text-gray-500 mt-2'>Totaal</p>
-          </div>
-
-          {/* News Claps */}
-          <div className='flex flex-col items-center justify-center'>
-            <div className='flex items-center gap-1 text-blue-600'>
-              <Newspaper className='w-4 h-4' />
-              <p className='text-2xl font-bold'>{clapsStats.newsClaps}</p>
-            </div>
-            <p className='text-xs text-gray-500'>Nieuws</p>
-          </div>
-
-          {/* Activities Claps */}
-          <div className='flex flex-col items-center justify-center'>
-            <div className='flex items-center gap-1 text-green-600'>
-              <Calendar className='w-4 h-4' />
-              <p className='text-2xl font-bold'>{clapsStats.activitiesClaps}</p>
-            </div>
-            <p className='text-xs text-gray-500'>Activiteiten</p>
-          </div>
-        </div>
-
-        {clapsStats.totalClaps > 0 && (
-          <div className='mt-4 flex items-center gap-2 text-sm text-pink-700 bg-pink-50 px-3 py-2 rounded-button'>
-            <Heart className='w-4 h-4 fill-pink-500' />
-            <span>Bezoekers waarderen je content!</span>
-          </div>
-        )}
-      </div>
-    </div>
   );
 }
 
@@ -404,18 +141,6 @@ function QuickLinks() {
           </div>
         </Link>
         <Link
-          href='/admin/decoraties'
-          className='flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors'
-        >
-          <div className='w-10 h-10 bg-pink-100 rounded-button flex items-center justify-center'>
-            <Sparkles className='w-5 h-5 text-pink-500' />
-          </div>
-          <div>
-            <p className='font-medium text-gray-800 text-sm'>Decoraties</p>
-            <p className='text-xs text-gray-500'>Seizoensversiering</p>
-          </div>
-        </Link>
-        <Link
           href='/'
           target='_blank'
           rel='noopener noreferrer'
@@ -439,29 +164,8 @@ async function DashboardContent() {
 
   return (
     <>
-      {/* Active Announcements Alert */}
-      {data.announcements.length > 0 && (
-        <div className='space-y-2'>
-          {data.announcements.map(announcement => (
-            <div
-              key={announcement.id}
-              className={`p-3 rounded-button border flex items-center gap-3 ${getAnnouncementTypeColor(announcement.data.type)}`}
-            >
-              <AnnouncementIcon type={announcement.data.type} />
-              <span className='flex-1 text-sm font-medium'>{announcement.data.tekst}</span>
-              <Link
-                href='/admin/aankondigingen'
-                className='text-xs underline hover:no-underline'
-              >
-                Beheren
-              </Link>
-            </div>
-          ))}
-        </div>
-      )}
-
       {/* Statistics Cards */}
-      <div className='grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4'>
+      <div className='grid grid-cols-2 gap-3 sm:gap-4'>
         <Link href='/admin/submissions' className='bg-white p-4 sm:p-5 rounded-card shadow-base hover:shadow-elevated transition-shadow group'>
           <div className='flex items-center justify-between mb-2'>
             <Inbox className='w-5 h-5 text-gray-500 group-hover:text-primary transition-colors' />
@@ -480,26 +184,6 @@ async function DashboardContent() {
           <p className='text-2xl sm:text-3xl font-bold text-primary'>{data.unreadCount}</p>
           <p className='text-xs text-gray-500 mt-1'>Ongelezen</p>
         </Link>
-        <Link href='/admin/nieuws' className='bg-white p-4 sm:p-5 rounded-card shadow-base hover:shadow-elevated transition-shadow group'>
-          <div className='flex items-center justify-between mb-2'>
-            <Newspaper className='w-5 h-5 text-gray-500 group-hover:text-blue-500 transition-colors' />
-          </div>
-          <p className='text-2xl sm:text-3xl font-bold text-gray-800'>{data.news.length > 0 ? data.news.length : '0'}</p>
-          <p className='text-xs text-gray-500 mt-1'>Nieuwsberichten</p>
-        </Link>
-        <Link href='/admin/activiteiten' className='bg-white p-4 sm:p-5 rounded-card shadow-base hover:shadow-elevated transition-shadow group'>
-          <div className='flex items-center justify-between mb-2'>
-            <Calendar className='w-5 h-5 text-gray-500 group-hover:text-green-500 transition-colors' />
-          </div>
-          <p className='text-2xl sm:text-3xl font-bold text-gray-800'>{data.activities.length > 0 ? data.activities.length : '0'}</p>
-          <p className='text-xs text-gray-500 mt-1'>Activiteiten</p>
-        </Link>
-      </div>
-
-      {/* SEO Quick Overview & Claps Overview */}
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6'>
-        <SeoQuickOverview news={data.news} activities={data.activities} />
-        <ClapsOverview clapsStats={data.clapsStats} />
       </div>
 
       {/* Content Lists Grid */}
@@ -554,128 +238,6 @@ async function DashboardContent() {
           </div>
         </div>
 
-        {/* Upcoming Activities */}
-        <div className='bg-white rounded-card shadow-base overflow-hidden'>
-          <div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
-            <h2 className='font-semibold text-gray-800 flex items-center gap-2'>
-              <Calendar className='w-4 h-4 text-green-500' />
-              Komende activiteiten
-            </h2>
-            <Link href='/admin/activiteiten' className='text-primary-text text-sm hover:underline flex items-center gap-1'>
-              Alles bekijken
-              <ArrowRight className='w-3 h-3' />
-            </Link>
-          </div>
-          <div className='divide-y divide-gray-50'>
-            {data.activities.length === 0
-              ? (
-                <div className='p-4 text-center text-gray-500 text-sm'>
-                  Geen activiteiten
-                </div>
-              )
-              : (
-                data.activities.map(activity => (
-                  <Link
-                    key={activity.id}
-                    href={`/admin/activiteiten/${activity.id}`}
-                    className='block p-3 sm:p-4 hover:bg-gray-50 transition-colors'
-                  >
-                    <div className='flex items-start justify-between gap-2'>
-                      <div className='flex-1 min-w-0'>
-                        <div className='flex items-center gap-2'>
-                          {activity.data.vastgepind && (
-                            <Star className='w-3 h-3 text-yellow-500 fill-yellow-500 flex-shrink-0' />
-                          )}
-                          <span className='font-medium text-gray-800 truncate text-sm'>
-                            {activity.data.titel}
-                          </span>
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${getCategoryColor(activity.data.categorie)}`}>
-                            {activity.data.categorie}
-                          </span>
-                        </div>
-                        <div className='flex items-center gap-3 mt-1 text-xs text-gray-500'>
-                          <span className='flex items-center gap-1'>
-                            <Clock className='w-3 h-3' />
-                            {formatDate(activity.data.datum)}
-                            {activity.data.tijd && ` om ${activity.data.tijd}`}
-                          </span>
-                          {activity.data.locatie && (
-                            <span className='flex items-center gap-1 truncate'>
-                              <MapPin className='w-3 h-3' />
-                              {activity.data.locatie}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      {activity.published !== 'published' && (
-                        <span className='text-xs px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full'>
-                          concept
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-                ))
-              )}
-          </div>
-        </div>
-
-        {/* Latest News */}
-        <div className='bg-white rounded-card shadow-base overflow-hidden'>
-          <div className='p-4 sm:p-5 border-b border-gray-100 flex items-center justify-between'>
-            <h2 className='font-semibold text-gray-800 flex items-center gap-2'>
-              <Newspaper className='w-4 h-4 text-blue-500' />
-              Laatste nieuws
-            </h2>
-            <Link href='/admin/nieuws' className='text-primary-text text-sm hover:underline flex items-center gap-1'>
-              Alles bekijken
-              <ArrowRight className='w-3 h-3' />
-            </Link>
-          </div>
-          <div className='divide-y divide-gray-50'>
-            {data.news.length === 0
-              ? (
-                <div className='p-4 text-center text-gray-500 text-sm'>
-                  Geen nieuwsberichten
-                </div>
-              )
-              : (
-                data.news.map(item => (
-                  <Link
-                    key={item.id}
-                    href={`/admin/nieuws/${item.id}`}
-                    className='block p-3 sm:p-4 hover:bg-gray-50 transition-colors'
-                  >
-                    <div className='flex items-start justify-between gap-2'>
-                      <div className='flex-1 min-w-0'>
-                        <div className='flex items-center gap-2'>
-                          {item.data.vastgepind && (
-                            <Star className='w-3 h-3 text-yellow-500 fill-yellow-500 flex-shrink-0' />
-                          )}
-                          <span className='font-medium text-gray-800 truncate text-sm'>
-                            {item.data.titel}
-                          </span>
-                        </div>
-                        <p className='text-xs text-gray-500 mt-0.5 truncate'>
-                          {item.data.samenvatting}
-                        </p>
-                      </div>
-                      <div className='flex items-center gap-2'>
-                        {item.published !== 'published' && (
-                          <span className='text-xs px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full'>
-                            concept
-                          </span>
-                        )}
-                        <span className='text-xs text-gray-500 whitespace-nowrap'>
-                          {formatDate(item.data.datum)}
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                ))
-              )}
-          </div>
-        </div>
-
         {/* Quick Links */}
         <QuickLinks />
       </div>
@@ -683,7 +245,9 @@ async function DashboardContent() {
   );
 }
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  await requireAdminSession();
+
   return (
     <div className='space-y-6 sm:space-y-8'>
       <DashboardHeader />

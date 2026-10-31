@@ -1,0 +1,9 @@
+{
+  "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  // Production dependencies must have zero moderate+ advisories; this step blocks CI.
+  // Dev-only advisories (currently minimatch 3.x in the ESLint toolchain, GHSA-g3hv-75wg-m249:
+  // no fix, the patched range >=11.0.1 breaks eslint and its plugins) are not part of the
+  // production image. They stay visible in the informational "Full audit" step of ci.yml.
+  "moderate": true,
+  "skip-dev": true
+}

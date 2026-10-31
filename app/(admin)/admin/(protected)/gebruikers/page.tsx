@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import {requireAdminSession} from '@lib/auth/require-admin';
 import {Suspense} from 'react';
 import {db} from '@lib/db';
 import {TableSkeleton} from '@components/skeletons';
@@ -23,7 +24,9 @@ async function UsersLoader() {
   return <UsersManager initialUsers={allUsers} protectedEmails={protectedEmails} />;
 }
 
-export default function UsersAdminPage() {
+export default async function UsersAdminPage() {
+  await requireAdminSession();
+
   return (
     <div>
       <h1 className='text-3xl font-bold text-gray-800 mb-8'>Gebruikers</h1>

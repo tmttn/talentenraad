@@ -1,5 +1,3 @@
-import {Analytics} from '@vercel/analytics/react';
-import {SpeedInsights} from '@vercel/speed-insights/next';
 import type {Metadata, Viewport} from 'next';
 import {siteConfig, generateOrganizationSchema, JsonLd} from '@lib/seo';
 import {SwRegister} from '@components/pwa/sw-register';
@@ -86,19 +84,10 @@ export default function RootLayout({
     <html lang='nl' className='overflow-auto'>
       <head>
         <JsonLd data={organizationSchema} />
-        {(process.env.NODE_ENV === 'development' || process.env.VERCEL_ENV === 'preview') && (
-          <script
-            data-project-id='cXhuDUHiYP0QQFVsZtiEudYQMB95amgg0c9tgiNr'
-            data-is-production-environment='false'
-            src='https://snippet.meticulous.ai/v1/meticulous.js'
-          />
-        )}
       </head>
       <body className='min-h-screen flex flex-col antialiased bg-white'>
         {children}
         <SwRegister />
-        <SpeedInsights />
-        <Analytics />
       </body>
     </html>
   );

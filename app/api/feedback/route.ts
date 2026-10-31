@@ -1,6 +1,9 @@
 import {type NextRequest, NextResponse} from 'next/server';
 import {db, feedback} from '@lib/db';
 import {verifyRecaptcha} from '@lib/recaptcha';
+import {createRateLimiter, formRateLimit, getClientIp, rateLimitMessage} from '@lib/rate-limit';
+
+const rateLimiter = createRateLimiter(formRateLimit);
 
 type FeedbackFormData = {
   rating: number;
@@ -9,6 +12,7 @@ type FeedbackFormData = {
   pageUrl?: string;
   pageTitle?: string;
   recaptchaToken?: string | null;
+  website?: string;
 };
 
 function isValidEmail(email: string): boolean {
@@ -25,9 +29,27 @@ function sanitizeInput(input: string): string {
     .replaceAll('\'', '&#x27;');
 }
 
+const successResponse = {
+  success: true,
+  message: 'Bedankt voor je feedback!',
+};
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json() as FeedbackFormData;
+
+    // Honeypot: real visitors never fill this hidden field. Pretend it worked, store nothing.
+    if (typeof body.website === 'string' && body.website.trim() !== '') {
+      console.warn('spam: honeypot');
+      return NextResponse.json(successResponse, {status: 200});
+    }
+
+    if (!rateLimiter.check(getClientIp(request.headers))) {
+      return NextResponse.json(
+        {success: false, message: rateLimitMessage},
+        {status: 429},
+      );
+    }
 
     // Validate required fields
     const errors: Record<string, string> = {};
@@ -96,10 +118,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(
-      {
-        success: true,
-        message: 'Bedankt voor je feedback!',
-      },
+      successResponse,
       {status: 200},
     );
   } catch (error) {

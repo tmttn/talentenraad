@@ -1,7 +1,7 @@
 'use client';
 
 import {
-  useState, useEffect, useCallback, useMemo,
+  useState, useEffect, useCallback,
 } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,17 +9,8 @@ import {usePathname} from 'next/navigation';
 import {
   Home,
   Mail,
-  Calendar,
-  Newspaper,
-  FileText,
-  Megaphone,
-  Sparkles,
   Users,
   History,
-  Bell,
-  Search,
-  Database,
-  Building2,
   ChevronLeft,
   ChevronRight,
   X,
@@ -27,8 +18,6 @@ import {
   LogOut,
   type LucideIcon,
 } from 'lucide-react';
-import {useFlags} from '@lib/flags-client';
-import type {FlagValues} from '@generated/hypertune/hypertune';
 
 type UnreadCounts = {
   unreadFeedback: number;
@@ -39,7 +28,6 @@ type AdminSidebarProperties = {
   user: {
     name?: string | null;
     email?: string | null;
-    image?: string | null;
   };
   unreadCounts?: UnreadCounts;
 };
@@ -50,56 +38,28 @@ type NavItem = {
   href: string;
   label: string;
   icon: LucideIcon;
-  flag?: keyof FlagValues;
 };
 
 const navItems: NavItem[] = [
   {href: '/admin', label: 'Dashboard', icon: Home},
   {
-    href: '/admin/submissions', label: 'Berichten', icon: Mail, flag: 'adminSubmissions',
+    href: '/admin/submissions', label: 'Berichten', icon: Mail,
   },
   {
-    href: '/admin/activiteiten', label: 'Activiteiten', icon: Calendar, flag: 'adminActivities',
+    href: '/admin/gebruikers', label: 'Gebruikers', icon: Users,
   },
   {
-    href: '/admin/nieuws', label: 'Nieuws', icon: Newspaper, flag: 'adminNews',
-  },
-  {href: '/admin/paginas', label: 'Pagina\'s', icon: FileText},
-  {
-    href: '/admin/aankondigingen', label: 'Aankondigingen', icon: Megaphone, flag: 'adminAnnouncements',
-  },
-  {
-    href: '/admin/notificaties', label: 'Notificaties', icon: Bell, flag: 'adminNotifications',
-  },
-  {href: '/admin/seo', label: 'SEO', icon: Search},
-  {href: '/admin/sponsors', label: 'Sponsors', icon: Building2},
-  {href: '/admin/data', label: 'Data', icon: Database},
-  {
-    href: '/admin/decoraties', label: 'Decoraties', icon: Sparkles, flag: 'adminDecorations',
-  },
-  {
-    href: '/admin/gebruikers', label: 'Gebruikers', icon: Users, flag: 'adminUsers',
-  },
-  {
-    href: '/admin/audit-logs', label: 'Audit Logs', icon: History, flag: 'adminAuditLogs',
+    href: '/admin/audit-logs', label: 'Audit Logs', icon: History,
   },
 ];
 
 export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperties>) {
   const pathname = usePathname();
-  const flags = useFlags();
 
   // Calculate total unread for the Berichten nav item
   const totalUnread = (unreadCounts?.unreadFeedback ?? 0) + (unreadCounts?.unreadSubmissions ?? 0);
   const [isOpen, setIsOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
-
-  // Filter nav items based on feature flags
-  const visibleNavItems = useMemo(
-    () =>
-      navItems.filter(item => !item.flag || flags[item.flag]),
-    [flags],
-  );
 
   // Load collapsed state from localStorage on mount
   useEffect(() => {
@@ -186,7 +146,7 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
       </div>
       <nav className={`flex-1 ${isCollapsed ? 'lg:p-2' : 'p-4'} overflow-y-auto`}>
         <ul className='space-y-1'>
-          {visibleNavItems.map(item => {
+          {navItems.map(item => {
             const Icon = item.icon;
             const showBadge = item.href === '/admin/submissions' && totalUnread > 0;
             return (
@@ -232,40 +192,29 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
       </div>
       <div className={`${isCollapsed ? 'lg:p-2' : 'p-4'} border-t border-gray-200`}>
         <div className={`flex flex-col items-center ${isCollapsed ? '' : 'mb-4'}`}>
-          {user.image
-            ? (
-              <Image
-                src={user.image}
-                alt=''
-                width={40}
-                height={40}
-                className='rounded-full flex-shrink-0'
-                title={isCollapsed ? (user.name ?? user.email ?? '') : undefined}
-              />
-            )
-            : (
-              <div
-                className='w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'
-                title={isCollapsed ? (user.name ?? user.email ?? '') : undefined}
-              >
-                <span className='text-primary font-medium'>
-                  {user.name?.charAt(0) ?? user.email?.charAt(0) ?? '?'}
-                </span>
-              </div>
-            )}
+          <div
+            className='w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'
+            title={isCollapsed ? (user.name ?? user.email ?? '') : undefined}
+          >
+            <span className='text-primary font-medium'>
+              {user.name?.charAt(0) ?? user.email?.charAt(0) ?? '?'}
+            </span>
+          </div>
           <div className={`text-sm text-center mt-2 ${isCollapsed ? 'lg:hidden' : ''}`}>
             <p className='font-medium text-gray-800 truncate'>{user.name ?? 'Gebruiker'}</p>
             <p className='text-gray-500 text-xs truncate'>{user.email}</p>
           </div>
         </div>
-        <a
-          href='/api/admin/auth/logout'
-          title={isCollapsed ? 'Uitloggen' : undefined}
-          className={`flex items-center justify-center gap-3 w-full ${isCollapsed ? 'lg:px-2' : 'px-4'} py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-button transition-colors`}
-        >
-          <LogOut className='w-5 h-5' strokeWidth={1.5} />
-          <span className={isCollapsed ? 'lg:hidden' : ''}>Uitloggen</span>
-        </a>
+        <form method='post' action='/api/auth/logout'>
+          <button
+            type='submit'
+            title={isCollapsed ? 'Uitloggen' : undefined}
+            className={`flex items-center justify-center gap-3 w-full ${isCollapsed ? 'lg:px-2' : 'px-4'} py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-button transition-colors`}
+          >
+            <LogOut className='w-5 h-5' strokeWidth={1.5} />
+            <span className={isCollapsed ? 'lg:hidden' : ''}>Uitloggen</span>
+          </button>
+        </form>
         {!isCollapsed && (
           <p className='text-xs text-gray-400 text-center mt-3 hidden lg:block'>v{process.env.NEXT_PUBLIC_APP_VERSION}</p>
         )}

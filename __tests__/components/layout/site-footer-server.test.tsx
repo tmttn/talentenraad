@@ -1,117 +1,64 @@
 import {render, screen} from '@testing-library/react';
+import {content} from '@lib/content';
+import {fixtureSite} from '../../fixtures/site';
 import {SiteFooterServer} from '../../../app/components/layout/site-footer-server';
 
-// Mock the Builder.io SDK
-jest.mock('@builder.io/sdk-react-nextjs', () => ({
-  fetchOneEntry: jest.fn(),
-}));
+vi.mock('@lib/content', () => ({content: {getSite: vi.fn()}}));
 
-// Mock cookie consent
-jest.mock('@components/cookie-consent', () => ({
+vi.mock('@components/cookie-consent', () => ({
   useCookieConsent: () => ({
-    openPreferences: jest.fn(),
+    openPreferences: vi.fn(),
   }),
 }));
 
-// Import the mocked module
-import {fetchOneEntry} from '@builder.io/sdk-react-nextjs';
-
-const mockFetchOneEntry = fetchOneEntry as jest.MockedFunction<typeof fetchOneEntry>;
-
 describe('SiteFooterServer', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.mocked(content.getSite).mockReturnValue(fixtureSite);
   });
 
-  it('renders SiteFooter with data from Builder.io', async () => {
-    mockFetchOneEntry.mockResolvedValueOnce({
-      data: {
-        logoUrl: '/custom-logo.png',
-        tagline: 'Custom Tagline',
-        email: 'custom@example.com',
-        address: {
-          street: 'Custom Street 123',
-          city: 'Custom City',
-        },
-        copyrightText: 'Custom Copyright',
-      },
-    } as never);
+  it('renders tagline, address and email', async () => {
+    render(await SiteFooterServer());
 
-    const Component = await SiteFooterServer();
-    render(Component);
-
-    expect(screen.getByText('Custom Tagline')).toBeInTheDocument();
-    expect(screen.getByRole('link', {name: 'custom@example.com'})).toBeInTheDocument();
-    expect(screen.getByText('Custom Street 123')).toBeInTheDocument();
-    expect(screen.getByText('Custom City')).toBeInTheDocument();
+    expect(screen.getByText(/Een fictieve ouderraad/)).toBeInTheDocument();
+    expect(screen.getByText('Voorbeeldstraat 1')).toBeInTheDocument();
+    expect(screen.getByText('1000 Voorbeeldstad')).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: 'info@voorbeeld.test'})).toHaveAttribute('href', 'mailto:info@voorbeeld.test');
   });
 
-  it('renders SiteFooter with defaults when Builder.io returns no data', async () => {
-    mockFetchOneEntry.mockResolvedValueOnce(null as never);
+  it('renders the groepen with their links', async () => {
+    render(await SiteFooterServer());
 
-    const Component = await SiteFooterServer();
-    render(Component);
-
-    // Should render with default navigation
-    expect(screen.getByRole('contentinfo')).toBeInTheDocument();
+    expect(screen.getByText('Eerste groep')).toBeInTheDocument();
+    expect(screen.getByText('Tweede groep')).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: 'Binnenlands'})).toHaveAttribute('href', '/binnen');
   });
 
-  it('renders SiteFooter with defaults when Builder.io throws error', async () => {
-    const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
-    mockFetchOneEntry.mockRejectedValueOnce(new Error('API Error'));
+  it('opens external links in a new window and keeps internal links in place', async () => {
+    render(await SiteFooterServer());
 
-    const Component = await SiteFooterServer();
-    render(Component);
+    const external = screen.getByRole('link', {name: 'Buitenlands (opent in nieuw venster)'});
+    expect(external).toHaveAttribute('href', 'https://voorbeeld.test/buiten');
+    expect(external).toHaveAttribute('target', '_blank');
+    expect(external).toHaveAttribute('rel', 'noopener noreferrer');
 
-    // Should still render with defaults
-    expect(screen.getByRole('contentinfo')).toBeInTheDocument();
-    expect(consoleSpy).toHaveBeenCalledWith('Error fetching site footer:', expect.any(Error));
-
-    consoleSpy.mockRestore();
+    const internal = screen.getByRole('link', {name: 'Binnenlands'});
+    expect(internal).not.toHaveAttribute('target');
+    expect(internal).not.toHaveAttribute('rel');
   });
 
-  it('fetches from site-footer model with correct API key', async () => {
-    mockFetchOneEntry.mockResolvedValueOnce(null as never);
+  it('renders social links in a new window', async () => {
+    render(await SiteFooterServer());
 
-    await SiteFooterServer();
-
-    expect(mockFetchOneEntry).toHaveBeenCalledWith({
-      model: 'site-footer',
-      apiKey: expect.any(String),
-    });
+    const facebook = screen.getByRole('link', {name: 'facebook (opent in nieuw venster)'});
+    expect(facebook).toHaveAttribute('href', 'https://facebook.test/raad');
+    expect(facebook).toHaveAttribute('target', '_blank');
+    expect(facebook).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(screen.getByRole('link', {name: 'instagram (opent in nieuw venster)'})).toBeInTheDocument();
   });
 
-  it('renders navigation groups from Builder.io', async () => {
-    mockFetchOneEntry.mockResolvedValueOnce({
-      data: {
-        navigationGroups: [
-          {
-            title: 'Test Group',
-            links: [{text: 'Test Link', url: '/test'}],
-          },
-        ],
-      },
-    } as never);
+  it('renders the copyright text', async () => {
+    render(await SiteFooterServer());
 
-    const Component = await SiteFooterServer();
-    render(Component);
-
-    expect(screen.getByText('Test Group')).toBeInTheDocument();
-    expect(screen.getByRole('link', {name: 'Test Link'})).toHaveAttribute('href', '/test');
-  });
-
-  it('renders social links from Builder.io', async () => {
-    mockFetchOneEntry.mockResolvedValueOnce({
-      data: {
-        socialLinks: [
-          {platform: 'facebook', url: 'https://facebook.com/test'},
-        ],
-      },
-    } as never);
-
-    const Component = await SiteFooterServer();
-    render(Component);
-
-    expect(screen.getByRole('link', {name: 'facebook (opent in nieuw venster)'})).toHaveAttribute('href', 'https://facebook.com/test');
+    expect(screen.getByText(/Voorbeeldraad\. Alle rechten voorbehouden\./)).toBeInTheDocument();
   });
 });

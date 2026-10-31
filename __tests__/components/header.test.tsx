@@ -1,13 +1,13 @@
 import {render, screen} from '@testing-library/react';
-import {SiteHeader, SiteHeaderInfo} from '../../app/components/layout/site-header';
+import {SiteHeader} from '../../app/components/layout/site-header';
 
 // Mock usePathname
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   usePathname: () => '/',
 }));
 
 // Mock icons
-jest.mock('@components/ui', () => ({
+vi.mock('@components/ui', () => ({
   MenuIcon: () => <span data-testid='menu-icon' />,
   XIcon: () => <span data-testid='x-icon' />,
 }));
@@ -64,10 +64,4 @@ describe('SiteHeader', () => {
     expect(skipLink).toHaveAttribute('href', '#main-content');
   });
 
-  it('has correct SiteHeaderInfo export properties', () => {
-    expect(SiteHeaderInfo.name).toBe('SiteHeader');
-    expect(SiteHeaderInfo.component).toBeDefined();
-    expect(SiteHeaderInfo.inputs).toBeDefined();
-    expect(SiteHeaderInfo.inputs.length).toBeGreaterThan(0);
-  });
 });

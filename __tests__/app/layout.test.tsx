@@ -1,15 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import RootLayout, {metadata} from '../../app/layout';
 
-// Mock Vercel analytics
-jest.mock('@vercel/analytics/react', () => ({
-  Analytics: () => null,
-}));
-
-jest.mock('@vercel/speed-insights/next', () => ({
-  SpeedInsights: () => null,
-}));
-
 describe('RootLayout', () => {
   it('renders children content', () => {
     render(<RootLayout>

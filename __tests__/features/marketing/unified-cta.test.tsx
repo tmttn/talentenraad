@@ -1,7 +1,5 @@
 import {render} from '@testing-library/react';
-import {UnifiedCtaInfo} from '../../../app/features/marketing/unified-cta';
-
-const UnifiedCTA = UnifiedCtaInfo.component;
+import {UnifiedCta as UnifiedCTA} from '../../../app/features/marketing/unified-cta';
 
 describe('UnifiedCTA', () => {
   describe('variant styles', () => {
@@ -62,22 +60,5 @@ describe('UnifiedCTA', () => {
       const section = container.querySelector('section');
       expect(section).toBeInTheDocument();
     });
-  });
-});
-
-describe('UnifiedCtaInfo', () => {
-  it('exports correct component info', () => {
-    expect(UnifiedCtaInfo.name).toBe('UnifiedCTA');
-    expect(UnifiedCtaInfo.component).toBeDefined();
-    expect(UnifiedCtaInfo.inputs).toBeInstanceOf(Array);
-  });
-
-  it('has canHaveChildren enabled', () => {
-    expect(UnifiedCtaInfo.canHaveChildren).toBe(true);
-  });
-
-  it('only has variant input', () => {
-    expect(UnifiedCtaInfo.inputs).toHaveLength(1);
-    expect(UnifiedCtaInfo.inputs[0].name).toBe('variant');
   });
 });

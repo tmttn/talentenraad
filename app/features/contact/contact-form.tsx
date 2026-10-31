@@ -11,7 +11,7 @@ import {
   CheckCircle, XCircle, Send, Loader2,
 } from 'lucide-react';
 import {Container, Grid} from '@components/ui/layout';
-import {useFlags} from '@lib/flags-client';
+import {HoneypotField} from '@components/ui/honeypot-field';
 import {useRecaptcha} from './use-recaptcha';
 
 /**
@@ -307,6 +307,7 @@ function ContactFormInner({
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [statusMessage, setStatusMessage] = useState('');
+  const [website, setWebsite] = useState('');
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -357,7 +358,7 @@ function ContactFormInner({
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({...formData, recaptchaToken}),
+        body: JSON.stringify({...formData, website, recaptchaToken}),
       });
 
       const data = await response.json() as ApiResponse;
@@ -365,6 +366,8 @@ function ContactFormInner({
       if (!response.ok) {
         if (data.errors) {
           setErrors(data.errors);
+        } else if (response.status === 429 && data.message) {
+          setErrors({general: data.message});
         }
 
         setStatusMessage(data.message ?? 'Er is een fout opgetreden.');
@@ -394,6 +397,7 @@ function ContactFormInner({
       {errors.general && <GeneralErrorMessage message={errors.general} />}
 
       <form onSubmit={handleSubmit} className='bg-white p-component-lg rounded-modal shadow-elevated' noValidate>
+        <HoneypotField id='contact-website' value={website} onChange={setWebsite} />
         <Grid cols={1} colsMd={2} gap='md'>
           <TextField
             id='name'
@@ -493,18 +497,10 @@ function ContactFormWithParameters(props: Readonly<ContactFormProperties>) {
   return <ContactFormInner {...props} defaultSubject={defaultSubject} />;
 }
 
-// Main exported component with Suspense boundary and feature flag check
-function ContactForm(props: Readonly<ContactFormProperties>) {
-  const flags = useFlags();
-
-  // Check if contact form is enabled
-  if (!flags.contactForm) {
-    return null;
-  }
-
-  // Override props with flag values (flags take precedence over props)
-  const showPhone = props.showPhone && flags.contactFormPhone;
-  const showSubject = props.showSubject !== false && flags.contactFormSubject;
+// Main exported component with Suspense boundary
+export function ContactForm(props: Readonly<ContactFormProperties>) {
+  const showPhone = props.showPhone;
+  const showSubject = props.showSubject !== false;
 
   return (
     <Suspense fallback={<ContactFormSkeleton />}>
@@ -512,22 +508,3 @@ function ContactForm(props: Readonly<ContactFormProperties>) {
     </Suspense>
   );
 }
-
-export const ContactFormInfo = {
-  name: 'ContactForm',
-  component: ContactForm,
-  inputs: [
-    {
-      name: 'showPhone',
-      type: 'boolean',
-      defaultValue: false,
-      helperText: 'Toon telefoonnummer veld',
-    },
-    {
-      name: 'showSubject',
-      type: 'boolean',
-      defaultValue: true,
-      helperText: 'Toon onderwerp dropdown',
-    },
-  ],
-};

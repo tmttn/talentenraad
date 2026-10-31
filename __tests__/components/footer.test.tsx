@@ -1,8 +1,8 @@
 import {render, screen} from '@testing-library/react';
-import {SiteFooter, SiteFooterInfo} from '../../app/components/layout/site-footer';
+import {SiteFooter} from '../../app/components/layout/site-footer';
 
 // Mock icons
-jest.mock('@components/ui', () => ({
+vi.mock('@components/ui', () => ({
   FacebookIcon: () => <span data-testid='facebook-icon' />,
   InstagramIcon: () => <span data-testid='instagram-icon' />,
   LinkedinIcon: () => <span data-testid='linkedin-icon' />,
@@ -11,8 +11,8 @@ jest.mock('@components/ui', () => ({
 }));
 
 // Mock cookie consent
-const mockOpenPreferences = jest.fn();
-jest.mock('@components/cookie-consent', () => ({
+const mockOpenPreferences = vi.fn();
+vi.mock('@components/cookie-consent', () => ({
   useCookieConsent: () => ({
     openPreferences: mockOpenPreferences,
   }),
@@ -112,10 +112,4 @@ describe('SiteFooter', () => {
     expect(navElements.length).toBeGreaterThan(0);
   });
 
-  it('has correct SiteFooterInfo export properties', () => {
-    expect(SiteFooterInfo.name).toBe('SiteFooter');
-    expect(SiteFooterInfo.component).toBeDefined();
-    expect(SiteFooterInfo.inputs).toBeDefined();
-    expect(SiteFooterInfo.inputs.length).toBeGreaterThan(0);
-  });
 });

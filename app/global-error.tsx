@@ -1,6 +1,5 @@
 'use client';
 
-import * as Sentry from '@sentry/nextjs';
 import {useEffect} from 'react';
 import {Home, RefreshCw, ServerCrash} from 'lucide-react';
 
@@ -17,7 +16,7 @@ type GlobalErrorProperties = {
  */
 export default function GlobalError({error, reset}: Readonly<GlobalErrorProperties>) {
   useEffect(() => {
-    Sentry.captureException(error);
+    console.error(error);
   }, [error]);
 
   return (
@@ -46,6 +45,7 @@ export default function GlobalError({error, reset}: Readonly<GlobalErrorProperti
 
           {/* Action buttons */}
           <div className='flex flex-wrap justify-center gap-3'>
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- root layout is stuk; volle reload is de bedoeling */}
             <a
               href='/'
               className='inline-flex items-center gap-2 px-6 py-3 bg-pink-600 text-white font-semibold rounded-button hover:bg-pink-700 transition-colors'
@@ -67,6 +67,7 @@ export default function GlobalError({error, reset}: Readonly<GlobalErrorProperti
           {/* Help text */}
           <p className='mt-8 text-sm text-gray-500'>
             Blijft dit probleem? Neem dan{' '}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- root layout is stuk; volle reload is de bedoeling */}
             <a href='/contact' className='text-pink-600 hover:underline font-medium'>
               contact
             </a>{' '}

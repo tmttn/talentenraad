@@ -1,18 +1,20 @@
+import {sql} from 'drizzle-orm';
 import {
-  pgTable,
-  pgEnum,
+  sqliteTable,
   text,
-  timestamp,
-  uuid,
-  boolean,
-  jsonb,
-  index,
   integer,
-  uniqueIndex,
-} from 'drizzle-orm/pg-core';
+  index,
+} from 'drizzle-orm/sqlite-core';
 
-// Audit action type enum
-export const auditActionTypeEnum = pgEnum('audit_action_type', [
+// Ids are UUID strings generated in the app; timestamps are epoch milliseconds.
+const id = () => text('id').primaryKey().$defaultFn(() => crypto.randomUUID());
+const createdAt = () => integer('created_at', {mode: 'timestamp_ms'})
+  .notNull()
+  .default(sql`(unixepoch() * 1000)`)
+  // The SQL default only has second resolution; inserts through the app get milliseconds.
+  .$defaultFn(() => new Date());
+
+export const auditActionTypes = [
   'create',
   'read',
   'update',
@@ -23,54 +25,59 @@ export const auditActionTypeEnum = pgEnum('audit_action_type', [
   'unpublish',
   'settings_change',
   'bulk_action',
-]);
-
-// Site settings table for global configuration
-export const siteSettings = pgTable('site_settings', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  key: text('key').notNull().unique(),
-  value: jsonb('value').notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  updatedBy: uuid('updated_by').references(() => users.id),
-});
+] as const;
 
 // Users table for admin access
-export const users = pgTable('users', {
-  id: uuid('id').defaultRandom().primaryKey(),
+export const users = sqliteTable('users', {
+  id: id(),
   email: text('email').notNull().unique(),
   name: text('name'),
-  auth0Id: text('auth0_id').unique(),
-  isAdmin: boolean('is_admin').default(false).notNull(),
-  invitedAt: timestamp('invited_at'),
-  acceptedAt: timestamp('accepted_at'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  isAdmin: integer('is_admin', {mode: 'boolean'}).default(false).notNull(),
+  invitedAt: integer('invited_at', {mode: 'timestamp_ms'}),
+  acceptedAt: integer('accepted_at', {mode: 'timestamp_ms'}),
+  createdAt: createdAt(),
+  updatedAt: integer('updated_at', {mode: 'timestamp_ms'})
+    .notNull()
+    .default(sql`(unixepoch() * 1000)`)
+    .$defaultFn(() => new Date()),
 });
 
+// One-time login links (magic links). Only the sha256 hash of the token is stored.
+export const loginTokens = sqliteTable('login_tokens', {
+  id: id(),
+  email: text('email').notNull(),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: integer('expires_at', {mode: 'timestamp_ms'}).notNull(),
+  usedAt: integer('used_at', {mode: 'timestamp_ms'}),
+  createdAt: createdAt(),
+}, table => [
+  index('login_tokens_email_created_at_idx').on(table.email, table.createdAt),
+]);
+
 // Contact submissions table
-export const submissions = pgTable('submissions', {
-  id: uuid('id').defaultRandom().primaryKey(),
+export const submissions = sqliteTable('submissions', {
+  id: id(),
   name: text('name').notNull(),
   email: text('email').notNull(),
   phone: text('phone'),
   subject: text('subject').notNull(),
   message: text('message').notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  readAt: timestamp('read_at'),
-  archivedAt: timestamp('archived_at'),
+  createdAt: createdAt(),
+  readAt: integer('read_at', {mode: 'timestamp_ms'}),
+  archivedAt: integer('archived_at', {mode: 'timestamp_ms'}),
 });
 
 // Audit logs table for tracking all admin actions
-export const auditLogs = pgTable('audit_logs', {
-  id: uuid('id').defaultRandom().primaryKey(),
+export const auditLogs = sqliteTable('audit_logs', {
+  id: id(),
 
   // Action details
-  actionType: auditActionTypeEnum('action_type').notNull(),
+  actionType: text('action_type', {enum: auditActionTypes}).notNull(),
   resourceType: text('resource_type').notNull(), // 'user', 'content:nieuws', 'session', etc.
   resourceId: text('resource_id'), // ID of affected resource (null for login/logout)
 
   // User who performed action
-  userId: uuid('user_id').references(() => users.id, {onDelete: 'set null'}),
+  userId: text('user_id').references(() => users.id, {onDelete: 'set null'}),
   userEmail: text('user_email').notNull(), // Stored for resilience if user is deleted
   userName: text('user_name'),
 
@@ -81,14 +88,12 @@ export const auditLogs = pgTable('audit_logs', {
   requestMethod: text('request_method'),
 
   // Data changes (JSON diff)
-  dataBefore: jsonb('data_before'), // State before action
-  dataAfter: jsonb('data_after'), // State after action
-  metadata: jsonb('metadata'), // Additional context (e.g., bulk action IDs)
+  dataBefore: text('data_before', {mode: 'json'}), // State before action
+  dataAfter: text('data_after', {mode: 'json'}), // State after action
+  metadata: text('metadata', {mode: 'json'}), // Additional context (e.g., bulk action IDs)
 
-  // Timestamps
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+  createdAt: createdAt(),
 }, table => [
-  // Indexes for efficient querying
   index('audit_logs_created_at_idx').on(table.createdAt),
   index('audit_logs_user_email_idx').on(table.userEmail),
   index('audit_logs_action_type_idx').on(table.actionType),
@@ -96,128 +101,34 @@ export const auditLogs = pgTable('audit_logs', {
   index('audit_logs_resource_id_idx').on(table.resourceId),
 ]);
 
-export type User = typeof users.$inferSelect;
-export type NewUser = typeof users.$inferInsert;
-export type Submission = typeof submissions.$inferSelect;
-export type NewSubmission = typeof submissions.$inferInsert;
-export type SiteSetting = typeof siteSettings.$inferSelect;
-export type NewSiteSetting = typeof siteSettings.$inferInsert;
-export type AuditLog = typeof auditLogs.$inferSelect;
-export type NewAuditLog = typeof auditLogs.$inferInsert;
-export type AuditActionType = (typeof auditActionTypeEnum.enumValues)[number];
-
-// Push notification subscriptions table
-export const pushSubscriptions = pgTable('push_subscriptions', {
-  id: uuid('id').defaultRandom().primaryKey(),
-
-  // Subscription data (from PushSubscription.toJSON())
-  endpoint: text('endpoint').notNull().unique(),
-  p256dh: text('p256dh').notNull(), // Public key
-  auth: text('auth').notNull(), // Auth secret
-
-  // User association (optional - for logged-in users)
-  userId: uuid('user_id').references(() => users.id, {onDelete: 'cascade'}),
-
-  // Device info for management
-  userAgent: text('user_agent'),
-
-  // Subscription preferences
-  topics: text('topics').array(),
-
-  // Timestamps
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  lastUsedAt: timestamp('last_used_at'),
-}, table => [
-  index('push_subscriptions_user_id_idx').on(table.userId),
-  index('push_subscriptions_endpoint_idx').on(table.endpoint),
-]);
-
-// Notification history for tracking
-export const notificationHistory = pgTable('notification_history', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  title: text('title').notNull(),
-  body: text('body').notNull(),
-  url: text('url'),
-  topic: text('topic'),
-  sentBy: uuid('sent_by').references(() => users.id),
-  sentAt: timestamp('sent_at').defaultNow().notNull(),
-  recipientCount: integer('recipient_count').default(0),
-  successCount: integer('success_count').default(0),
-  failureCount: integer('failure_count').default(0),
-});
-
-export type PushSubscription = typeof pushSubscriptions.$inferSelect;
-export type NewPushSubscription = typeof pushSubscriptions.$inferInsert;
-export type NotificationHistoryEntry = typeof notificationHistory.$inferSelect;
-export type NewNotificationHistoryEntry = typeof notificationHistory.$inferInsert;
-
-// Content claps aggregate table
-export const contentClaps = pgTable('content_claps', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  contentType: text('content_type').notNull(), // 'nieuws' | 'activiteit'
-  contentId: text('content_id').notNull(),
-  totalClaps: integer('total_claps').default(0).notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-}, table => [
-  uniqueIndex('content_claps_unique_idx').on(table.contentType, table.contentId),
-]);
-
-// Per-session clap tracking (max 50 claps per visitor per content)
-export const clapSessions = pgTable('clap_sessions', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  sessionId: text('session_id').notNull(),
-  contentType: text('content_type').notNull(),
-  contentId: text('content_id').notNull(),
-  clapCount: integer('clap_count').default(0).notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-}, table => [
-  uniqueIndex('clap_sessions_unique_idx').on(table.sessionId, table.contentType, table.contentId),
-]);
-
 // Visitor feedback
-export const feedback = pgTable('feedback', {
-  id: uuid('id').defaultRandom().primaryKey(),
+export const feedback = sqliteTable('feedback', {
+  id: id(),
   rating: integer('rating').notNull(), // 1-5
   comment: text('comment'),
   email: text('email'),
   pageUrl: text('page_url'),
   pageTitle: text('page_title'),
   userAgent: text('user_agent'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  readAt: timestamp('read_at'),
-  archivedAt: timestamp('archived_at'),
+  createdAt: createdAt(),
+  readAt: integer('read_at', {mode: 'timestamp_ms'}),
+  archivedAt: integer('archived_at', {mode: 'timestamp_ms'}),
 }, table => [
   index('feedback_created_at_idx').on(table.createdAt),
   index('feedback_rating_idx').on(table.rating),
 ]);
 
-export type ContentClaps = typeof contentClaps.$inferSelect;
-export type NewContentClaps = typeof contentClaps.$inferInsert;
-export type ClapSession = typeof clapSessions.$inferSelect;
-export type NewClapSession = typeof clapSessions.$inferInsert;
+export type User = typeof users.$inferSelect;
+export type NewUser = typeof users.$inferInsert;
+export type LoginToken = typeof loginTokens.$inferSelect;
+export type NewLoginToken = typeof loginTokens.$inferInsert;
+export type Submission = typeof submissions.$inferSelect;
+export type NewSubmission = typeof submissions.$inferInsert;
+export type AuditLog = typeof auditLogs.$inferSelect;
+export type NewAuditLog = typeof auditLogs.$inferInsert;
+export type AuditActionType = (typeof auditActionTypes)[number];
 export type Feedback = typeof feedback.$inferSelect;
 export type NewFeedback = typeof feedback.$inferInsert;
-
-// Sponsor analytics - aggregate tracking
-export const sponsorAnalytics = pgTable('sponsor_analytics', {
-  id: uuid('id').defaultRandom().primaryKey(),
-  sponsorId: text('sponsor_id').notNull(),
-  sponsorName: text('sponsor_name').notNull(),
-  date: timestamp('date').notNull(), // Date of the analytics (truncated to day)
-  impressions: integer('impressions').default(0).notNull(),
-  clicks: integer('clicks').default(0).notNull(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-}, table => [
-  uniqueIndex('sponsor_analytics_unique_idx').on(table.sponsorId, table.date),
-  index('sponsor_analytics_sponsor_id_idx').on(table.sponsorId),
-  index('sponsor_analytics_date_idx').on(table.date),
-]);
-
-export type SponsorAnalytics = typeof sponsorAnalytics.$inferSelect;
-export type NewSponsorAnalytics = typeof sponsorAnalytics.$inferInsert;
 
 // Re-export shared types for convenience
 export type {SeasonalDecorationsConfig} from '../types';

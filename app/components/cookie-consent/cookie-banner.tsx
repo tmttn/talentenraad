@@ -5,14 +5,15 @@ import {Cookie} from 'lucide-react';
 import {useCookieConsent} from './cookie-consent-context';
 
 export function CookieBanner() {
-  const {showBanner, acceptAll, rejectAll} = useCookieConsent();
+  const recaptchaEnabled = Boolean(process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY);
+  const {showBanner, dismiss} = useCookieConsent();
 
   if (!showBanner) {
     return null;
   }
 
   return (
-    <div className='fixed inset-x-0 bottom-0 z-50 p-4' role='dialog' aria-modal='true' aria-labelledby='cookie-banner-title'>
+    <div className='fixed inset-x-0 bottom-0 z-50 p-4' role='dialog' aria-labelledby='cookie-banner-title'>
       {/* Banner - uses rounded-modal, shadow-overlay, p-component-md tokens */}
       <div className='mx-auto max-w-4xl bg-white rounded-modal shadow-overlay border border-gray-200 overflow-hidden'>
         <div className='p-component-md'>
@@ -25,33 +26,28 @@ export function CookieBanner() {
                 </div>
                 <div>
                   <h2 id='cookie-banner-title' className='font-bold text-gray-800'>
-                    Wij gebruiken cookies
+                    Cookies en opslag
                   </h2>
                   <p className='text-gray-600 text-sm mt-1'>
-                    We gebruiken cookies voor analytics om onze website te verbeteren.{' '}
-                    <Link href='/privacybeleid' className='text-primary hover:underline'>
-                      Meer informatie
+                    Deze website gebruikt alleen strikt noodzakelijke opslag, geen analyse of advertenties.
+                    {recaptchaEnabled && ' Op de formulieren gebruiken we Google reCAPTCHA tegen spam.'}
+                    {' '}
+                    <Link href='/cookiebeleid' className='text-primary hover:underline'>
+                      Lees ons cookiebeleid
                     </Link>
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Buttons */}
-            <div className='flex flex-col sm:flex-row gap-2 sm:gap-3'>
+            {/* Button */}
+            <div className='flex'>
               <button
                 type='button'
-                onClick={rejectAll}
-                className='py-2.5 px-5 bg-gray-100 text-gray-700 font-medium rounded-card hover:bg-gray-200 transition-colors duration-fast focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 text-sm'
-              >
-                Weigeren
-              </button>
-              <button
-                type='button'
-                onClick={acceptAll}
+                onClick={dismiss}
                 className='py-2.5 px-5 bg-primary text-white font-medium rounded-card hover:bg-primary-hover transition-colors duration-fast focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 text-sm'
               >
-                Accepteren
+                Begrepen
               </button>
             </div>
           </div>
