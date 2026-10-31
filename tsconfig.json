@@ -55,8 +55,6 @@
   "exclude": [
     "node_modules",
     "__tests__",
-    "jest.config.ts",
-    "jest.setup.tsx",
     "public/sw.js"
   ]
 }

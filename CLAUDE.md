@@ -26,7 +26,6 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 - `copy-content-assets`: is-main via realpath; Node ≥ 20.12 vastleggen; `content/` in de standalone-trace opnemen (stap 5).
 - `TZ=Europe/Brussels` in de Dockerfile zetten (stap 5): komend/voorbij hangt af van de serverdatum.
 - Schema's: `z.strictObject`, `min(1)` op verplichte strings, link-validatie; de editor schrijft alleen `100644`-blobs (stap 6).
-- `tsconfig.json` `exclude` bevat nog `jest.*` (Tom).
 
 ## Pre-commit Checklist (MANDATORY)
 

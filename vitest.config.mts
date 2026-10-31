@@ -21,9 +21,6 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./vitest.setup.tsx'],
     include: ['__tests__/**/*.test.{ts,tsx}'],
-    env: {
-      NEXT_PUBLIC_BUILDER_API_KEY: 'test-builder-api-key',
-    },
     coverage: {
       provider: 'istanbul',
       reporter: ['text', 'lcov', 'json-summary'],
