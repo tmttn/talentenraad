@@ -4,6 +4,7 @@ import {useState, useCallback} from 'react';
 import {MessageCircle, Send, X} from 'lucide-react';
 import {toast} from 'sonner';
 import {Modal} from '@components/ui/interactive/Modal';
+import {HoneypotField} from '@components/ui/honeypot-field';
 import {useRecaptcha} from '@features/contact/use-recaptcha';
 import {StarRating} from './star-rating';
 
@@ -30,6 +31,7 @@ export function FloatingFeedbackButton() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FeedbackFormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [website, setWebsite] = useState('');
 
   const {isReady: isRecaptchaReady, executeRecaptcha} = useRecaptcha();
 
@@ -72,6 +74,7 @@ export function FloatingFeedbackButton() {
           email: formData.email.trim() || undefined,
           pageUrl: window.location.pathname,
           pageTitle: document.title,
+          website,
           recaptchaToken,
         }),
       });
@@ -91,7 +94,7 @@ export function FloatingFeedbackButton() {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, executeRecaptcha]);
+  }, [formData, website, executeRecaptcha]);
 
   const handleClose = () => {
     if (!isSubmitting) {
@@ -129,6 +132,8 @@ export function FloatingFeedbackButton() {
         size='sm'
       >
         <div className='space-y-6'>
+          <HoneypotField id='feedback-website' value={website} onChange={setWebsite} />
+
           {/* Rating */}
           <div>
             <label className='block text-sm font-medium text-gray-700 mb-2'>

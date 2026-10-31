@@ -273,3 +273,45 @@ describe('ContactForm', () => {
     expect(nameInput).toHaveAttribute('aria-required', 'true');
   });
 });
+
+describe('ContactForm spam protection', () => {
+  const fillAndSubmit = () => {
+    fireEvent.change(screen.getByLabelText(/naam/i), {target: {value: 'Test User'}});
+    fireEvent.change(screen.getByLabelText(/e-mail/i), {target: {value: 'test@example.com'}});
+    fireEvent.change(screen.getByLabelText(/bericht/i), {target: {value: 'This is a test message that is long enough'}});
+    fireEvent.click(screen.getByRole('button', {name: /verstuur bericht/i}));
+  };
+
+  beforeEach(() => {
+    mockFetch.mockReset();
+  });
+
+  it('has a hidden, unfocusable honeypot field that is sent empty', async () => {
+    mockFetch.mockResolvedValue({ok: true, json: () => Promise.resolve({message: 'Success'})});
+    const {container} = render(<ContactForm showSubject={false} />);
+
+    const honeypot = container.querySelector<HTMLInputElement>('input[name="website"]')!;
+    expect(honeypot).toHaveAttribute('tabindex', '-1');
+    expect(honeypot).toHaveAttribute('autocomplete', 'off');
+    expect(honeypot.closest('[aria-hidden="true"]')).not.toBeNull();
+
+    fillAndSubmit();
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalled();
+    });
+    const sent = JSON.parse((mockFetch.mock.calls[0] as [string, {body: string}])[1].body) as {website: string};
+    expect(sent.website).toBe('');
+  });
+
+  it('shows the rate limit message', async () => {
+    const message = 'Te veel berichten in korte tijd. Probeer het over enkele minuten opnieuw.';
+    mockFetch.mockResolvedValue({ok: false, status: 429, json: () => Promise.resolve({success: false, message})});
+    render(<ContactForm showSubject={false} />);
+
+    fillAndSubmit();
+
+    await waitFor(() => {
+      expect(screen.getAllByText(message).length).toBeGreaterThan(0);
+    });
+  });
+});
