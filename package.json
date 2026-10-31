@@ -25,7 +25,6 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@serwist/next": "^9.3.0",
     "@tailwindcss/typography": "^0.5.19",
     "better-sqlite3": "^13.0.3",
     "drizzle-orm": "^0.45.1",
@@ -34,7 +33,7 @@
     "jose": "^6.2.14",
     "js-yaml": "^5.5.0",
     "lucide-react": "^1.0.0",
-    "next": "16.2.9",
+    "next": "16.4.3",
     "nodemailer": "^10.3.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -73,7 +72,7 @@
     "drizzle-kit": "^0.31.8",
     "esbuild-wasm": "^0.28.0",
     "eslint": "^9.39.5",
-    "eslint-config-next": "16.2.9",
+    "eslint-config-next": "16.4.3",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "postcss": "^8.5.12",
@@ -88,6 +87,14 @@
     "@eslint/plugin-kit": "^0.7.0",
     "lodash": "^4.17.23",
     "node-fetch": "^3.0.0",
-    "esbuild": "^0.28.0"
+    "esbuild": "^0.28.0",
+    "zod": "$zod",
+    "glob": "^14.0.3",
+    "@tailwindcss/typography": {
+      "postcss-selector-parser": "^6.1.5"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "^11.0.3"
+    }
   }
 }
