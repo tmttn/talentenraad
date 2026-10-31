@@ -29,6 +29,9 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 - Stap 5, compose/secrets: `AUTH_SECRET` (≥ 32 tekens), `SITE_URL`, `SMTP_HOST/PORT/USER/PASS/FROM`, `ADMIN_EMAILS` (zie `.env.example`).
 - Mail-linkscanners (bv. Outlook SafeLinks) kunnen het eenmalige login-token opgebruiken; overweeg later een bevestigingspagina vóór het verbruiken.
 - Stap 5: tests voor login-tokens tegen een echte database (nu gemockt).
+- Stap 5: in `compose.yaml` de app-poort alleen op het interne Docker-netwerk; alles via Caddy (redirects in logout/verify volgen de Host-header). `TZ=Europe/Brussels`, nodemailer-timeouts, `AUTH_SECRET` controleren bij opstart.
+- Stap 5: cookie- en privacybeleid en de cookiebanner noemen nog Vercel Analytics/Speed Insights; aanpassen aan de nieuwe hosting.
+- `vitest.config.mts`: commentaar verwijst nog naar Auth0-sessies; `app/features/admin/**` kan terug in coverage (beschermd bestand, toestemming Tom).
 - Schema's: `z.strictObject`, `min(1)` op verplichte strings, link-validatie; de editor schrijft alleen `100644`-blobs (stap 6).
 
 ## Pre-commit Checklist (MANDATORY)
