@@ -5,7 +5,7 @@ beschrijving: >-
   technologieën gebruikt op onze website talentenraad.be, in overeenstemming met
   de…
 ---
-Laatst bijgewerkt: 17 december 2025
+Laatst bijgewerkt: 31 oktober 2026
 
 Dit cookiebeleid legt uit hoe de Talentenraad cookies en vergelijkbare technologieën gebruikt op onze website talentenraad.be, in overeenstemming met de Belgische wetgeving inzake elektronische communicatie en de richtlijnen van de Gegevensbeschermingsautoriteit (GBA).
 
@@ -27,38 +27,40 @@ Deze cookies zijn essentieel voor het functioneren van de website. Hiervoor is g
 
 | Naam | Doel | Bewaartermijn | Partij |
 | --- | --- | --- | --- |
-| cookie-consent | Onthoudt uw cookievoorkeuren | 1 jaar | Eerste partij |
-| cookie-preferences | Slaat gedetailleerde voorkeuren op | 1 jaar | Eerste partij |
+| cookie-consent | Onthoudt dat u de cookiebanner hebt beantwoord (opgeslagen in de lokale opslag van uw browser) | Tot u deze verwijdert | Eerste partij |
+| cookie-preferences | Slaat uw cookievoorkeuren op (lokale opslag van uw browser) | Tot u deze verwijdert | Eerste partij |
+| tr_session | Houdt een beheerder ingelogd. Wordt alleen geplaatst nadat een beheerder via een eenmalige e-maillink heeft ingelogd; uw gewone bezoek aan de website plaatst deze cookie niet. | 7 dagen | Eerste partij |
 
 **Rechtsgrond:** Legitiem belang - noodzakelijk voor de werking van de website (Art. 6(1)(f) AVG)
 
-### Analytische cookies
+### Beveiliging van het contactformulier (reCAPTCHA)
 
-Deze cookies helpen ons te begrijpen hoe bezoekers onze website gebruiken. **Deze cookies worden alleen geplaatst na uw uitdrukkelijke toestemming.**
+Wanneer reCAPTCHA is ingeschakeld, beschermt Google reCAPTCHA het contactformulier tegen spam en misbruik. Hiervoor laadt uw browser een script van Google en kunnen door Google cookies worden geplaatst. Wij gebruiken geen analytische of advertentiecookies. Is reCAPTCHA niet ingeschakeld, dan worden er geen Google-cookies geplaatst.
 
 | Naam | Doel | Bewaartermijn | Partij |
 | --- | --- | --- | --- |
-| Vercel Analytics | Verzamelt geanonimiseerde bezoekersstatistieken (paginaweergaven, verwijzingen). Geen persoonlijke identificatie. | Sessie | Derde partij (Vercel) |
-| Vercel Speed Insights | Meet laadtijden en prestaties van pagina's voor optimalisatie. | Sessie | Derde partij (Vercel) |
+| Google reCAPTCHA-cookies | Onderscheidt mensen van geautomatiseerde programma's bij het verzenden van het contactformulier. | Bepaald door Google | Derde partij (Google) |
 
-**Rechtsgrond:** Toestemming (Art. 6(1)(a) AVG)
+**Rechtsgrond:** Legitiem belang - bescherming van het formulier tegen misbruik (Art. 6(1)(f) AVG)
 
 ## 4. Derde partijen met toegang tot cookies
 
 De volgende derde partijen kunnen gegevens ontvangen via cookies op onze website:
 
--   **Vercel Inc.** (Verenigde Staten) - Onze hostingprovider. Vercel verwerkt analytische gegevens namens ons. Meer informatie: [Vercel Privacy Policy](https://vercel.com/legal/privacy-policy)
+-   **Google** - Aanbieder van reCAPTCHA, alleen wanneer deze beveiliging is ingeschakeld. Meer informatie: [Privacybeleid van Google](https://policies.google.com/privacy)
+
+Onze website wordt gehost bij Hetzner Online GmbH (Gunzenhausen, Duitsland), met servers in een datacenter in Duitsland. Hetzner plaatst geen cookies via onze website.
 
 ## 5. Uw toestemming beheren
 
-Bij uw eerste bezoek aan onze website verschijnt een cookiebanner waarin wij uw toestemming vragen voor niet-noodzakelijke cookies.
+Bij uw eerste bezoek aan onze website verschijnt een cookiebanner waarin wij uw keuze vragen. Wij plaatsen geen analytische of advertentiecookies; de noodzakelijke cookies hierboven zijn altijd actief.
 
 **U kunt uw keuze op elk moment wijzigen** door te klikken op de link "Cookie-instellingen" onderaan elke pagina van onze website.
 
 U heeft de volgende opties:
 
--   **Accepteren:** Alle cookies worden geplaatst
--   **Weigeren:** Alleen strikt noodzakelijke cookies worden geplaatst
+-   **Accepteren:** Uw keuze wordt onthouden; er worden geen extra cookies geplaatst
+-   **Weigeren:** Uw keuze wordt onthouden; alleen strikt noodzakelijke cookies worden gebruikt
 
 ## 6. Cookies verwijderen via uw browser
 

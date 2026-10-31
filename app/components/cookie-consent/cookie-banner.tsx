@@ -28,7 +28,7 @@ export function CookieBanner() {
                     Wij gebruiken cookies
                   </h2>
                   <p className='text-gray-600 text-sm mt-1'>
-                    We gebruiken cookies voor analytics om onze website te verbeteren.{' '}
+                    Deze website gebruikt alleen noodzakelijke cookies en opslag, geen analyse of advertenties.{' '}
                     <Link href='/privacybeleid' className='text-primary hover:underline'>
                       Meer informatie
                     </Link>

@@ -5,7 +5,7 @@ beschrijving: >-
   verzamelt, gebruikt en beschermt in overeenstemming met de Algemene
   Verordening…
 ---
-Laatst bijgewerkt: 17 december 2025
+Laatst bijgewerkt: 31 oktober 2026
 
 Dit privacybeleid beschrijft hoe de Talentenraad uw persoonsgegevens verzamelt, gebruikt en beschermt in overeenstemming met de Algemene Verordening Gegevensbescherming (AVG/GDPR) en de Belgische Wet van 30 juli 2018 betreffende de bescherming van natuurlijke personen met betrekking tot de verwerking van persoonsgegevens.
 
@@ -28,7 +28,7 @@ Wij verwerken de volgende categorieën persoonsgegevens voor de onderstaande doe
 
 ### Contactformulier
 
--   **Gegevens:** Naam, e-mailadres, bericht
+-   **Gegevens:** Naam, e-mailadres, bericht. Het bericht wordt opgeslagen in onze database en per e-mail naar het bestuur gestuurd.
 -   **Doel:** Beantwoorden van uw vragen
 -   **Rechtsgrond:** Toestemming (Art. 6(1)(a) AVG)
 
@@ -38,18 +38,29 @@ Wij verwerken de volgende categorieën persoonsgegevens voor de onderstaande doe
 -   **Doel:** Organisatie en uitvoering van schoolactiviteiten
 -   **Rechtsgrond:** Uitvoering van een overeenkomst (Art. 6(1)(b) AVG)
 
-### Website analytics
+### Beheerders van de website
 
--   **Gegevens:** Geanonimiseerde bezoekersstatistieken (geen IP-adressen of persoonlijke identificatiegegevens)
+-   **Gegevens:** E-mailadres en naam van bestuursleden die de website beheren, een tijdelijke inlogcode (alleen als hash bewaard, 15 minuten geldig), de sessiecookie `tr_session` en een auditlog van beheeracties (wie deed wat en wanneer)
+-   **Doel:** Beveiligd beheer van de website en controle op misbruik
+-   **Rechtsgrond:** Gerechtvaardigd belang (Art. 6(1)(f) AVG)
+
+### Feedback op de website
+
+-   **Gegevens:** De feedback die u achterlaat en de bijbehorende pagina
 -   **Doel:** Verbetering van de website
 -   **Rechtsgrond:** Toestemming (Art. 6(1)(a) AVG)
+
+### Bezoek aan de website
+
+Wij gebruiken geen analyse- of trackingdiensten. Onze server kan technische gegevens (zoals IP-adres en gevraagde pagina) kortstondig in logbestanden bewaren voor de werking en beveiliging van de website.
 
 ## 3. Met wie delen wij uw gegevens?
 
 Uw persoonsgegevens kunnen worden gedeeld met de volgende ontvangers:
 
--   **Vercel Inc.** (VS) - Hosting van onze website en analytische diensten. Vercel voldoet aan de EU-US Data Privacy Framework.
--   **Builder.io** (VS) - Content management systeem. Gegevens worden verwerkt conform hun privacybeleid.
+-   **Hetzner Online GmbH** (Gunzenhausen, Duitsland) - Hosting van onze website en database. De servers staan in een datacenter in Duitsland.
+-   **Gandi SAS** (Parijs, Frankrijk) - E-mailprovider; berichten van het contactformulier en inloglinks voor beheerders worden via hun mailbox verstuurd.
+-   **Google** (reCAPTCHA) - Alleen wanneer ingeschakeld: beveiliging van het contactformulier tegen spam. Google kan hierbij gegevens zoals uw IP-adres verwerken.
 -   **Bestuursleden Talentenraad** - Voor het beantwoorden van vragen en organiseren van activiteiten
 -   **School Het Talentenhuis** - Alleen indien noodzakelijk voor de organisatie van gezamenlijke activiteiten
 
@@ -57,10 +68,7 @@ Uw persoonsgegevens kunnen worden gedeeld met de volgende ontvangers:
 
 ## 4. Doorgifte buiten de EER
 
-Sommige van onze dienstverleners zijn gevestigd in de Verenigde Staten. Deze doorgiften vinden plaats op basis van:
-
--   Het EU-US Data Privacy Framework (voor gecertificeerde organisaties)
--   Standaardcontractbepalingen (SCCs) goedgekeurd door de Europese Commissie
+Onze hosting en e-mail bevinden zich in de Europese Unie (Duitsland en Frankrijk). Alleen wanneer reCAPTCHA is ingeschakeld, kan Google gegevens verwerken buiten de EER. Die doorgifte vindt plaats op basis van het EU-US Data Privacy Framework en/of standaardcontractbepalingen (SCCs) goedgekeurd door de Europese Commissie.
 
 ## 5. Hoe lang bewaren wij uw gegevens?
 
@@ -70,7 +78,8 @@ Wij bewaren uw persoonsgegevens niet langer dan noodzakelijk voor de doeleinden 
 | --- | --- |
 | Contactformulier berichten | 1 jaar na afhandeling vraag |
 | Activiteiteninschrijvingen | 1 jaar na datum activiteit |
-| Website analytics | 26 maanden (geanonimiseerd) |
+| Auditlogs van beheeracties | 90 dagen |
+| Inlogcodes voor beheerders | 15 minuten (alleen als hash bewaard) |
 
 ## 6. Uw rechten
 
@@ -103,7 +112,7 @@ Wij nemen passende technische en organisatorische maatregelen om uw persoonsgege
 
 -   SSL/TLS-versleuteling (HTTPS) voor alle dataoverdracht
 -   Beperkte toegang tot gegevens voor geautoriseerde bestuursleden
--   Veilige hosting bij Vercel met adequate beveiligingsmaatregelen
+-   Hosting bij Hetzner in Duitsland met adequate beveiligingsmaatregelen; inloggen voor beheerders gebeurt via een eenmalige e-maillink met korte geldigheid
 
 ## 10. Klachten
 

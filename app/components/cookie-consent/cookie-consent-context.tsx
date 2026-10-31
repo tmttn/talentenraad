@@ -6,8 +6,6 @@ import {
 
 export type CookiePreferences = {
   necessary: boolean; // Always true, cannot be disabled
-  analytics: boolean;
-  marketing: boolean;
 };
 
 export type ConsentStatus = 'pending' | 'accepted' | 'rejected' | 'customized';
@@ -28,8 +26,6 @@ const COOKIE_PREFERENCES_KEY = 'cookie-preferences';
 
 const defaultPreferences: CookiePreferences = {
   necessary: true,
-  analytics: false,
-  marketing: false,
 };
 
 const CookieConsentContext = createContext<CookieConsentContextType | null>(null);
@@ -47,8 +43,9 @@ export function CookieConsentProvider({children}: Readonly<{children: ReactNode}
 
     if (savedConsent && savedPreferences) {
       try {
-        const parsed = JSON.parse(savedPreferences) as CookiePreferences;
-        setPreferences({...parsed, necessary: true});
+        // Old versions also stored analytics/marketing flags; they are ignored.
+        JSON.parse(savedPreferences);
+        setPreferences(defaultPreferences);
         setConsentStatus(savedConsent as ConsentStatus);
         setShowBanner(false);
       } catch {
@@ -67,32 +64,21 @@ export function CookieConsentProvider({children}: Readonly<{children: ReactNode}
   }, []);
 
   const acceptAll = useCallback(() => {
-    const allAccepted: CookiePreferences = {
-      necessary: true,
-      analytics: true,
-      marketing: true,
-    };
-    setPreferences(allAccepted);
+    setPreferences(defaultPreferences);
     setConsentStatus('accepted');
     setShowBanner(false);
-    saveToStorage('accepted', allAccepted);
+    saveToStorage('accepted', defaultPreferences);
   }, [saveToStorage]);
 
   const rejectAll = useCallback(() => {
-    const onlyNecessary: CookiePreferences = {
-      necessary: true,
-      analytics: false,
-      marketing: false,
-    };
-    setPreferences(onlyNecessary);
+    setPreferences(defaultPreferences);
     setConsentStatus('rejected');
     setShowBanner(false);
-    saveToStorage('rejected', onlyNecessary);
+    saveToStorage('rejected', defaultPreferences);
   }, [saveToStorage]);
 
   const savePreferences = useCallback((newPreferences: Partial<CookiePreferences>) => {
     const updated: CookiePreferences = {
-      ...preferences,
       ...newPreferences,
       necessary: true, // Always true
     };
@@ -100,7 +86,7 @@ export function CookieConsentProvider({children}: Readonly<{children: ReactNode}
     setConsentStatus('customized');
     setShowBanner(false);
     saveToStorage('customized', updated);
-  }, [preferences, saveToStorage]);
+  }, [saveToStorage]);
 
   const openPreferences = useCallback(() => {
     setShowBanner(true);

@@ -15,22 +15,21 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 2. [x] Contentmodel in `content/` (Markdown + frontmatter) en migratiescript vanuit `content-export/`.
 3. [x] Pagina's lezen uit `content/` i.p.v. Builder.io; Builder-code en `scripts/*builder*` verwijderen.
 4. [x] Auth0 → magic links; Resend → SMTP; flags, Sentry, push, claps, Vercel-pakketten eruit.
-5. [ ] Postgres → SQLite; `Dockerfile` + `compose.yaml` (app + Caddy); deploy via GitHub Actions.
+5. [ ] Postgres → SQLite; `Dockerfile` + `compose.yaml` (app + Caddy); deploy via GitHub Actions. (code klaar; server en DNS volgen)
 6. [ ] Admin-editor die content als commits wegschrijft.
+
+### Hosting
+- Hetzner Cloud-server, uitrol in `/opt/talentenraad` (Docker Compose: app + Caddy). Secrets staan alleen in `/opt/talentenraad/.env` op de server.
+- Deploy via GitHub Actions bij een push naar `main` en elke nacht (herbouw). Zie `deploy/README.md`.
+- Database: SQLite in `/data/talentenraad.db` (container), lokaal `./data/`.
 
 ### Open punten
 - Alias-uniciteit controleren in `content.test.ts`.
 - Relatieve afbeeldingen in de Markdown-body worden nog niet afgehandeld.
 - `concept` op pagina's wordt genegeerd.
 - Gecachte arrays worden by reference teruggegeven (stap 3/6).
-- `copy-content-assets`: is-main via realpath; Node ≥ 20.12 vastleggen; `content/` in de standalone-trace opnemen (stap 5).
-- `TZ=Europe/Brussels` in de Dockerfile zetten (stap 5): komend/voorbij hangt af van de serverdatum.
-- Stap 5, database: oude tabellen laten vallen (`push_subscriptions`, `notification_history`, `content_claps`, `clap_sessions`, `sponsor_analytics`, `site_settings`, en `sponsors` als ongebruikt) en de kolom `users.auth0_id`.
-- Stap 5, compose/secrets: `AUTH_SECRET` (≥ 32 tekens), `SITE_URL`, `SMTP_HOST/PORT/USER/PASS/FROM`, `ADMIN_EMAILS` (zie `.env.example`).
+- `copy-content-assets`: is-main via realpath; Node ≥ 20.12 vastleggen; `content/` in de standalone-trace opnemen.
 - Mail-linkscanners (bv. Outlook SafeLinks) kunnen het eenmalige login-token opgebruiken; overweeg later een bevestigingspagina vóór het verbruiken.
-- Stap 5: tests voor login-tokens tegen een echte database (nu gemockt).
-- Stap 5: in `compose.yaml` de app-poort alleen op het interne Docker-netwerk; alles via Caddy (redirects in logout/verify volgen de Host-header). `TZ=Europe/Brussels`, nodemailer-timeouts, `AUTH_SECRET` controleren bij opstart.
-- Stap 5: cookie- en privacybeleid en de cookiebanner noemen nog Vercel Analytics/Speed Insights; aanpassen aan de nieuwe hosting.
 - `vitest.config.mts`: commentaar verwijst nog naar Auth0-sessies; `app/features/admin/**` kan terug in coverage (beschermd bestand, toestemming Tom).
 - Schema's: `z.strictObject`, `min(1)` op verplichte strings, link-validatie; de editor schrijft alleen `100644`-blobs (stap 6).
 

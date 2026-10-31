@@ -23,7 +23,7 @@ describe('CookieBanner', () => {
     render(<CookieBanner />);
 
     expect(screen.getByText('Wij gebruiken cookies')).toBeInTheDocument();
-    expect(screen.getByText(/We gebruiken cookies voor analytics/)).toBeInTheDocument();
+    expect(screen.getByText(/alleen noodzakelijke cookies en opslag/)).toBeInTheDocument();
   });
 
   it('renders accept and reject buttons', () => {

@@ -7,13 +7,17 @@
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) for the Talentenraad parent council of the Talentenhuis school in Beverst (Belgium).
 
-## Getting Started
+## Ontwikkelen
 
-Copy `.env.example` to `.env.local` and fill in the values, then install and start the dev server:
+Kopieer `.env.example` naar `.env.local` en vul de waarden in. Daarna:
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). De SQLite-database staat lokaal in `./data/` en wordt bij het opstarten automatisch gemigreerd.
+
+## Uitrollen
+
+De site draait als Docker-container achter Caddy op een Hetzner-server en wordt via GitHub Actions uitgerold. Zie [deploy/README.md](deploy/README.md).

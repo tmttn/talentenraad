@@ -30,12 +30,10 @@ function TestConsumer() {
     <div>
       <div data-testid='consent-status'>{consentStatus}</div>
       <div data-testid='show-banner'>{String(showBanner)}</div>
-      <div data-testid='analytics'>{String(preferences.analytics)}</div>
-      <div data-testid='marketing'>{String(preferences.marketing)}</div>
       <div data-testid='necessary'>{String(preferences.necessary)}</div>
       <button type='button' onClick={acceptAll}>Accept All</button>
       <button type='button' onClick={rejectAll}>Reject All</button>
-      <button type='button' onClick={() => savePreferences({analytics: true})}>Save Custom</button>
+      <button type='button' onClick={() => savePreferences({})}>Save Custom</button>
       <button type='button' onClick={openPreferences}>Open Preferences</button>
       <button type='button' onClick={closeBanner}>Close Banner</button>
     </div>
@@ -54,8 +52,6 @@ describe('CookieConsentContext', () => {
 
       expect(screen.getByTestId('consent-status')).toHaveTextContent('pending');
       expect(screen.getByTestId('show-banner')).toHaveTextContent('false');
-      expect(screen.getByTestId('analytics')).toHaveTextContent('false');
-      expect(screen.getByTestId('marketing')).toHaveTextContent('false');
       expect(screen.getByTestId('necessary')).toHaveTextContent('true');
     });
   });
@@ -74,8 +70,6 @@ describe('CookieConsentContext', () => {
       localStorageMock.setItem('cookie-consent', 'accepted');
       localStorageMock.setItem('cookie-preferences', JSON.stringify({
         necessary: true,
-        analytics: true,
-        marketing: false,
       }));
 
       render(<CookieConsentProvider>
@@ -84,8 +78,22 @@ describe('CookieConsentContext', () => {
 
       expect(screen.getByTestId('consent-status')).toHaveTextContent('accepted');
       expect(screen.getByTestId('show-banner')).toHaveTextContent('false');
-      expect(screen.getByTestId('analytics')).toHaveTextContent('true');
-      expect(screen.getByTestId('marketing')).toHaveTextContent('false');
+    });
+
+    it('ignores legacy analytics and marketing flags in stored preferences', () => {
+      localStorageMock.setItem('cookie-consent', 'accepted');
+      localStorageMock.setItem('cookie-preferences', JSON.stringify({
+        necessary: true,
+        analytics: true,
+        marketing: true,
+      }));
+
+      render(<CookieConsentProvider>
+        <TestConsumer />
+      </CookieConsentProvider>);
+
+      expect(screen.getByTestId('consent-status')).toHaveTextContent('accepted');
+      expect(screen.getByTestId('show-banner')).toHaveTextContent('false');
     });
 
     it('shows banner when localStorage has invalid JSON', () => {
@@ -99,7 +107,7 @@ describe('CookieConsentContext', () => {
       expect(screen.getByTestId('show-banner')).toHaveTextContent('true');
     });
 
-    it('acceptAll sets all preferences to true', async () => {
+    it('acceptAll keeps only necessary and marks accepted', async () => {
       render(<CookieConsentProvider>
         <TestConsumer />
       </CookieConsentProvider>);
@@ -109,15 +117,13 @@ describe('CookieConsentContext', () => {
       });
 
       expect(screen.getByTestId('consent-status')).toHaveTextContent('accepted');
-      expect(screen.getByTestId('analytics')).toHaveTextContent('true');
-      expect(screen.getByTestId('marketing')).toHaveTextContent('true');
       expect(screen.getByTestId('show-banner')).toHaveTextContent('false');
 
       // Check localStorage
       expect(localStorageMock.getItem('cookie-consent')).toBe('accepted');
     });
 
-    it('rejectAll sets analytics and marketing to false', async () => {
+    it('rejectAll keeps only necessary', async () => {
       render(<CookieConsentProvider>
         <TestConsumer />
       </CookieConsentProvider>);
@@ -127,8 +133,6 @@ describe('CookieConsentContext', () => {
       });
 
       expect(screen.getByTestId('consent-status')).toHaveTextContent('rejected');
-      expect(screen.getByTestId('analytics')).toHaveTextContent('false');
-      expect(screen.getByTestId('marketing')).toHaveTextContent('false');
       expect(screen.getByTestId('necessary')).toHaveTextContent('true');
       expect(screen.getByTestId('show-banner')).toHaveTextContent('false');
     });
@@ -143,7 +147,6 @@ describe('CookieConsentContext', () => {
       });
 
       expect(screen.getByTestId('consent-status')).toHaveTextContent('customized');
-      expect(screen.getByTestId('analytics')).toHaveTextContent('true');
       expect(screen.getByTestId('show-banner')).toHaveTextContent('false');
     });
 
@@ -151,8 +154,6 @@ describe('CookieConsentContext', () => {
       localStorageMock.setItem('cookie-consent', 'accepted');
       localStorageMock.setItem('cookie-preferences', JSON.stringify({
         necessary: true,
-        analytics: true,
-        marketing: true,
       }));
 
       render(<CookieConsentProvider>
@@ -172,8 +173,6 @@ describe('CookieConsentContext', () => {
       localStorageMock.setItem('cookie-consent', 'accepted');
       localStorageMock.setItem('cookie-preferences', JSON.stringify({
         necessary: true,
-        analytics: true,
-        marketing: true,
       }));
 
       render(<CookieConsentProvider>
@@ -215,8 +214,6 @@ describe('CookieConsentContext', () => {
       localStorageMock.setItem('cookie-consent', 'customized');
       localStorageMock.setItem('cookie-preferences', JSON.stringify({
         necessary: false, // Attempting to set to false
-        analytics: true,
-        marketing: false,
       }));
 
       render(<CookieConsentProvider>
