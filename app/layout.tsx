@@ -1,5 +1,3 @@
-import {Analytics} from '@vercel/analytics/react';
-import {SpeedInsights} from '@vercel/speed-insights/next';
 import type {Metadata, Viewport} from 'next';
 import {siteConfig, generateOrganizationSchema, JsonLd} from '@lib/seo';
 import {SwRegister} from '@components/pwa/sw-register';
@@ -90,8 +88,6 @@ export default function RootLayout({
       <body className='min-h-screen flex flex-col antialiased bg-white'>
         {children}
         <SwRegister />
-        <SpeedInsights />
-        <Analytics />
       </body>
     </html>
   );

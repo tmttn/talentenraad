@@ -1,16 +1,18 @@
 import {render, screen, fireEvent} from '@testing-library/react';
-import * as Sentry from '@sentry/nextjs';
 import GlobalError from '../../app/global-error';
-
-vi.mock('@sentry/nextjs', () => ({
-  captureException: vi.fn(),
-}));
 
 describe('GlobalError', () => {
   const mockReset = vi.fn();
 
+  let consoleError: ReturnType<typeof vi.spyOn>;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    consoleError = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => {
+    consoleError.mockRestore();
   });
 
   it('renders error message in Dutch', () => {
@@ -27,18 +29,18 @@ describe('GlobalError', () => {
     expect(screen.getByText('500')).toBeInTheDocument();
   });
 
-  it('captures exception with Sentry', () => {
+  it('logs the error to the console', () => {
     const error = new Error('Test error');
     render(<GlobalError error={error} reset={mockReset} />);
 
-    expect(Sentry.captureException).toHaveBeenCalledWith(error);
+    expect(consoleError).toHaveBeenCalledWith(error);
   });
 
-  it('captures exception with digest', () => {
+  it('logs an error that has a digest', () => {
     const error = Object.assign(new Error('Test error'), {digest: 'abc123'});
     render(<GlobalError error={error} reset={mockReset} />);
 
-    expect(Sentry.captureException).toHaveBeenCalledWith(error);
+    expect(consoleError).toHaveBeenCalledWith(error);
   });
 
   it('renders home link', () => {
