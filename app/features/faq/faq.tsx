@@ -1,10 +1,11 @@
 'use client';
 
 import {
-  useEffect, useState, useRef, useCallback, type KeyboardEvent,
+  useState, useRef, useCallback, type KeyboardEvent,
 } from 'react';
 import {ChevronDown, HelpCircle} from 'lucide-react';
 import {Container, Stack} from '@components/ui/layout';
+import type {FaqItem} from '@lib/content';
 import {useFlag} from '@lib/flags-client';
 
 const faqButtonClassName = [
@@ -74,14 +75,11 @@ const faqStyles = `
 	}
 `;
 
-type FaqItem = {
-  id: string;
-  data: {
-    vraag: string;
-    antwoord: string;
-    volgorde?: number;
-  };
+type FaqProperties = {
+  items: FaqItem[];
 };
+
+const stripTags = (html: string) => html.replaceAll(/<[^>]*>/g, ' ').replaceAll(/\s+/g, ' ').trim();
 
 // Generate JSON-LD structured data for FAQPage schema
 function generateFaqStructuredData(faqs: FaqItem[]) {
@@ -90,22 +88,18 @@ function generateFaqStructuredData(faqs: FaqItem[]) {
     '@type': 'FAQPage',
     mainEntity: faqs.map(faq => ({
       '@type': 'Question',
-      name: faq.data.vraag,
+      name: faq.vraag,
       acceptedAnswer: {
         '@type': 'Answer',
-        text: faq.data.antwoord,
+        text: stripTags(faq.html),
       },
     })),
   };
 }
 
-// Use environment variable for API key
-const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '3706422a8e454ceebe64acdc5a1475ba';
-
-function Faq() {
+function Faq({items}: Readonly<FaqProperties>) {
   const isEnabled = useFlag('faqSection');
-  const [faqs, setFaqs] = useState<FaqItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const faqs = items;
   const [openIndex, setOpenIndex] = useState<number | undefined>(undefined);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const buttonRefs = useRef<Array<HTMLButtonElement | undefined>>([]);
@@ -152,57 +146,13 @@ function Faq() {
     }
   }, [faqs.length]);
 
-  useEffect(() => {
-    async function fetchFaqs() {
-      try {
-        const url = new URL('https://cdn.builder.io/api/v3/content/faq');
-        url.searchParams.set('apiKey', builderApiKey);
-        url.searchParams.set('limit', '20');
-        url.searchParams.set('sort.data.volgorde', '1');
-        url.searchParams.set('cachebust', 'true');
-
-        const response = await fetch(url.toString(), {cache: 'no-store'});
-
-        // Gracefully handle 404 - content type may not exist yet
-        if (!response.ok) {
-          setLoading(false);
-          return;
-        }
-
-        const data = await response.json() as {results?: FaqItem[]};
-
-        if (data.results) {
-          setFaqs(data.results);
-        }
-      } catch {
-        // Silently fail - FAQs will show empty state
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    void fetchFaqs();
-  }, []);
-
   const toggleFaq = (index: number) => {
     const isOpening = openIndex !== index;
     setOpenIndex(isOpening ? index : undefined);
     // Announce state change to screen readers
-    const faqTitle = faqs[index]?.data.vraag ?? '';
+    const faqTitle = faqs[index]?.vraag ?? '';
     setStatusMessage(isOpening ? `${faqTitle} geopend` : `${faqTitle} gesloten`);
   };
-
-  if (loading) {
-    return (
-      <Container size='md' className='animate-pulse'>
-        <Stack gap='md'>
-          {[1, 2, 3].map(i => (
-            <div key={i} className='h-16 bg-gray-200 rounded' />
-          ))}
-        </Stack>
-      </Container>
-    );
-  }
 
   if (faqs.length === 0) {
     return (
@@ -240,7 +190,7 @@ function Faq() {
       <Stack gap='md' as='div' className='faq-accordion' role='group' aria-label='Veelgestelde vragen accordeon'>
         {faqs.map((faq, index) => (
           <div
-            key={faq.id}
+            key={faq.slug}
             className='faq-item bg-white rounded-card shadow-subtle overflow-hidden hover:shadow-base transition-shadow duration-base'
             style={{animationDelay: `${index * 0.08}s`}}
           >
@@ -260,7 +210,7 @@ function Faq() {
               aria-controls={`faq-answer-${index}`}
               id={`faq-button-${index}`}
             >
-              <span className='font-semibold text-gray-900'>{faq.data.vraag}</span>
+              <span className='font-semibold text-gray-900'>{faq.vraag}</span>
               <ChevronDown
                 className={`faq-chevron h-5 w-5 text-primary flex-shrink-0 ${openIndex === index ? 'open' : ''}`}
                 aria-hidden='true'
@@ -275,7 +225,7 @@ function Faq() {
             >
               <div className='faq-content-inner'>
                 <div className='faq-content-text px-6 pb-4 text-gray-700'>
-                  <p>{faq.data.antwoord}</p>
+                  <div dangerouslySetInnerHTML={{__html: faq.html}} />
                 </div>
               </div>
             </div>
@@ -285,6 +235,8 @@ function Faq() {
     </Container>
   );
 }
+
+export {Faq};
 
 export const FaqInfo = {
   name: 'FAQ',

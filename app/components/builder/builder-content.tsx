@@ -7,7 +7,6 @@ import {HeroInfo} from '@features/marketing/hero';
 import {EventCardInfo} from '@features/activities/event-card';
 import {ContactFormInfo} from '@features/contact/contact-form';
 import {NewsCardInfo} from '@features/news/news-card';
-import {CalendarSectionInfo} from '@features/activities/calendar-section';
 import {TeamMemberInfo} from '@features/team/team-member';
 import {CtaBannerInfo} from '@features/marketing/cta-banner';
 import {InfoCardInfo} from '@features/info/info-card';
@@ -25,7 +24,6 @@ import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
 import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
 import {CtaButtonInfo} from '@components/ui/cta-button';
 import {TypographyInfo} from '@components/ui/typography';
-import {PhotoGalleryInfo} from '@features/gallery/photo-gallery';
 import {SponsorBannerInfo} from '@features/sponsors/sponsor-banner';
 
 type BuilderContentProperties = {
@@ -47,7 +45,6 @@ export function BuilderContent({content, apiKey, model}: Readonly<BuilderContent
         EventCardInfo,
         ContactFormInfo,
         NewsCardInfo,
-        CalendarSectionInfo,
         TeamMemberInfo,
         CtaBannerInfo,
         InfoCardInfo,
@@ -66,7 +63,6 @@ export function BuilderContent({content, apiKey, model}: Readonly<BuilderContent
         UnifiedCtaInfo,
         CtaButtonInfo,
         TypographyInfo,
-        PhotoGalleryInfo,
         SponsorBannerInfo,
       ]}
     />

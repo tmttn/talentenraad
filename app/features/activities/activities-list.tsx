@@ -1,14 +1,14 @@
 'use client';
 
-import {useEffect, useState} from 'react';
 import {
   MapPin,
   Clock,
   Calendar,
-  Bookmark,
 } from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 import {Container, Stack} from '@components/ui/layout';
+import type {Activiteit} from '@lib/content';
+import {parseLocalDate, todayString} from '@lib/dates';
 import {useFlag} from '@lib/flags-client';
 
 const articleClassName = [
@@ -16,144 +16,36 @@ const articleClassName = [
   'focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2 group',
 ].join(' ');
 
-type Activity = {
-  id: string;
-  data: {
-    titel: string;
-    datum: string;
-    tijd?: string;
-    locatie?: string;
-    samenvatting?: string;
-    inhoud?: string;
-    categorie: string;
-    vastgepind?: boolean;
-    volgorde?: number;
-  };
-};
-
 type ActivitiesListProperties = {
+  activiteiten: Activiteit[];
   showViewAll?: boolean;
   viewAllLink?: string;
   limit?: number;
-  category?: string;
   showLocation?: boolean;
   showDescription?: boolean;
 };
 
-// Use environment variable for API key
-const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
-
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replaceAll(/[\u0300-\u036F]/g, '')
-    .replaceAll(/[^a-z\d\s-]/g, '')
-    .replaceAll(/\s+/g, '-')
-    .replaceAll(/-+/g, '-')
-    .trim();
-}
-
 function ActivitiesList({
+  activiteiten,
   showViewAll = true,
   viewAllLink = '/kalender',
   limit = 5,
-  category,
   showLocation = true,
   showDescription = false,
 }: Readonly<ActivitiesListProperties>) {
   const isEnabled = useFlag('activitiesList');
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMessage, setLoadingMessage] = useState('Activiteiten worden geladen...');
-
-  useEffect(() => {
-    async function fetchActivities() {
-      try {
-        // Get today's date in YYYY-MM-DD format for API filtering
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-        const todayString = today.toISOString().split('T')[0];
-
-        const url = new URL('https://cdn.builder.io/api/v3/content/activiteit');
-        url.searchParams.set('apiKey', builderApiKey);
-        // Fetch more than limit to account for pinning/sorting, then slice
-        url.searchParams.set('limit', String(Math.max(limit * 3, 20)));
-        url.searchParams.set('sort.data.datum', '1'); // Sort by date ascending
-        url.searchParams.set('cachebust', 'true');
-        // Filter for future events at API level
-        url.searchParams.set('query.data.datum.$gte', todayString);
-
-        if (category) {
-          url.searchParams.set('query.data.categorie.$eq', category);
-        }
-
-        const response = await fetch(url.toString(), {cache: 'no-store'});
-        const data = await response.json() as {results?: Activity[]};
-
-        if (data.results) {
-          // Sort: pinned first, then by volgorde, then by date
-          const sortedEvents = [...data.results].sort((a: Activity, b: Activity) => {
-            // Pinned items first
-            if (a.data.vastgepind && !b.data.vastgepind) {
-              return -1;
-            }
-
-            if (!a.data.vastgepind && b.data.vastgepind) {
-              return 1;
-            }
-
-            // Then by volgorde (lower = earlier)
-            const orderA = a.data.volgorde ?? 999;
-            const orderB = b.data.volgorde ?? 999;
-            if (orderA !== orderB) {
-              return orderA - orderB;
-            }
-
-            // Then by date
-            return new Date(a.data.datum).getTime() - new Date(b.data.datum).getTime();
-          });
-
-          // Apply limit after sorting
-          setActivities(sortedEvents.slice(0, limit));
-        }
-      } catch (error) {
-        console.error('Error fetching activities:', error);
-        setLoadingMessage('Er is een fout opgetreden bij het laden van activiteiten.');
-      } finally {
-        setLoading(false);
-        setLoadingMessage('');
-      }
-    }
-
-    void fetchActivities();
-  }, [limit, category]);
+  const today = todayString();
+  const activities = activiteiten
+    .filter(activity => activity.datum >= today)
+    .sort((a, b) => a.datum.localeCompare(b.datum))
+    .slice(0, limit);
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    const date = parseLocalDate(dateString);
     const day = date.getDate();
     const month = date.toLocaleDateString('nl-BE', {month: 'short'}).toUpperCase();
     return {day, month};
   };
-
-  if (loading) {
-    return (
-      <section className='py-16 px-6' aria-busy='true' aria-label='Activiteiten worden geladen'>
-        <Container size='lg'>
-          <div className='text-center'>
-            <div className='animate-pulse'>
-              <div className='h-8 bg-gray-200 rounded w-64 mx-auto mb-4' />
-              <div className='h-4 bg-gray-200 rounded w-48 mx-auto' />
-            </div>
-          </div>
-        </Container>
-        {/* Screen reader announcement */}
-        <div className='sr-only' role='status' aria-live='polite'>
-          {loadingMessage}
-        </div>
-      </section>
-    );
-  }
 
   // Check feature flag
   if (!isEnabled) {
@@ -167,11 +59,11 @@ function ActivitiesList({
           ? (
             <Stack gap='md' role='list' aria-label='Lijst van activiteiten'>
               {activities.map(activity => {
-                const {day, month} = formatDate(activity.data.datum);
+                const {day, month} = formatDate(activity.datum);
                 return (
                   <a
-                    key={activity.id}
-                    href={`/activiteiten/${generateSlug(activity.data.titel)}`}
+                    key={activity.slug}
+                    href={`/activiteiten/${activity.slug}`}
                     className='block'
                   >
                     <article
@@ -184,42 +76,37 @@ function ActivitiesList({
                       </div>
                       <div className='flex-grow'>
                         <h3 className='font-bold text-gray-800 flex items-center gap-2 group-hover:text-primary transition-colors'>
-                          {activity.data.titel}
-                          {activity.data.vastgepind && (
-                            <span className='text-primary' aria-label='Vastgepind'>
-                              <Bookmark className='h-4 w-4 fill-current' aria-hidden='true' />
-                            </span>
-                          )}
+                          {activity.titel}
                         </h3>
-                        {activity.data.tijd && (
+                        {activity.tijd && (
                           <p className='text-sm text-gray-500 flex items-center gap-1'>
                             <Clock className='h-4 w-4' aria-hidden='true' />
-                            {activity.data.tijd}
+                            {activity.tijd}
                           </p>
                         )}
-                        {showLocation && activity.data.locatie && (
+                        {showLocation && activity.locatie && (
                           <p className='text-sm text-gray-500 flex items-center gap-1 mt-1'>
                             <MapPin className='h-4 w-4' aria-hidden='true' />
-                            {activity.data.locatie}
+                            {activity.locatie}
                           </p>
                         )}
-                        {showDescription && activity.data.samenvatting && (
+                        {showDescription && activity.samenvatting && (
                           <p className='text-sm text-gray-600 mt-2 line-clamp-2'>
-                            {activity.data.samenvatting.length > 150
-                              ? `${activity.data.samenvatting.slice(0, 150)}...`
-                              : activity.data.samenvatting}
+                            {activity.samenvatting.length > 150
+                              ? `${activity.samenvatting.slice(0, 150)}...`
+                              : activity.samenvatting}
                           </p>
                         )}
                       </div>
                       <div className='flex-shrink-0 flex flex-col items-end gap-2'>
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
-                          activity.data.categorie === 'feest'
+                          activity.categorie === 'feest'
                             ? 'bg-category-event-bg text-category-event-text'
-                            : (activity.data.categorie === 'kalender'
+                            : (activity.categorie === 'kalender'
                               ? 'bg-category-calendar-bg text-category-calendar-text'
                               : 'bg-category-activity-bg text-category-activity-text')
                         }`}>
-                          {activity.data.categorie}
+                          {activity.categorie}
                         </span>
                         <span className='text-primary text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity'>
                           Meer info →
@@ -257,6 +144,8 @@ function ActivitiesList({
     </section>
   );
 }
+
+export {ActivitiesList};
 
 export const ActivitiesListInfo = {
   name: 'ActivitiesList',

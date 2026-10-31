@@ -18,7 +18,6 @@ const components = [
   {name: 'Feature Grid', slug: 'feature-grid', category: 'Info'},
   {name: 'Activities List', slug: 'activities-list', category: 'Activiteiten'},
   {name: 'Activities Archive', slug: 'activities-archive', category: 'Activiteiten'},
-  {name: 'Calendar Section', slug: 'calendar-section', category: 'Activiteiten'},
   {name: 'Event Card', slug: 'event-card', category: 'Activiteiten'},
   {name: 'News List', slug: 'news-list', category: 'Nieuws'},
   {name: 'News Card', slug: 'news-card', category: 'Nieuws'},

@@ -1,14 +1,15 @@
 'use client';
 
-import {useEffect, useState} from 'react';
+import Image from 'next/image';
 import {
   Calendar,
-  Pin,
   Newspaper,
   ArrowRight,
 } from 'lucide-react';
 import {linkStyles} from '@components/ui';
 import {Container, Stack, Grid} from '@components/ui/layout';
+import type {NieuwsItem} from '@lib/content';
+import {parseLocalDate} from '@lib/dates';
 import {useFlag} from '@lib/flags-client';
 
 const articleListClassName = [
@@ -28,132 +29,32 @@ const socialLinkClassName = [
   'focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded',
 ].join(' ');
 
-type NewsItem = {
-  id: string;
-  data: {
-    titel: string;
-    datum: string;
-    samenvatting: string;
-    inhoud?: string;
-    afbeelding?: string;
-    vastgepind?: boolean;
-    volgorde?: number;
-  };
-};
-
 type NewsListProperties = {
+  nieuws: NieuwsItem[];
   limit?: number;
   layout?: 'list' | 'grid';
   showImages?: boolean;
 };
 
-// Use environment variable for API key
-const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY;
-
-function generateSlug(title: string): string {
-  return title
-    .toLowerCase()
-    .normalize('NFD')
-    .replaceAll(/[\u0300-\u036F]/g, '')
-    .replaceAll(/[^a-z\d\s-]/g, '')
-    .replaceAll(/\s+/g, '-')
-    .replaceAll(/-+/g, '-')
-    .trim();
-}
-
 function NewsList({
+  nieuws,
   limit = 10,
   layout = 'list',
   showImages = true,
 }: Readonly<NewsListProperties>) {
   const isEnabled = useFlag('newsList');
-  const [newsItems, setNewsItems] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingMessage, setLoadingMessage] = useState('Nieuwsberichten worden geladen...');
-
-  useEffect(() => {
-    async function fetchNews() {
-      if (!builderApiKey) {
-        console.error('Builder.io API key not configured');
-        setLoadingMessage('Configuratiefout: API key ontbreekt');
-        setLoading(false);
-        return;
-      }
-
-      try {
-        const url = new URL('https://cdn.builder.io/api/v3/content/nieuws');
-        url.searchParams.set('apiKey', builderApiKey);
-        url.searchParams.set('limit', String(limit));
-        url.searchParams.set('sort.data.datum', '-1'); // Sort by date descending (newest first)
-        url.searchParams.set('cachebust', 'true');
-
-        const response = await fetch(url.toString(), {cache: 'no-store'});
-        const data = await response.json() as {results?: NewsItem[]};
-
-        if (data.results) {
-          // Sort: pinned first, then by volgorde, then by date (newest first)
-          const sortedNews = data.results.sort((a: NewsItem, b: NewsItem) => {
-            // Pinned items first
-            if (a.data.vastgepind && !b.data.vastgepind) {
-              return -1;
-            }
-
-            if (!a.data.vastgepind && b.data.vastgepind) {
-              return 1;
-            }
-
-            // Then by volgorde (lower = earlier)
-            const orderA = a.data.volgorde ?? 999;
-            const orderB = b.data.volgorde ?? 999;
-            if (orderA !== orderB) {
-              return orderA - orderB;
-            }
-
-            // Then by date (newest first)
-            return new Date(b.data.datum).getTime() - new Date(a.data.datum).getTime();
-          });
-
-          setNewsItems(sortedNews);
-        }
-      } catch (error) {
-        console.error('Error fetching news:', error);
-        setLoadingMessage('Er is een fout opgetreden bij het laden van nieuws.');
-      } finally {
-        setLoading(false);
-        setLoadingMessage('');
-      }
-    }
-
-    void fetchNews();
-  }, [limit]);
+  const newsItems = [...nieuws]
+    .sort((a, b) => b.datum.localeCompare(a.datum))
+    .slice(0, limit);
 
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+    const date = parseLocalDate(dateString);
     return date.toLocaleDateString('nl-BE', {
       day: 'numeric',
       month: 'long',
       year: 'numeric',
     });
   };
-
-  if (loading) {
-    return (
-      <section className='py-16 px-6' aria-busy='true' aria-label='Nieuwsberichten worden geladen'>
-        <Container size='md'>
-          <div className='text-center'>
-            <div className='animate-pulse'>
-              <div className='h-8 bg-gray-200 rounded w-64 mx-auto mb-4' />
-              <div className='h-4 bg-gray-200 rounded w-48 mx-auto' />
-            </div>
-          </div>
-        </Container>
-        {/* Screen reader announcement */}
-        <div className='sr-only' role='status' aria-live='polite'>
-          {loadingMessage}
-        </div>
-      </section>
-    );
-  }
 
   // Check feature flag
   if (!isEnabled) {
@@ -164,15 +65,17 @@ function NewsList({
     <Grid cols={1} colsMd={2} colsLg={3} gap='md' as='div' aria-label='Nieuwsberichten'>
       {newsItems.map(item => (
         <a
-          key={item.id}
-          href={`/nieuws/${generateSlug(item.data.titel)}`}
+          key={item.slug}
+          href={`/nieuws/${item.slug}`}
           className={linkClassName}
         >
           <article className={articleGridClassName}>
-            {showImages && item.data.afbeelding && (
+            {showImages && item.afbeelding && (
               <div className='relative h-48 overflow-hidden'>
-                <img
-                  src={item.data.afbeelding}
+                <Image
+                  src={item.afbeelding.src}
+                  width={item.afbeelding.width}
+                  height={item.afbeelding.height}
                   alt=''
                   className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-slow'
                 />
@@ -181,18 +84,13 @@ function NewsList({
             <div className='p-5'>
               <div className='flex items-center gap-2 text-sm text-gray-500 mb-2'>
                 <Calendar className='h-4 w-4' aria-hidden='true' />
-                {formatDate(item.data.datum)}
+                {formatDate(item.datum)}
               </div>
               <h3 className='font-bold text-gray-800 mb-2 flex items-center gap-2 group-hover:text-primary transition-colors text-lg line-clamp-2'>
-                {item.data.titel}
-                {item.data.vastgepind && (
-                  <span className='text-primary flex-shrink-0' aria-label='Vastgepind'>
-                    <Pin className='h-5 w-5' aria-hidden='true' />
-                  </span>
-                )}
+                {item.titel}
               </h3>
               <p className='text-gray-600 text-sm line-clamp-2'>
-                {item.data.samenvatting}
+                {item.samenvatting}
               </p>
               <span
                 className='animated-link inline-flex items-center gap-1 mt-3 text-primary font-semibold text-sm'
@@ -212,25 +110,20 @@ function NewsList({
     <Stack gap='lg' as='div' aria-label='Nieuwsberichten'>
       {newsItems.map(item => (
         <a
-          key={item.id}
-          href={`/nieuws/${generateSlug(item.data.titel)}`}
+          key={item.slug}
+          href={`/nieuws/${item.slug}`}
           className={linkClassName}
         >
           <article className={articleListClassName}>
             <div className='flex items-center gap-2 text-sm text-gray-500 mb-2'>
               <Calendar className='h-4 w-4' aria-hidden='true' />
-              {formatDate(item.data.datum)}
+              {formatDate(item.datum)}
             </div>
             <h3 className='font-bold text-gray-800 mb-2 flex items-center gap-2 group-hover:text-primary transition-colors text-xl'>
-              {item.data.titel}
-              {item.data.vastgepind && (
-                <span className='text-primary flex-shrink-0' aria-label='Vastgepind'>
-                  <Pin className='h-5 w-5' aria-hidden='true' />
-                </span>
-              )}
+              {item.titel}
             </h3>
             <p className='text-gray-600'>
-              {item.data.samenvatting}
+              {item.samenvatting}
             </p>
             <span
               className='animated-link inline-flex items-center gap-1 mt-3 text-primary font-semibold text-sm'
@@ -288,6 +181,8 @@ function NewsList({
     </section>
   );
 }
+
+export {NewsList};
 
 export const NewsListInfo = {
   name: 'NewsList',

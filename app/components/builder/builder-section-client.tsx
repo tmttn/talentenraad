@@ -13,7 +13,6 @@ import {AnnouncementBannerInfo} from '@features/marketing/announcement-banner';
 import {TeamGridInfo} from '@features/team/team-grid';
 import {FeatureGridInfo} from '@features/info/feature-grid';
 import {ContactFormInfo} from '@features/contact/contact-form';
-import {CalendarSectionInfo} from '@features/activities/calendar-section';
 import {EventCardInfo} from '@features/activities/event-card';
 import {NewsCardInfo} from '@features/news/news-card';
 import {TeamMemberInfo} from '@features/team/team-member';
@@ -23,7 +22,6 @@ import {NewsletterSignupInfo} from '@features/marketing/newsletter-signup';
 import {UnifiedCtaInfo} from '@features/marketing/unified-cta';
 import {CtaButtonInfo} from '@components/ui/cta-button';
 import {TypographyInfo} from '@components/ui/typography';
-import {PhotoGalleryInfo} from '@features/gallery/photo-gallery';
 
 // All custom components available for sections
 const customComponents = [
@@ -40,7 +38,6 @@ const customComponents = [
   TeamGridInfo,
   FeatureGridInfo,
   ContactFormInfo,
-  CalendarSectionInfo,
   EventCardInfo,
   NewsCardInfo,
   TeamMemberInfo,
@@ -50,7 +47,6 @@ const customComponents = [
   UnifiedCtaInfo,
   CtaButtonInfo,
   TypographyInfo,
-  PhotoGalleryInfo,
 ];
 
 type BuilderSectionClientProperties = {

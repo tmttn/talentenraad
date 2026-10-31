@@ -98,13 +98,6 @@ vi.mock('@features/contact/contact-form', () => ({
   },
 }));
 
-vi.mock('@features/activities/calendar-section', () => ({
-  CalendarSectionInfo: {
-    name: 'CalendarSection',
-    component: () => <div data-testid='calendar-section'>Calendar Section</div>,
-  },
-}));
-
 vi.mock('@features/activities/event-card', () => ({
   EventCardInfo: {
     name: 'EventCard',

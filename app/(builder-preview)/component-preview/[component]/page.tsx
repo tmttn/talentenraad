@@ -14,7 +14,6 @@ import {AnnouncementBannerInfo} from '@features/marketing/announcement-banner';
 import {TeamGridInfo} from '@features/team/team-grid';
 import {FeatureGridInfo} from '@features/info/feature-grid';
 import {ContactFormInfo} from '@features/contact/contact-form';
-import {CalendarSectionInfo} from '@features/activities/calendar-section';
 import {EventCardInfo} from '@features/activities/event-card';
 import {NewsCardInfo} from '@features/news/news-card';
 import {TeamMemberInfo} from '@features/team/team-member';
@@ -143,14 +142,6 @@ const componentRegistry: Record<string, ComponentRegistryEntry> = {
     sampleProps: {
       showPhone: true,
       showSubject: true,
-    },
-  },
-  'calendar-section': {
-    info: CalendarSectionInfo,
-    sampleProps: {
-      showViewAll: true,
-      viewAllLink: '/activiteiten',
-      limit: 5,
     },
   },
   'event-card': {
