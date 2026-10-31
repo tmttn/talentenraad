@@ -2,7 +2,7 @@ import {type NextRequest, NextResponse} from 'next/server';
 import {auth0, isAdminEmail} from '@lib/auth0';
 import {db, users} from '@lib/db';
 import {eq} from 'drizzle-orm';
-import {sendInvitationEmail} from '@lib/email/resend';
+import {sendInvitationEmail} from '@lib/email/messages';
 import {logAudit, createAuditContext} from '@lib/audit';
 import {computeDataDiff} from '@lib/audit/helpers';
 
@@ -102,7 +102,7 @@ export async function PUT(
       } catch (error) {
         console.error('Failed to send invitation email:', error);
         return NextResponse.json({
-          error: 'Uitnodigingsmail kon niet worden verstuurd. Controleer de Resend configuratie.',
+          error: 'Uitnodigingsmail kon niet worden verstuurd. Controleer de SMTP-configuratie.',
         }, {status: 500});
       }
 
