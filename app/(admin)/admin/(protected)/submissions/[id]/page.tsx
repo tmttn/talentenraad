@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import {requireAdminSession} from '@lib/auth/require-admin';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {eq} from 'drizzle-orm';
@@ -22,6 +23,8 @@ const subjectLabels: Record<string, string> = {
 };
 
 export default async function SubmissionDetailPage({params}: Readonly<PageProperties>) {
+  await requireAdminSession();
+
   const {id} = await params;
 
   const submission = await db.query.submissions.findFirst({

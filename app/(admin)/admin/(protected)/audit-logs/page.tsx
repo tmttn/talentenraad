@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import {requireAdminSession} from '@lib/auth/require-admin';
 import {Suspense} from 'react';
 import {desc} from 'drizzle-orm';
 import {db, auditLogs} from '@lib/db';
@@ -18,7 +19,9 @@ async function AuditLogsLoader() {
   return <AuditLogsManager initialLogs={logs} />;
 }
 
-export default function AuditLogsPage() {
+export default async function AuditLogsPage() {
+  await requireAdminSession();
+
   return (
     <div>
       <h1 className='text-3xl font-bold text-gray-800 mb-8'>Audit Logs</h1>

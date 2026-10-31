@@ -1,4 +1,4 @@
-import {type NextRequest, NextResponse} from 'next/server';
+import {after, type NextRequest, NextResponse} from 'next/server';
 import {normalizeEmail, safeReturnTo, verifyAdmin} from '@lib/auth/admin';
 import {createLoginToken} from '@lib/auth/tokens';
 import {getSiteUrl} from '@lib/email/mailer';
@@ -28,23 +28,43 @@ function buildLoginUrl(token: string, returnTo: unknown): string {
   return `${getSiteUrl()}/api/auth/verify?${parameters.toString()}`;
 }
 
-export async function POST(request: NextRequest) {
+async function handleLoginRequest(email: string, returnTo: unknown): Promise<void> {
   try {
-    const body = await request.json() as {returnTo?: unknown} | undefined;
-    const email = parseEmail(body);
+    if (!await verifyAdmin(email)) {
+      return;
+    }
 
-    if (email && await verifyAdmin(email)) {
-      const token = await createLoginToken(email);
+    const token = await createLoginToken(email);
 
-      if (token) {
-        // Not awaited: the answer must not wait for (or reveal) the SMTP round trip.
-        sendLoginLink({to: email, url: buildLoginUrl(token, body?.returnTo)}).catch((error: unknown) => {
-          console.error('Failed to send login link:', error);
-        });
-      }
+    if (!token) {
+      return;
+    }
+
+    try {
+      await sendLoginLink({to: email, url: buildLoginUrl(token, returnTo)});
+    } catch (error) {
+      console.error('Failed to send login link:', error);
     }
   } catch (error) {
+    // Message only: never log anything that could carry the token.
     console.error('Login request failed:', error instanceof Error ? error.message : error);
+  }
+}
+
+export async function POST(request: NextRequest) {
+  let body: {email?: unknown; returnTo?: unknown} | undefined;
+
+  try {
+    body = await request.json() as typeof body;
+  } catch {
+    body = undefined;
+  }
+
+  const email = parseEmail(body);
+
+  if (email) {
+    // Runs after the response is sent, so admin and non-admin requests answer equally fast.
+    after(async () => handleLoginRequest(email, body?.returnTo));
   }
 
   return NextResponse.json({message: neutralMessage});

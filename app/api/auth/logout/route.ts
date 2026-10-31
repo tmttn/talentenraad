@@ -4,10 +4,15 @@ import {getSession, sessionCookieName, sessionCookieOptions} from '@lib/auth/ses
 import {getSiteUrl} from '@lib/email/mailer';
 
 export async function POST(request: NextRequest) {
-  const session = await getSession();
+  try {
+    const session = await getSession();
 
-  if (session) {
-    await logSessionEvent(request, 'logout', session.user);
+    if (session) {
+      await logSessionEvent(request, 'logout', session.user);
+    }
+  } catch (error) {
+    // Logging out must never depend on the database.
+    console.error('Failed to log logout event:', error);
   }
 
   // 303 so the browser follows with a GET.

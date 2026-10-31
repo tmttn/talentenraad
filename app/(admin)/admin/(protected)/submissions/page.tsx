@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import {requireAdminSession} from '@lib/auth/require-admin';
 import {Suspense} from 'react';
 import {desc, isNull, isNotNull} from 'drizzle-orm';
 import {db, submissions, feedback} from '@lib/db';
@@ -41,7 +42,9 @@ async function SubmissionsLoader() {
   );
 }
 
-export default function SubmissionsPage() {
+export default async function SubmissionsPage() {
+  await requireAdminSession();
+
   return (
     <Suspense fallback={<SubmissionsPageSkeleton />}>
       <SubmissionsLoader />

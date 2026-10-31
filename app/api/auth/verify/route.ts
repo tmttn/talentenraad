@@ -14,19 +14,24 @@ export async function GET(request: NextRequest) {
     return failure;
   }
 
-  // Marks the token used before anything else, so a second click always fails.
-  const consumed = await consumeLoginToken(token);
+  try {
+    // Marks the token used before anything else, so a second click always fails.
+    const consumed = await consumeLoginToken(token);
 
-  if (!consumed || !await verifyAdmin(consumed.email)) {
+    if (!consumed || !await verifyAdmin(consumed.email)) {
+      return failure;
+    }
+
+    const user = await ensureAdminUser(consumed.email);
+    const returnTo = safeReturnTo(request.nextUrl.searchParams.get('returnTo'));
+    const response = NextResponse.redirect(new URL(returnTo, siteUrl));
+    response.cookies.set(sessionCookieName, await createSessionCookie(user), sessionCookieOptions());
+
+    await logSessionEvent(request, 'login', user);
+
+    return response;
+  } catch (error) {
+    console.error('Login link verification failed:', error);
     return failure;
   }
-
-  const user = await ensureAdminUser(consumed.email);
-  const returnTo = safeReturnTo(request.nextUrl.searchParams.get('returnTo'));
-  const response = NextResponse.redirect(new URL(returnTo, siteUrl));
-  response.cookies.set(sessionCookieName, await createSessionCookie(user), sessionCookieOptions());
-
-  await logSessionEvent(request, 'login', user);
-
-  return response;
 }

@@ -1,14 +1,18 @@
 // @vitest-environment node
+import {type SQL} from 'drizzle-orm';
+import {PgDialect} from 'drizzle-orm/pg-core';
 import {
   afterEach, beforeEach, describe, expect, it, vi,
 } from 'vitest';
+
+const renderWhere = (call: unknown[]) => new PgDialect().sqlToQuery((call[0] as {where: SQL}).where);
 
 const findFirst = vi.fn();
 const insertValues = vi.fn();
 const updateSet = vi.fn();
 
-vi.mock('@lib/db', () => ({
-  users: {id: 'id', email: 'email'},
+vi.mock('@lib/db', async () => ({
+  users: (await import('../../../app/lib/db/schema')).users,
   db: {
     query: {users: {findFirst}},
     insert: () => ({
@@ -88,6 +92,26 @@ describe('verifyAdmin', () => {
 
   it('rejects a missing email', async () => {
     await expect(verifyAdmin(undefined)).resolves.toBe(false);
+  });
+});
+
+describe('case-insensitive email lookup', () => {
+  it('verifyAdmin finds legacy rows stored with mixed-case emails', async () => {
+    findFirst.mockResolvedValue({isAdmin: true});
+
+    await expect(verifyAdmin(' Legacy@Test.com ')).resolves.toBe(true);
+    expect(renderWhere(findFirst.mock.calls[0])).toEqual(expect.objectContaining({
+      sql: 'lower("users"."email") = $1',
+      params: ['legacy@test.com'],
+    }));
+  });
+
+  it('ensureAdminUser looks the user up case-insensitively', async () => {
+    findFirst.mockResolvedValue({id: 'u1', email: 'Legacy@Test.com', isAdmin: true, acceptedAt: new Date(0)});
+
+    await expect(ensureAdminUser('legacy@test.com')).resolves.toEqual({id: 'u1', email: 'Legacy@Test.com'});
+    expect(renderWhere(findFirst.mock.calls[0]).sql).toBe('lower("users"."email") = $1');
+    expect(insertValues).not.toHaveBeenCalled();
   });
 });
 

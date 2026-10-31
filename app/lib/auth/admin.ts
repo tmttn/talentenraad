@@ -1,4 +1,4 @@
-import {eq} from 'drizzle-orm';
+import {eq, sql} from 'drizzle-orm';
 import {db, users} from '@lib/db';
 
 /** Emails are compared lowercase and trimmed everywhere. */
@@ -21,6 +21,11 @@ export function isAdminEmail(email: string | undefined | null): boolean {
   return adminEmails.includes(normalizeEmail(email));
 }
 
+/** Matches users.email case-insensitively, so legacy mixed-case rows are found. */
+function emailEquals(email: string) {
+  return sql`lower(${users.email}) = ${normalizeEmail(email)}`;
+}
+
 /** Admin when listed in ADMIN_EMAILS or marked isAdmin in the database. */
 export function isAdminUser(user: {email: string; isAdmin: boolean}): boolean {
   return isAdminEmail(user.email) || user.isAdmin;
@@ -39,7 +44,7 @@ export async function verifyAdmin(email: string | undefined | null): Promise<boo
   }
 
   const user = await db.query.users.findFirst({
-    where: eq(users.email, normalizeEmail(email)),
+    where: emailEquals(email),
   });
 
   return user?.isAdmin ?? false;
@@ -55,7 +60,7 @@ export async function ensureAdminUser(rawEmail: string): Promise<{id: string; em
   const now = new Date();
 
   const existing = await db.query.users.findFirst({
-    where: eq(users.email, email),
+    where: emailEquals(email),
   });
 
   if (!existing) {

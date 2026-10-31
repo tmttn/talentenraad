@@ -11,6 +11,17 @@ const consumeLoginToken = vi.fn();
 const sendLoginLink = vi.fn();
 const getSession = vi.fn();
 const auditValues = vi.fn();
+const afterCallbacks: Array<() => unknown> = [];
+
+vi.mock('next/server', async () => {
+  const actual = await vi.importActual<typeof import('next/server')>('next/server');
+  return {
+    ...actual,
+    after(callback: () => unknown) {
+      afterCallbacks.push(callback);
+    },
+  };
+});
 
 vi.mock('@lib/auth/admin', async () => {
   const actual = await vi.importActual<typeof import('@lib/auth/admin')>('@lib/auth/admin');
@@ -28,12 +39,15 @@ vi.mock('@lib/db', () => ({
 }));
 
 const neutral = 'Als dit adres toegang heeft, ontvang je een e-mail met een link.';
-const flush = async () => new Promise(resolve => {
-  setTimeout(resolve, 0);
-});
+// Runs the work the route scheduled with after(), as Next.js does once the response is sent.
+const flush = async () => {
+  const callbacks = afterCallbacks.splice(0);
+  await Promise.all(callbacks.map(async callback => callback()));
+};
 
 beforeEach(() => {
   vi.resetAllMocks();
+  afterCallbacks.length = 0;
   vi.stubEnv('SITE_URL', 'https://talentenraad.test');
   vi.stubEnv('AUTH_SECRET', 'test-secret-that-is-at-least-32-chars!!');
   auditValues.mockResolvedValue(undefined);
@@ -131,14 +145,27 @@ describe('POST /api/auth/request', () => {
     expect(JSON.stringify(error.mock.calls)).not.toContain('secret-token');
   });
 
-  it('answers neutrally when the database fails', async () => {
+  it('answers neutrally when the database fails, logging without the token', async () => {
     verifyAdmin.mockRejectedValue(new Error('db down'));
-    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const response = await requestLogin({email: 'admin@test.com'});
+    await flush();
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({message: neutral});
+    expect(error).toHaveBeenCalledWith('Login request failed:', 'db down');
+  });
+
+  it('answers before any admin check, token or mail work runs', async () => {
+    verifyAdmin.mockReturnValue(new Promise(() => undefined));
 
     const response = await requestLogin({email: 'admin@test.com'});
 
     expect(response.status).toBe(200);
-    await expect(response.json()).resolves.toEqual({message: neutral});
+    expect(verifyAdmin).not.toHaveBeenCalled();
+    expect(createLoginToken).not.toHaveBeenCalled();
+    expect(afterCallbacks).toHaveLength(1);
   });
 });
 
@@ -195,6 +222,24 @@ describe('GET /api/auth/verify', () => {
     expect(consumeLoginToken).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ['consumeLoginToken', () => consumeLoginToken.mockRejectedValue(new Error('db down'))],
+    ['ensureAdminUser', () => {
+      consumeLoginToken.mockResolvedValue({email: user.email});
+      verifyAdmin.mockResolvedValue(true);
+      ensureAdminUser.mockRejectedValue(new Error('db down'));
+    }],
+  ])('redirects to the login error and logs when %s throws', async (_name, arrange) => {
+    arrange();
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    const response = await verify('?token=abc');
+
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/login?error=link');
+    expect(response.cookies.get('tr_session')).toBeUndefined();
+    expect(error).toHaveBeenCalledWith('Login link verification failed:', expect.any(Error));
+  });
+
   it('refuses a valid token for someone who lost admin access since requesting it', async () => {
     consumeLoginToken.mockResolvedValue({email: user.email});
     verifyAdmin.mockResolvedValue(false);
@@ -217,6 +262,18 @@ describe('POST /api/auth/logout', () => {
     expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/login');
     expect(response.cookies.get('tr_session')).toMatchObject({value: '', maxAge: 0, path: '/'});
     expect(auditValues).toHaveBeenCalledWith(expect.objectContaining({actionType: 'logout'}));
+  });
+
+  it('clears the cookie even when the session lookup throws', async () => {
+    getSession.mockRejectedValue(new Error('db down'));
+    const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const {POST} = await import('../../app/api/auth/logout/route');
+
+    const response = await POST(new NextRequest('http://intern:3000/api/auth/logout', {method: 'POST'}));
+
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/login');
+    expect(response.cookies.get('tr_session')).toMatchObject({value: '', maxAge: 0});
+    expect(error).toHaveBeenCalledWith('Failed to log logout event:', expect.any(Error));
   });
 
   it('still logs out without a valid session', async () => {

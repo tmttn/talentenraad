@@ -20,8 +20,16 @@ export default async function AdminLoginPage({searchParams}: AdminLoginPageProps
   const params = await searchParams;
   const returnTo = safeReturnTo(params.returnTo);
 
-  // Already signed in: go straight to the requested admin page
-  if (await getSession()) {
+  let session: Awaited<ReturnType<typeof getSession>>;
+  try {
+    session = await getSession();
+  } catch (error) {
+    // Database trouble: still show the login form.
+    console.error('Session lookup failed on login page:', error);
+  }
+
+  // Already signed in: go straight to the requested admin page (outside the try: redirect throws)
+  if (session) {
     redirect(returnTo);
   }
 

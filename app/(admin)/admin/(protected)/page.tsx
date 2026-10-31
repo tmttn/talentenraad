@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import {requireAdminSession} from '@lib/auth/require-admin';
 import {Suspense} from 'react';
 import {count, isNull, desc} from 'drizzle-orm';
 import Link from 'next/link';
@@ -246,7 +247,9 @@ async function DashboardContent() {
   );
 }
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  await requireAdminSession();
+
   return (
     <div className='space-y-6 sm:space-y-8'>
       <DashboardHeader />

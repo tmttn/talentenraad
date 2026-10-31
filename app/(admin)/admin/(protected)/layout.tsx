@@ -1,7 +1,6 @@
-import {redirect} from 'next/navigation';
 import {and, isNull} from 'drizzle-orm';
 import {Toaster} from 'sonner';
-import {getSession} from '@lib/auth/session';
+import {requireAdminSession} from '@lib/auth/require-admin';
 import {db, feedback, submissions} from '@lib/db';
 import {AdminSidebar} from '@features/admin/admin-sidebar';
 import {SessionValidator} from '@features/admin/session-validator';
@@ -33,11 +32,8 @@ export default async function AdminProtectedLayout({
   children: React.ReactNode;
 }>) {
   // Proxy already checked the cookie; this also checks the user is still an admin.
-  const session = await getSession();
-
-  if (!session) {
-    redirect('/admin/login');
-  }
+  // Every page repeats the check, because layouts don't re-render on client navigation.
+  const session = await requireAdminSession();
 
   const unreadCounts = await getUnreadCounts();
 
