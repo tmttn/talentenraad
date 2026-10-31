@@ -19,7 +19,6 @@
     "test:cls": "playwright test layout-shift.spec.ts",
     "prepare": "husky",
     "db:generate": "drizzle-kit generate",
-    "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
@@ -28,6 +27,7 @@
     "@dnd-kit/utilities": "^3.2.2",
     "@serwist/next": "^9.3.0",
     "@tailwindcss/typography": "^0.5.19",
+    "better-sqlite3": "^13.0.3",
     "drizzle-orm": "^0.45.1",
     "gray-matter": "^4.0.3",
     "image-size": "^2.0.4",
@@ -36,7 +36,6 @@
     "lucide-react": "^1.0.0",
     "next": "16.2.9",
     "nodemailer": "^10.3.1",
-    "postgres": "^3.4.7",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "rehype-sanitize": "^6.0.0",
@@ -61,6 +60,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/better-sqlite3": "^9.6.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.0.1",
     "@types/nodemailer": "^8.0.2",

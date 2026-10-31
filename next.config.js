@@ -3,7 +3,7 @@ const packageJson = require('./package.json');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Esbuild-wasm is required for @serwist/turbopack
-  serverExternalPackages: ['isolated-vm', 'esbuild-wasm'],
+  serverExternalPackages: ['isolated-vm', 'esbuild-wasm', 'better-sqlite3'],
 };
 
 // Turbopack is the default bundler; an empty config acknowledges the webpack config below

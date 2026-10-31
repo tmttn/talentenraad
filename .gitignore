@@ -57,3 +57,6 @@ next-env.d.ts
 
 # Gekopieerde content-afbeeldingen (scripts/copy-content-assets.mjs)
 /public/content/
+
+# local SQLite database
+/data/

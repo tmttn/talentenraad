@@ -3,9 +3,8 @@ import type {Config} from 'drizzle-kit';
 export default {
   schema: './app/lib/db/schema.ts',
   out: './drizzle',
-  dialect: 'postgresql',
+  dialect: 'sqlite',
   dbCredentials: {
-
-    url: process.env.POSTGRES_URL ?? process.env.DATABASE_URL!,
+    url: process.env.DATABASE_PATH ?? './data/talentenraad.db',
   },
 } satisfies Config;

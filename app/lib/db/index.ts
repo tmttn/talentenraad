@@ -1,11 +1,11 @@
-import {drizzle} from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
-import * as schema from './schema';
+import {createDatabase, defaultDatabasePath} from './open';
 
-const connectionString = process.env.POSTGRES_URL ?? process.env.DATABASE_URL!;
+// Cached on globalThis so Next.js hot reloads do not leak connections in development.
+const globalForDb = globalThis as unknown as {
+  talentenraadDb?: ReturnType<typeof createDatabase>;
+};
 
-// Disable prefetch for serverless environments
-const client = postgres(connectionString, {prepare: false});
+globalForDb.talentenraadDb ??= createDatabase(process.env.DATABASE_PATH ?? defaultDatabasePath);
 
-export const db = drizzle(client, {schema});
+export const {db} = globalForDb.talentenraadDb;
 export * from './schema';
