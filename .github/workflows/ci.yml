@@ -82,7 +82,7 @@ jobs:
         echo "- **Status**: Build successful" >> $GITHUB_STEP_SUMMARY
         echo "- **Output**: Next.js build in \`.next/\` directory" >> $GITHUB_STEP_SUMMARY
         echo "- **Build Size**: $(du -sh .next/ | cut -f1)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Deployment**: Vercel" >> $GITHUB_STEP_SUMMARY
+        echo "- **Deployment**: Docker-image via deploy.yml" >> $GITHUB_STEP_SUMMARY
 
   # Stage 2: Quality Assurance (runs in parallel, only if build succeeds)
 
