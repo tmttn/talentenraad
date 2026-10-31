@@ -31,7 +31,13 @@ jobs:
 
       - name: Compute image tag
         id: meta
-        run: echo "tag=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+        run: |
+          build_date="$(TZ=Europe/Brussels date +%F)"
+          {
+            echo "build_date=${build_date}"
+            echo "tag=sha-${GITHUB_SHA::7}-${build_date//-/}"
+            echo "sha_tag=sha-${GITHUB_SHA::7}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -51,7 +57,11 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE }}:latest
+            ${{ env.IMAGE }}:${{ steps.meta.outputs.sha_tag }}
             ${{ env.IMAGE }}:${{ steps.meta.outputs.tag }}
+          build-args: |
+            BUILD_DATE=${{ steps.meta.outputs.build_date }}
+            NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${{ vars.RECAPTCHA_SITE_KEY }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

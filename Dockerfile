@@ -6,7 +6,12 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-RUN npm run build
+ARG NEXT_PUBLIC_RECAPTCHA_SITE_KEY=
+ENV NEXT_PUBLIC_RECAPTCHA_SITE_KEY=$NEXT_PUBLIC_RECAPTCHA_SITE_KEY
+# A new date busts the cache from here on, so date-dependent static pages are rebuilt nightly.
+ARG BUILD_DATE=unknown
+ENV BUILD_DATE=$BUILD_DATE
+RUN echo "Building for $BUILD_DATE" && npm run build
 
 FROM node:24-bookworm-slim AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends tzdata \

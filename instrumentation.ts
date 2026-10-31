@@ -14,13 +14,8 @@ export async function register() {
       failStartup(error);
     }
 
-    // Replaces the old daily cron: the container restarts on every nightly deploy.
-    try {
-      const {cleanupOldAuditLogs} = await import('@lib/audit');
-      const deletedCount = await cleanupOldAuditLogs(90);
-      console.info(`[audit] cleanup removed ${deletedCount} entries older than 90 days`);
-    } catch (error) {
-      console.error('[audit] cleanup failed', error);
-    }
+    // Replaces the old daily cron: runs now and then every 24 hours.
+    const {startAuditCleanup} = await import('@lib/audit/schedule');
+    startAuditCleanup();
   }
 }
