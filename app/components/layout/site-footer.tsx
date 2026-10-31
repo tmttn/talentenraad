@@ -187,7 +187,7 @@ export function SiteFooter({
               onClick={openPreferences}
               className='text-gray-700 hover:text-primary transition-colors'
             >
-              Cookie-instellingen
+              Cookiemelding
             </button>
           </div>
 

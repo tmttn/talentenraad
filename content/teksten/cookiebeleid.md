@@ -27,8 +27,7 @@ Deze cookies zijn essentieel voor het functioneren van de website. Hiervoor is g
 
 | Naam | Doel | Bewaartermijn | Partij |
 | --- | --- | --- | --- |
-| cookie-consent | Onthoudt dat u de cookiebanner hebt beantwoord (opgeslagen in de lokale opslag van uw browser) | Tot u deze verwijdert | Eerste partij |
-| cookie-preferences | Slaat uw cookievoorkeuren op (lokale opslag van uw browser) | Tot u deze verwijdert | Eerste partij |
+| cookie-consent | Onthoudt dat u de cookiemelding hebt gezien (opgeslagen in de lokale opslag van uw browser) | Tot u deze verwijdert | Eerste partij |
 | tr_session | Houdt een beheerder ingelogd. Wordt alleen geplaatst nadat een beheerder via een eenmalige e-maillink heeft ingelogd; uw gewone bezoek aan de website plaatst deze cookie niet. | 7 dagen | Eerste partij |
 
 **Rechtsgrond:** Legitiem belang - noodzakelijk voor de werking van de website (Art. 6(1)(f) AVG)
@@ -53,14 +52,9 @@ Onze website wordt gehost bij Hetzner Online GmbH (Gunzenhausen, Duitsland), met
 
 ## 5. Uw toestemming beheren
 
-Bij uw eerste bezoek aan onze website verschijnt een cookiebanner waarin wij uw keuze vragen. Wij plaatsen geen analytische of advertentiecookies; de noodzakelijke cookies hierboven zijn altijd actief.
+Bij uw eerste bezoek aan onze website verschijnt een cookiemelding die uitlegt dat wij alleen strikt noodzakelijke opslag gebruiken. Wij plaatsen geen analytische of advertentiecookies; er valt dus niets te kiezen. Met de knop "Begrepen" verdwijnt de melding en onthoudt uw browser dit in de lokale opslag (item `cookie-consent`).
 
-**U kunt uw keuze op elk moment wijzigen** door te klikken op de link "Cookie-instellingen" onderaan elke pagina van onze website.
-
-U heeft de volgende opties:
-
--   **Accepteren:** Uw keuze wordt onthouden; er worden geen extra cookies geplaatst
--   **Weigeren:** Uw keuze wordt onthouden; alleen strikt noodzakelijke cookies worden gebruikt
+U kunt de melding opnieuw bekijken via de link "Cookiemelding" onderaan elke pagina van onze website.
 
 ## 6. Cookies verwijderen via uw browser
 

@@ -81,7 +81,6 @@ describe('rate limit', () => {
   it('contact: 6th request from the same IP gets 429, another IP is fine', async () => {
     const ip = newIp();
     for (let index = 0; index < 5; index++) {
-      // eslint-disable-next-line no-await-in-loop
       expect((await contact.POST(post('/api/contact', contactBody, ip))).status).toBe(200);
     }
 
@@ -94,7 +93,6 @@ describe('rate limit', () => {
   it('feedback: 6th request from the same IP gets 429, another IP is fine', async () => {
     const ip = newIp();
     for (let index = 0; index < 5; index++) {
-      // eslint-disable-next-line no-await-in-loop
       expect((await feedbackRoute.POST(post('/api/feedback', feedbackBody, ip))).status).toBe(200);
     }
 
@@ -107,7 +105,6 @@ describe('rate limit', () => {
   it('limits are per form', async () => {
     const ip = newIp();
     for (let index = 0; index < 5; index++) {
-      // eslint-disable-next-line no-await-in-loop
       await contact.POST(post('/api/contact', contactBody, ip));
     }
 

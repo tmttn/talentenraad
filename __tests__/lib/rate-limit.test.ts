@@ -71,4 +71,10 @@ describe('getClientIp', () => {
     expect(getClientIp(new Headers({'x-real-ip': '3.3.3.3'}))).toBe('3.3.3.3');
     expect(getClientIp(new Headers())).toBe('unknown');
   });
+
+  it('treats an empty or whitespace x-forwarded-for as missing', () => {
+    expect(getClientIp(new Headers({'x-forwarded-for': '  ', 'x-real-ip': '4.4.4.4'}))).toBe('4.4.4.4');
+    expect(getClientIp(new Headers({'x-forwarded-for': ''}))).toBe('unknown');
+    expect(getClientIp(new Headers({'x-forwarded-for': ' , 2.2.2.2', 'x-real-ip': ' '}))).toBe('unknown');
+  });
 });
