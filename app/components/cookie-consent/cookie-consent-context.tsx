@@ -4,100 +4,48 @@ import {
   createContext, useContext, useState, useEffect, useCallback, type ReactNode,
 } from 'react';
 
-export type CookiePreferences = {
-  necessary: boolean; // Always true, cannot be disabled
-};
-
-export type ConsentStatus = 'pending' | 'accepted' | 'rejected' | 'customized';
-
 type CookieConsentContextType = {
-  preferences: CookiePreferences;
-  consentStatus: ConsentStatus;
   showBanner: boolean;
-  acceptAll: () => void;
-  rejectAll: () => void;
-  savePreferences: (preferences: Partial<CookiePreferences>) => void;
+  dismiss: () => void;
+  /** Shows the notice again (footer link). */
   openPreferences: () => void;
-  closeBanner: () => void;
 };
 
+// Same key as before, so returning visitors who already answered are not shown the notice again.
+// Any stored value (including old 'accepted' / 'rejected' / 'customized') counts as seen.
 const COOKIE_CONSENT_KEY = 'cookie-consent';
-const COOKIE_PREFERENCES_KEY = 'cookie-preferences';
-
-const defaultPreferences: CookiePreferences = {
-  necessary: true,
-};
 
 const CookieConsentContext = createContext<CookieConsentContextType | null>(null);
 
+function hasSeenNotice(): boolean {
+  try {
+    return Boolean(localStorage.getItem(COOKIE_CONSENT_KEY));
+  } catch {
+    return false;
+  }
+}
+
 export function CookieConsentProvider({children}: Readonly<{children: ReactNode}>) {
-  const [preferences, setPreferences] = useState<CookiePreferences>(defaultPreferences);
-  const [consentStatus, setConsentStatus] = useState<ConsentStatus>('pending');
   const [showBanner, setShowBanner] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
 
-  // Load saved preferences on mount
   useEffect(() => {
-    const savedConsent = localStorage.getItem(COOKIE_CONSENT_KEY);
-    const savedPreferences = localStorage.getItem(COOKIE_PREFERENCES_KEY);
-
-    if (savedConsent && savedPreferences) {
-      try {
-        // Old versions also stored analytics/marketing flags; they are ignored.
-        JSON.parse(savedPreferences);
-        setPreferences(defaultPreferences);
-        setConsentStatus(savedConsent as ConsentStatus);
-        setShowBanner(false);
-      } catch {
-        setShowBanner(true);
-      }
-    } else {
-      setShowBanner(true);
-    }
-
+    setShowBanner(!hasSeenNotice());
     setIsInitialized(true);
   }, []);
 
-  const saveToStorage = useCallback((status: ConsentStatus, prefs: CookiePreferences) => {
-    localStorage.setItem(COOKIE_CONSENT_KEY, status);
-    localStorage.setItem(COOKIE_PREFERENCES_KEY, JSON.stringify(prefs));
+  const dismiss = useCallback(() => {
+    setShowBanner(false);
+    try {
+      localStorage.setItem(COOKIE_CONSENT_KEY, 'acknowledged');
+    } catch {
+      // Storage unavailable: the notice simply shows again next visit.
+    }
   }, []);
-
-  const acceptAll = useCallback(() => {
-    setPreferences(defaultPreferences);
-    setConsentStatus('accepted');
-    setShowBanner(false);
-    saveToStorage('accepted', defaultPreferences);
-  }, [saveToStorage]);
-
-  const rejectAll = useCallback(() => {
-    setPreferences(defaultPreferences);
-    setConsentStatus('rejected');
-    setShowBanner(false);
-    saveToStorage('rejected', defaultPreferences);
-  }, [saveToStorage]);
-
-  const savePreferences = useCallback((newPreferences: Partial<CookiePreferences>) => {
-    const updated: CookiePreferences = {
-      ...newPreferences,
-      necessary: true, // Always true
-    };
-    setPreferences(updated);
-    setConsentStatus('customized');
-    setShowBanner(false);
-    saveToStorage('customized', updated);
-  }, [saveToStorage]);
 
   const openPreferences = useCallback(() => {
     setShowBanner(true);
   }, []);
-
-  const closeBanner = useCallback(() => {
-    // Only allow closing if consent has been given
-    if (consentStatus !== 'pending') {
-      setShowBanner(false);
-    }
-  }, [consentStatus]);
 
   // Don't render anything until initialized to prevent hydration mismatch
   if (!isInitialized) {
@@ -105,18 +53,7 @@ export function CookieConsentProvider({children}: Readonly<{children: ReactNode}
   }
 
   return (
-    <CookieConsentContext.Provider
-      value={{
-        preferences,
-        consentStatus,
-        showBanner,
-        acceptAll,
-        rejectAll,
-        savePreferences,
-        openPreferences,
-        closeBanner,
-      }}
-    >
+    <CookieConsentContext.Provider value={{showBanner, dismiss, openPreferences}}>
       {children}
     </CookieConsentContext.Provider>
   );
@@ -124,18 +61,12 @@ export function CookieConsentProvider({children}: Readonly<{children: ReactNode}
 
 // Default context value for when used outside provider (e.g., during SSR/static generation)
 const defaultContextValue: CookieConsentContextType = {
-  preferences: defaultPreferences,
-  consentStatus: 'pending',
   showBanner: false,
-  acceptAll() {},
-  rejectAll() {},
-  savePreferences() {},
+  dismiss() {},
   openPreferences() {},
-  closeBanner() {},
 };
 
 export function useCookieConsent() {
   const context = useContext(CookieConsentContext);
-  // Return default context for SSR/static generation (when provider isn't available)
   return context ?? defaultContextValue;
 }

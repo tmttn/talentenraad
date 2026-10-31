@@ -1,102 +1,111 @@
 import {render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {CookieBanner} from '../../../app/components/cookie-consent/cookie-banner';
+import {CookieConsentProvider} from '../../../app/components/cookie-consent/cookie-consent-context';
 
-// Mock the cookie consent context
-const mockAcceptAll = vi.fn();
-const mockRejectAll = vi.fn();
+const store = new Map<string, string>();
 
-vi.mock('../../../app/components/cookie-consent/cookie-consent-context', () => ({
-  useCookieConsent: () => ({
-    showBanner: true,
-    acceptAll: mockAcceptAll,
-    rejectAll: mockRejectAll,
-  }),
-}));
+Object.defineProperty(window, 'localStorage', {
+  value: {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem(key: string, value: string) {
+      store.set(key, value);
+    },
+    removeItem(key: string) {
+      store.delete(key);
+    },
+  },
+});
 
-describe('CookieBanner', () => {
+const renderBanner = () => render(<CookieConsentProvider>
+  <CookieBanner />
+</CookieConsentProvider>);
+
+describe('CookieBanner (informational notice)', () => {
   beforeEach(() => {
-    vi.clearAllMocks();
+    store.clear();
+    vi.unstubAllEnvs();
   });
 
-  it('renders the banner with correct content', () => {
-    render(<CookieBanner />);
+  it('renders the notice text and a link to the cookie policy', () => {
+    renderBanner();
 
-    expect(screen.getByText('Wij gebruiken cookies')).toBeInTheDocument();
-    expect(screen.getByText(/alleen noodzakelijke cookies en opslag/)).toBeInTheDocument();
+    expect(screen.getByText(/alleen strikt noodzakelijke opslag/)).toBeInTheDocument();
+    expect(screen.getByText(/geen analyse of advertenties/)).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: /cookiebeleid/i})).toHaveAttribute('href', '/cookiebeleid');
   });
 
-  it('renders accept and reject buttons', () => {
-    render(<CookieBanner />);
+  it('has a single button and no accept/reject choice', () => {
+    renderBanner();
 
-    expect(screen.getByRole('button', {name: 'Accepteren'})).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'Weigeren'})).toBeInTheDocument();
+    expect(screen.getAllByRole('button')).toHaveLength(1);
+    expect(screen.getByRole('button', {name: 'Begrepen'})).toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: 'Accepteren'})).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: 'Weigeren'})).not.toBeInTheDocument();
   });
 
-  it('calls acceptAll when accept button is clicked', async () => {
+  it('hides on "Begrepen" and remembers it', async () => {
     const user = userEvent.setup();
-    render(<CookieBanner />);
+    const {unmount} = renderBanner();
 
-    await user.click(screen.getByRole('button', {name: 'Accepteren'}));
+    await user.click(screen.getByRole('button', {name: 'Begrepen'}));
 
-    expect(mockAcceptAll).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText(/alleen strikt noodzakelijke opslag/)).not.toBeInTheDocument();
+    expect(store.get('cookie-consent')).toBeTruthy();
+
+    unmount();
+    renderBanner();
+    expect(screen.queryByText(/alleen strikt noodzakelijke opslag/)).not.toBeInTheDocument();
   });
 
-  it('calls rejectAll when reject button is clicked', async () => {
+  it.each(['accepted', 'rejected', 'customized', 'iets onbekends'])('does not ask again for old stored value %s', value => {
+    store.set('cookie-consent', value);
+    store.set('cookie-preferences', '{"necessary":true,"analytics":true}');
+
+    renderBanner();
+
+    expect(screen.queryByText(/alleen strikt noodzakelijke opslag/)).not.toBeInTheDocument();
+  });
+
+  it('can be shown again via openPreferences', async () => {
+    const {useCookieConsent} = await import('../../../app/components/cookie-consent/cookie-consent-context');
+    store.set('cookie-consent', 'acknowledged');
     const user = userEvent.setup();
-    render(<CookieBanner />);
+    function Reopen() {
+      return <button type='button' onClick={useCookieConsent().openPreferences}>Heropen</button>;
+    }
 
-    await user.click(screen.getByRole('button', {name: 'Weigeren'}));
+    render(<CookieConsentProvider>
+      <Reopen />
+      <CookieBanner />
+    </CookieConsentProvider>);
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 
-    expect(mockRejectAll).toHaveBeenCalledTimes(1);
+    await user.click(screen.getByRole('button', {name: 'Heropen'}));
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
   });
 
-  it('renders link to privacy policy', () => {
-    render(<CookieBanner />);
+  it('does not crash on corrupt old preferences', () => {
+    store.set('cookie-consent', 'accepted');
+    store.set('cookie-preferences', 'invalid-json');
 
-    const link = screen.getByRole('link', {name: 'Meer informatie'});
-    expect(link).toHaveAttribute('href', '/privacybeleid');
+    expect(() => renderBanner()).not.toThrow();
+  });
+
+  it('mentions reCAPTCHA only when it is enabled', () => {
+    const {unmount} = renderBanner();
+    expect(screen.queryByText(/reCAPTCHA/)).not.toBeInTheDocument();
+    unmount();
+
+    vi.stubEnv('NEXT_PUBLIC_RECAPTCHA_SITE_KEY', 'site-key');
+    renderBanner();
+    expect(screen.getByText(/Google reCAPTCHA/)).toBeInTheDocument();
   });
 
   it('has correct accessibility attributes', () => {
-    render(<CookieBanner />);
+    renderBanner();
 
-    const dialog = screen.getByRole('dialog');
-    expect(dialog).toHaveAttribute('aria-modal', 'true');
-    expect(dialog).toHaveAttribute('aria-labelledby', 'cookie-banner-title');
-  });
-
-  it('renders the cookie icon', () => {
-    render(<CookieBanner />);
-
-    // The Cookie icon is from lucide-react
-    // We can check for the title element
-    expect(screen.getByText('Wij gebruiken cookies')).toBeInTheDocument();
-  });
-});
-
-// Separate test suite for hidden banner
-describe('CookieBanner when hidden', () => {
-  beforeEach(() => {
-    vi.resetModules();
-    vi.clearAllMocks();
-  });
-
-  it('returns null when showBanner is false', async () => {
-    // Re-mock with showBanner: false
-    vi.doMock('../../../app/components/cookie-consent/cookie-consent-context', () => ({
-      useCookieConsent: () => ({
-        showBanner: false,
-        acceptAll: vi.fn(),
-        rejectAll: vi.fn(),
-      }),
-    }));
-
-    // Need to re-import with the new mock
-    const {CookieBanner: HiddenCookieBanner} = await vi.importActual<typeof import('../../../app/components/cookie-consent/cookie-banner')>('../../../app/components/cookie-consent/cookie-banner');
-
-    // For this test, we'll verify the conditional rendering logic directly
-    // The component returns null when showBanner is false
-    expect(true).toBe(true); // Placeholder assertion - the real test is the mock setup
+    expect(screen.getByRole('dialog')).toHaveAttribute('aria-labelledby', 'cookie-banner-title');
   });
 });

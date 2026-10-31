@@ -52,7 +52,7 @@ Wij verwerken de volgende categorieën persoonsgegevens voor de onderstaande doe
 
 ### Bezoek aan de website
 
-Wij gebruiken geen analyse- of trackingdiensten. Onze server kan technische gegevens (zoals IP-adres en gevraagde pagina) kortstondig in logbestanden bewaren voor de werking en beveiliging van de website.
+Wij gebruiken geen analyse- of trackingdiensten. De webserver (Caddy) en de container waarin de website draait houden technische logbestanden bij (IP-adres, tijdstip en gevraagde pagina) voor de werking en de beveiliging van de website. Deze logbestanden zijn beperkt in omvang en worden na korte tijd overschreven.
 
 ## 3. Met wie delen wij uw gegevens?
 
