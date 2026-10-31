@@ -188,7 +188,7 @@ describe('GET /api/auth/verify', () => {
     expect(consumeLoginToken).toHaveBeenCalledWith('abc');
     expect(ensureAdminUser).toHaveBeenCalledWith(user.email);
     expect(response.status).toBe(307);
-    expect(response.headers.get('location')).toBe('http://intern:3000/admin/gebruikers');
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/gebruikers');
     const cookie = response.cookies.get('tr_session');
     expect(cookie).toMatchObject({httpOnly: true, sameSite: 'lax', path: '/'});
     await expect(readSession(cookie?.value)).resolves.toEqual({userId: user.id, email: user.email});
@@ -210,7 +210,7 @@ describe('GET /api/auth/verify', () => {
 
     const response = await verify('?token=abc&returnTo=/admin/login');
 
-    expect(response.headers.get('location')).toBe('http://intern:3000/admin');
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin');
   });
 
   it('ignores an external returnTo', async () => {
@@ -220,7 +220,7 @@ describe('GET /api/auth/verify', () => {
 
     const response = await verify('?token=abc&returnTo=https://evil.example');
 
-    expect(response.headers.get('location')).toBe('http://intern:3000/admin');
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin');
   });
 
   it('redirects to the login error without a session for an unknown, expired or reused token', async () => {
@@ -228,7 +228,7 @@ describe('GET /api/auth/verify', () => {
 
     const response = await verify('?token=used');
 
-    expect(response.headers.get('location')).toBe('http://intern:3000/admin/login?error=link');
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/login?error=link');
     expect(response.cookies.get('tr_session')).toBeUndefined();
     expect(ensureAdminUser).not.toHaveBeenCalled();
   });
@@ -236,7 +236,7 @@ describe('GET /api/auth/verify', () => {
   it('redirects to the login error without a token', async () => {
     const response = await verify('');
 
-    expect(response.headers.get('location')).toBe('http://intern:3000/admin/login?error=link');
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/login?error=link');
     expect(consumeLoginToken).not.toHaveBeenCalled();
   });
 
@@ -253,7 +253,7 @@ describe('GET /api/auth/verify', () => {
 
     const response = await verify('?token=abc');
 
-    expect(response.headers.get('location')).toBe('http://intern:3000/admin/login?error=link');
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/login?error=link');
     expect(response.cookies.get('tr_session')).toBeUndefined();
     expect(error).toHaveBeenCalledWith('Login link verification failed:', expect.any(Error));
   });
@@ -264,7 +264,7 @@ describe('GET /api/auth/verify', () => {
 
     const response = await verify('?token=abc');
 
-    expect(response.headers.get('location')).toBe('http://intern:3000/admin/login?error=link');
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/login?error=link');
     expect(response.cookies.get('tr_session')).toBeUndefined();
   });
 });
@@ -277,7 +277,7 @@ describe('POST /api/auth/logout', () => {
     const response = await POST(new NextRequest('http://intern:3000/api/auth/logout', {method: 'POST'}));
 
     expect(response.status).toBe(303);
-    expect(response.headers.get('location')).toBe('http://intern:3000/admin/login');
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/login');
     expect(response.cookies.get('tr_session')).toMatchObject({value: '', maxAge: 0, path: '/'});
     expect(auditValues).toHaveBeenCalledWith(expect.objectContaining({actionType: 'logout'}));
   });
@@ -289,7 +289,7 @@ describe('POST /api/auth/logout', () => {
 
     const response = await POST(new NextRequest('http://intern:3000/api/auth/logout', {method: 'POST'}));
 
-    expect(response.headers.get('location')).toBe('http://intern:3000/admin/login');
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/login');
     expect(response.cookies.get('tr_session')).toMatchObject({value: '', maxAge: 0});
     expect(error).toHaveBeenCalledWith('Failed to log logout event:', expect.any(Error));
   });
