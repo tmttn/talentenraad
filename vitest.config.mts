@@ -23,7 +23,7 @@ export default defineConfig({
     include: ['__tests__/**/*.test.{ts,tsx}'],
     coverage: {
       provider: 'istanbul',
-      reporter: ['text', 'lcov', 'json-summary'],
+      reporter: ['text', 'json-summary'],
       include: ['app/**/*.{ts,tsx}'],
       exclude: [
         '**/*.d.ts',
