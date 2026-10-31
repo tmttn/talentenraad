@@ -92,7 +92,7 @@ export async function ensureAdminUser(rawEmail: string): Promise<{id: string; em
 
 /** Only same-site admin paths are allowed as redirect target. */
 export function safeReturnTo(returnTo: string | undefined | null): string {
-  if (returnTo && /^\/admin(?:[/?#]|$)/.test(returnTo)) {
+  if (returnTo && /^\/admin(?:[/?#]|$)/.test(returnTo) && !/^\/admin\/login(?:[/?#]|$)/.test(returnTo)) {
     return returnTo;
   }
 

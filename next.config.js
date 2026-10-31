@@ -24,19 +24,6 @@ nextConfig.webpack = (webpackConfig, {webpack}) => {
   return webpackConfig;
 };
 
-nextConfig.images = {
-  remotePatterns: [
-    {
-      protocol: 'https',
-      hostname: 'lh3.googleusercontent.com',
-    },
-    {
-      protocol: 'https',
-      hostname: 's.gravatar.com',
-    },
-  ],
-};
-
 // Security headers
 nextConfig.headers = async () => [
   {

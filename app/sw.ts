@@ -25,7 +25,9 @@ const serwist = new Serwist({
   runtimeCaching: [
     // Cache page navigations
     {
-      matcher: ({request}) => request.mode === 'navigate',
+      // Admin pages and API responses hold private data and must not be cached across logout
+      matcher: ({request, sameOrigin, url}) => request.mode === 'navigate'
+        && !(sameOrigin && (/^\/(?:admin|api)(?:\/|$)/.test(url.pathname))),
       handler: new NetworkFirst({
         cacheName: 'pages',
         networkTimeoutSeconds: 3,

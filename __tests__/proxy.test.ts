@@ -70,6 +70,13 @@ describe('proxy', () => {
     expect(response.headers.get('x-middleware-rewrite')).toBe('http://localhost:3000/admin/not-found-page');
   });
 
+  it('rewrites the removed /admin/notificaties route to the admin 404 page', async () => {
+    const response = await proxy(request('/admin/notificaties', await jwt()));
+
+    expect(response.status).toBe(404);
+    expect(response.headers.get('x-middleware-rewrite')).toBe('http://localhost:3000/admin/not-found-page');
+  });
+
   it('leaves public routes alone', async () => {
     const response = await proxy(request('/kalender'));
 

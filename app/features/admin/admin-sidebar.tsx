@@ -28,7 +28,6 @@ type AdminSidebarProperties = {
   user: {
     name?: string | null;
     email?: string | null;
-    image?: string | null;
   };
   unreadCounts?: UnreadCounts;
 };
@@ -193,27 +192,14 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
       </div>
       <div className={`${isCollapsed ? 'lg:p-2' : 'p-4'} border-t border-gray-200`}>
         <div className={`flex flex-col items-center ${isCollapsed ? '' : 'mb-4'}`}>
-          {user.image
-            ? (
-              <Image
-                src={user.image}
-                alt=''
-                width={40}
-                height={40}
-                className='rounded-full flex-shrink-0'
-                title={isCollapsed ? (user.name ?? user.email ?? '') : undefined}
-              />
-            )
-            : (
-              <div
-                className='w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'
-                title={isCollapsed ? (user.name ?? user.email ?? '') : undefined}
-              >
-                <span className='text-primary font-medium'>
-                  {user.name?.charAt(0) ?? user.email?.charAt(0) ?? '?'}
-                </span>
-              </div>
-            )}
+          <div
+            className='w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'
+            title={isCollapsed ? (user.name ?? user.email ?? '') : undefined}
+          >
+            <span className='text-primary font-medium'>
+              {user.name?.charAt(0) ?? user.email?.charAt(0) ?? '?'}
+            </span>
+          </div>
           <div className={`text-sm text-center mt-2 ${isCollapsed ? 'lg:hidden' : ''}`}>
             <p className='font-medium text-gray-800 truncate'>{user.name ?? 'Gebruiker'}</p>
             <p className='text-gray-500 text-xs truncate'>{user.email}</p>

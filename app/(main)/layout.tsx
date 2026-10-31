@@ -12,7 +12,7 @@ import {Snowfall, SeasonalStyles} from '@components/seasonal-decorations';
 import {ConditionalFeedbackButton} from '@components/feedback';
 import {content} from '@lib/content';
 
-// Dynamically import the server component to prevent build-time errors
+// Reads the site config; falls back to no decorations when content is unavailable (e.g. at build time)
 async function SafeSeasonalDecorations({children}: {children: React.ReactNode}) {
   let config: SeasonalDecorationsConfig = defaultSeasonalConfig;
 

@@ -6,8 +6,6 @@ import Link from 'next/link';
 import {
   Inbox,
   Mail,
-  Calendar,
-  Newspaper,
   ArrowRight,
   FileText,
   Users,

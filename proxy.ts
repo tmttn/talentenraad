@@ -15,7 +15,6 @@ const validAdminExactPaths = new Set([
   '/admin',
   '/admin/login',
   '/admin/submissions',
-  '/admin/notificaties',
   '/admin/gebruikers',
   '/admin/audit-logs',
   '/admin/not-found-page', // Target for 404 rewrites
