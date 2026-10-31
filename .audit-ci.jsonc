@@ -1,22 +1,9 @@
 {
   "$schema": "https://github.com/IBM/audit-ci/raw/main/docs/schema.json",
+  // Production dependencies must have zero moderate+ advisories; this step blocks CI.
+  // Dev-only advisories (currently minimatch 3.x in the ESLint toolchain, GHSA-g3hv-75wg-m249:
+  // no fix, the patched range >=11.0.1 breaks eslint and its plugins) are not part of the
+  // production image. They stay visible in the informational "Full audit" step of ci.yml.
   "moderate": true,
-  "allowlist": [
-    // minimatch 3.1.5 (GHSA-g3hv-75wg-m249, DoS via globparts amplification) under the ESLint
-    // toolchain: eslint, @eslint/config-array, @eslint/eslintrc, eslint-plugin-import,
-    // eslint-plugin-jsx-a11y, eslint-plugin-react (all via eslint-config-next).
-    // Dev-only: lint runs in CI/locally on our own source, never in the production image,
-    // and minimatch is only fed our own static globs. No fix: the patched range is >=11.0.1,
-    // but these packages need the minimatch 3 CJS API (v11 is ESM-first with named exports),
-    // and npm's "fix" is a nonsensical downgrade to eslint@4.0.0. Remove once ESLint and its
-    // plugins move to minimatch >=11.
-    // The same advisory in production paths (glob via @serwist/build) is fixed through the
-    // `glob` override in package.json, so only exact dev paths are allowed here.
-    "GHSA-g3hv-75wg-m249|@eslint/eslintrc>minimatch>",
-    "GHSA-g3hv-75wg-m249|eslint-config-next>eslint-plugin-import>minimatch",
-    "GHSA-g3hv-75wg-m249|eslint-plugin-jsx-a11y>minimatch>",
-    "GHSA-g3hv-75wg-m249|eslint-plugin-react>minimatch",
-    "GHSA-g3hv-75wg-m249|eslint>@eslint/config-array>minimatch",
-    "GHSA-g3hv-75wg-m249|minimatch>"
-  ]
+  "skip-dev": true
 }

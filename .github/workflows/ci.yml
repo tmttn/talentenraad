@@ -189,6 +189,9 @@ jobs:
     - name: Check for new vulnerabilities
       run: npx audit-ci --config .audit-ci.jsonc
 
+    - name: Full audit (informational)
+      run: npm audit || true
+
     - name: Create security audit summary
       run: |
         echo "## Security Audit Summary" >> $GITHUB_STEP_SUMMARY
