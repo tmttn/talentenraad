@@ -8,17 +8,18 @@ import {
 } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import type {Sponsor} from '@lib/builder-types';
+import type {Pagina} from '@lib/content';
+
+type Sponsor = Pagina<'sponsors'>['sponsors'][number];
 
 type SponsorBannerProperties = {
+  sponsors?: Sponsor[];
   hidden?: boolean;
   rotationInterval?: number; // In seconds
   showTierBadge?: boolean;
   variant?: 'default' | 'compact' | 'minimal';
   title?: string;
 };
-
-const builderPublicApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY ?? '';
 
 // Track sponsor event (impression or click)
 async function trackSponsorEvent(
@@ -38,66 +39,26 @@ async function trackSponsorEvent(
   }
 }
 
+const tierOrder = {
+  goud: 1,
+  zilver: 2,
+  brons: 3,
+  partner: 4,
+};
+
 function SponsorBanner({
+  sponsors: sponsorsInput = [],
   hidden = false,
   rotationInterval = 5,
   showTierBadge = true,
   variant = 'default',
   title = 'Met dank aan onze sponsors',
 }: Readonly<SponsorBannerProperties>) {
-  const [sponsors, setSponsors] = useState<Sponsor[]>([]);
+  const sponsors = [...sponsorsInput].sort((a, b) => tierOrder[a.niveau] - tierOrder[b.niveau]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
   const [isVisible, setIsVisible] = useState(false);
   const bannerRef = useRef<HTMLDivElement>(null);
   const trackedImpressions = useRef<Set<string>>(new Set());
-
-  // Fetch sponsors from Builder.io
-  useEffect(() => {
-    async function fetchSponsors() {
-      try {
-        const url = new URL('https://cdn.builder.io/api/v3/content/sponsor');
-        url.searchParams.set('apiKey', builderPublicApiKey);
-        url.searchParams.set('limit', '50');
-        url.searchParams.set('query.data.actief', 'true');
-        url.searchParams.set('sort.data.volgorde', '1');
-
-        const response = await fetch(url.toString(), {cache: 'no-store'});
-
-        if (!response.ok) {
-          throw new Error('Failed to fetch sponsors');
-        }
-
-        const data = await response.json() as {results: Sponsor[]};
-
-        // Sort by tier priority and then by volgorde
-        const tierOrder = {
-          gold: 1,
-          silver: 2,
-          bronze: 3,
-          partner: 4,
-        };
-        const sorted = [...data.results].sort((a, b) => {
-          const tierDiff = (tierOrder[a.data.tier] ?? 5) - (tierOrder[b.data.tier] ?? 5);
-          if (tierDiff !== 0) {
-            return tierDiff;
-          }
-
-          return (a.data.volgorde ?? 0) - (b.data.volgorde ?? 0);
-        });
-
-        setSponsors(sorted);
-      } catch (error) {
-        console.error('Error fetching sponsors:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    if (!hidden) {
-      void fetchSponsors();
-    }
-  }, [hidden]);
 
   // Set up rotation interval
   useEffect(() => {
@@ -147,21 +108,21 @@ function SponsorBanner({
     }
 
     // Only track each sponsor impression once per page view
-    const impressionKey = `${currentSponsor.id}-${currentIndex}`;
+    const impressionKey = `${currentSponsor.naam}-${currentIndex}`;
     if (trackedImpressions.current.has(impressionKey)) {
       return;
     }
 
     trackedImpressions.current.add(impressionKey);
-    void trackSponsorEvent(currentSponsor.id, currentSponsor.data.naam, 'impression');
-  }, [isVisible, currentIndex, sponsors]);
+    void trackSponsorEvent(currentSponsor.naam, currentSponsor.naam, 'impression');
+  }, [isVisible, currentIndex, sponsors.length]);
 
   // Handle sponsor click
   const handleClick = useCallback((sponsor: Sponsor) => {
-    void trackSponsorEvent(sponsor.id, sponsor.data.naam, 'click');
+    void trackSponsorEvent(sponsor.naam, sponsor.naam, 'click');
   }, []);
 
-  if (hidden || isLoading || sponsors.length === 0) {
+  if (hidden || sponsors.length === 0) {
     return null;
   }
 
@@ -171,16 +132,16 @@ function SponsorBanner({
   }
 
   const tierColors = {
-    gold: 'bg-amber-100 text-amber-800 border-amber-300',
-    silver: 'bg-gray-100 text-gray-700 border-gray-300',
-    bronze: 'bg-orange-100 text-orange-800 border-orange-300',
+    goud: 'bg-amber-100 text-amber-800 border-amber-300',
+    zilver: 'bg-gray-100 text-gray-700 border-gray-300',
+    brons: 'bg-orange-100 text-orange-800 border-orange-300',
     partner: 'bg-blue-100 text-blue-800 border-blue-300',
   };
 
   const tierLabels = {
-    gold: 'Goud',
-    silver: 'Zilver',
-    bronze: 'Brons',
+    goud: 'Goud',
+    zilver: 'Zilver',
+    brons: 'Brons',
     partner: 'Partner',
   };
 
@@ -199,11 +160,11 @@ function SponsorBanner({
       )}
 
       <div className='flex items-center gap-4'>
-        {currentSponsor.data.logo && (
+        {currentSponsor.logo && (
           <div className='relative h-12 w-32 md:h-16 md:w-40'>
             <Image
-              src={currentSponsor.data.logo}
-              alt={currentSponsor.data.naam}
+              src={currentSponsor.logo.src}
+              alt={currentSponsor.naam}
               fill
               className='object-contain'
               sizes='(max-width: 768px) 128px, 160px'
@@ -212,23 +173,17 @@ function SponsorBanner({
         )}
 
         {showTierBadge && variant !== 'minimal' && (
-          <span className={`px-2 py-1 text-xs font-medium rounded border ${tierColors[currentSponsor.data.tier]}`}>
-            {tierLabels[currentSponsor.data.tier]}
+          <span className={`px-2 py-1 text-xs font-medium rounded border ${tierColors[currentSponsor.niveau]}`}>
+            {tierLabels[currentSponsor.niveau]}
           </span>
         )}
       </div>
-
-      {variant === 'default' && currentSponsor.data.beschrijving && (
-        <p className='text-sm text-gray-600 text-center max-w-md'>
-          {currentSponsor.data.beschrijving}
-        </p>
-      )}
 
       {sponsors.length > 1 && variant !== 'minimal' && (
         <div className='flex gap-1.5 mt-2'>
           {sponsors.map((_, index) => (
             <button
-              key={sponsors[index]?.id ?? index}
+              key={sponsors[index]?.naam ?? index}
               type='button'
               onClick={() => {
                 setCurrentIndex(index);
@@ -252,10 +207,10 @@ function SponsorBanner({
       className={`bg-gray-50 ${variants[variant]}`}
     >
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-        {currentSponsor.data.website
+        {currentSponsor.link
           ? (
             <Link
-              href={currentSponsor.data.website}
+              href={currentSponsor.link}
               target='_blank'
               rel='noopener noreferrer sponsored'
               onClick={() => {

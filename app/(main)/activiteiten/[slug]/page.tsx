@@ -101,7 +101,7 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
   const showClaps = await clapsButton();
 
   return (
-    <PageWithAnnouncements content={undefined}>
+    <PageWithAnnouncements>
       <JsonLd data={eventSchema} />
       <JsonLd data={breadcrumbSchema} />
       <article className='py-12 px-6'>

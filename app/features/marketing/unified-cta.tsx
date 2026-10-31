@@ -20,7 +20,7 @@ const containerConfig: Record<string, {size: 'lg' | 'xl'; className?: string}> =
   full: {size: 'xl'},
 };
 
-function UnifiedCta({
+export function UnifiedCta({
   variant = 'full',
   children,
 }: Readonly<UnifiedCtaProperties>) {

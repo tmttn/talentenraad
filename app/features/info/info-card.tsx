@@ -21,7 +21,9 @@ type IconType = 'heart' | 'users' | 'calendar' | 'star' | 'gift' | 'school' | 'm
 
 type InfoCardProperties = {
   title: string;
-  description: string;
+  description?: string;
+  /** Pre-rendered, sanitized HTML from content/; takes precedence over description. */
+  html?: string;
   icon?: IconType;
   link?: string;
   linkText?: string;
@@ -98,9 +100,10 @@ const cardBaseClassName = [
  */
 const iconContainerBase = 'inline-flex items-center justify-center w-16 h-16 rounded-full mb-6 transition-all duration-slow';
 
-function InfoCard({
+export function InfoCard({
   title,
   description,
+  html,
   icon = 'star',
   link,
   linkText = 'Meer info',
@@ -125,7 +128,14 @@ function InfoCard({
           <Icon name={icon} />
         </div>
         <h3 className={`text-xl font-bold mb-3 ${styles.title}`}>{title}</h3>
-        <p className={`whitespace-pre-line ${styles.description}`}>{description}</p>
+        {html
+          ? (
+            <div
+              className={`[&>p]:mb-3 [&>p:last-child]:mb-0 ${styles.description}`}
+              dangerouslySetInnerHTML={{__html: html}}
+            />
+          )
+          : <p className={`whitespace-pre-line ${styles.description}`}>{description}</p>}
         {link && (
           <AnimatedLink
             href={link}

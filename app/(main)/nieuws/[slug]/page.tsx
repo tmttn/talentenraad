@@ -86,7 +86,7 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
   const showClaps = await clapsButton();
 
   return (
-    <PageWithAnnouncements content={undefined}>
+    <PageWithAnnouncements>
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
       <article className='py-12 px-6'>

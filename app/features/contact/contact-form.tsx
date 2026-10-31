@@ -494,7 +494,7 @@ function ContactFormWithParameters(props: Readonly<ContactFormProperties>) {
 }
 
 // Main exported component with Suspense boundary and feature flag check
-function ContactForm(props: Readonly<ContactFormProperties>) {
+export function ContactForm(props: Readonly<ContactFormProperties>) {
   const flags = useFlags();
 
   // Check if contact form is enabled

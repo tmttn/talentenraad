@@ -1,58 +1,33 @@
 import type {Metadata} from 'next';
-import {BuilderContent} from '@components/builder/builder-content';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
-import {
-  builderPublicApiKey,
-  fetchBuilderContent,
-  extractSeoData,
-  ConfigurationError,
-  type PageSearchParameters,
-} from '@lib/builder-utils';
-import {generateMetadata as generateSeoMetadata, siteConfig} from '@lib/seo';
+import {PageHero, PageUnifiedCta, SectionHeading} from '@components/layout/page-parts';
+import {HomepageDashboard} from '@features/dashboard/homepage-dashboard';
+import {Faq} from '@features/faq/faq';
+import {InfoCard} from '@features/info/info-card';
+import {content} from '@lib/content';
+import {generateMetadata as generateSeoMetadata} from '@lib/seo';
 
-// Enable ISR with fast revalidation for quick content updates
-export const revalidate = 5;
-
-type PageProperties = {
-  params: Promise<{slug: string[]}>;
-  searchParams: Promise<PageSearchParameters>;
-};
-
-export async function generateMetadata(): Promise<Metadata> {
-  if (!builderPublicApiKey) {
-    return {title: siteConfig.name};
-  }
-
-  const {content} = await fetchBuilderContent('/', {}, builderPublicApiKey);
-  const seoData = extractSeoData(content);
-
-  if (seoData.title ?? seoData.description) {
-    return generateSeoMetadata({
-      title: seoData.title ?? siteConfig.name,
-      description: seoData.description ?? siteConfig.description,
-      url: '/',
-      image: seoData.image,
-      noIndex: seoData.noIndex,
-    });
-  }
-
-  return {
-    title: siteConfig.name,
-    description: siteConfig.description,
-  };
+export function generateMetadata(): Metadata {
+  const pagina = content.getPagina('home');
+  return generateSeoMetadata({title: pagina.titel, description: pagina.beschrijving, url: '/'});
 }
 
-export default async function Page(properties: Readonly<PageProperties>) {
-  if (!builderPublicApiKey) {
-    return <ConfigurationError />;
-  }
-
-  const searchParameters = await properties.searchParams;
-  const {content} = await fetchBuilderContent('/', searchParameters, builderPublicApiKey);
+export default function Page() {
+  const pagina = content.getPagina('home');
 
   return (
-    <PageWithAnnouncements content={content ?? undefined}>
-      <BuilderContent content={content ?? null} apiKey={builderPublicApiKey} model='page' />
+    <PageWithAnnouncements>
+      <PageHero size='compact' titel={pagina.hero.titel} ondertitel={pagina.hero.ondertitel} />
+      <div className='py-12 bg-gray-50'>
+        <SectionHeading titel={pagina.dashboardTitel} />
+        <HomepageDashboard activiteiten={content.getActiviteiten()} nieuws={content.getNieuws()} />
+      </div>
+      <InfoCard icon='heart' variant='default' title={pagina.infokaart.titel} html={pagina.html} />
+      <div className='py-12'>
+        <SectionHeading titel={pagina.faqTitel} />
+        <Faq items={content.getFaq()} />
+      </div>
+      <PageUnifiedCta variant='compact' cta={pagina.cta} />
     </PageWithAnnouncements>
   );
 }

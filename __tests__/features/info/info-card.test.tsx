@@ -34,6 +34,12 @@ describe('InfoCard', () => {
     expect(screen.getByText('Test description text')).toBeInTheDocument();
   });
 
+  it('renders html instead of description when provided', () => {
+    render(<InfoCard title='Titel' html='<p>Eerste</p><p>Tweede</p>' />);
+    expect(screen.getByText('Eerste')).toBeInTheDocument();
+    expect(screen.getByText('Tweede')).toBeInTheDocument();
+  });
+
   it('renders link when provided', () => {
     render(<InfoCard {...defaultProps} link='/test' />);
     const link = screen.getByRole('link', {name: 'Meer info'});

@@ -11,7 +11,7 @@ type SectionProperties = {
   width?: 'narrow' | 'default' | 'wide' | 'full';
 };
 
-function Section({
+export function Section({
   children,
   background = 'white',
   align = 'center',

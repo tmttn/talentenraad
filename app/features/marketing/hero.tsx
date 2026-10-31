@@ -28,7 +28,7 @@ function getBackgroundStyle(backgroundImage?: string) {
   return gradients.primary;
 }
 
-function Hero({
+export function Hero({
   backgroundImage,
   size = 'medium',
   children,

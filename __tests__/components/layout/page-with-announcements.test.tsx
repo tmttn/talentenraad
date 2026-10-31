@@ -5,20 +5,14 @@ import {PageWithAnnouncements} from '../../../app/components/layout/page-with-an
 
 vi.mock('@lib/content', () => ({content: {getSite: vi.fn()}}));
 
-vi.mock('../../../app/lib/builder-utils', () => ({
-  extractPageAnnouncement: vi.fn(),
-}));
-
 vi.mock('@features/marketing/announcements-container', () => ({
-  AnnouncementsContainer: ({globalAnnouncement, pageAnnouncement}: {
+  AnnouncementsContainer: ({globalAnnouncement}: {
     globalAnnouncement?: {tekst: string; link?: string; linkTekst?: string};
-    pageAnnouncement?: unknown;
   }) => (
     <div data-testid='announcements-container'>
       {globalAnnouncement && (
         <div data-testid='global-announcement' data-link={globalAnnouncement.link} data-linktekst={globalAnnouncement.linkTekst}>{globalAnnouncement.tekst}</div>
       )}
-      {pageAnnouncement && <div data-testid='page-announcement'>Page</div>}
     </div>
   ),
 }));
@@ -34,7 +28,6 @@ describe('PageWithAnnouncements', () => {
 
   it('renders children within main content area', async () => {
     render(await PageWithAnnouncements({
-      content: undefined,
       children: <div data-testid='child-content'>Child Content</div>,
     }));
 
@@ -42,13 +35,13 @@ describe('PageWithAnnouncements', () => {
   });
 
   it('renders SiteHeaderServer', async () => {
-    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
+    render(await PageWithAnnouncements({children: <div>Content</div>}));
 
     expect(screen.getByTestId('site-header')).toBeInTheDocument();
   });
 
   it('passes the active announcement from site content', async () => {
-    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
+    render(await PageWithAnnouncements({children: <div>Content</div>}));
 
     expect(screen.getByTestId('global-announcement')).toHaveTextContent('Fictieve aankondiging');
     expect(screen.getByTestId('global-announcement')).toHaveAttribute('data-link', '/meer');
@@ -60,13 +53,13 @@ describe('PageWithAnnouncements', () => {
       aankondiging: {...fixtureSite.aankondiging, linkTekst: 'Lees verder'},
     });
 
-    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
+    render(await PageWithAnnouncements({children: <div>Content</div>}));
 
     expect(screen.getByTestId('global-announcement')).toHaveAttribute('data-linktekst', 'Lees verder');
   });
 
   it('passes no linkTekst when none is set (old behaviour: no link shown)', async () => {
-    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
+    render(await PageWithAnnouncements({children: <div>Content</div>}));
 
     expect(screen.getByTestId('global-announcement')).not.toHaveAttribute('data-linktekst');
   });
@@ -77,13 +70,13 @@ describe('PageWithAnnouncements', () => {
       aankondiging: {...fixtureSite.aankondiging, actief: false},
     });
 
-    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
+    render(await PageWithAnnouncements({children: <div>Content</div>}));
 
     expect(screen.queryByTestId('global-announcement')).not.toBeInTheDocument();
   });
 
   it('has correct accessibility attributes on main element', async () => {
-    render(await PageWithAnnouncements({content: undefined, children: <div>Content</div>}));
+    render(await PageWithAnnouncements({children: <div>Content</div>}));
 
     const main = screen.getByRole('main');
     expect(main).toHaveAttribute('id', 'main-content');
