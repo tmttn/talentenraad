@@ -14,7 +14,7 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 1. [x] Builder.io-content exporteren: `scripts/export-builder-content.mjs` (sinds stap 3 verwijderd; staat in de git-historie) → `content-export/`. **Alleen lokaal, niet committen**: bevat persoonsgegevens en de repo is publiek. Content freeze in Builder tot stap 3.
 2. [x] Contentmodel in `content/` (Markdown + frontmatter) en migratiescript vanuit `content-export/`.
 3. [x] Pagina's lezen uit `content/` i.p.v. Builder.io; Builder-code en `scripts/*builder*` verwijderen.
-4. [ ] Auth0 → magic links; Resend → SMTP; flags, Sentry, push, claps, Vercel-pakketten eruit.
+4. [x] Auth0 → magic links; Resend → SMTP; flags, Sentry, push, claps, Vercel-pakketten eruit.
 5. [ ] Postgres → SQLite; `Dockerfile` + `compose.yaml` (app + Caddy); deploy via GitHub Actions.
 6. [ ] Admin-editor die content als commits wegschrijft.
 
@@ -25,6 +25,10 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 - Gecachte arrays worden by reference teruggegeven (stap 3/6).
 - `copy-content-assets`: is-main via realpath; Node ≥ 20.12 vastleggen; `content/` in de standalone-trace opnemen (stap 5).
 - `TZ=Europe/Brussels` in de Dockerfile zetten (stap 5): komend/voorbij hangt af van de serverdatum.
+- Stap 5, database: oude tabellen laten vallen (`push_subscriptions`, `notification_history`, `content_claps`, `clap_sessions`, `sponsor_analytics`, `site_settings`, en `sponsors` als ongebruikt) en de kolom `users.auth0_id`.
+- Stap 5, compose/secrets: `AUTH_SECRET` (≥ 32 tekens), `SITE_URL`, `SMTP_HOST/PORT/USER/PASS/FROM`, `ADMIN_EMAILS` (zie `.env.example`).
+- Mail-linkscanners (bv. Outlook SafeLinks) kunnen het eenmalige login-token opgebruiken; overweeg later een bevestigingspagina vóór het verbruiken.
+- Stap 5: tests voor login-tokens tegen een echte database (nu gemockt).
 - Schema's: `z.strictObject`, `min(1)` op verplichte strings, link-validatie; de editor schrijft alleen `100644`-blobs (stap 6).
 
 ## Pre-commit Checklist (MANDATORY)
