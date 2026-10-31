@@ -48,6 +48,8 @@ describe('sendMail', () => {
       port: 2525,
       secure: false,
       auth: {user: 'user', pass: 'pass'},
+      connectionTimeout: 10_000,
+      socketTimeout: 20_000,
     });
     expect(sendMailMock).toHaveBeenCalledWith({
       from: 'Talentenraad <noreply@example.com>',
@@ -66,6 +68,8 @@ describe('sendMail', () => {
       port: 587,
       secure: false,
       auth: undefined,
+      connectionTimeout: 10_000,
+      socketTimeout: 20_000,
     });
   });
 

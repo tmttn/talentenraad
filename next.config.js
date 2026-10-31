@@ -2,26 +2,9 @@ const packageJson = require('./package.json');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   // Esbuild-wasm is required for @serwist/turbopack
   serverExternalPackages: ['isolated-vm', 'esbuild-wasm', 'better-sqlite3'],
-};
-
-// Turbopack is the default bundler; an empty config acknowledges the webpack config below
-nextConfig.turbopack = {};
-
-nextConfig.webpack = (webpackConfig, {webpack}) => {
-  webpackConfig.plugins.push(
-    // Remove node: from import specifiers, because Next.js does not yet support node: scheme
-    // https://github.com/vercel/next.js/issues/28774
-    new webpack.NormalModuleReplacementPlugin(
-      /^node:/,
-      resource => {
-        resource.request = resource.request.replace(/^node:/, '');
-      },
-    ),
-  );
-
-  return webpackConfig;
 };
 
 // Security headers

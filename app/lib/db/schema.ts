@@ -10,7 +10,9 @@ import {
 const id = () => text('id').primaryKey().$defaultFn(() => crypto.randomUUID());
 const createdAt = () => integer('created_at', {mode: 'timestamp_ms'})
   .notNull()
-  .default(sql`(unixepoch() * 1000)`);
+  .default(sql`(unixepoch() * 1000)`)
+  // The SQL default only has second resolution; inserts through the app get milliseconds.
+  .$defaultFn(() => new Date());
 
 export const auditActionTypes = [
   'create',
@@ -36,7 +38,8 @@ export const users = sqliteTable('users', {
   createdAt: createdAt(),
   updatedAt: integer('updated_at', {mode: 'timestamp_ms'})
     .notNull()
-    .default(sql`(unixepoch() * 1000)`),
+    .default(sql`(unixepoch() * 1000)`)
+    .$defaultFn(() => new Date()),
 });
 
 // One-time login links (magic links). Only the sha256 hash of the token is stored.

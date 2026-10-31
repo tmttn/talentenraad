@@ -1,0 +1,12 @@
+node_modules
+.next
+data
+content-export
+.env*
+!.env.example
+.git
+coverage
+.superpowers
+docs
+__tests__
+e2e

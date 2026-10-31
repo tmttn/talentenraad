@@ -1,0 +1,27 @@
+services:
+  app:
+    image: ghcr.io/tmttn/talentenraad:${TAG:-latest}
+    env_file: .env
+    restart: unless-stopped
+    volumes:
+      - data:/data
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_healthy
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+
+volumes:
+  data:
+  caddy_data:
+  caddy_config:

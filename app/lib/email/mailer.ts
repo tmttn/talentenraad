@@ -45,6 +45,8 @@ export async function sendMail(message: MailMessage): Promise<void> {
     port,
     secure: port === 465,
     auth: user ? {user, pass} : undefined,
+    connectionTimeout: 10_000,
+    socketTimeout: 20_000,
   });
 
   await transport.sendMail({
