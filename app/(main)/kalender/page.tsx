@@ -4,6 +4,7 @@ import {PageCtaBanner, PageHero, SectionHeading} from '@components/layout/page-p
 import {ActivitiesArchive} from '@features/activities/activities-archive';
 import {ActivitiesList} from '@features/activities/activities-list';
 import {content} from '@lib/content';
+import {todayString} from '@lib/dates';
 import {generateMetadata as generateSeoMetadata} from '@lib/seo';
 
 export function generateMetadata(): Metadata {
@@ -14,6 +15,7 @@ export function generateMetadata(): Metadata {
 export default function Page() {
   const pagina = content.getPagina('kalender');
   const activiteiten = content.getActiviteiten();
+  const today = todayString();
 
   return (
     <PageWithAnnouncements>
@@ -21,6 +23,7 @@ export default function Page() {
       <div className='py-12'>
         <SectionHeading titel={pagina.lijst.titel} tekst={pagina.lijst.ondertitel} />
         <ActivitiesList
+          today={today}
           activiteiten={activiteiten}
           limit={20}
           showViewAll={false}
@@ -29,6 +32,7 @@ export default function Page() {
         />
       </div>
       <ActivitiesArchive
+        today={today}
         activiteiten={activiteiten}
         title={pagina.archief.titel}
         subtitle={pagina.archief.ondertitel}

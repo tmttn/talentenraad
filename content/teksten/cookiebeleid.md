@@ -1,5 +1,5 @@
 ---
-titel: Cookiebeleid - Talentenraad
+titel: Cookiebeleid
 beschrijving: >-
   Dit cookiebeleid legt uit hoe de Talentenraad cookies en vergelijkbare
   technologieën gebruikt op onze website talentenraad.be, in overeenstemming met

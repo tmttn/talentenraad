@@ -7,6 +7,7 @@ import {ChevronDown, HelpCircle} from 'lucide-react';
 import {Container, Stack} from '@components/ui/layout';
 import type {FaqItem} from '@lib/content';
 import {useFlag} from '@lib/flags-client';
+import {serializeJsonLd} from '@lib/seo';
 
 const faqButtonClassName = [
   'faq-button w-full px-6 py-4 text-left flex items-center justify-between gap-4',
@@ -179,7 +180,7 @@ function Faq({items}: Readonly<FaqProperties>) {
         <script
           type='application/ld+json'
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateFaqStructuredData(faqs)),
+            __html: serializeJsonLd(generateFaqStructuredData(faqs)),
           }}
         />
       )}

@@ -1,5 +1,5 @@
 ---
-titel: Algemene Voorwaarden - Talentenraad
+titel: Algemene Voorwaarden
 beschrijving: >-
   Deze algemene voorwaarden zijn van toepassing op het gebruik van de website
   talentenraad.be en deelname aan activiteiten georganiseerd door de

@@ -3,15 +3,16 @@
 import {Calendar, Newspaper} from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 import type {Activiteit, NieuwsItem} from '@lib/content';
-import {parseLocalDate, todayString} from '@lib/dates';
+import {parseLocalDate} from '@lib/dates';
 
 type HomepageDashboardProperties = {
+  /** Local date (YYYY-MM-DD) computed on the server, so hydration matches the static HTML. */
+  today: string;
   activiteiten: Activiteit[];
   nieuws: NieuwsItem[];
 };
 
-function HomepageDashboard({activiteiten: alleActiviteiten, nieuws}: Readonly<HomepageDashboardProperties>) {
-  const today = todayString();
+function HomepageDashboard({today, activiteiten: alleActiviteiten, nieuws}: Readonly<HomepageDashboardProperties>) {
   const activiteiten = alleActiviteiten
     .filter(activiteit => activiteit.datum >= today)
     .sort((a, b) => a.datum.localeCompare(b.datum))

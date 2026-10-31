@@ -36,8 +36,8 @@ describe('Contact page', () => {
   it('generates metadata with canonical url and openGraph from the page', () => {
     const metadata = generateMetadata();
     expect(metadata).toMatchObject({description: 'Fictieve beschrijving', alternates: {canonical: 'https://talentenraad.be/contact'}});
-    expect(String(metadata.title)).toContain('Fictief contact');
+    expect(metadata.title).toEqual({absolute: 'Fictief contact | Talentenraad'});
     expect(metadata.openGraph).toMatchObject({description: 'Fictieve beschrijving'});
-    expect(String(metadata.openGraph?.title)).toContain('Fictief contact');
+    expect(metadata.openGraph?.title).toBe('Fictief contact | Talentenraad');
   });
 });

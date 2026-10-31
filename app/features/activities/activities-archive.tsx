@@ -4,10 +4,12 @@ import {useState} from 'react';
 import {Archive, ChevronDown} from 'lucide-react';
 import {Container, Stack} from '@components/ui/layout';
 import type {Activiteit} from '@lib/content';
-import {parseLocalDate, todayString} from '@lib/dates';
+import {parseLocalDate} from '@lib/dates';
 import {useFlag} from '@lib/flags-client';
 
 type ActivitiesArchiveProperties = {
+  /** Local date (YYYY-MM-DD) computed on the server, so hydration matches the static HTML. */
+  today: string;
   activiteiten: Activiteit[];
   title: string;
   subtitle: string;
@@ -16,6 +18,7 @@ type ActivitiesArchiveProperties = {
 };
 
 function ActivitiesArchive({
+  today,
   activiteiten,
   title,
   subtitle,
@@ -24,7 +27,6 @@ function ActivitiesArchive({
 }: Readonly<ActivitiesArchiveProperties>) {
   const isEnabled = useFlag('activitiesArchive');
   const [isExpanded, setIsExpanded] = useState(false);
-  const today = todayString();
   const activities = activiteiten
     .filter(activity => activity.datum < today)
     .sort((a, b) => b.datum.localeCompare(a.datum))

@@ -49,8 +49,8 @@ describe('Sponsors page', () => {
   it('generates metadata with canonical url and openGraph from the page', () => {
     const metadata = generateMetadata();
     expect(metadata).toMatchObject({description: 'Fictieve beschrijving', alternates: {canonical: 'https://talentenraad.be/sponsors'}});
-    expect(String(metadata.title)).toContain('Fictieve sponsors');
+    expect(metadata.title).toEqual({absolute: 'Fictieve sponsors | Talentenraad'});
     expect(metadata.openGraph).toMatchObject({description: 'Fictieve beschrijving'});
-    expect(String(metadata.openGraph?.title)).toContain('Fictieve sponsors');
+    expect(metadata.openGraph?.title).toBe('Fictieve sponsors | Talentenraad');
   });
 });

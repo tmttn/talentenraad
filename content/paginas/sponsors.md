@@ -1,5 +1,5 @@
 ---
-titel: Onze Sponsors - Talentenraad
+titel: Onze Sponsors
 beschrijving: Met dank aan onze sponsors en partners die de Talentenraad ondersteunen.
 hero:
   titel: Onze Sponsors

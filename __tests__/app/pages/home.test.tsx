@@ -14,7 +14,7 @@ vi.mock('@components/layout/page-with-announcements', () => ({
 }));
 
 vi.mock('@features/dashboard/homepage-dashboard', () => ({
-  HomepageDashboard: (p: {activiteiten: unknown[]; nieuws: unknown[]}) => <div data-testid='dashboard'>DASHBOARD {p.activiteiten.length}/{p.nieuws.length}</div>,
+  HomepageDashboard: (p: {today: string; activiteiten: unknown[]; nieuws: unknown[]}) => <div data-testid='dashboard' data-today={p.today}>DASHBOARD {p.activiteiten.length}/{p.nieuws.length}</div>,
 }));
 
 vi.mock('@features/faq/faq', () => ({
@@ -27,6 +27,11 @@ describe('Home page', () => {
     vi.mocked(content.getActiviteiten).mockReturnValue([makeActiviteit()]);
     vi.mocked(content.getNieuws).mockReturnValue([makeNieuws()]);
     vi.mocked(content.getFaq).mockReturnValue([makeFaq({vraag: 'Waarom?'})]);
+  });
+
+  it('passes the server date to the dashboard', () => {
+    render(<HomePage />);
+    expect(screen.getByTestId('dashboard').dataset.today).toMatch(/^\d{4}-\d{2}-\d{2}$/);
   });
 
   it('renders all texts in table order', () => {
@@ -47,8 +52,8 @@ describe('Home page', () => {
   it('generates metadata with canonical url and openGraph from the page', () => {
     const metadata = generateMetadata();
     expect(metadata).toMatchObject({description: 'Fictieve beschrijving', alternates: {canonical: 'https://talentenraad.be/'}});
-    expect(String(metadata.title)).toContain('Fictieve start');
+    expect(metadata.title).toEqual({absolute: 'Fictieve start | Talentenraad'});
     expect(metadata.openGraph).toMatchObject({description: 'Fictieve beschrijving'});
-    expect(String(metadata.openGraph?.title)).toContain('Fictieve start');
+    expect(metadata.openGraph?.title).toBe('Fictieve start | Talentenraad');
   });
 });

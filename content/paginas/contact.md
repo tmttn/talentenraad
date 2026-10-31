@@ -1,5 +1,5 @@
 ---
-titel: Contact - Talentenraad
+titel: Contact
 beschrijving: Heb je een vraag of wil je meer informatie? We helpen je graag!
 hero:
   titel: Neem Contact Op

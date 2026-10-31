@@ -41,6 +41,20 @@ describe('content/', () => {
     }
   });
 
+  it('has titles without the site suffix (home is the bare site name)', () => {
+    const titels = [
+      ...(Object.keys(paginaSchemas) as PaginaNaam[]).map(naam => [naam, reader.getPagina(naam).titel] as const),
+      ...reader.listTeksten().map(tekst => [tekst.slug, tekst.titel] as const),
+    ];
+    for (const [naam, titel] of titels) {
+      if (naam === 'home') {
+        expect(titel).toBe('Talentenraad');
+      } else {
+        expect(titel.endsWith('Talentenraad'), naam).toBe(false);
+      }
+    }
+  });
+
   it('resolves activity images', () => {
     const withImage = reader.getActiviteiten().filter(item => item.afbeelding !== undefined);
     expect(withImage.length).toBeGreaterThan(0);

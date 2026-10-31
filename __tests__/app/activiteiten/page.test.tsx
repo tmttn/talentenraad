@@ -112,7 +112,7 @@ describe('ActivityDetailPage metadata and params', () => {
   it('builds metadata from title and summary', async () => {
     getActiviteit.mockReturnValue(makeActiviteit({titel: 'Zomerfeest'}));
     const metadata = await generateMetadata({params: Promise.resolve({slug: 'voorbeeldfeest'})});
-    expect(metadata.title).toContain('Zomerfeest');
+    expect(metadata.title).toEqual({absolute: 'Zomerfeest | Talentenraad'});
     expect(metadata.description).toBe('Een fictieve samenvatting van het feest.');
   });
 

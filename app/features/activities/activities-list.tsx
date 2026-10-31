@@ -8,7 +8,7 @@ import {
 import {AnimatedLink} from '@components/ui';
 import {Container, Stack} from '@components/ui/layout';
 import type {Activiteit} from '@lib/content';
-import {parseLocalDate, todayString} from '@lib/dates';
+import {parseLocalDate} from '@lib/dates';
 import {useFlag} from '@lib/flags-client';
 
 const articleClassName = [
@@ -17,6 +17,8 @@ const articleClassName = [
 ].join(' ');
 
 type ActivitiesListProperties = {
+  /** Local date (YYYY-MM-DD) computed on the server, so hydration matches the static HTML. */
+  today: string;
   activiteiten: Activiteit[];
   showViewAll?: boolean;
   viewAllLink?: string;
@@ -26,6 +28,7 @@ type ActivitiesListProperties = {
 };
 
 function ActivitiesList({
+  today,
   activiteiten,
   showViewAll = true,
   viewAllLink = '/kalender',
@@ -34,7 +37,6 @@ function ActivitiesList({
   showDescription = false,
 }: Readonly<ActivitiesListProperties>) {
   const isEnabled = useFlag('activitiesList');
-  const today = todayString();
   const activities = activiteiten
     .filter(activity => activity.datum >= today)
     .sort((a, b) => a.datum.localeCompare(b.datum))

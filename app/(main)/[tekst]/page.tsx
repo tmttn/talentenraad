@@ -40,7 +40,7 @@ export default async function Page({params}: Readonly<PageProperties>) {
     <PageWithAnnouncements>
       <JsonLd data={breadcrumbSchema} />
       <div className='max-w-[800px] mx-auto px-5 py-10'>
-        <h1 className='text-[2.5rem] font-bold text-gray-800 mb-4'>{tekst.titel.replace(/ - Talentenraad$/, '')}</h1>
+        <h1 className='text-[2.5rem] font-bold text-gray-800 mb-4'>{tekst.titel}</h1>
         <div
           className='prose prose-lg max-w-none prose-headings:text-gray-700 prose-p:text-gray-600'
           dangerouslySetInnerHTML={{__html: tekst.html}}

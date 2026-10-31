@@ -1,5 +1,5 @@
 ---
-titel: Home - Talentenraad
+titel: Talentenraad
 beschrijving: De ouderraad van het Talentenhuis - School met een hart voor ieder kind
 hero:
   titel: Welkom bij de Talentenraad

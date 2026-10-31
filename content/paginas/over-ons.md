@@ -1,5 +1,5 @@
 ---
-titel: Over Ons - Talentenraad
+titel: Over Ons
 beschrijving: Samen met jullie op zoek gaan naar nog meer kansen voor onze kinderen
 hero:
   titel: De Talentenraad

@@ -57,12 +57,6 @@ async function ConditionalCookieBanner() {
  * - Cookie consent management (controlled by cookieBanner flag)
  * - Seasonal decorations context (controlled by seasonalDecorations flag)
  * - Site footer with loading skeleton
- *
- * Header and announcements are rendered via PageWithAnnouncements component in each page.
- * This allows page-specific announcements to be fetched from page content.
- *
- * Note: 404 detection is handled in proxy.ts before page rendering, so async
- * wrappers here don't interfere with 404 status codes.
  */
 export default async function MainSiteLayout({
   children,

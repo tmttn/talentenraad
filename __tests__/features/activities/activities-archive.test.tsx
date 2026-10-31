@@ -13,19 +13,10 @@ const activiteiten = [
 ];
 
 const renderArchive = (props: Partial<Parameters<typeof ActivitiesArchive>[0]> = {}) => render(
-  <ActivitiesArchive activiteiten={activiteiten} title='Archief' subtitle='Voorbije activiteiten' {...props} />,
+  <ActivitiesArchive today='2025-03-01' activiteiten={activiteiten} title='Archief' subtitle='Voorbije activiteiten' {...props} />,
 );
 
 describe('ActivitiesArchive', () => {
-  beforeEach(() => {
-    vi.useFakeTimers();
-    vi.setSystemTime(new Date(2025, 2, 1, 12));
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
-  });
-
   it('shows only past activities, newest first, with title and count', () => {
     renderArchive();
     expect(screen.getByText('Archief')).toBeInTheDocument();

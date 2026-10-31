@@ -15,13 +15,13 @@ vi.mock('@components/layout/page-with-announcements', () => ({
 
 vi.mock('@features/activities/activities-list', () => ({
   ActivitiesList: (p: Record<string, unknown>) => (
-    <div data-testid='lijst' data-limit={String(p.limit)} data-viewall={String(p.showViewAll)} data-location={String(p.showLocation)} data-description={String(p.showDescription)}>LIJST</div>
+    <div data-testid='lijst' data-today={String(p.today)} data-limit={String(p.limit)} data-viewall={String(p.showViewAll)} data-location={String(p.showLocation)} data-description={String(p.showDescription)}>LIJST</div>
   ),
 }));
 
 vi.mock('@features/activities/activities-archive', () => ({
   ActivitiesArchive: (p: Record<string, unknown>) => (
-    <div data-testid='archief' data-limit={String(p.limit)} data-year={String(p.showYear)}>{String(p.title)}|{String(p.subtitle)}</div>
+    <div data-testid='archief' data-today={String(p.today)} data-limit={String(p.limit)} data-year={String(p.showYear)}>{String(p.title)}|{String(p.subtitle)}</div>
   ),
 }));
 
@@ -49,6 +49,13 @@ describe('Kalender page', () => {
     expect(screen.getByTestId('archief')).toHaveAttribute('data-year', 'true');
   });
 
+  it('passes the server date to the list and archive', () => {
+    render(<KalenderPage />);
+    const today = /^\d{4}-\d{2}-\d{2}$/;
+    expect(screen.getByTestId('lijst').dataset.today).toMatch(today);
+    expect(screen.getByTestId('archief').dataset.today).toBe(screen.getByTestId('lijst').dataset.today);
+  });
+
   it('links the CTA button', () => {
     render(<KalenderPage />);
     expect(screen.getByRole('link', {name: /Enige knop/})).toHaveAttribute('href', '/enige');
@@ -57,8 +64,8 @@ describe('Kalender page', () => {
   it('generates metadata with canonical url and openGraph from the page', () => {
     const metadata = generateMetadata();
     expect(metadata).toMatchObject({description: 'Fictieve beschrijving', alternates: {canonical: 'https://talentenraad.be/kalender'}});
-    expect(String(metadata.title)).toContain('Fictieve agenda');
+    expect(metadata.title).toEqual({absolute: 'Fictieve agenda | Talentenraad'});
     expect(metadata.openGraph).toMatchObject({description: 'Fictieve beschrijving'});
-    expect(String(metadata.openGraph?.title)).toContain('Fictieve agenda');
+    expect(metadata.openGraph?.title).toBe('Fictieve agenda | Talentenraad');
   });
 });

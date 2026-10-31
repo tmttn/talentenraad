@@ -1,5 +1,5 @@
 ---
-titel: Kalender - Talentenraad
+titel: Kalender
 beschrijving: Bekijk alle geplande activiteiten van de Talentenraad
 hero:
   titel: Activiteiten Kalender

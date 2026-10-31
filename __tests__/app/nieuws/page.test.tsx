@@ -87,7 +87,7 @@ describe('NewsDetailPage metadata and params', () => {
   it('builds metadata from title and summary', async () => {
     getNieuwsItem.mockReturnValue(makeNieuws({titel: 'Lentebericht'}));
     const metadata = await generateMetadata({params: Promise.resolve({slug: 'voorbeeldbericht'})});
-    expect(metadata.title).toContain('Lentebericht');
+    expect(metadata.title).toEqual({absolute: 'Lentebericht | Talentenraad'});
     expect(metadata.description).toBe('Een fictieve samenvatting van het bericht.');
   });
 

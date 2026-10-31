@@ -1,5 +1,5 @@
 ---
-titel: Privacybeleid - Talentenraad
+titel: Privacybeleid
 beschrijving: >-
   Dit privacybeleid beschrijft hoe de Talentenraad uw persoonsgegevens
   verzamelt, gebruikt en beschermt in overeenstemming met de Algemene

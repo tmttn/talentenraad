@@ -42,19 +42,6 @@ vi.mock('next/navigation', () => ({
   }),
 }));
 
-// Mock Builder.io SDK
-vi.mock('@builder.io/sdk-react-nextjs', () => ({
-  fetchOneEntry: vi.fn(),
-  isPreviewing: vi.fn(),
-  isEditing: vi.fn(),
-  getBuilderSearchParams: vi.fn((params: Record<string, string>) => params),
-  Content: ({content, customComponents}: {content: unknown; customComponents: unknown[]}) => (
-    <div data-testid='builder-content' data-content={JSON.stringify(content)} data-components={customComponents?.length ?? 0}>
-      Builder Content
-    </div>
-  ),
-}));
-
 // Mock feature flags - all enabled by default for tests
 const mockFlagValues = vi.hoisted(() => ({
   adminSubmissions: true,

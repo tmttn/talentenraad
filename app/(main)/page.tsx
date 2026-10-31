@@ -5,6 +5,7 @@ import {HomepageDashboard} from '@features/dashboard/homepage-dashboard';
 import {Faq} from '@features/faq/faq';
 import {InfoCard} from '@features/info/info-card';
 import {content} from '@lib/content';
+import {todayString} from '@lib/dates';
 import {generateMetadata as generateSeoMetadata} from '@lib/seo';
 
 export function generateMetadata(): Metadata {
@@ -20,7 +21,7 @@ export default function Page() {
       <PageHero size='compact' titel={pagina.hero.titel} ondertitel={pagina.hero.ondertitel} />
       <div className='py-12 bg-gray-50'>
         <SectionHeading titel={pagina.dashboardTitel} />
-        <HomepageDashboard activiteiten={content.getActiviteiten()} nieuws={content.getNieuws()} />
+        <HomepageDashboard today={todayString()} activiteiten={content.getActiviteiten()} nieuws={content.getNieuws()} />
       </div>
       <InfoCard icon='heart' variant='default' title={pagina.infokaart.titel} html={pagina.html} />
       <div className='py-12'>

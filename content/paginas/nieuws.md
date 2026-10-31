@@ -1,5 +1,5 @@
 ---
-titel: Nieuws - Talentenraad
+titel: Nieuws
 beschrijving: Blijf op de hoogte van de Talentenraad
 hero:
   titel: Nieuws

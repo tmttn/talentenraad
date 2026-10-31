@@ -52,9 +52,9 @@ describe('Tekst page', () => {
       description: 'Fictieve beleidsbeschrijving',
       alternates: {canonical: 'https://talentenraad.be/fictief-beleid'},
     });
-    expect(String(metadata.title)).toContain('Fictief beleid');
+    expect(metadata.title).toEqual({absolute: 'Fictief beleid | Talentenraad'});
     expect(metadata.openGraph).toMatchObject({description: 'Fictieve beleidsbeschrijving'});
-    expect(String(metadata.openGraph?.title)).toContain('Fictief beleid');
+    expect(metadata.openGraph?.title).toBe('Fictief beleid | Talentenraad');
   });
 
   it('renders breadcrumb JSON-LD', async () => {

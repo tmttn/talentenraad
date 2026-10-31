@@ -42,8 +42,8 @@ describe('Nieuws page', () => {
   it('generates metadata with canonical url and openGraph from the page', () => {
     const metadata = generateMetadata();
     expect(metadata).toMatchObject({description: 'Fictieve beschrijving', alternates: {canonical: 'https://talentenraad.be/nieuws'}});
-    expect(String(metadata.title)).toContain('Fictief nieuws');
+    expect(metadata.title).toEqual({absolute: 'Fictief nieuws | Talentenraad'});
     expect(metadata.openGraph).toMatchObject({description: 'Fictieve beschrijving'});
-    expect(String(metadata.openGraph?.title)).toContain('Fictief nieuws');
+    expect(metadata.openGraph?.title).toBe('Fictief nieuws | Talentenraad');
   });
 });
