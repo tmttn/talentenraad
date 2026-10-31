@@ -1,9 +1,7 @@
 import {
   render, screen, fireEvent, waitFor,
 } from '@testing-library/react';
-import {ContactFormInfo} from '../../../app/features/contact/contact-form';
-
-const ContactForm = ContactFormInfo.component;
+import {ContactForm} from '../../../app/features/contact/contact-form';
 
 // Mock fetch globally
 const mockFetch = vi.fn();
@@ -273,13 +271,5 @@ describe('ContactForm', () => {
 
     const nameInput = screen.getByLabelText(/naam/i);
     expect(nameInput).toHaveAttribute('aria-required', 'true');
-  });
-});
-
-describe('ContactFormInfo', () => {
-  it('exports correct component info', () => {
-    expect(ContactFormInfo.name).toBe('ContactForm');
-    expect(ContactFormInfo.component).toBeDefined();
-    expect(ContactFormInfo.inputs).toBeInstanceOf(Array);
   });
 });

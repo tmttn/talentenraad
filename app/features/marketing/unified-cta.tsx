@@ -34,18 +34,3 @@ export function UnifiedCta({
     </section>
   );
 }
-
-export const UnifiedCtaInfo = {
-  name: 'UnifiedCTA',
-  component: UnifiedCta,
-  inputs: [
-    {
-      name: 'variant',
-      type: 'string',
-      enum: ['compact', 'full', 'minimal'],
-      defaultValue: 'full',
-      helperText: 'Achtergrondstijl: compact (primaire gradient), full (donkere gradient), minimal (donker)',
-    },
-  ],
-  canHaveChildren: true,
-};

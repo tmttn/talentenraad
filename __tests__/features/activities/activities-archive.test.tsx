@@ -1,5 +1,5 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import {ActivitiesArchive, ActivitiesArchiveInfo} from '../../../app/features/activities/activities-archive';
+import {ActivitiesArchive} from '../../../app/features/activities/activities-archive';
 import {makeActiviteit} from '../../fixtures/content';
 
 const activiteiten = [
@@ -84,9 +84,5 @@ describe('ActivitiesArchive', () => {
   it('renders nothing for an empty list', () => {
     const {container} = renderArchive({activiteiten: []});
     expect(container).toBeEmptyDOMElement();
-  });
-
-  it('exports builder info', () => {
-    expect(ActivitiesArchiveInfo.name).toBe('ActivitiesArchive');
   });
 });

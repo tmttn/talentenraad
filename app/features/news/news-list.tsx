@@ -183,29 +183,3 @@ function NewsList({
 }
 
 export {NewsList};
-
-export const NewsListInfo = {
-  name: 'NewsList',
-  component: NewsList,
-  inputs: [
-    {
-      name: 'limit',
-      type: 'number',
-      defaultValue: 10,
-      helperText: 'Maximum aantal nieuwsberichten',
-    },
-    {
-      name: 'layout',
-      type: 'string',
-      enum: ['list', 'grid'],
-      defaultValue: 'list',
-      helperText: 'Weergave: lijst (verticaal) of grid (kaarten)',
-    },
-    {
-      name: 'showImages',
-      type: 'boolean',
-      defaultValue: true,
-      helperText: 'Toon afbeeldingen bij nieuwsberichten (alleen bij grid layout)',
-    },
-  ],
-};

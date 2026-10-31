@@ -512,22 +512,3 @@ export function ContactForm(props: Readonly<ContactFormProperties>) {
     </Suspense>
   );
 }
-
-export const ContactFormInfo = {
-  name: 'ContactForm',
-  component: ContactForm,
-  inputs: [
-    {
-      name: 'showPhone',
-      type: 'boolean',
-      defaultValue: false,
-      helperText: 'Toon telefoonnummer veld',
-    },
-    {
-      name: 'showSubject',
-      type: 'boolean',
-      defaultValue: true,
-      helperText: 'Toon onderwerp dropdown',
-    },
-  ],
-};

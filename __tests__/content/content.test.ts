@@ -4,10 +4,16 @@ import path from 'node:path';
 import {describe, expect, it} from 'vitest';
 import {createContentReader} from '../../app/lib/content/reader';
 import {paginaSchemas, type PaginaNaam} from '../../app/lib/content/schemas';
-import {findDisallowedEmails} from '../../scripts/migrate-content/transform';
 
 const root = path.resolve('content');
 const allowlist = ['voorzitterouderraad@talentenhuis.be', 'contact@apd-gba.be'];
+const emailPattern = /[\w.+-]+@[\w-]+(?:\.[\w-]+)+/g;
+
+function findDisallowedEmails(text: string, allowed: string[]): string[] {
+  const found = text.match(emailPattern) ?? [];
+  const lower = new Set(allowed.map(address => address.toLowerCase()));
+  return [...new Set(found.filter(address => !lower.has(address.toLowerCase())))];
+}
 
 function textFiles(dir: string): string[] {
   return readdirSync(dir).flatMap(name => {

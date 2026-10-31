@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {NewsList, NewsListInfo} from '../../../app/features/news/news-list';
+import {NewsList} from '../../../app/features/news/news-list';
 import {makeNieuws} from '../../fixtures/content';
 
 const nieuws = [
@@ -55,7 +55,4 @@ describe('NewsList', () => {
     expect(screen.getByRole('link', {name: /Facebook/})).toBeInTheDocument();
   });
 
-  it('exports builder info', () => {
-    expect(NewsListInfo.name).toBe('NewsList');
-  });
 });

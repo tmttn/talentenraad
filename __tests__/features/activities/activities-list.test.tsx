@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {ActivitiesList, ActivitiesListInfo} from '../../../app/features/activities/activities-list';
+import {ActivitiesList} from '../../../app/features/activities/activities-list';
 import {makeActiviteit} from '../../fixtures/content';
 
 const activiteiten = [
@@ -88,7 +88,4 @@ describe('ActivitiesList', () => {
     expect(screen.getByText('Nog geen activiteiten gepland')).toBeInTheDocument();
   });
 
-  it('exports builder info', () => {
-    expect(ActivitiesListInfo.name).toBe('ActivitiesList');
-  });
 });

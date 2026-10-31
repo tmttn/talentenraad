@@ -1,7 +1,5 @@
 import {render} from '@testing-library/react';
-import {HeroInfo} from '../../../app/features/marketing/hero';
-
-const Hero = HeroInfo.component;
+import {Hero} from '../../../app/features/marketing/hero';
 
 describe('Hero', () => {
   describe('sizes', () => {
@@ -40,31 +38,6 @@ describe('Hero', () => {
     const {container} = render(<Hero />);
     const decorativeElements = container.querySelectorAll('[aria-hidden="true"]');
     expect(decorativeElements.length).toBeGreaterThan(0);
-  });
-});
-
-describe('HeroInfo', () => {
-  it('exports correct component info', () => {
-    expect(HeroInfo.name).toBe('Hero');
-    expect(HeroInfo.component).toBeDefined();
-    expect(HeroInfo.inputs).toBeInstanceOf(Array);
-  });
-
-  it('has size input', () => {
-    const sizeInput = HeroInfo.inputs.find(i => i.name === 'size');
-    expect(sizeInput).toBeDefined();
-    expect(sizeInput?.enum).toContain('compact');
-    expect(sizeInput?.enum).toContain('medium');
-  });
-
-  it('has backgroundImage input', () => {
-    const bgInput = HeroInfo.inputs.find(i => i.name === 'backgroundImage');
-    expect(bgInput).toBeDefined();
-    expect(bgInput?.type).toBe('file');
-  });
-
-  it('has canHaveChildren enabled', () => {
-    expect(HeroInfo.canHaveChildren).toBe(true);
   });
 });
 

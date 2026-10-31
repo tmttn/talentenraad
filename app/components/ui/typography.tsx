@@ -86,7 +86,7 @@ export function Typography({
     colorClasses[color],
     alignClasses[align],
     weight ? weightClasses[weight] : '',
-    'whitespace-pre-line', // Preserve line breaks from Builder
+    'whitespace-pre-line', // Preserve line breaks from content
   ].filter(Boolean).join(' ');
 
   return (
@@ -95,43 +95,3 @@ export function Typography({
     </Element>
   );
 }
-
-export const TypographyInfo = {
-  name: 'Typography',
-  component: Typography,
-  inputs: [
-    {
-      name: 'text',
-      type: 'longText',
-      required: true,
-      helperText: 'De tekst die wordt weergegeven',
-    },
-    {
-      name: 'variant',
-      type: 'string',
-      enum: ['h1', 'h2', 'h3', 'h4', 'lead', 'body', 'small', 'caption'],
-      defaultValue: 'body',
-      helperText: 'Tekststijl: h1-h4=koppen, lead=intro tekst, body=normale tekst, small=kleine tekst, caption=label',
-    },
-    {
-      name: 'color',
-      type: 'string',
-      enum: ['default', 'muted', 'primary', 'secondary', 'accent', 'white'],
-      defaultValue: 'default',
-      helperText: 'Tekstkleur: primary=roze, secondary=groen, accent=oranje, muted=grijs',
-    },
-    {
-      name: 'align',
-      type: 'string',
-      enum: ['left', 'center', 'right'],
-      defaultValue: 'left',
-      helperText: 'Tekstuitlijning',
-    },
-    {
-      name: 'weight',
-      type: 'string',
-      enum: ['normal', 'medium', 'semibold', 'bold'],
-      helperText: 'Optioneel: overschrijf het standaard lettergewicht van de variant',
-    },
-  ],
-};

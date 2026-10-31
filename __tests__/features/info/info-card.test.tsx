@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {InfoCardInfo} from '../../../app/features/info/info-card';
+import {InfoCard} from '../../../app/features/info/info-card';
 
 // Mock the UI components
 vi.mock('../../../app/components/ui', () => ({
@@ -19,8 +19,6 @@ vi.mock('../../../app/components/ui', () => ({
   LocationIcon: () => <svg data-testid='icon-location' />,
   PhoneIcon: () => <svg data-testid='icon-phone' />,
 }));
-
-const InfoCard = InfoCardInfo.component;
 
 describe('InfoCard', () => {
   const defaultProps = {
@@ -115,20 +113,5 @@ describe('InfoCard', () => {
       const decorativeElements = card?.querySelectorAll('.absolute');
       expect(decorativeElements?.length).toBe(0);
     });
-  });
-});
-
-describe('InfoCardInfo', () => {
-  it('exports correct component info', () => {
-    expect(InfoCardInfo.name).toBe('InfoCard');
-    expect(InfoCardInfo.component).toBeDefined();
-    expect(InfoCardInfo.inputs).toBeInstanceOf(Array);
-  });
-
-  it('has required inputs for title and description', () => {
-    const titleInput = InfoCardInfo.inputs.find(i => i.name === 'title');
-    const descriptionInput = InfoCardInfo.inputs.find(i => i.name === 'description');
-    expect(titleInput?.required).toBe(true);
-    expect(descriptionInput?.required).toBe(true);
   });
 });

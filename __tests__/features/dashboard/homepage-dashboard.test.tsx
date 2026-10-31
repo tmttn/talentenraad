@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {HomepageDashboard, HomepageDashboardInfo} from '../../../app/features/dashboard/homepage-dashboard';
+import {HomepageDashboard} from '../../../app/features/dashboard/homepage-dashboard';
 import {makeActiviteit, makeNieuws} from '../../fixtures/content';
 
 const activiteiten = [
@@ -70,7 +70,4 @@ describe('HomepageDashboard', () => {
     expect(screen.getByText('Nog geen nieuws')).toBeInTheDocument();
   });
 
-  it('exports builder info', () => {
-    expect(HomepageDashboardInfo.name).toBe('HomepageDashboard');
-  });
 });

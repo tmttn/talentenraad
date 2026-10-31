@@ -10,7 +10,6 @@
     "start": "cross-env NODE_OPTIONS='--no-node-snapshot' next start",
     "lint": "eslint .",
     "type-check": "tsc --noEmit",
-    "migrate:content": "tsx scripts/migrate-content/index.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -25,8 +24,6 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.14.0",
-    "@builder.io/admin-sdk": "^0.0.8",
-    "@builder.io/sdk-react-nextjs": "^0.25.0",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
@@ -70,7 +67,6 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
-    "@builder.io/cli": "^1.2.10",
     "@commitlint/cli": "^21.0.0",
     "@commitlint/config-conventional": "^21.0.0",
     "@playwright/test": "^1.57.0",
@@ -84,7 +80,6 @@
     "@types/node": "^25.0.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
-    "@types/turndown": "^5.0.6",
     "@types/web-push": "^3.6.4",
     "@vitejs/plugin-react": "^6.1.2",
     "@vitest/coverage-istanbul": "^5.0.5",
@@ -100,9 +95,6 @@
     "serwist": "^9.3.0",
     "tailwindcss": "^4.0.8",
     "ts-node": "^10.9.2",
-    "tsx": "^4.23.15",
-    "turndown": "^7.2.4",
-    "turndown-plugin-gfm": "^1.0.2",
     "typescript": "^6.0.0-dev",
     "vite": "^8.3.5",
     "vitest": "^5.0.5"

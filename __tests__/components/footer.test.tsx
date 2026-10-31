@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {SiteFooter, SiteFooterInfo} from '../../app/components/layout/site-footer';
+import {SiteFooter} from '../../app/components/layout/site-footer';
 
 // Mock icons
 vi.mock('@components/ui', () => ({
@@ -112,10 +112,4 @@ describe('SiteFooter', () => {
     expect(navElements.length).toBeGreaterThan(0);
   });
 
-  it('has correct SiteFooterInfo export properties', () => {
-    expect(SiteFooterInfo.name).toBe('SiteFooter');
-    expect(SiteFooterInfo.component).toBeDefined();
-    expect(SiteFooterInfo.inputs).toBeDefined();
-    expect(SiteFooterInfo.inputs.length).toBeGreaterThan(0);
-  });
 });

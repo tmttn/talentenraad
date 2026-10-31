@@ -1,9 +1,7 @@
 import {defaultCache} from '@serwist/turbopack/worker';
 import {
   Serwist,
-  CacheFirst,
   NetworkFirst,
-  StaleWhileRevalidate,
   ExpirationPlugin,
   type PrecacheEntry,
   type SerwistGlobalConfig,
@@ -25,32 +23,6 @@ const serwist = new Serwist({
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching: [
-    // Cache Builder.io CDN images
-    {
-      matcher: /^https:\/\/cdn\.builder\.io\/api\/v1\/image\/.*/i,
-      handler: new CacheFirst({
-        cacheName: 'builder-images',
-        plugins: [
-          new ExpirationPlugin({
-            maxEntries: 100,
-            maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-          }),
-        ],
-      }),
-    },
-    // Cache Builder.io content API (stale-while-revalidate for dynamic content)
-    {
-      matcher: /^https:\/\/cdn\.builder\.io\/api\/v3\/content\/.*/i,
-      handler: new StaleWhileRevalidate({
-        cacheName: 'builder-content',
-        plugins: [
-          new ExpirationPlugin({
-            maxEntries: 50,
-            maxAgeSeconds: 60 * 60, // 1 hour
-          }),
-        ],
-      }),
-    },
     // Cache page navigations
     {
       matcher: ({request}) => request.mode === 'navigate',

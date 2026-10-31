@@ -1,5 +1,5 @@
 import {fireEvent, render, screen} from '@testing-library/react';
-import {Faq, FaqInfo} from '../../../app/features/faq/faq';
+import {Faq} from '../../../app/features/faq/faq';
 import {makeFaq} from '../../fixtures/content';
 
 const items = [
@@ -73,7 +73,4 @@ describe('Faq', () => {
     expect(screen.getByText('Geen veelgestelde vragen gevonden')).toBeInTheDocument();
   });
 
-  it('exports builder info', () => {
-    expect(FaqInfo.name).toBe('FAQ');
-  });
 });

@@ -237,9 +237,3 @@ function Faq({items}: Readonly<FaqProperties>) {
 }
 
 export {Faq};
-
-export const FaqInfo = {
-  name: 'FAQ',
-  component: Faq,
-  inputs: [],
-};

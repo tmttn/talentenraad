@@ -286,7 +286,7 @@ export function HomepageDashboardSkeleton() {
   );
 }
 
-// Generic section skeleton for Builder pages - uses rounded-card, shadow-base, p-component-lg tokens
+// Generic section skeleton for content pages - uses rounded-card, shadow-base, p-component-lg tokens
 export function SectionsSkeleton({count = 2}: {count?: number}) {
   return (
     <div className='space-y-12 py-8 animate-pulse'>

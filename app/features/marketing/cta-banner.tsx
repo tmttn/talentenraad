@@ -35,18 +35,3 @@ export function CtaBanner({
     </section>
   );
 }
-
-export const CtaBannerInfo = {
-  name: 'CTABanner',
-  component: CtaBanner,
-  inputs: [
-    {
-      name: 'variant',
-      type: 'string',
-      enum: ['default', 'accent', 'light'],
-      defaultValue: 'default',
-      helperText: 'default: donkergrijs, accent: primaire kleur gradient, light: lichtgrijs',
-    },
-  ],
-  canHaveChildren: true,
-};

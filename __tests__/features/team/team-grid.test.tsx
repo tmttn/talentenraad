@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {TeamGrid, TeamGridInfo} from '../../../app/features/team/team-grid';
+import {TeamGrid} from '../../../app/features/team/team-grid';
 import {makeTeamlid} from '../../fixtures/content';
 
 const leden = [
@@ -43,7 +43,4 @@ describe('TeamGrid', () => {
     expect(screen.getByText('Geen teamleden gevonden')).toBeInTheDocument();
   });
 
-  it('exports builder info', () => {
-    expect(TeamGridInfo.name).toBe('TeamGrid');
-  });
 });

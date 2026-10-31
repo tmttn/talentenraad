@@ -155,9 +155,3 @@ function HomepageDashboard({activiteiten: alleActiviteiten, nieuws}: Readonly<Ho
 }
 
 export {HomepageDashboard};
-
-export const HomepageDashboardInfo = {
-  name: 'HomepageDashboard',
-  component: HomepageDashboard,
-  inputs: [],
-};

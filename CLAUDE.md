@@ -11,14 +11,23 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 - **Design systeem:** "Talentenraad Beverst" op claude.ai (Design System-artifact): tokens, merkboek en de UI-componenten uit `app/components/ui/`. Lees het README daarvan vóór je UI bouwt; nieuwe componenten volgen die tokens. `color-accent` haalt maar 3,6:1 op wit: gebruik `color-accent-hover` voor kleine tekst.
 
 ### Stappenplan
-1. [x] Builder.io-content exporteren: `node scripts/export-builder-content.mjs` (keys in `.env.local`) → `content-export/`. **Alleen lokaal, niet committen**: bevat persoonsgegevens en de repo is publiek. Content freeze in Builder tot stap 3.
+1. [x] Builder.io-content exporteren: `scripts/export-builder-content.mjs` (sinds stap 3 verwijderd; staat in de git-historie) → `content-export/`. **Alleen lokaal, niet committen**: bevat persoonsgegevens en de repo is publiek. Content freeze in Builder tot stap 3.
 2. [x] Contentmodel in `content/` (Markdown + frontmatter) en migratiescript vanuit `content-export/`.
-3. [ ] Pagina's lezen uit `content/` i.p.v. Builder.io; Builder-code en `scripts/*builder*` verwijderen.
+3. [x] Pagina's lezen uit `content/` i.p.v. Builder.io; Builder-code en `scripts/*builder*` verwijderen.
 4. [ ] Auth0 → magic links; Resend → SMTP; flags, Sentry, push, claps, Vercel-pakketten eruit.
 5. [ ] Postgres → SQLite; `Dockerfile` + `compose.yaml` (app + Caddy); deploy via GitHub Actions.
 6. [ ] Admin-editor die content als commits wegschrijft.
 
-Tot stap 3 klaar is, gelden de Builder.io-secties hieronder nog voor de bestaande code; daarna mogen ze weg.
+### Open punten
+- Alias-uniciteit controleren in `content.test.ts`.
+- Relatieve afbeeldingen in de Markdown-body worden nog niet afgehandeld.
+- `concept` op pagina's wordt genegeerd.
+- Gecachte arrays worden by reference teruggegeven (stap 3/6).
+- `copy-content-assets`: is-main via realpath; Node ≥ 20.12 vastleggen; `content/` in de standalone-trace opnemen (stap 5).
+- `TZ=Europe/Brussels` in de Dockerfile zetten (stap 5): komend/voorbij hangt af van de serverdatum.
+- Dubbele titelsuffix "… - Talentenraad | Talentenraad": de titel in `content/paginas` bevat al " - Talentenraad".
+- Schema's: `z.strictObject`, `min(1)` op verplichte strings, link-validatie; de editor schrijft alleen `100644`-blobs (stap 6).
+- `tsconfig.json` `exclude` bevat nog `jest.*` (Tom).
 
 ## Pre-commit Checklist (MANDATORY)
 
@@ -63,7 +72,6 @@ Niet afgedwongen, wel de stijl van de bestaande code; volg die:
 ## Project Structure
 
 - `app/(main)/` - Main site pages with header/footer layout
-- `app/(builder-preview)/` - Isolated Builder.io preview pages (no header/footer)
 - `__tests__/` - Vitest test files mirroring app structure
 
 ## After Refactoring
@@ -72,61 +80,6 @@ When moving files or creating route groups:
 1. Update ALL related test import paths
 2. Update vitest.config.mts coverage exclusions (escape parentheses)
 3. Run full test suite before committing
-
-## Builder.io API Usage
-
-### API Keys
-- **Public API Key**: `NEXT_PUBLIC_BUILDER_API_KEY` - For reading content (CDN)
-- **Private Write Key**: `BUILDER_PRIVATE_KEY` - For writing/updating content (starts with `bpk-`)
-
-### Read API (CDN)
-Use the CDN endpoint for reading published content:
-```bash
-# List content entries
-curl "https://cdn.builder.io/api/v3/content/{model}?apiKey={PUBLIC_KEY}&limit=10"
-
-# Get single entry by ID
-curl "https://cdn.builder.io/api/v3/content/{model}/{entryId}?apiKey={PUBLIC_KEY}"
-
-# Query by field (e.g., URL)
-curl "https://cdn.builder.io/api/v3/content/{model}?apiKey={PUBLIC_KEY}&query.data.url=/"
-
-# Filter by date (use $gte, $lte, $gt, $lt)
-curl "https://cdn.builder.io/api/v3/content/{model}?apiKey={PUBLIC_KEY}&query.data.datum.\$gte=2025-01-01"
-
-# Bypass CDN cache (for debugging only)
-curl "https://cdn.builder.io/api/v3/content/{model}?apiKey={PUBLIC_KEY}&noCache=true"
-```
-
-### Write API
-Use the Write API to create or update content:
-```bash
-# Create new entry (POST)
-curl -X POST "https://builder.io/api/v1/write/{model}" \
-  -H "Authorization: Bearer {PRIVATE_KEY}" \
-  -H "Content-Type: application/json" \
-  -d '{"data": {"blocks": [...]}}'
-
-# Update existing entry by ID (PUT)
-curl -X PUT "https://builder.io/api/v1/write/{model}/{entryId}" \
-  -H "Authorization: Bearer {PRIVATE_KEY}" \
-  -H "Content-Type: application/json" \
-  -d '{"data": {"blocks": [...]}}'
-```
-
-### Important Notes
-1. **Always find entry ID first** before updating - use Read API to get the ID
-2. **CDN caching**: Changes may take 1-5 minutes to propagate on CDN
-3. **Use `noCache=true`** to verify updates immediately (debugging only)
-4. **POST creates new entries**, PUT updates existing ones
-5. **Query uses `$eq`, `$gte`, `$lte`** - escape the `$` in bash with `\$`
-
-### Builder.io Models
-When creating Builder.io models:
-- Use v2 admin API (`https://builder.io/api/v2/admin`), NOT v1 graphql
-- Always add `@type: '@builder.io/core:Field'` to field definitions
-- Always verify the model exists after creation by listing models
-- Include `helperText` (description) for all models and fields
 
 ## Configuration Restrictions (CRITICAL)
 
@@ -149,6 +102,4 @@ This rule exists to maintain code quality standards. Circumventing these rules b
 2. Forgetting to update test imports after moving files
 3. Using `||` instead of `??` for optional values
 4. Not escaping `()` in Vitest glob patterns
-5. Assuming Builder.io models exist without verifying
-6. Forgetting helperText/description on Builder.io models
-7. Modifying test/linter configuration to bypass failing checks
+5. Modifying test/linter configuration to bypass failing checks

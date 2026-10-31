@@ -58,24 +58,3 @@ export function Hero({
     </section>
   );
 }
-
-export const HeroInfo = {
-  name: 'Hero',
-  component: Hero,
-  inputs: [
-    {
-      name: 'backgroundImage',
-      type: 'file',
-      allowedFileTypes: ['jpeg', 'jpg', 'png', 'webp'],
-      helperText: 'Achtergrondafbeelding (optioneel)',
-    },
-    {
-      name: 'size',
-      type: 'string',
-      enum: ['compact', 'small', 'medium', 'large'],
-      defaultValue: 'medium',
-      helperText: 'compact: zeer klein voor subpagina\'s, small: klein, medium: standaard, large: groot',
-    },
-  ],
-  canHaveChildren: true,
-};

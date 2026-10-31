@@ -1,5 +1,5 @@
 import {render, screen} from '@testing-library/react';
-import {SiteHeader, SiteHeaderInfo} from '../../app/components/layout/site-header';
+import {SiteHeader} from '../../app/components/layout/site-header';
 
 // Mock usePathname
 vi.mock('next/navigation', () => ({
@@ -64,10 +64,4 @@ describe('SiteHeader', () => {
     expect(skipLink).toHaveAttribute('href', '#main-content');
   });
 
-  it('has correct SiteHeaderInfo export properties', () => {
-    expect(SiteHeaderInfo.name).toBe('SiteHeader');
-    expect(SiteHeaderInfo.component).toBeDefined();
-    expect(SiteHeaderInfo.inputs).toBeDefined();
-    expect(SiteHeaderInfo.inputs.length).toBeGreaterThan(0);
-  });
 });

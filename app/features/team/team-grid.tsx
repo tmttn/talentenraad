@@ -98,39 +98,3 @@ function TeamGrid({
 }
 
 export {TeamGrid};
-
-export const TeamGridInfo = {
-  name: 'TeamGrid',
-  component: TeamGrid,
-  inputs: [
-    {
-      name: 'columns',
-      type: 'number',
-      enum: [
-        {label: '2 kolommen', value: 2},
-        {label: '3 kolommen', value: 3},
-        {label: '4 kolommen', value: 4},
-      ],
-      defaultValue: 3,
-      helperText: 'Aantal kolommen in het grid',
-    },
-    {
-      name: 'showDescription',
-      type: 'boolean',
-      defaultValue: true,
-      helperText: 'Toon beschrijving onder teamleden',
-    },
-    {
-      name: 'category',
-      type: 'string',
-      enum: [
-        {label: 'Alle teamleden', value: ''},
-        {label: 'Alleen bestuur', value: 'bestuur'},
-        {label: 'Alleen leden', value: 'lid'},
-        {label: 'Alleen helpers', value: 'helper'},
-      ],
-      defaultValue: '',
-      helperText: 'Filter op categorie',
-    },
-  ],
-};

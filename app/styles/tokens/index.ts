@@ -67,6 +67,3 @@ export {
   type TransitionPresets,
   type SemanticTransitions,
 } from './transitions';
-
-// Re-export component tokens when they exist
-export * from '@components/index';

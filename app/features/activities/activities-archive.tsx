@@ -144,22 +144,3 @@ function ActivitiesArchive({
 }
 
 export {ActivitiesArchive};
-
-export const ActivitiesArchiveInfo = {
-  name: 'ActivitiesArchive',
-  component: ActivitiesArchive,
-  inputs: [
-    {
-      name: 'limit',
-      type: 'number',
-      defaultValue: 20,
-      helperText: 'Maximum aantal voorbije activiteiten om te tonen',
-    },
-    {
-      name: 'showYear',
-      type: 'boolean',
-      defaultValue: true,
-      helperText: 'Toon het jaar bij de datum',
-    },
-  ],
-};

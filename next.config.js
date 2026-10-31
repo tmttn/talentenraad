@@ -26,12 +26,6 @@ nextConfig.images = {
   remotePatterns: [
     {
       protocol: 'https',
-      hostname: 'cdn.builder.io',
-      port: '',
-      pathname: '/api/v1/image/*',
-    },
-    {
-      protocol: 'https',
       hostname: 'lh3.googleusercontent.com',
     },
     {
@@ -62,7 +56,7 @@ nextConfig.headers = async () => [
     headers: [
       {
         key: 'Content-Security-Policy',
-        value: 'frame-ancestors \'self\' https://*.builder.io https://builder.io',
+        value: 'frame-ancestors \'self\'',
       },
       {
         key: 'X-Content-Type-Options',

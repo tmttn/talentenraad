@@ -9,17 +9,9 @@ import {usePathname} from 'next/navigation';
 import {
   Home,
   Mail,
-  Calendar,
-  Newspaper,
-  FileText,
-  Megaphone,
-  Sparkles,
   Users,
   History,
   Bell,
-  Search,
-  Database,
-  Building2,
   ChevronLeft,
   ChevronRight,
   X,
@@ -59,23 +51,7 @@ const navItems: NavItem[] = [
     href: '/admin/submissions', label: 'Berichten', icon: Mail, flag: 'adminSubmissions',
   },
   {
-    href: '/admin/activiteiten', label: 'Activiteiten', icon: Calendar, flag: 'adminActivities',
-  },
-  {
-    href: '/admin/nieuws', label: 'Nieuws', icon: Newspaper, flag: 'adminNews',
-  },
-  {href: '/admin/paginas', label: 'Pagina\'s', icon: FileText},
-  {
-    href: '/admin/aankondigingen', label: 'Aankondigingen', icon: Megaphone, flag: 'adminAnnouncements',
-  },
-  {
     href: '/admin/notificaties', label: 'Notificaties', icon: Bell, flag: 'adminNotifications',
-  },
-  {href: '/admin/seo', label: 'SEO', icon: Search},
-  {href: '/admin/sponsors', label: 'Sponsors', icon: Building2},
-  {href: '/admin/data', label: 'Data', icon: Database},
-  {
-    href: '/admin/decoraties', label: 'Decoraties', icon: Sparkles, flag: 'adminDecorations',
   },
   {
     href: '/admin/gebruikers', label: 'Gebruikers', icon: Users, flag: 'adminUsers',

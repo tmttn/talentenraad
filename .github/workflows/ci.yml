@@ -65,8 +65,6 @@ jobs:
 
     - name: Build application
       run: npm run build
-      env:
-        BUILDER_API_KEY: ${{ secrets.BUILDER_API_KEY }}
 
     - name: Verify build output
       run: |
