@@ -18,10 +18,6 @@ vi.mock('@lib/content', () => ({
   content: {getNieuwsItem: vi.fn(), getNieuws: vi.fn()},
 }));
 
-vi.mock('@components/claps', () => ({
-  ClapButton: () => <div data-testid='clap-button' />,
-}));
-
 vi.mock('@components/ui', () => ({
   AnimatedLink: ({children, href}: {children: React.ReactNode; href: string}) => <a href={href}>{children}</a>,
 }));

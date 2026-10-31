@@ -6,7 +6,6 @@ import {usePathname} from 'next/navigation';
 import {useEffect, useRef, useState} from 'react';
 import {Menu, X} from 'lucide-react';
 import {ChristmasLights} from '@components/seasonal-decorations';
-import {NotificationToggle} from '@components/ui/notification-toggle';
 
 type NavigationLink = {
   text: string;
@@ -101,10 +100,8 @@ export function SiteHeader({
                 {item.text}
               </Link>
             ))}
-            <NotificationToggle />
           </nav>
           <div className='flex items-center gap-2 md:hidden'>
-            <NotificationToggle />
             <button
               type='button'
               className='p-2 text-gray-600 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded-button transition-colors'

@@ -18,10 +18,6 @@ vi.mock('@lib/content', () => ({
   content: {getActiviteit: vi.fn(), getActiviteiten: vi.fn()},
 }));
 
-vi.mock('@components/claps', () => ({
-  ClapButton: () => <div data-testid='clap-button' />,
-}));
-
 vi.mock('@components/ui', () => ({
   AnimatedButton: ({children, href}: {children: React.ReactNode; href: string}) => <a href={href}>{children}</a>,
   AnimatedLink: ({children, href}: {children: React.ReactNode; href: string}) => <a href={href}>{children}</a>,
@@ -81,12 +77,6 @@ describe('ActivityDetailPage', () => {
     const {container} = await render_('voorbeeldfeest');
     expect(container.querySelector('img')).toHaveAttribute('alt', 'Voorbeeldfeest');
     expect(screen.queryByText('Over deze activiteit')).not.toBeInTheDocument();
-  });
-
-  it('shows the clap button', async () => {
-    getActiviteit.mockReturnValue(makeActiviteit());
-    await render_('voorbeeldfeest');
-    expect(screen.getByTestId('clap-button')).toBeInTheDocument();
   });
 
   it('redirects an alias to the canonical url', async () => {

@@ -4,7 +4,6 @@ import Image from 'next/image';
 import {Calendar} from 'lucide-react';
 import {AnimatedLink} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
-import {ClapButton} from '@components/claps';
 import {
   generateMetadata as generateSeoMetadata,
   generateArticleSchema,
@@ -132,11 +131,6 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
           {item.html.trim() && (
             <div className={proseClassName} dangerouslySetInnerHTML={{__html: item.html}} />
           )}
-
-          {/* Clap button */}
-                    <div className='mt-8 flex items-center justify-center'>
-            <ClapButton contentType='nieuws' contentId={item.slug} />
-          </div>
 
           {/* Back link */}
           <div className='mt-12 pt-8 border-t border-gray-200'>

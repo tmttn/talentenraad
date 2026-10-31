@@ -11,7 +11,6 @@ import {
   Mail,
   Users,
   History,
-  Bell,
   ChevronLeft,
   ChevronRight,
   X,
@@ -46,9 +45,6 @@ const navItems: NavItem[] = [
   {href: '/admin', label: 'Dashboard', icon: Home},
   {
     href: '/admin/submissions', label: 'Berichten', icon: Mail,
-  },
-  {
-    href: '/admin/notificaties', label: 'Notificaties', icon: Bell,
   },
   {
     href: '/admin/gebruikers', label: 'Gebruikers', icon: Users,

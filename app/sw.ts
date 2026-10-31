@@ -16,7 +16,7 @@ declare global {
 declare const self: ServiceWorkerGlobalScope;
 
 const serwist = new Serwist({
-  // Disable precaching - it blocks SW activation and breaks push notifications
+  // Disable precaching - it blocks SW activation
   // Runtime caching still works for dynamic content
   precacheEntries: [],
   skipWaiting: true,
@@ -48,54 +48,6 @@ const serwist = new Serwist({
       },
     ],
   },
-});
-
-// Push notification handling
-self.addEventListener('push', event => {
-  if (!event.data) {
-    return;
-  }
-
-  const data = event.data.json() as {
-    title: string;
-    body: string;
-    icon?: string;
-    badge?: string;
-    url?: string;
-    tag?: string;
-  };
-
-  const options: NotificationOptions = {
-    body: data.body,
-    icon: data.icon ?? '/favicons/android-chrome-192x192.png',
-    badge: data.badge ?? '/favicons/favicon-32x32.png',
-    tag: data.tag ?? 'talentenraad-notification',
-    data: {url: data.url ?? '/'},
-  };
-
-  event.waitUntil(self.registration.showNotification(data.title, options));
-});
-
-self.addEventListener('notificationclick', event => {
-  event.notification.close();
-
-  const url = (event.notification.data as {url?: string})?.url ?? '/';
-
-  const handleClick = async () => {
-    const clients = await self.clients.matchAll({type: 'window'});
-
-    // Focus existing window if available
-    for (const client of clients) {
-      if (client.url === url && 'focus' in client) {
-        return client.focus();
-      }
-    }
-
-    // Open new window
-    return self.clients.openWindow(url);
-  };
-
-  event.waitUntil(handleClick());
 });
 
 serwist.addEventListeners();
