@@ -219,15 +219,16 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
             <p className='text-gray-500 text-xs truncate'>{user.email}</p>
           </div>
         </div>
-        {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- API-route; <Link> zou logout prefetchen */}
-        <a
-          href='/api/admin/auth/logout'
-          title={isCollapsed ? 'Uitloggen' : undefined}
-          className={`flex items-center justify-center gap-3 w-full ${isCollapsed ? 'lg:px-2' : 'px-4'} py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-button transition-colors`}
-        >
-          <LogOut className='w-5 h-5' strokeWidth={1.5} />
-          <span className={isCollapsed ? 'lg:hidden' : ''}>Uitloggen</span>
-        </a>
+        <form method='post' action='/api/auth/logout'>
+          <button
+            type='submit'
+            title={isCollapsed ? 'Uitloggen' : undefined}
+            className={`flex items-center justify-center gap-3 w-full ${isCollapsed ? 'lg:px-2' : 'px-4'} py-3 text-sm text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-button transition-colors`}
+          >
+            <LogOut className='w-5 h-5' strokeWidth={1.5} />
+            <span className={isCollapsed ? 'lg:hidden' : ''}>Uitloggen</span>
+          </button>
+        </form>
         {!isCollapsed && (
           <p className='text-xs text-gray-400 text-center mt-3 hidden lg:block'>v{process.env.NEXT_PUBLIC_APP_VERSION}</p>
         )}

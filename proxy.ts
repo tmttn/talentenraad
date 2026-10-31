@@ -1,9 +1,10 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0} from '@lib/auth0';
+import {readSession, sessionCookieName} from '@lib/auth/session-token';
 
 /**
- * Proxy middleware that handles:
- * 1. Auth0 authentication
+ * Proxy middleware for /admin:
+ * 1. Session check (JWT signature and expiry only; the admin check against the
+ *    database happens in getSession() in the protected layout and API routes)
  * 2. 404 rewrites for unknown admin routes
  *
  * Unknown public URLs are handled by notFound() in the routes themselves.
@@ -41,31 +42,29 @@ function isValidAdminPath(pathname: string): boolean {
 export async function proxy(request: NextRequest) {
   const {pathname} = request.nextUrl;
 
-  // First, run Auth0 middleware
-  const authResponse = await auth0.middleware(request);
+  if (!pathname.startsWith('/admin')) {
+    return NextResponse.next();
+  }
 
-  // If Auth0 returned a non-next response (redirect, etc.), return it
-  if (authResponse.status !== 200 || authResponse.headers.get('x-middleware-rewrite')) {
-    return authResponse;
+  if (pathname !== '/admin/login') {
+    const session = await readSession(request.cookies.get(sessionCookieName)?.value);
+
+    if (!session) {
+      const loginUrl = new URL('/admin/login', request.url);
+      loginUrl.searchParams.set('returnTo', pathname);
+      return NextResponse.redirect(loginUrl);
+    }
   }
 
   // Rewrite unknown admin routes to the admin 404 page
-  if (pathname.startsWith('/admin') && !isValidAdminPath(pathname)) {
+  if (!isValidAdminPath(pathname)) {
     const notFoundUrl = new URL('/admin/not-found-page', request.url);
     return NextResponse.rewrite(notFoundUrl, {status: 404});
   }
 
-  return authResponse;
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    /*
-		 * Match all request paths except for the ones starting with:
-		 * - _next/static (static files)
-		 * - _next/image (image optimization files)
-		 * - favicon.ico, sitemap.xml, robots.txt (metadata files)
-		 */
-    '/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
-  ],
+  matcher: ['/admin', '/admin/:path*'],
 };

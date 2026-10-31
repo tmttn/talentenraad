@@ -34,10 +34,6 @@ nextConfig.images = {
       protocol: 'https',
       hostname: 's.gravatar.com',
     },
-    {
-      protocol: 'https',
-      hostname: 'cdn.auth0.com',
-    },
   ],
 };
 

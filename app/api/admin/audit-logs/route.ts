@@ -2,18 +2,14 @@ import {type NextRequest, NextResponse} from 'next/server';
 import {
   desc, eq, and, gte, lte, like, sql,
 } from 'drizzle-orm';
-import {auth0, verifyAdmin} from '@lib/auth0';
+import {getSession} from '@lib/auth/session';
 import {db, auditLogs, type AuditActionType} from '@lib/db';
 
 export async function GET(request: NextRequest) {
-  const session = await auth0.getSession();
+  const session = await getSession();
 
-  if (!session?.user) {
+  if (!session) {
     return NextResponse.json({error: 'Unauthorized'}, {status: 401});
-  }
-
-  if (!await verifyAdmin(session.user.email)) {
-    return NextResponse.json({error: 'Forbidden'}, {status: 403});
   }
 
   const {searchParams} = request.nextUrl;

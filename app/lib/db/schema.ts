@@ -47,6 +47,18 @@ export const users = pgTable('users', {
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
 
+// One-time login links (magic links). Only the sha256 hash of the token is stored.
+export const loginTokens = pgTable('login_tokens', {
+  id: uuid('id').defaultRandom().primaryKey(),
+  email: text('email').notNull(),
+  tokenHash: text('token_hash').notNull().unique(),
+  expiresAt: timestamp('expires_at').notNull(),
+  usedAt: timestamp('used_at'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+}, table => [
+  index('login_tokens_email_created_at_idx').on(table.email, table.createdAt),
+]);
+
 // Contact submissions table
 export const submissions = pgTable('submissions', {
   id: uuid('id').defaultRandom().primaryKey(),
@@ -98,6 +110,8 @@ export const auditLogs = pgTable('audit_logs', {
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type LoginToken = typeof loginTokens.$inferSelect;
+export type NewLoginToken = typeof loginTokens.$inferInsert;
 export type Submission = typeof submissions.$inferSelect;
 export type NewSubmission = typeof submissions.$inferInsert;
 export type SiteSetting = typeof siteSettings.$inferSelect;

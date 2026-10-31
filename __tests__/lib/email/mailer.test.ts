@@ -69,6 +69,18 @@ describe('sendMail', () => {
     });
   });
 
+  it('falls back to the default sender when SMTP_FROM is empty or blank', async () => {
+    vi.stubEnv('SMTP_HOST', 'smtp.example.com');
+    vi.stubEnv('SMTP_FROM', '   ');
+    const {sendMail} = await import('@lib/email/mailer');
+
+    await sendMail(message);
+
+    expect(sendMailMock).toHaveBeenCalledWith(expect.objectContaining({
+      from: 'Talentenraad <noreply@talentenraad.be>',
+    }));
+  });
+
   it('uses implicit TLS on port 465', async () => {
     vi.stubEnv('SMTP_HOST', 'smtp.example.com');
     vi.stubEnv('SMTP_PORT', '465');

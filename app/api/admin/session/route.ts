@@ -1,11 +1,11 @@
-import {type NextRequest, NextResponse} from 'next/server';
-import {auth0} from '@lib/auth0';
+import {NextResponse} from 'next/server';
+import {getSession} from '@lib/auth/session';
 
-export async function GET(_request: NextRequest) {
+export async function GET() {
   try {
-    const session = await auth0.getSession();
+    const session = await getSession();
 
-    if (!session?.user) {
+    if (!session) {
       return NextResponse.json({valid: false}, {status: 401});
     }
 

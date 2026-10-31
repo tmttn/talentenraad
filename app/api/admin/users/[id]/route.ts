@@ -1,5 +1,6 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {auth0, isAdminEmail} from '@lib/auth0';
+import {isAdminEmail, normalizeEmail} from '@lib/auth/admin';
+import {getSession} from '@lib/auth/session';
 import {db, users} from '@lib/db';
 import {eq} from 'drizzle-orm';
 import {sendInvitationEmail} from '@lib/email/messages';
@@ -10,30 +11,14 @@ type RouteContext = {
   params: Promise<{id: string}>;
 };
 
-async function checkAdminAccess(session: Awaited<ReturnType<typeof auth0.getSession>>): Promise<boolean> {
-  if (!session?.user) {
-    return false;
-  }
-
-  if (isAdminEmail(session.user.email)) {
-    return true;
-  }
-
-  const currentUser = await db.query.users.findFirst({
-    where: eq(users.email, session.user.email?.toLowerCase() ?? ''),
-  });
-
-  return currentUser?.isAdmin ?? false;
-}
-
 export async function GET(
   _request: NextRequest,
   context: RouteContext,
 ) {
-  const session = await auth0.getSession();
+  const session = await getSession();
 
-  if (!await checkAdminAccess(session)) {
-    return NextResponse.json({error: 'Forbidden'}, {status: 403});
+  if (!session) {
+    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
   }
 
   const {id} = await context.params;
@@ -58,10 +43,10 @@ export async function PUT(
   request: NextRequest,
   context: RouteContext,
 ) {
-  const session = await auth0.getSession();
+  const session = await getSession();
 
-  if (!await checkAdminAccess(session)) {
-    return NextResponse.json({error: 'Forbidden'}, {status: 403});
+  if (!session) {
+    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
   }
 
   const {id} = await context.params;
@@ -97,7 +82,7 @@ export async function PUT(
         await sendInvitationEmail({
           email: updatedUser.email,
           name: updatedUser.name ?? undefined,
-          inviterName: session?.user?.name ?? session?.user?.email ?? undefined,
+          inviterName: session.user.name ?? session.user.email,
         });
       } catch (error) {
         console.error('Failed to send invitation email:', error);
@@ -121,7 +106,7 @@ export async function PUT(
     }
 
     // Prevent removing admin from yourself
-    if (session?.user?.email?.toLowerCase() === existingUser.email && body.isAdmin === false) {
+    if (normalizeEmail(session.user.email) === existingUser.email && body.isAdmin === false) {
       return NextResponse.json({error: 'Cannot remove admin from yourself'}, {status: 400});
     }
 
@@ -166,10 +151,10 @@ export async function DELETE(
   request: NextRequest,
   context: RouteContext,
 ) {
-  const session = await auth0.getSession();
+  const session = await getSession();
 
-  if (!await checkAdminAccess(session)) {
-    return NextResponse.json({error: 'Forbidden'}, {status: 403});
+  if (!session) {
+    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
   }
 
   const {id} = await context.params;
@@ -185,7 +170,7 @@ export async function DELETE(
     }
 
     // Prevent deleting yourself
-    if (session?.user?.email?.toLowerCase() === existingUser.email) {
+    if (normalizeEmail(session.user.email) === existingUser.email) {
       return NextResponse.json({error: 'Cannot delete yourself'}, {status: 400});
     }
 

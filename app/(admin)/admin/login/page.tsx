@@ -1,8 +1,9 @@
 import type {Metadata} from 'next';
 import Image from 'next/image';
 import {redirect} from 'next/navigation';
-import {auth0} from '@lib/auth0';
-import {LoginButton} from './login-button';
+import {safeReturnTo} from '@lib/auth/admin';
+import {getSession} from '@lib/auth/session';
+import {LoginForm} from './login-form';
 
 export const metadata: Metadata = {
   title: 'Inloggen',
@@ -11,25 +12,18 @@ export const metadata: Metadata = {
 type AdminLoginPageProps = {
   searchParams: Promise<{
     returnTo?: string;
+    error?: string;
   }>;
 };
 
 export default async function AdminLoginPage({searchParams}: AdminLoginPageProps) {
-  const session = await auth0.getSession();
   const params = await searchParams;
+  const returnTo = safeReturnTo(params.returnTo);
 
-  // If already authenticated, redirect to admin dashboard or returnTo
-  if (session?.user) {
-    const returnTo = params.returnTo ?? '/admin';
-    // Only allow admin paths for security
-    const safeReturnTo = returnTo.startsWith('/admin') ? returnTo : '/admin';
-    redirect(safeReturnTo);
+  // Already signed in: go straight to the requested admin page
+  if (await getSession()) {
+    redirect(returnTo);
   }
-
-  // Get returnTo from search params, default to /admin
-  const returnTo = params.returnTo ?? '/admin';
-  // Only allow admin paths for security
-  const safeReturnTo = returnTo.startsWith('/admin') ? returnTo : '/admin';
 
   return (
     <div className='min-h-screen flex items-center justify-center bg-gray-50 px-4'>
@@ -47,10 +41,10 @@ export default async function AdminLoginPage({searchParams}: AdminLoginPageProps
             Admin Dashboard
           </h1>
           <p className='text-gray-500 text-sm sm:text-base'>
-            Log in om toegang te krijgen tot het admin dashboard.
+            Vul je e-mailadres in. Je ontvangt een link waarmee je meteen bent ingelogd.
           </p>
         </div>
-        <LoginButton returnTo={safeReturnTo} />
+        <LoginForm returnTo={returnTo} error={params.error} />
         <p className='mt-6 text-center text-xs sm:text-sm text-gray-500'>
           Alleen geautoriseerde beheerders kunnen inloggen.
         </p>

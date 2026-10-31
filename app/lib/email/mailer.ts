@@ -48,7 +48,7 @@ export async function sendMail(message: MailMessage): Promise<void> {
   });
 
   await transport.sendMail({
-    from: process.env.SMTP_FROM ?? defaultFrom,
+    from: process.env.SMTP_FROM?.trim() || defaultFrom,
     ...message,
   });
 }
