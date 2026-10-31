@@ -17,7 +17,8 @@ env:
 jobs:
   build:
     name: Build and push image
-    runs-on: ubuntu-latest
+    # De server is een Hetzner cax11 (ARM); native ARM-runner, geen emulatie.
+    runs-on: ubuntu-24.04-arm
     timeout-minutes: 30
     permissions:
       contents: read
@@ -53,7 +54,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          platforms: linux/amd64
+          platforms: linux/arm64
           push: true
           tags: |
             ${{ env.IMAGE }}:latest

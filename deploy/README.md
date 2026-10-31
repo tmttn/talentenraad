@@ -2,6 +2,8 @@
 
 De site draait als Docker-container op een kleine VPS, met Caddy ervoor voor HTTPS. GitHub Actions bouwt en rolt uit (`.github/workflows/deploy.yml`).
 
+Server: Hetzner Cloud `cax11` (ARM, 2 vCPU, 4 GB RAM) in Falkenstein (`fsn1`), Ubuntu 24.04, aangemaakt met `deploy/cloud-init.yaml`. Het image wordt daarom voor `linux/arm64` gebouwd, op een ARM-runner van GitHub. Wie naar een x86-server verhuist, zet in de workflow `runs-on` terug op `ubuntu-latest` en `platforms` op `linux/amd64`.
+
 ## Indeling op de server
 
 Alles staat in `/opt/talentenraad/`, eigendom van de gebruiker `deploy` (lid van de groep `docker`):
