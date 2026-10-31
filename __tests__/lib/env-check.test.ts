@@ -7,6 +7,7 @@ const valid = {
   SITE_URL: 'https://talentenraad.be',
   SMTP_HOST: 'smtp.example.com',
   SMTP_FROM: 'noreply@talentenraad.be',
+  ADMIN_EMAILS: 'admin@talentenraad.be',
 } as unknown as NodeJS.ProcessEnv;
 
 describe('assertProductionEnv', () => {
@@ -19,7 +20,13 @@ describe('assertProductionEnv', () => {
   it('names every missing variable', () => {
     expect(() => {
       assertProductionEnv({NODE_ENV: 'production'} as unknown as NodeJS.ProcessEnv);
-    }).toThrow(/AUTH_SECRET[\s\S]*SITE_URL[\s\S]*SMTP_HOST[\s\S]*SMTP_FROM/);
+    }).toThrow(/AUTH_SECRET[\s\S]*SITE_URL[\s\S]*SMTP_HOST[\s\S]*SMTP_FROM[\s\S]*ADMIN_EMAILS/);
+  });
+
+  it('rejects blank ADMIN_EMAILS', () => {
+    expect(() => {
+      assertProductionEnv({...valid, ADMIN_EMAILS: '  '});
+    }).toThrow(/ADMIN_EMAILS/);
   });
 
   it('rejects a short AUTH_SECRET', () => {

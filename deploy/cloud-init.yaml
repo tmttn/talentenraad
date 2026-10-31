@@ -31,6 +31,19 @@ write_files:
     content: |
       APT::Periodic::Update-Package-Lists "1";
       APT::Periodic::Unattended-Upgrade "1";
+  - path: /etc/apt/apt.conf.d/52unattended-upgrades-local
+    content: |
+      // Docker-repo (download.docker.com: Origin "Docker", Label "Docker CE") ook automatisch bijwerken
+      Unattended-Upgrade::Origins-Pattern { "origin=Docker,label=Docker CE"; };
+      // Kernel-updates activeren met een reboot; containers starten zelf weer op (restart: unless-stopped)
+      Unattended-Upgrade::Automatic-Reboot "true";
+      Unattended-Upgrade::Automatic-Reboot-Time "04:30";
+  # IPv6 met behoud van het echte client-adres voor gepubliceerde poorten (zie compose.yaml)
+  - path: /etc/docker/daemon.json
+    content: |
+      {
+        "ip6tables": true
+      }
 
 runcmd:
   - curl -fsSL https://get.docker.com | sh

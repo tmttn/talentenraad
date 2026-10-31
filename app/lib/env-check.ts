@@ -16,7 +16,7 @@ export function assertProductionEnv(env: NodeJS.ProcessEnv = process.env): void 
     problems.push(`AUTH_SECRET ontbreekt of is korter dan ${minimumSecretLength} tekens`);
   }
 
-  for (const name of ['SITE_URL', 'SMTP_HOST', 'SMTP_FROM']) {
+  for (const name of ['SITE_URL', 'SMTP_HOST', 'SMTP_FROM', 'ADMIN_EMAILS']) {
     if (!env[name]?.trim()) {
       problems.push(`${name} ontbreekt`);
     }

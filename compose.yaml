@@ -31,6 +31,15 @@ services:
       - caddy_config:/config
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
 
+networks:
+  # Dual-stack, so Docker keeps the real client address for IPv6 visitors
+  # (rate limiting and audit logs). Needs ip6tables, see deploy/README.md.
+  default:
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: fd00:7a1e::/64
+
 volumes:
   data:
   caddy_data:

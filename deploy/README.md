@@ -72,17 +72,25 @@ docker compose ps
 
 ## Database en back-up
 
-Het SQLite-bestand staat in het volume `talentenraad_data` als `/data/talentenraad.db` (WAL-modus). Een gewone `cp` tijdens het draaien kan een inconsistente kopie geven; gebruik de `.backup`-opdracht in een wegwerpcontainer, zonder de app te stoppen:
+Het SQLite-bestand staat in het volume `talentenraad_data` als `/data/talentenraad.db` (WAL-modus). Een gewone `cp` tijdens het draaien kan een inconsistente kopie geven. Gebruik de back-up-API van `better-sqlite3` in de draaiende app-container (dezelfde image, WAL-veilig, de app hoeft niet te stoppen):
 
 ```bash
-docker run --rm \
-  -v talentenraad_data:/data \
-  -v "$PWD":/backup \
-  --entrypoint sqlite3 keinos/sqlite3 \
-  /data/talentenraad.db ".backup '/backup/talentenraad-$(date +%F).db'"
+cd /opt/talentenraad
+f=backup-$(date +%F).db
+docker compose exec -T app node -e "require('better-sqlite3')('/data/talentenraad.db').backup('/data/$f').then(()=>console.log('ok'))"
+docker compose cp "app:/data/$f" .
+docker compose exec -T app rm "/data/$f"
 ```
 
-Het volume is hier niet read-only gemount omdat SQLite in WAL-modus de `-shm`-file nodig heeft. De back-up staat daarna in de huidige map; kopieer die buiten de server (`scp`).
+Kopieer het bestand daarna buiten de server (`scp`). Een alternatief is de optie Back-ups bij Hetzner (+20% van de serverprijs, dagelijkse snapshots van de hele server) die Tom in de Cloud Console kan aanzetten.
+
+## IPv6 en client-IP's
+
+`compose.yaml` maakt het standaardnetwerk dual-stack (`enable_ipv6` met subnet `fd00:7a1e::/64`; het IPv4-subnet kiest Docker zelf). Zonder IPv6 op het netwerk stuurt Docker IPv6-bezoekers via de userland-proxy naar Caddy met het bridge-adres als bron, waardoor alle IPv6-bezoekers één rate-limit-emmer delen en het audit log een fout adres toont.
+
+Sinds Docker 27 hoeft de daemon-optie `ipv6` niet meer aan; wel moet `ip6tables` aan staan zodat poorten via NAT (met behoud van het bronadres) worden gepubliceerd. Docker 28+ doet dat standaard; `deploy/cloud-init.yaml` zet het toch expliciet in `/etc/docker/daemon.json`. Op een bestaande server: maak dat bestand aan met `{"ip6tables": true}`, `sudo systemctl restart docker` en daarna `docker compose up -d` (het netwerk wordt opnieuw aangemaakt).
+
+Controleren: bezoek de site via IPv6 (`curl -6 https://talentenraad.be/api/health`, vanaf een host met IPv6; de server heeft een IPv6-adres van Hetzner nodig en een AAAA-record), laat de login of het contactformulier één keer lopen en kijk in de admin of het audit log een echt IPv6-adres toont in plaats van `172.x.x.1` of `fd00:7a1e::1`.
 
 ## Image in GHCR privé houden
 

@@ -18,6 +18,7 @@ describe('register', () => {
     vi.stubEnv('SITE_URL', 'https://example.test');
     vi.stubEnv('SMTP_HOST', 'smtp.example.test');
     vi.stubEnv('SMTP_FROM', 'noreply@example.test');
+    vi.stubEnv('ADMIN_EMAILS', 'admin@example.test');
     vi.spyOn(console, 'error').mockImplementation(() => undefined);
     vi.spyOn(console, 'info').mockImplementation(() => undefined);
     exit = vi.spyOn(process, 'exit').mockImplementation((() => undefined) as never);
