@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {getSession} from '@lib/auth/session';
+import {guardAdminApi} from '@lib/auth/api-guard';
 import {db, submissions} from '@lib/db';
 import {inArray} from 'drizzle-orm';
 import {logAudit, createAuditContext} from '@lib/audit';
@@ -10,12 +10,14 @@ type BulkActionRequest = {
 };
 
 export async function PATCH(request: NextRequest) {
-  // Authenticated admins only (getSession also checks admin access)
-  const session = await getSession();
+  // Admins only: a redacteur gets 403
+  const guard = await guardAdminApi();
 
-  if (!session) {
-    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  if (guard.response) {
+    return guard.response;
   }
+
+  const {session} = guard;
 
   try {
     const body = await request.json() as BulkActionRequest;

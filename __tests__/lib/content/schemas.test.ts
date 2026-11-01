@@ -16,7 +16,7 @@ describe('datumSchema', () => {
   it('normalizes dates and strings', () => {
     expect(datumSchema.parse('2025-02-07')).toBe('2025-02-07');
     expect(() => datumSchema.parse('7 februari')).toThrow();
-    expect(() => datumSchema.parse('2025-02-30')).toThrow(/Ongeldige datum/);
+    expect(() => datumSchema.parse('2025-02-30')).toThrow(/Kies een geldige datum/);
     expect(() => datumSchema.parse('2025-13-01')).toThrow();
     expect(datumSchema.parse('2024-02-29')).toBe('2024-02-29');
     expect(() => datumSchema.parse(new Date('2025-02-07T00:00:00Z'))).toThrow();

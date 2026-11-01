@@ -1,7 +1,8 @@
 import {cookies} from 'next/headers';
 import {eq} from 'drizzle-orm';
 import {db, users} from '@lib/db';
-import {isAdminUser} from './admin';
+import type {Role} from '@lib/db/schema';
+import {resolveRole} from './admin';
 import {readSession, sessionCookieName} from './session-token';
 
 export {
@@ -9,12 +10,12 @@ export {
 } from './session-token';
 
 export type Session = {
-  user: {id: string; email: string; name: string | null};
+  user: {id: string; email: string; name: string | null; role: Role};
 };
 
 /**
  * Reads the session cookie, verifies the JWT and checks that the user still
- * exists and is still an admin (same rule as verifyAdmin).
+ * exists. The role comes from the database (ADMIN_EMAILS is always admin).
  */
 export async function getSession(): Promise<Session | undefined> {
   const cookieStore = await cookies();
@@ -28,9 +29,9 @@ export async function getSession(): Promise<Session | undefined> {
     where: eq(users.id, claims.userId),
   });
 
-  if (!user || user.email !== claims.email || !isAdminUser(user)) {
+  if (!user || user.email !== claims.email) {
     return undefined;
   }
 
-  return {user: {id: user.id, email: user.email, name: user.name}};
+  return {user: {id: user.id, email: user.email, name: user.name, role: resolveRole(user)}};
 }

@@ -20,7 +20,7 @@ describe('createContentReader', () => {
 
   it('vindt een activiteit via alias en lost afbeeldingen op', () => {
     expect(reader.getActiviteit('oude-slug')?.slug).toBe('nieuwe-slug');
-    expect(reader.getActiviteit('met-foto')?.afbeelding?.src).toBe('/content/activiteiten/met-foto/foto.png');
+    expect(reader.getActiviteit('met-foto')?.afbeelding?.src).toBe('/content/activiteiten/met-foto/afbeelding.jpg');
     expect(reader.getActiviteit('met-foto')?.html).toContain('<strong>wereld</strong>');
     expect(reader.getActiviteit('verborgen')).toBeUndefined();
   });
@@ -39,7 +39,7 @@ describe('createContentReader', () => {
   it('sorteert team en faq', () => {
     expect(reader.getTeam().map(t => t.naam)).toEqual(['Anna', 'Bea', 'Carl']);
     expect(reader.getTeam()[0].categorie).toBe('bestuur');
-    expect(reader.getTeam()[0].foto?.src).toBe('/content/team/lid-a.png');
+    expect(reader.getTeam()[0].foto?.src).toBe('/content/team/foto.jpg');
     expect(reader.getFaq().map(f => f.vraag)).toEqual(['Eerste vraag?', 'Tweede vraag?']);
   });
 

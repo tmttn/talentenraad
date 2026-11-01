@@ -8,6 +8,13 @@
       "when": 1793460668612,
       "tag": "0000_glorious_scarlet_spider",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1793533025294,
+      "tag": "0001_strange_toxin",
+      "breakpoints": true
     }
   ]
 }

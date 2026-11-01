@@ -11,6 +11,7 @@ import {
   Mail,
   Users,
   History,
+  FileText,
   ChevronLeft,
   ChevronRight,
   X,
@@ -18,6 +19,7 @@ import {
   LogOut,
   type LucideIcon,
 } from 'lucide-react';
+import type {Role} from '@lib/db/schema';
 
 type UnreadCounts = {
   unreadFeedback: number;
@@ -28,6 +30,7 @@ type AdminSidebarProperties = {
   user: {
     name?: string | null;
     email?: string | null;
+    role: Role;
   };
   unreadCounts?: UnreadCounts;
 };
@@ -38,20 +41,27 @@ type NavItem = {
   href: string;
   label: string;
   icon: LucideIcon;
+  adminOnly?: boolean;
 };
 
 const navItems: NavItem[] = [
   {href: '/admin', label: 'Dashboard', icon: Home},
+  {href: '/admin/content', label: 'Content', icon: FileText},
   {
-    href: '/admin/submissions', label: 'Berichten', icon: Mail,
+    href: '/admin/submissions', label: 'Berichten', icon: Mail, adminOnly: true,
   },
   {
-    href: '/admin/gebruikers', label: 'Gebruikers', icon: Users,
+    href: '/admin/gebruikers', label: 'Gebruikers', icon: Users, adminOnly: true,
   },
   {
-    href: '/admin/audit-logs', label: 'Audit Logs', icon: History,
+    href: '/admin/audit-logs', label: 'Audit Logs', icon: History, adminOnly: true,
   },
 ];
+
+/** Menu per role: a redacteur only sees the items that are not admin-only. */
+export function navItemsForRole(role: Role): NavItem[] {
+  return navItems.filter(item => !item.adminOnly || role === 'admin');
+}
 
 export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperties>) {
   const pathname = usePathname();
@@ -146,7 +156,7 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
       </div>
       <nav className={`flex-1 ${isCollapsed ? 'lg:p-2' : 'p-4'} overflow-y-auto`}>
         <ul className='space-y-1'>
-          {navItems.map(item => {
+          {navItemsForRole(user.role).map(item => {
             const Icon = item.icon;
             const showBadge = item.href === '/admin/submissions' && totalUnread > 0;
             return (

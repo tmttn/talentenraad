@@ -1,5 +1,5 @@
 import type {Metadata} from 'next';
-import {requireAdminSession} from '@lib/auth/require-admin';
+import {requireEditorSession} from '@lib/auth/require-admin';
 import {Suspense} from 'react';
 import {count, isNull, desc} from 'drizzle-orm';
 import Link from 'next/link';
@@ -246,7 +246,31 @@ async function DashboardContent() {
 }
 
 export default async function AdminDashboardPage() {
-  await requireAdminSession();
+  const session = await requireEditorSession();
+
+  // Messages contain parents' personal data: a redacteur gets a welcome only.
+  if (session.user.role !== 'admin') {
+    return (
+      <div className='space-y-6 sm:space-y-8'>
+        <DashboardHeader />
+        <div className='bg-white rounded-card shadow-base p-4 sm:p-5 text-gray-600'>
+          <p>Je bent ingelogd als redacteur. Hier bewerk je de inhoud van de website.</p>
+          <Link
+            href='/admin/content'
+            className='mt-4 inline-flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary'
+          >
+            <span className='w-10 h-10 bg-primary/10 rounded-button flex items-center justify-center'>
+              <FileText className='w-5 h-5 text-primary' aria-hidden='true' />
+            </span>
+            <span>
+              <span className='block font-medium text-gray-800 text-sm'>Content</span>
+              <span className='block text-xs text-gray-500'>Activiteiten, nieuws, team en meer</span>
+            </span>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='space-y-6 sm:space-y-8'>

@@ -7,7 +7,7 @@ import {toast} from 'sonner';
 import {
   Loader2, Shield, ShieldOff, Pencil, Trash2, Send, Lock,
 } from 'lucide-react';
-import type {User} from '@lib/db/schema';
+import type {Role, User} from '@lib/db/schema';
 import {DeleteDialog} from '@features/admin/delete-dialog';
 import {TableFilters} from '@features/admin/table-filters';
 import {TablePagination} from '@features/admin/table-pagination';
@@ -29,18 +29,18 @@ const inputStyles = [
 type FormData = {
   email: string;
   name: string;
-  isAdmin: boolean;
+  role: Role;
 };
 
 const emptyForm: FormData = {
   email: '',
   name: '',
-  isAdmin: true,
+  role: 'redacteur',
 };
 
 const roleOptions = [
-  {value: 'admin', label: 'Administrator'},
-  {value: 'user', label: 'Gebruiker'},
+  {value: 'admin', label: 'Beheerder'},
+  {value: 'redacteur', label: 'Redacteur'},
 ];
 
 const statusOptions = [
@@ -77,7 +77,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
     setFormData({
       email: user.email,
       name: user.name ?? '',
-      isAdmin: user.isAdmin,
+      role: user.role,
     });
     setIsCreating(false);
   };
@@ -109,8 +109,8 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
         : '/api/admin/users';
 
       const body = editingId
-        ? {name: formData.name || undefined, isAdmin: formData.isAdmin}
-        : {email: formData.email, name: formData.name || undefined, isAdmin: formData.isAdmin};
+        ? {name: formData.name || undefined, role: formData.role}
+        : {email: formData.email, name: formData.name || undefined, role: formData.role};
 
       const response = await fetch(url, {
         method: editingId ? 'PUT' : 'POST',
@@ -172,7 +172,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
     const response = await fetch(`/api/admin/users/${user.id}`, {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({isAdmin: !user.isAdmin}),
+      body: JSON.stringify({role: user.role === 'admin' ? 'redacteur' : 'admin'}),
     });
 
     const data = await response.json() as {error?: string; user?: User};
@@ -184,7 +184,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 
     if (data.user) {
       setUsers(previous => previous.map(u => u.id === user.id ? data.user! : u));
-      toast.success(data.user.isAdmin ? 'Admin rechten toegekend' : 'Admin rechten verwijderd');
+      toast.success(data.user.role === 'admin' ? 'Gebruiker is nu beheerder' : 'Gebruiker is nu redacteur');
     }
   };
 
@@ -221,7 +221,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
 
     // Apply role filter
     if (roleFilter) {
-      result = result.filter(u => roleFilter === 'admin' ? u.isAdmin : !u.isAdmin);
+      result = result.filter(u => u.role === roleFilter);
     }
 
     // Apply status filter
@@ -362,19 +362,21 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
         </div>
 
         <div>
-          <label className='flex items-center gap-3 cursor-pointer py-1'>
-            <input
-              type='checkbox'
-              checked={formData.isAdmin}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setFormData(previous => ({...previous, isAdmin: e.target.checked}));
-              }}
-              className='w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary'
-            />
-            <span className='text-gray-700'>Administrator</span>
-          </label>
+          <label htmlFor='user-role' className='block text-sm font-medium text-gray-700 mb-1'>Rol</label>
+          <select
+            id='user-role'
+            value={formData.role}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => {
+              setFormData(previous => ({...previous, role: e.target.value as Role}));
+            }}
+            className={inputStyles}
+          >
+            {roleOptions.map(option => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
+          </select>
           <p className='mt-1 text-sm text-gray-500'>
-            Administrators hebben toegang tot het admin dashboard
+            Redacteurs kunnen inloggen en de inhoud van de site bewerken. Beheerders beheren ook gebruikers en zien de berichten en audit logs.
           </p>
         </div>
       </div>
@@ -506,11 +508,11 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                           <td className='px-4 sm:px-6 py-4'>
                             <div className='flex flex-col gap-1'>
                               <span className={`px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit ${
-                                user.isAdmin
+                                user.role === 'admin'
                                   ? 'bg-green-100 text-green-800'
                                   : 'bg-gray-100 text-gray-600'
                               }`}>
-                                {user.isAdmin ? 'Administrator' : 'Gebruiker'}
+                                {user.role === 'admin' ? 'Beheerder' : 'Redacteur'}
                               </span>
                               {user.invitedAt && !user.acceptedAt && (
                                 <span className='px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit bg-amber-100 text-amber-800'>
@@ -555,20 +557,20 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                                 onClick={() => {
                                   void handleToggleAdmin(user);
                                 }}
-                                disabled={isProtectedEmail(user.email) && user.isAdmin}
-                                title={isProtectedEmail(user.email) && user.isAdmin
+                                disabled={isProtectedEmail(user.email) && user.role === 'admin'}
+                                title={isProtectedEmail(user.email) && user.role === 'admin'
                                   ? 'Beschermd admin e-mail'
-                                  : (user.isAdmin
-                                    ? 'Admin rechten verwijderen'
-                                    : 'Admin maken')}
+                                  : (user.role === 'admin'
+                                    ? 'Redacteur maken'
+                                    : 'Beheerder maken')}
                                 className={`inline-flex items-center gap-1.5 px-2 sm:px-3 py-1.5 text-sm rounded-button transition-colors focus:outline-none focus:ring-2 focus:ring-offset-1 ${
-                                  isProtectedEmail(user.email) && user.isAdmin
+                                  isProtectedEmail(user.email) && user.role === 'admin'
                                     ? 'text-gray-300 cursor-not-allowed'
                                     : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100 focus:ring-gray-300'
                                 }`}
                               >
-                                {user.isAdmin ? <ShieldOff className='w-4 h-4' /> : <Shield className='w-4 h-4' />}
-                                <span className='hidden lg:inline'>{user.isAdmin ? 'Verwijder admin' : 'Maak admin'}</span>
+                                {user.role === 'admin' ? <ShieldOff className='w-4 h-4' /> : <Shield className='w-4 h-4' />}
+                                <span className='hidden lg:inline'>{user.role === 'admin' ? 'Maak redacteur' : 'Maak beheerder'}</span>
                               </button>
                               <button
                                 type='button'
@@ -653,11 +655,11 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                       </p>
                       <div className='flex flex-wrap gap-2 mb-4'>
                         <span className={`px-2 py-1 text-xs font-medium rounded ${
-                          user.isAdmin
+                          user.role === 'admin'
                             ? 'bg-green-100 text-green-800'
                             : 'bg-gray-100 text-gray-600'
                         }`}>
-                          {user.isAdmin ? 'Administrator' : 'Gebruiker'}
+                          {user.role === 'admin' ? 'Beheerder' : 'Redacteur'}
                         </span>
                         {user.invitedAt && !user.acceptedAt && (
                           <span className='px-2 py-1 text-xs font-medium rounded bg-amber-100 text-amber-800'>
@@ -689,20 +691,20 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                           onClick={() => {
                             void handleToggleAdmin(user);
                           }}
-                          disabled={isProtectedEmail(user.email) && user.isAdmin}
-                          title={isProtectedEmail(user.email) && user.isAdmin
+                          disabled={isProtectedEmail(user.email) && user.role === 'admin'}
+                          title={isProtectedEmail(user.email) && user.role === 'admin'
                             ? 'Beschermd admin e-mail'
-                            : (user.isAdmin
-                              ? 'Admin rechten verwijderen'
-                              : 'Admin maken')}
+                            : (user.role === 'admin'
+                              ? 'Redacteur maken'
+                              : 'Beheerder maken')}
                           className={`inline-flex items-center gap-1.5 px-2 py-1.5 text-sm rounded-button transition-colors ${
-                            isProtectedEmail(user.email) && user.isAdmin
+                            isProtectedEmail(user.email) && user.role === 'admin'
                               ? 'text-gray-300 cursor-not-allowed'
                               : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'
                           }`}
                         >
-                          {user.isAdmin ? <ShieldOff className='w-4 h-4' /> : <Shield className='w-4 h-4' />}
-                          <span>{user.isAdmin ? 'Verwijder admin' : 'Maak admin'}</span>
+                          {user.role === 'admin' ? <ShieldOff className='w-4 h-4' /> : <Shield className='w-4 h-4' />}
+                          <span>{user.role === 'admin' ? 'Maak redacteur' : 'Maak beheerder'}</span>
                         </button>
                         <button
                           type='button'

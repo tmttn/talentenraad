@@ -17,12 +17,16 @@ const validAdminExactPaths = new Set([
   '/admin/submissions',
   '/admin/gebruikers',
   '/admin/audit-logs',
+  '/admin/content',
+  '/admin/content/aankondiging',
   '/admin/not-found-page', // Target for 404 rewrites
 ]);
 
 // Admin routes with dynamic segments (e.g., /admin/submissions/[id])
 const adminDynamicPatterns = [
   /^\/admin\/submissions\/[\w-]+$/,
+  // Content editor: list, new and edit per type (slugs as in app/lib/content-store/paths.ts)
+  /^\/admin\/content\/(?:activiteiten|nieuws|team|faq)(?:\/[a-z\d]+(?:-[a-z\d]+)*)?$/,
 ];
 
 /**

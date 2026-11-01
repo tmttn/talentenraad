@@ -1,6 +1,6 @@
 import {and, isNull} from 'drizzle-orm';
 import {Toaster} from 'sonner';
-import {requireAdminSession} from '@lib/auth/require-admin';
+import {requireEditorSession} from '@lib/auth/require-admin';
 import {db, feedback, submissions} from '@lib/db';
 import {AdminSidebar} from '@features/admin/admin-sidebar';
 import {SessionValidator} from '@features/admin/session-validator';
@@ -31,11 +31,13 @@ export default async function AdminProtectedLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Proxy already checked the cookie; this also checks the user is still an admin.
+  // Proxy already checked the cookie; this also checks the user still exists and has a role.
   // Every page repeats the check, because layouts don't re-render on client navigation.
-  const session = await requireAdminSession();
+  const session = await requireEditorSession();
 
-  const unreadCounts = await getUnreadCounts();
+  // Messages are for admins only; a redacteur gets no counts.
+  const isAdmin = session.user.role === 'admin';
+  const unreadCounts = isAdmin ? await getUnreadCounts() : undefined;
 
   return (
       <div className='min-h-screen bg-gray-50 flex'>
@@ -45,6 +47,7 @@ export default async function AdminProtectedLayout({
           user={{
             name: session.user.name,
             email: session.user.email,
+            role: session.user.role,
           }}
           unreadCounts={unreadCounts}
         />

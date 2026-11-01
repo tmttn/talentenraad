@@ -5,6 +5,11 @@ const nextConfig = {
   output: 'standalone',
   // Esbuild-wasm is required for @serwist/turbopack
   serverExternalPackages: ['isolated-vm', 'esbuild-wasm', 'better-sqlite3'],
+  // Photos of up to 10 MB go through a server action; the default limit is 1 MB (proxy: 10 MB).
+  experimental: {
+    serverActions: {bodySizeLimit: '11mb'},
+    proxyClientMaxBodySize: '11mb',
+  },
 };
 
 // Security headers

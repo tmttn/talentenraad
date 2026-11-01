@@ -17,7 +17,7 @@ vi.mock('@lib/db', async () => {
 
 const {users} = await import('@lib/db/schema');
 const {
-  isAdminEmail, verifyAdmin, normalizeEmail, ensureAdminUser, safeReturnTo,
+  isAdminEmail, getUserRole, canLogin, normalizeEmail, ensureAdminUser, safeReturnTo,
 } = await import('@lib/auth/admin');
 const testDb = test.current as unknown as ReturnType<typeof createTestDb>;
 
@@ -66,31 +66,47 @@ describe('isAdminEmail', () => {
   });
 });
 
-describe('verifyAdmin (real SQLite)', () => {
-  it('accepts ADMIN_EMAILS without a users row', async () => {
-    await expect(verifyAdmin('Admin@test.com')).resolves.toBe(true);
+describe('getUserRole and canLogin (real SQLite)', () => {
+  it('gives ADMIN_EMAILS the admin role without a users row', async () => {
+    await expect(getUserRole('Admin@test.com')).resolves.toBe('admin');
+    await expect(canLogin('Admin@test.com')).resolves.toBe(true);
   });
 
-  it('falls back to users.isAdmin', async () => {
+  it('ADMIN_EMAILS is admin even when the row says redacteur', async () => {
+    await testDb.db.insert(users).values({email: 'admin@test.com', role: 'redacteur'});
+
+    await expect(getUserRole('admin@test.com')).resolves.toBe('admin');
+  });
+
+  it('reads the role from the users row and lets both roles log in', async () => {
     await testDb.db.insert(users).values([
-      {email: 'db-admin@test.com', isAdmin: true},
-      {email: 'former@test.com', isAdmin: false},
+      {email: 'db-admin@test.com', role: 'admin'},
+      {email: 'editor@test.com', role: 'redacteur'},
     ]);
 
-    await expect(verifyAdmin('db-admin@test.com')).resolves.toBe(true);
-    await expect(verifyAdmin('former@test.com')).resolves.toBe(false);
-    await expect(verifyAdmin('unknown@test.com')).resolves.toBe(false);
+    await expect(getUserRole('db-admin@test.com')).resolves.toBe('admin');
+    await expect(getUserRole('editor@test.com')).resolves.toBe('redacteur');
+    await expect(canLogin('editor@test.com')).resolves.toBe(true);
+    await expect(canLogin('db-admin@test.com')).resolves.toBe(true);
   });
 
-  it('rejects a missing email', async () => {
-    await expect(verifyAdmin(undefined)).resolves.toBe(false);
+  it('ignores the legacy isAdmin column', async () => {
+    await testDb.db.insert(users).values({email: 'legacy-flag@test.com', isAdmin: true, role: 'redacteur'});
+
+    await expect(getUserRole('legacy-flag@test.com')).resolves.toBe('redacteur');
+  });
+
+  it('refuses unknown and missing emails', async () => {
+    await expect(getUserRole('unknown@test.com')).resolves.toBeUndefined();
+    await expect(canLogin('unknown@test.com')).resolves.toBe(false);
+    await expect(canLogin(undefined)).resolves.toBe(false);
+    await expect(canLogin('')).resolves.toBe(false);
   });
 
   it('finds legacy rows stored with mixed-case emails, ignoring case and whitespace', async () => {
-    await testDb.db.insert(users).values({email: 'Legacy@Test.com', isAdmin: true});
+    await testDb.db.insert(users).values({email: 'Legacy@Test.com', role: 'redacteur'});
 
-    await expect(verifyAdmin(' LEGACY@test.COM ')).resolves.toBe(true);
-    await expect(verifyAdmin('legacy@test.com')).resolves.toBe(true);
+    await expect(getUserRole(' LEGACY@test.COM ')).resolves.toBe('redacteur');
   });
 });
 
@@ -100,13 +116,13 @@ describe('ensureAdminUser (real SQLite)', () => {
 
     expect(created.email).toBe('admin@test.com');
     const [row] = await testDb.db.select().from(users).where(eq(users.id, created.id));
-    expect(row.isAdmin).toBe(true);
+    expect(row.role).toBe('admin');
     expect(row.acceptedAt).toBeInstanceOf(Date);
   });
 
   it('looks an existing user up case-insensitively and does not create a duplicate', async () => {
     const [existing] = await testDb.db.insert(users)
-      .values({email: 'Legacy@Test.com', isAdmin: true, acceptedAt: new Date(0)})
+      .values({email: 'Legacy@Test.com', role: 'admin', acceptedAt: new Date(0)})
       .returning();
 
     await expect(ensureAdminUser('legacy@test.com')).resolves.toEqual({id: existing.id, email: 'Legacy@Test.com'});
@@ -117,25 +133,25 @@ describe('ensureAdminUser (real SQLite)', () => {
 
   it('sets acceptedAt on the first login of an invited user', async () => {
     const [invited] = await testDb.db.insert(users)
-      .values({email: 'invited@test.com', isAdmin: true})
+      .values({email: 'invited@test.com', role: 'redacteur'})
       .returning();
 
     await ensureAdminUser('invited@test.com');
 
     const [row] = await testDb.db.select().from(users).where(eq(users.id, invited.id));
     expect(row.acceptedAt).toBeInstanceOf(Date);
-    expect(row.isAdmin).toBe(true);
+    expect(row.role).toBe('redacteur');
   });
 
-  it('grants isAdmin to an ADMIN_EMAILS user stored as non-admin', async () => {
+  it('promotes an ADMIN_EMAILS user stored as redacteur to admin', async () => {
     const [stored] = await testDb.db.insert(users)
-      .values({email: 'admin@test.com', isAdmin: false, acceptedAt: new Date(0)})
+      .values({email: 'admin@test.com', role: 'redacteur', acceptedAt: new Date(0)})
       .returning();
 
     await ensureAdminUser('admin@test.com');
 
     const [row] = await testDb.db.select().from(users).where(eq(users.id, stored.id));
-    expect(row.isAdmin).toBe(true);
+    expect(row.role).toBe('admin');
     expect(row.acceptedAt).toEqual(new Date(0));
   });
 });

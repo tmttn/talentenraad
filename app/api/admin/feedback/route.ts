@@ -1,15 +1,17 @@
 import {NextResponse} from 'next/server';
 import {inArray, isNull} from 'drizzle-orm';
 import {db, feedback} from '@lib/db';
-import {getSession} from '@lib/auth/session';
+import {guardAdminApi} from '@lib/auth/api-guard';
 
 /**
  * PATCH /api/admin/feedback
  * Mark feedback as read
  */
 export async function PATCH(request: Request) {
-  if (!await getSession()) {
-    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  const guard = await guardAdminApi();
+
+  if (guard.response) {
+    return guard.response;
   }
 
   try {
@@ -51,8 +53,10 @@ export async function PATCH(request: Request) {
  * Delete multiple feedback items
  */
 export async function DELETE(request: Request) {
-  if (!await getSession()) {
-    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  const guard = await guardAdminApi();
+
+  if (guard.response) {
+    return guard.response;
   }
 
   try {

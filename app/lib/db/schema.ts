@@ -27,12 +27,18 @@ export const auditActionTypes = [
   'bulk_action',
 ] as const;
 
+export const roles = ['admin', 'redacteur'] as const;
+export type Role = typeof roles[number];
+export const isRole = (value: unknown): value is Role => roles.includes(value as Role);
+
 // Users table for admin access
 export const users = sqliteTable('users', {
   id: id(),
   email: text('email').notNull().unique(),
   name: text('name'),
+  // Legacy flag, no longer read; role is the source of truth. Kept in sync on writes.
   isAdmin: integer('is_admin', {mode: 'boolean'}).default(false).notNull(),
+  role: text('role', {enum: roles}).default('redacteur').notNull(),
   invitedAt: integer('invited_at', {mode: 'timestamp_ms'}),
   acceptedAt: integer('accepted_at', {mode: 'timestamp_ms'}),
   createdAt: createdAt(),
