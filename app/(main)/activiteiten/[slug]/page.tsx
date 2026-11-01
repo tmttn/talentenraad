@@ -1,41 +1,24 @@
 import {notFound, permanentRedirect} from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
-import {Calendar, Clock, MapPin} from 'lucide-react';
-import {AnimatedButton, AnimatedLink, AddToCalendarButton} from '@components/ui';
+import {ArrowLeft, MapPin} from 'lucide-react';
+import {
+  AddToCalendarButton, CategoryBadge, DateBadge, SpeechBubble,
+} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
+import {contourTitle} from '@components/layout/contour-parts';
+import {
+  ActivityCard, categoryLabels, formatDayDate,
+} from '@features/activities/activity-card';
 import {
   generateMetadata as generateSeoMetadata,
   generateEventSchema,
   generateBreadcrumbSchema,
   JsonLd,
+  siteConfig,
 } from '@lib/seo';
 import {content} from '@lib/content';
-import {parseLocalDate, todayString} from '@lib/dates';
-
-function formatDate(dateString: string) {
-  const date = parseLocalDate(dateString);
-  return date.toLocaleDateString('nl-BE', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-}
-
-function formatShortDate(dateString: string) {
-  const date = parseLocalDate(dateString);
-  const day = date.getDate();
-  const month = date.toLocaleDateString('nl-BE', {month: 'short'}).toUpperCase();
-  return {day, month};
-}
-
-const categoryStyles: Record<string, {bg: string; text: string}> = {
-  feest: {bg: 'bg-category-event-bg', text: 'text-category-event-text'},
-  kalender: {bg: 'bg-category-calendar-bg', text: 'text-category-calendar-text'},
-  activiteit: {bg: 'bg-category-activity-bg', text: 'text-category-activity-text'},
-  nieuws: {bg: 'bg-category-news-bg', text: 'text-category-news-text'},
-};
+import {todayString} from '@lib/dates';
 
 export function generateStaticParams() {
   return content.getActiviteiten().map(item => ({slug: item.slug}));
@@ -49,16 +32,17 @@ export async function generateMetadata({params}: {params: Promise<{slug: string}
     return {title: 'Activiteit niet gevonden'};
   }
 
-  const description = item.samenvatting;
-
   return generateSeoMetadata({
     title: item.titel,
-    description,
+    description: item.samenvatting,
     url: `/activiteiten/${item.slug}`,
     image: item.afbeelding?.src,
     type: 'website',
   });
 }
+
+/** Route search on Google Maps; "Beverst" narrows a bare venue name like "Beversheem". */
+const routeUrl = (locatie: string) => `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${locatie}, Beverst`)}`;
 
 type PageProperties = {
   params: Promise<{slug: string}>;
@@ -76,16 +60,18 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
     permanentRedirect(`/activiteiten/${item.slug}`);
   }
 
-  const {day, month} = formatShortDate(item.datum);
-  const style = categoryStyles[item.categorie] ?? categoryStyles.activiteit;
-
-  // Check if event is in the past
-  const isPast = item.datum < todayString();
+  const today = todayString();
+  const isPast = item.datum < today;
+  const href = `/activiteiten/${item.slug}`;
+  const andere = content.getActiviteiten()
+    .filter(activiteit => activiteit.datum >= today && activiteit.slug !== item.slug)
+    .sort((a, b) => a.datum.localeCompare(b.datum))
+    .slice(0, 3);
 
   const eventSchema = generateEventSchema({
     name: item.titel,
     description: item.samenvatting,
-    url: `/activiteiten/${item.slug}`,
+    url: href,
     startDate: item.datum,
     location: item.locatie,
     image: item.afbeelding?.src,
@@ -93,138 +79,123 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
   const breadcrumbSchema = generateBreadcrumbSchema([
     {name: 'Home', url: '/'},
     {name: 'Kalender', url: '/kalender'},
-    {name: item.titel, url: `/activiteiten/${item.slug}`},
+    {name: item.titel, url: href},
   ]);
 
   return (
     <PageWithAnnouncements>
       <JsonLd data={eventSchema} />
       <JsonLd data={breadcrumbSchema} />
-      <article className='py-12 px-6'>
-        <div className='max-w-3xl mx-auto'>
-          {/* Breadcrumb */}
-          <nav className='mb-8' aria-label='Breadcrumb'>
-            <ol className='flex items-center gap-2 text-sm text-gray-500'>
-              <li>
-                <Link href='/' className='hover:text-primary'>Home</Link>
-              </li>
-              <li>/</li>
-              <li>
-                <Link href='/kalender' className='hover:text-primary'>Kalender</Link>
-              </li>
-              <li>/</li>
-              <li className='text-gray-800 font-medium truncate max-w-[200px]'>
-                {item.titel}
-              </li>
-            </ol>
-          </nav>
+      <section className='px-5 pt-[clamp(32px,4vw,48px)] pb-[clamp(64px,7vw,96px)]'>
+        <div className='max-w-[1240px] mx-auto flex flex-col gap-7'>
+          <Link href='/kalender' className='self-start inline-flex items-center gap-2 font-bold text-primary-text underline-offset-4 hover:underline'>
+            <ArrowLeft className='h-[18px] w-[18px]' strokeWidth={2.5} aria-hidden='true' />
+            Terug naar de kalender
+          </Link>
 
-          {/* Header with date badge */}
-          <header className='mb-8'>
-            <div className='flex items-start gap-6'>
-              <div className='flex-shrink-0 w-20 h-20 bg-primary rounded-modal flex flex-col items-center justify-center text-white shadow-elevated'>
-                <span className='text-3xl font-bold leading-none'>{day}</span>
-                <span className='text-sm uppercase'>{month}</span>
+          <div className='flex flex-wrap items-start gap-[clamp(32px,4vw,56px)]'>
+            <article className='flex-[999_1_560px] min-w-0 flex flex-col gap-6'>
+              <div className='flex flex-wrap gap-2'>
+                <CategoryBadge category={categoryLabels[item.categorie]} variant='contour' size='sm' className='text-[13px]' />
+                {isPast && <span className='rounded-full contour-xs bg-gray-100 px-2 py-1 text-[13px] font-bold text-gray-700'>Afgelopen</span>}
               </div>
-              <div className='flex-grow'>
-                <div className='flex items-center gap-3 mb-2'>
-                  <span className={`px-3 py-1 text-sm font-medium rounded-full ${style.bg} ${style.text}`}>
-                    {item.categorie}
-                  </span>
-                  {isPast && (
-                    <span className='px-3 py-1 text-sm font-medium rounded-full bg-gray-100 text-gray-600'>
-                      Afgelopen
-                    </span>
+              <h1 className='font-display font-extrabold text-black text-[clamp(40px,5vw,64px)] leading-[0.98] tracking-[-0.02em]'>{item.titel}</h1>
+              <p className='text-gray-700 text-[clamp(18px,1.5vw,21px)] leading-normal'>{item.samenvatting}</p>
+              {item.afbeelding && (
+                // A poster is shown whole, never cropped
+                <div className='rounded-tile contour-sm overflow-hidden bg-gray-50'>
+                  <Image
+                    src={item.afbeelding.src}
+                    width={item.afbeelding.width}
+                    height={item.afbeelding.height}
+                    alt={`Affiche of foto van ${item.titel}`}
+                    sizes='(min-width: 1240px) 760px, 100vw'
+                    className='w-full h-auto max-h-[640px] object-contain'
+                  />
+                </div>
+              )}
+              {item.html.trim() && (
+                <div
+                  className='max-w-[720px] prose prose-lg prose-p:text-gray-700 prose-headings:font-display prose-headings:text-black prose-a:text-primary-text'
+                  dangerouslySetInnerHTML={{__html: item.html}}
+                />
+              )}
+            </article>
+
+            <aside className='flex-[1_1_340px] min-w-0 pt-3.5' aria-label='Praktisch'>
+              <SpeechBubble size='md'>
+                <div className='flex flex-col gap-[22px]'>
+                  <div className='flex items-center gap-4'>
+                    <DateBadge date={item.datum} variant='contour' tone='pink' size='lg' />
+                    <div className='flex flex-col gap-0.5'>
+                      <span className='font-display font-bold text-[22px] text-black'>{formatDayDate(item.datum)}</span>
+                      <span className='text-[15px] text-gray-700'>
+                        {[item.programma.length === 0 ? item.tijd : undefined, item.locatie].filter(Boolean).join(' · ')}
+                      </span>
+                    </div>
+                  </div>
+
+                  {item.programma.length > 0 && (
+                    <ol aria-label='Programma' className='border-t-2 border-ink'>
+                      {item.programma.map(punt => (
+                        <li key={`${punt.uur}-${punt.titel}`} className='flex gap-3.5 py-3.5 border-b border-gray-200 last:border-b-0'>
+                          <span className='shrink-0 w-14 font-extrabold text-black'>{punt.uur}</span>
+                          <span className='flex flex-col gap-0.5'>
+                            <span className='font-bold text-black'>{punt.titel}</span>
+                            {punt.info && <span className='text-sm text-gray-600'>{punt.info}</span>}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+
+                  {(!isPast || item.locatie) && (
+                    <div className='flex flex-col gap-3'>
+                      {!isPast && (
+                        <AddToCalendarButton
+                          variant='contour-solid'
+                          title={item.titel}
+                          date={item.datum}
+                          time={item.tijd}
+                          location={item.locatie}
+                          description={item.samenvatting}
+                          url={`${siteConfig.url}${href}`}
+                          id={item.slug}
+                        />
+                      )}
+                      {item.locatie && (
+                        <a
+                          href={routeUrl(item.locatie)}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='inline-flex justify-center items-center gap-2 px-[18px] py-3 font-bold text-black bg-white hover:bg-brand-primary-50 contour-sm rounded-control transition-colors'
+                        >
+                          <MapPin className='h-[18px] w-[18px]' aria-hidden='true' />
+                          Route naar {item.locatie}
+                          <span className='sr-only'> (opent Google Maps in een nieuw venster)</span>
+                        </a>
+                      )}
+                    </div>
                   )}
                 </div>
-                <h1 className='text-3xl md:text-4xl font-bold text-gray-800'>{item.titel}</h1>
-              </div>
-            </div>
-          </header>
-
-          {/* Event details card */}
-          <div className='bg-gray-50 rounded-modal p-6 mb-8'>
-            <h2 className='text-lg font-bold text-gray-800 mb-4'>Details</h2>
-            <dl className='space-y-4'>
-              <div className='flex items-start gap-3'>
-                <dt className='sr-only'>Datum</dt>
-                <Calendar className='h-5 w-5 text-primary mt-0.5' />
-                <dd className='text-gray-700'>{formatDate(item.datum)}</dd>
-              </div>
-
-              {item.tijd && (
-                <div className='flex items-start gap-3'>
-                  <dt className='sr-only'>Tijd</dt>
-                  <Clock className='h-5 w-5 text-primary mt-0.5' />
-                  <dd className='text-gray-700'>{item.tijd}</dd>
-                </div>
-              )}
-
-              {item.locatie && (
-                <div className='flex items-start gap-3'>
-                  <dt className='sr-only'>Locatie</dt>
-                  <MapPin className='h-5 w-5 text-primary mt-0.5' />
-                  <dd className='text-gray-700'>{item.locatie}</dd>
-                </div>
-              )}
-            </dl>
-            {!isPast && (
-              <div className='mt-6 pt-4 border-t border-gray-200'>
-                <AddToCalendarButton
-                  title={item.titel}
-                  date={item.datum}
-                  time={item.tijd}
-                  location={item.locatie}
-                  description={item.samenvatting}
-                  url={`https://www.talentenraad.be/activiteiten/${item.slug}`}
-                  id={item.slug}
-                />
-              </div>
-            )}
-          </div>
-
-          {/* Image */}
-          {item.afbeelding && (
-            <div className='mb-8 rounded-modal overflow-hidden shadow-elevated'>
-              <Image
-                src={item.afbeelding.src}
-                width={item.afbeelding.width}
-                height={item.afbeelding.height}
-                alt={item.titel}
-                className='w-full h-auto'
-              />
-            </div>
-          )}
-
-          {/* Content */}
-          {item.html.trim() && (
-            <div className='prose prose-lg max-w-none prose-headings:text-gray-800 prose-p:text-gray-600'>
-              <h2>Over deze activiteit</h2>
-              <div dangerouslySetInnerHTML={{__html: item.html}} />
-            </div>
-          )}
-
-          {/* CTA for future events */}
-          {!isPast && (
-            <div className='mt-8 p-6 bg-gradient-to-r from-primary/10 to-brand-primary-50 rounded-modal'>
-              <h3 className='font-bold text-gray-800 mb-2'>Vragen over deze activiteit?</h3>
-              <p className='text-gray-600 mb-4'>
-                Neem contact op met de Talentenraad voor meer informatie.
-              </p>
-              <AnimatedButton href='/contact?onderwerp=activiteit'>
-                Contact opnemen
-              </AnimatedButton>
-            </div>
-          )}
-
-          {/* Back link */}
-          <div className='mt-12 pt-8 border-t border-gray-200'>
-            <AnimatedLink href='/kalender' arrowDirection='left'>
-              Terug naar kalender
-            </AnimatedLink>
+              </SpeechBubble>
+            </aside>
           </div>
         </div>
-      </article>
+      </section>
+
+      {andere.length > 0 && (
+        <section className='bg-gray-50 border-t-(length:--contour-width-sm) border-ink px-5 py-[clamp(56px,6vw,80px)]'>
+          <div className='max-w-[1240px] mx-auto flex flex-col gap-7'>
+            <h2 className={contourTitle}>Ook op de kalender</h2>
+            <div className='grid grid-cols-[repeat(auto-fit,minmax(min(100%,300px),1fr))] gap-7'>
+              {andere.map((activiteit, index) => (
+                <ActivityCard key={activiteit.slug} activiteit={activiteit} index={index} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </PageWithAnnouncements>
   );
 }

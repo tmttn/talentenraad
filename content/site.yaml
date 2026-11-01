@@ -5,30 +5,24 @@ navigatie:
     link: /kalender
   - tekst: Nieuws
     link: /nieuws
-  - tekst: Over Ons
+  - tekst: Over ons
     link: /over-ons
   - tekst: Contact
     link: /contact
 footer:
-  tagline: |-
-    De ouderraad van Het Talentenhuis
-    School met een hart voor ieder kind
+  tagline: De ouderraad van het Talentenhuis
   adres:
     straat: Zonhoevestraat 32
     gemeente: 3740 Bilzen-Hoeselt
   email: voorzitterouderraad@talentenhuis.be
   groepen:
-    - titel: Navigatie
+    - titel: Site
       links:
-        - tekst: Home
-          link: /
         - tekst: Kalender
           link: /kalender
         - tekst: Nieuws
           link: /nieuws
-    - titel: Over Ons
-      links:
-        - tekst: Het Team
+        - tekst: Over ons
           link: /over-ons
         - tekst: Contact
           link: /contact

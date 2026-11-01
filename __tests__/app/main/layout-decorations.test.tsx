@@ -11,7 +11,6 @@ vi.mock('@components/cookie-consent', () => ({
   CookieConsentProvider: ({children}: {children: ReactNode}) => <>{children}</>,
   CookieBanner: () => null,
 }));
-vi.mock('@components/feedback', () => ({ConditionalFeedbackButton: () => null}));
 vi.mock('@components/seasonal-decorations', () => ({
   Snowfall: () => <div data-testid='snowfall' />,
   SeasonalStyles: () => <style data-testid='seasonal-styles' />,

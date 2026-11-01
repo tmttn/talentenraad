@@ -7,6 +7,7 @@ export const makeActiviteit = (overrides: Partial<Activiteit> = {}): Activiteit 
   locatie: 'Voorbeeldzaal',
   categorie: 'feest',
   samenvatting: 'Een fictieve samenvatting van het feest.',
+  programma: [],
   afbeelding: undefined,
   aliassen: [],
   concept: false,

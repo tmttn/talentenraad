@@ -97,6 +97,11 @@ export async function loadEntry(type: EntryType, slug: string): Promise<LoadedEn
     values[field.name] = typeof value === 'string' || typeof value === 'number' ? String(value) : '';
   }
 
+  if (config.listField) {
+    const list = data[config.listField];
+    values[config.listField] = JSON.stringify(Array.isArray(list) ? list : []);
+  }
+
   let imageSha = '';
   if (paths.image) {
     const entries = await listDir(paths.dir);

@@ -23,6 +23,12 @@ export const datumSchema = z.string({error: 'Kies een geldige datum.'})
 
 const linkSchema = z.object({tekst: z.string(), link: linkWaarde});
 
+export const programmaPuntSchema = z.strictObject({
+  uur: verplicht('Vul bij elk programmapunt een uur in.'),
+  titel: verplicht('Vul bij elk programmapunt een titel in.'),
+  info: z.string().trim().optional(),
+});
+
 export const activiteitSchema = z.strictObject({
   titel: verplicht('Vul een titel in.'),
   datum: datumSchema,
@@ -30,6 +36,8 @@ export const activiteitSchema = z.strictObject({
   locatie: z.string().optional(),
   categorie: z.enum(['feest', 'kalender', 'activiteit'], {error: 'Kies een geldige categorie.'}),
   samenvatting: verplicht('Vul een samenvatting in.'),
+  /** Optional time table on the activity page: one row per moment. */
+  programma: z.array(programmaPuntSchema).default([]),
   afbeelding: afbeeldingPad('afbeelding.jpg').optional(),
   aliassen,
   concept,
@@ -128,7 +136,6 @@ export const paginaSchemas = {
   }),
   kalender: z.object({
     ...basisPagina,
-    lijst: titelOndertitel,
     archief: titelOndertitel,
   }),
   nieuws: z.object(basisPagina),
@@ -139,7 +146,6 @@ export const paginaSchemas = {
   }),
   'over-ons': z.object({
     ...basisPagina,
-    infokaart,
     faqTitel: z.string().default('Veelgestelde vragen'),
     bestuur: titelTekst,
     leden: titelTekst,
@@ -164,6 +170,7 @@ export const paginaSchemas = {
 export type PaginaNaam = keyof typeof paginaSchemas;
 export type PaginaFrontmatter<K extends PaginaNaam> = z.infer<(typeof paginaSchemas)[K]>;
 export type ActiviteitFrontmatter = z.infer<typeof activiteitSchema>;
+export type ProgrammaPunt = z.infer<typeof programmaPuntSchema>;
 export type NieuwsFrontmatter = z.infer<typeof nieuwsSchema>;
 export type TeamlidFrontmatter = z.infer<typeof teamlidSchema>;
 export type FaqFrontmatter = z.infer<typeof faqSchema>;

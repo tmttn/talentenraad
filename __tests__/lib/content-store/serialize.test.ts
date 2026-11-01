@@ -96,7 +96,7 @@ describe('parseEntryForm', () => {
     const result = parseEntryForm('activiteiten', valid);
     expect(result).toEqual({
       ok: true,
-      frontmatter: {titel: 'Fuif', datum: '2025-02-07', categorie: 'feest', samenvatting: 'Kort', locatie: 'Zaal', aliassen: [], concept: true},
+      frontmatter: {titel: 'Fuif', datum: '2025-02-07', categorie: 'feest', samenvatting: 'Kort', locatie: 'Zaal', programma: [], aliassen: [], concept: true},
       body: 'Tekst',
       slugSource: 'Fuif',
     });
@@ -141,7 +141,7 @@ describe('parseEntryForm extras', () => {
   it('treats empty optional strings as absent', () => {
     const result = parseEntryForm('activiteiten', {titel: 'A', datum: '2025-01-01', categorie: 'feest', samenvatting: 'B', tijd: ' ', locatie: '', afbeelding: ''});
     expect(result).toMatchObject({ok: true});
-    expect(result.ok && Object.keys(result.frontmatter)).toEqual(['titel', 'datum', 'categorie', 'samenvatting', 'aliassen', 'concept']);
+    expect(result.ok && Object.keys(result.frontmatter)).toEqual(['titel', 'datum', 'categorie', 'samenvatting', 'programma', 'aliassen', 'concept']);
   });
 
   it('only allows the fixed image paths', () => {
@@ -183,5 +183,40 @@ describe('announcement form and empty optionals', () => {
     const next = updateAnnouncement(text, {actief: true, tekst: 'Hoi', type: 'info', link: '', linkTekst: ''});
     expect(next).not.toContain('link:\'\'');
     expect(next).toContain('tekst: Hoi');
+  });
+});
+
+describe('programma', () => {
+  const base = {titel: 'Kerst', datum: '2026-12-19', categorie: 'feest', samenvatting: 'Kort'};
+
+  it('parses the rows, drops empty ones and leaves out an empty info', () => {
+    const programma = JSON.stringify([
+      {uur: ' 14:00 ', titel: 'Kerstspel', info: ' Deuren 13:30 '},
+      {uur: '', titel: '', info: ''},
+      {uur: '15:00', titel: 'Instuif', info: '  '},
+    ]);
+    const result = parseEntryForm('activiteiten', {...base, programma});
+    expect(result).toMatchObject({ok: true});
+    expect(result.ok && result.frontmatter.programma).toEqual([
+      {uur: '14:00', titel: 'Kerstspel', info: 'Deuren 13:30'},
+      {uur: '15:00', titel: 'Instuif'},
+    ]);
+  });
+
+  it('asks for the missing part of a row', () => {
+    const programma = JSON.stringify([{uur: '', titel: 'Kerstspel', info: ''}]);
+    expect(parseEntryForm('activiteiten', {...base, programma})).toEqual({ok: false, errors: {programma: 'Vul bij elk programmapunt een uur in.'}});
+  });
+
+  it('rejects something that is not a list of rows', () => {
+    expect(parseEntryForm('activiteiten', {...base, programma: '{oeps'})).toMatchObject({ok: false, errors: {programma: expect.any(String)}});
+    expect(parseEntryForm('activiteiten', {...base, programma: '"tekst"'})).toMatchObject({ok: false, errors: {programma: expect.any(String)}});
+  });
+
+  it('writes the programme after the summary and leaves it out when empty', () => {
+    const met = serializeEntry('activiteiten', {...base, programma: [{uur: '14:00', titel: 'Kerstspel'}], aliassen: []}, '');
+    expect(met).toContain("samenvatting: Kort\nprogramma:\n  - uur: '14:00'\n    titel: Kerstspel\n");
+    const zonder = serializeEntry('activiteiten', {...base, programma: [], aliassen: []}, '');
+    expect(zonder).not.toContain('programma');
   });
 });

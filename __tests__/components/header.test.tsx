@@ -1,9 +1,10 @@
 import {render, screen} from '@testing-library/react';
 import {SiteHeader} from '../../app/components/layout/site-header';
 
-// Mock usePathname
+const {mockPathname} = vi.hoisted(() => ({mockPathname: vi.fn(() => '/')}));
+
 vi.mock('next/navigation', () => ({
-  usePathname: () => '/',
+  usePathname: mockPathname,
 }));
 
 // Mock icons
@@ -71,5 +72,24 @@ describe('SiteHeader', () => {
     expect(contact).toHaveClass('contour-sm', 'shadow-hard-xs', 'bg-primary');
     const [home] = screen.getAllByRole('link', {name: 'Home'});
     expect(home).not.toHaveClass('contour-sm');
+  });
+
+  it('underlines the active section and keeps the calendar active on an activity page', () => {
+    mockPathname.mockReturnValue('/activiteiten/kerst');
+    render(<SiteHeader navigationLinks={[{text: 'Home', url: '/'}, {text: 'Kalender', url: '/kalender'}, {text: 'Nieuws', url: '/nieuws'}]} />);
+    const [kalender] = screen.getAllByRole('link', {name: 'Kalender'});
+    expect(kalender).toHaveAttribute('aria-current', 'page');
+    expect(kalender).toHaveClass('border-primary', 'text-primary-text');
+    const [nieuws] = screen.getAllByRole('link', {name: 'Nieuws'});
+    expect(nieuws).not.toHaveAttribute('aria-current');
+  });
+
+  it('marks home active without an underline, only on the homepage itself', () => {
+    mockPathname.mockReturnValue('/');
+    render(<SiteHeader navigationLinks={[{text: 'Home', url: '/'}, {text: 'Kalender', url: '/kalender'}]} />);
+    const [home] = screen.getAllByRole('link', {name: 'Home'});
+    expect(home).toHaveAttribute('aria-current', 'page');
+    expect(home).toHaveClass('border-transparent');
+    expect(screen.getByRole('banner')).toHaveClass('border-ink');
   });
 });

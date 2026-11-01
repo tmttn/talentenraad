@@ -83,4 +83,9 @@ describe('CategoryBadge', () => {
     expect(badge).toHaveClass('border-2', 'border-current', 'font-bold');
     expect(badge).not.toHaveClass('bg-category-event-bg');
   });
+
+  it('renders the contour variant with category colors and a black outline', () => {
+    render(<CategoryBadge category='Feest' variant='contour' />);
+    expect(screen.getByText('Feest')).toHaveClass('bg-category-event-bg', 'contour-xs', 'font-bold');
+  });
 });

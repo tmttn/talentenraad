@@ -1,8 +1,11 @@
 type CategoryBadgeProperties = {
   category: string;
   size?: 'xs' | 'sm' | 'md';
-  /** `outline`: transparent pill with a border in the current text color, for use on colored card headers. */
-  variant?: 'filled' | 'outline';
+  /**
+   * `outline`: transparent pill with a border in the current text color, for colored card headers.
+   * `contour`: the category colors with a black outline, for white contour cards.
+   */
+  variant?: 'filled' | 'outline' | 'contour';
   className?: string;
 };
 
@@ -25,9 +28,12 @@ function CategoryBadge({
   variant = 'filled',
   className = '',
 }: Readonly<CategoryBadgeProperties>) {
-  const style = variant === 'outline'
-    ? 'font-bold border-2 border-current'
-    : `font-medium ${categoryStyles[category.toLowerCase()] ?? categoryStyles.activiteit}`;
+  const colors = categoryStyles[category.toLowerCase()] ?? categoryStyles.activiteit;
+  const style = {
+    filled: `font-medium ${colors}`,
+    outline: 'font-bold border-2 border-current',
+    contour: `font-bold contour-xs ${colors}`,
+  }[variant];
 
   return (
     <span className={`rounded-full ${style} ${sizeStyles[size]} ${className}`}>

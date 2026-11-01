@@ -8,7 +8,6 @@ import {
   type SeasonalDecorationsConfig,
 } from '@components/seasonal-decorations-context';
 import {Snowfall, SeasonalStyles} from '@components/seasonal-decorations';
-import {ConditionalFeedbackButton} from '@components/feedback';
 import {content} from '@lib/content';
 
 // Reads the site config; falls back to no decorations when content is unavailable (e.g. at build time)
@@ -55,7 +54,6 @@ export default function MainSiteLayout({
           <SiteFooterServer />
         </Suspense>
       </SafeSeasonalDecorations>
-      <ConditionalFeedbackButton />
       <Toaster position='bottom-left' richColors closeButton />
     </>
   );

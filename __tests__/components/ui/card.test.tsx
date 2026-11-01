@@ -108,4 +108,10 @@ describe('Card', () => {
     render(<Card href='/ergens'>Link content</Card>);
     expect(screen.getByRole('link', {name: 'Link content'})).toHaveAttribute('href', '/ergens');
   });
+
+  it('has a flat contour variant without a shadow', () => {
+    const {container} = render(<Card variant='contour-flat'>Content</Card>);
+    expect(container.firstChild).toHaveClass('contour-xs', 'rounded-tile');
+    expect(container.firstChild).not.toHaveClass('shadow-hard-md');
+  });
 });

@@ -2,9 +2,8 @@ import type {Metadata} from 'next';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {HomeHero} from '@features/home/home-hero';
 import {HomeActivities} from '@features/home/home-activities';
-import {
-  HomeCta, HomeNewsAndTeam, HomePhotoWall, HomeQuote,
-} from '@features/home/home-sections';
+import {HomeNewsAndTeam, HomePhotoWall, HomeQuote} from '@features/home/home-sections';
+import {ContourCta} from '@components/layout/contour-parts';
 import {content} from '@lib/content';
 import {todayString} from '@lib/dates';
 import {generateMetadata as generateSeoMetadata} from '@lib/seo';
@@ -37,7 +36,7 @@ export default function Page() {
       <HomeQuote citaat={pagina.citaat} bijschriftHtml={pagina.html} />
       <HomeNewsAndTeam nieuws={laatsteNieuws} team={bestuur} />
       <HomePhotoWall activiteiten={voorbij} />
-      <HomeCta cta={pagina.cta} />
+      <ContourCta cta={pagina.cta} />
     </PageWithAnnouncements>
   );
 }

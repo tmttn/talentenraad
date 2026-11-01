@@ -1,10 +1,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import {Card} from '@components/ui';
-import {CtaButton} from '@components/ui/cta-button';
 import type {Activiteit, NieuwsItem, Teamlid} from '@lib/content';
 import {parseLocalDate} from '@lib/dates';
-import {sectionTitle} from './home-activities';
+import {contourTitle as sectionTitle, LogoStripe} from '@components/layout/contour-parts';
+import {TeamAvatar} from '@features/team/team-avatar';
 
 const linkClass = 'font-bold text-primary-text underline';
 
@@ -13,11 +13,7 @@ function HomeQuote({citaat, bijschriftHtml}: Readonly<{citaat: string; bijschrif
   return (
     <section className='mt-[clamp(64px,7vw,96px)] bg-gray-50 px-5 py-[clamp(64px,8vw,112px)]'>
       <figure className='max-w-[900px] mx-auto flex flex-col gap-[22px] items-start'>
-        <div aria-hidden='true' className='flex gap-1.5'>
-          <span className='w-10 h-1.5 rounded-full bg-logo-pink' />
-          <span className='w-10 h-1.5 rounded-full bg-logo-green' />
-          <span className='w-10 h-1.5 rounded-full bg-logo-orange' />
-        </div>
+        <LogoStripe />
         <blockquote className='font-display font-bold text-gray-900 text-[clamp(28px,3vw,40px)] leading-tight tracking-[-0.01em]'>
           {citaat}
         </blockquote>
@@ -51,20 +47,6 @@ function NewsCard({item}: Readonly<{item: NieuwsItem}>) {
   );
 }
 
-/** Avatar fill, hard-shadow color and initials color per position, in the logo colors. */
-const avatarStyles = [
-  'bg-category-event-bg text-category-event-text shadow-[3px_3px_0_var(--color-logo-pink)]',
-  'bg-[#ecfccb] text-secondary-hover shadow-[3px_3px_0_var(--color-logo-green)]',
-  'bg-[#ffedd5] text-accent-hover shadow-[3px_3px_0_var(--color-logo-orange)]',
-];
-
-const initials = (naam: string) => naam
-  .split(' ')
-  .map(deel => deel[0])
-  .join('')
-  .toUpperCase()
-  .slice(0, 2);
-
 function TeamPreview({leden}: Readonly<{leden: Teamlid[]}>) {
   return (
     <div className='flex-[1_1_360px] min-w-0 flex flex-col gap-5'>
@@ -76,11 +58,7 @@ function TeamPreview({leden}: Readonly<{leden: Teamlid[]}>) {
         <ul className='flex flex-wrap gap-4 sm:gap-5'>
           {leden.map((lid, index) => (
             <li key={lid.slug} className='flex flex-col items-center gap-2 w-[104px] text-center'>
-              <span className={`relative size-24 rounded-full contour overflow-hidden flex items-center justify-center font-display font-extrabold text-2xl ${avatarStyles[index % avatarStyles.length]}`}>
-                {lid.foto
-                  ? <Image src={lid.foto.src} alt='' fill sizes='96px' className='object-cover' />
-                  : <span aria-hidden='true'>{initials(lid.naam)}</span>}
-              </span>
+              <TeamAvatar lid={lid} index={index} />
               <span className='font-bold text-[15px] text-gray-900'>{lid.naam}</span>
               <span className='text-[13px] text-gray-600'>{lid.rol}</span>
             </li>
@@ -152,35 +130,4 @@ function HomePhotoWall({activiteiten}: Readonly<{activiteiten: Activiteit[]}>) {
   );
 }
 
-type Cta = {titel: string; tekst: string; knoppen: Array<{tekst: string; link: string}>};
-
-/** Closing call to action on a pink contour panel. */
-function HomeCta({cta}: Readonly<{cta?: Cta}>) {
-  if (!cta) {
-    return null;
-  }
-
-  return (
-    <section className='px-3 sm:px-[clamp(12px,2vw,24px)] pb-[clamp(64px,7vw,96px)]'>
-      <div className='max-w-[1240px] mx-auto bg-primary rounded-panel contour shadow-hard-lg px-[clamp(24px,4vw,56px)] py-[clamp(36px,5vw,64px)] flex flex-wrap justify-between items-center gap-7'>
-        <div className='flex-[1_1_440px] min-w-0 flex flex-col gap-3'>
-          <h2 className='font-display font-extrabold text-white text-[clamp(32px,3.6vw,50px)] leading-[1.02] tracking-[-0.02em]'>{cta.titel}</h2>
-          <p className='text-lg leading-normal text-white'>{cta.tekst}</p>
-        </div>
-        <div className='flex flex-wrap gap-3.5'>
-          {cta.knoppen.map((knop, index) => (
-            <CtaButton
-              key={knop.link}
-              text={knop.tekst}
-              href={knop.link}
-              variant={index === 0 ? 'contour-white' : 'contour-on-color'}
-              showArrow={false}
-            />
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-export {HomeQuote, HomeNewsAndTeam, HomePhotoWall, HomeCta};
+export {HomeQuote, HomeNewsAndTeam, HomePhotoWall};
