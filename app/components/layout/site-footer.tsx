@@ -9,7 +9,6 @@ import {
   siYoutube,
 } from 'simple-icons';
 import {Icicles} from '@components/seasonal-decorations';
-import {useCookieConsent} from '@components/cookie-consent';
 
 type NavigationLink = {
   text: string;
@@ -95,10 +94,9 @@ export function SiteFooter({
 }: Readonly<SiteFooterProperties>) {
   const groups = navigationGroups ?? defaultNavigationGroups;
   const socials = socialLinks ?? defaultSocialLinks;
-  const {openPreferences} = useCookieConsent();
 
   return (
-    <footer role='contentinfo' className='bg-gray-100'>
+    <footer role='contentinfo' className='bg-white border-t-(length:--contour-width) border-ink'>
       {/* Seasonal icicles decoration */}
       <Icicles />
       <div className='max-w-[1280px] mx-auto px-6 py-12'>
@@ -171,7 +169,7 @@ export function SiteFooter({
             © {new Date().getFullYear()} {copyrightText}
           </p>
 
-          {/* Legal links and cookie settings */}
+          {/* Legal links; there is no cookie notice, only necessary storage (see /cookiebeleid) */}
           <div className='flex flex-wrap justify-center gap-4 text-sm'>
             <Link href='/privacybeleid' className='text-gray-700 hover:text-primary transition-colors'>
               Privacybeleid
@@ -182,13 +180,6 @@ export function SiteFooter({
             <Link href='/algemene-voorwaarden' className='text-gray-700 hover:text-primary transition-colors'>
               Algemene Voorwaarden
             </Link>
-            <button
-              type='button'
-              onClick={openPreferences}
-              className='text-gray-700 hover:text-primary transition-colors'
-            >
-              Cookiemelding
-            </button>
           </div>
 
           <div className='flex gap-4'>

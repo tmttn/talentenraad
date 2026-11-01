@@ -1,7 +1,16 @@
 import type {Metadata, Viewport} from 'next';
+import {Bricolage_Grotesque} from 'next/font/google';
 import {siteConfig, generateOrganizationSchema, JsonLd} from '@lib/seo';
 import {SwRegister} from '@components/pwa/sw-register';
 import './globals.css';
+
+// next/font downloads the font at build time and serves it from our own domain: no request to Google at runtime.
+const bricolage = Bricolage_Grotesque({
+  subsets: ['latin'],
+  axes: ['opsz'],
+  display: 'swap',
+  variable: '--font-bricolage',
+});
 
 export const metadata: Metadata = {
   title: {
@@ -81,7 +90,7 @@ export default function RootLayout({
   const organizationSchema = generateOrganizationSchema();
 
   return (
-    <html lang='nl' className='overflow-auto'>
+    <html lang='nl' className={`overflow-auto ${bricolage.variable}`}>
       <head>
         <JsonLd data={organizationSchema} />
       </head>

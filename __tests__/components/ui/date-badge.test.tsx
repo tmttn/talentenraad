@@ -89,4 +89,17 @@ describe('DateBadge', () => {
     const badge = container.firstChild;
     expect(badge).toHaveClass('custom-class');
   });
+
+  it('renders the contour variant in logo orange with the chip radius', () => {
+    const {container} = render(<DateBadge date='2026-03-29' size='lg' variant='contour' />);
+    const badge = container.firstChild;
+    expect(badge).toHaveClass('bg-logo-orange', 'text-black', 'contour-sm', 'rounded-chip');
+    expect(badge).not.toHaveClass('rounded-modal');
+    expect(screen.getByText('29')).toHaveClass('font-display', 'font-extrabold');
+    expect(screen.getByText('29')).not.toHaveClass('font-bold');
+  });
+
+  it('reads YYYY-MM-DD as a local date', () => {
+    expect(formatDateParts('2026-03-01')).toEqual({day: 1, month: 'MRT'});
+  });
 });

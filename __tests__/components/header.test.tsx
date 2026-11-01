@@ -64,4 +64,12 @@ describe('SiteHeader', () => {
     expect(skipLink).toHaveAttribute('href', '#main-content');
   });
 
+
+  it('shows the contact link as a contour button', () => {
+    render(<SiteHeader navigationLinks={[{text: 'Home', url: '/'}, {text: 'Contact', url: '/contact'}]} />);
+    const [contact] = screen.getAllByRole('link', {name: 'Contact'});
+    expect(contact).toHaveClass('contour-sm', 'shadow-hard-xs', 'bg-primary');
+    const [home] = screen.getAllByRole('link', {name: 'Home'});
+    expect(home).not.toHaveClass('contour-sm');
+  });
 });

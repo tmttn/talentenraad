@@ -10,14 +10,6 @@ vi.mock('@components/ui', () => ({
   YoutubeIcon: () => <span data-testid='youtube-icon' />,
 }));
 
-// Mock cookie consent
-const mockOpenPreferences = vi.fn();
-vi.mock('@components/cookie-consent', () => ({
-  useCookieConsent: () => ({
-    openPreferences: mockOpenPreferences,
-  }),
-}));
-
 describe('SiteFooter', () => {
   const mockNavigationGroups = [
     {
@@ -112,4 +104,10 @@ describe('SiteFooter', () => {
     expect(navElements.length).toBeGreaterThan(0);
   });
 
+
+  it('links to the cookie policy instead of showing a cookie notice', () => {
+    render(<SiteFooter />);
+    expect(screen.getByRole('link', {name: 'Cookiebeleid'})).toHaveAttribute('href', '/cookiebeleid');
+    expect(screen.queryByRole('button', {name: /cookie/i})).not.toBeInTheDocument();
+  });
 });

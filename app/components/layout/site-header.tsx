@@ -16,6 +16,8 @@ type SiteHeaderProperties = {
   logoUrl?: string;
   logoAlt?: string;
   navigationLinks?: NavigationLink[];
+  /** The link with this url is shown as a contour button instead of a plain link. */
+  ctaUrl?: string;
 };
 
 const defaultLinks: NavigationLink[] = [
@@ -30,6 +32,7 @@ export function SiteHeader({
   logoUrl = '/Logo.png',
   logoAlt = 'Talentenraad Logo',
   navigationLinks,
+  ctaUrl = '/contact',
 }: Readonly<SiteHeaderProperties>) {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -85,16 +88,18 @@ export function SiteHeader({
               priority
             />
           </Link>
-          <nav role='navigation' aria-label='Hoofdnavigatie' className='hidden md:flex items-center gap-8'>
+          <nav role='navigation' aria-label='Hoofdnavigatie' className='hidden md:flex items-center gap-1'>
             {links.map(item => (
               <Link
                 key={item.url}
                 href={item.url}
-                className={`font-medium transition-colors hover:text-primary focus:text-primary focus:outline-none focus:underline underline-offset-4 ${
-                  pathname === item.url
-                    ? 'text-primary'
-                    : 'text-gray-600'
-                }`}
+                className={item.url === ctaUrl
+                  ? 'ml-1.5 px-4 py-2.5 font-bold text-white bg-primary hover:bg-primary-hover contour-sm rounded-xl shadow-hard-xs transition-colors'
+                  : `px-3 py-2.5 transition-colors hover:text-primary-text focus:text-primary-text focus:outline-none focus:underline underline-offset-4 ${
+                    pathname === item.url
+                      ? 'font-bold text-primary-text'
+                      : 'font-semibold text-gray-900'
+                  }`}
                 aria-current={pathname === item.url ? 'page' : undefined}
               >
                 {item.text}

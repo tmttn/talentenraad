@@ -1,9 +1,10 @@
 import type {Metadata} from 'next';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
-import {PageHero, PageUnifiedCta, SectionHeading} from '@components/layout/page-parts';
-import {HomepageDashboard} from '@features/dashboard/homepage-dashboard';
-import {Faq} from '@features/faq/faq';
-import {InfoCard} from '@features/info/info-card';
+import {HomeHero} from '@features/home/home-hero';
+import {HomeActivities} from '@features/home/home-activities';
+import {
+  HomeCta, HomeNewsAndTeam, HomePhotoWall, HomeQuote,
+} from '@features/home/home-sections';
 import {content} from '@lib/content';
 import {todayString} from '@lib/dates';
 import {generateMetadata as generateSeoMetadata} from '@lib/seo';
@@ -15,20 +16,28 @@ export function generateMetadata(): Metadata {
 
 export default function Page() {
   const pagina = content.getPagina('home');
+  const today = todayString();
+  const activiteiten = content.getActiviteiten();
+  const komend = activiteiten
+    .filter(activiteit => activiteit.datum >= today)
+    .sort((a, b) => a.datum.localeCompare(b.datum));
+  const voorbij = activiteiten
+    .filter(activiteit => activiteit.datum < today)
+    .sort((a, b) => b.datum.localeCompare(a.datum));
+  const [laatsteNieuws] = [...content.getNieuws()].sort((a, b) => b.datum.localeCompare(a.datum));
+  const bestuur = content.getTeam()
+    .filter(lid => lid.categorie === 'bestuur')
+    .sort((a, b) => a.volgorde - b.volgorde)
+    .slice(0, 3);
 
   return (
     <PageWithAnnouncements>
-      <PageHero size='compact' titel={pagina.hero.titel} ondertitel={pagina.hero.ondertitel} />
-      <div className='py-12 bg-gray-50'>
-        <SectionHeading titel={pagina.dashboardTitel} />
-        <HomepageDashboard today={todayString()} activiteiten={content.getActiviteiten()} nieuws={content.getNieuws()} />
-      </div>
-      <InfoCard icon='heart' variant='default' title={pagina.infokaart.titel} html={pagina.html} />
-      <div className='py-12'>
-        <SectionHeading titel={pagina.faqTitel} />
-        <Faq items={content.getFaq()} />
-      </div>
-      <PageUnifiedCta variant='compact' cta={pagina.cta} />
+      <HomeHero titel={pagina.hero.titel} ondertitel={pagina.hero.ondertitel} knoppen={pagina.hero.knoppen} />
+      <HomeActivities activiteiten={komend} />
+      <HomeQuote citaat={pagina.citaat} bijschriftHtml={pagina.html} />
+      <HomeNewsAndTeam nieuws={laatsteNieuws} team={bestuur} />
+      <HomePhotoWall activiteiten={voorbij} />
+      <HomeCta cta={pagina.cta} />
     </PageWithAnnouncements>
   );
 }

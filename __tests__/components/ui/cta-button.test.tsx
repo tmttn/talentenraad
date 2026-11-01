@@ -161,4 +161,18 @@ describe('CtaButton', () => {
       expect(style?.innerHTML).toContain('.cta-button-arrow');
     });
   });
+
+  describe('contour variants', () => {
+    it.each([
+      ['contour', ['bg-primary', 'text-white', 'contour-sm', 'shadow-hard-sm']],
+      ['contour-white', ['bg-white', 'text-black', 'contour-sm', 'shadow-hard-sm']],
+      ['contour-outline', ['bg-white', 'text-black', 'contour-sm']],
+      ['contour-on-color', ['text-white', 'border-white']],
+    ] as const)('%s', (variant, classes) => {
+      render(<CtaButton text='Knop' variant={variant} />);
+      const link = screen.getByRole('link', {name: /Knop/});
+      expect(link).toHaveClass('rounded-control', 'font-bold', ...classes);
+      expect(link).not.toHaveClass('rounded-button');
+    });
+  });
 });

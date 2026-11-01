@@ -84,4 +84,28 @@ describe('Card', () => {
     const card = container.firstChild;
     expect(card).toHaveClass('custom-class');
   });
+
+  describe('contour variants', () => {
+    it('uses the contour outline, hard shadow and tile radius', () => {
+      const {container} = render(<Card variant='contour'>Content</Card>);
+      expect(container.firstChild).toHaveClass('contour-sm', 'shadow-hard-md', 'rounded-tile');
+      expect(container.firstChild).not.toHaveClass('rounded-card');
+    });
+
+    it('uses the thicker outline and panel radius for contour-lg', () => {
+      const {container} = render(<Card variant='contour-lg'>Content</Card>);
+      expect(container.firstChild).toHaveClass('contour', 'shadow-hard-lg', 'rounded-panel');
+    });
+
+    it('lifts on hover instead of growing a soft shadow', () => {
+      const {container} = render(<Card variant='contour' hover>Content</Card>);
+      expect(container.firstChild).toHaveClass('hover:shadow-hard-lg');
+      expect(container.firstChild).not.toHaveClass('hover:shadow-elevated');
+    });
+  });
+
+  it('renders as a link when href is given', () => {
+    render(<Card href='/ergens'>Link content</Card>);
+    expect(screen.getByRole('link', {name: 'Link content'})).toHaveAttribute('href', '/ergens');
+  });
 });

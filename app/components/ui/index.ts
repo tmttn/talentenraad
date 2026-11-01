@@ -54,6 +54,9 @@ export type {DateBadgeProperties} from './date-badge';
 export {CategoryBadge, categoryStyles} from './category-badge';
 export type {CategoryBadgeProperties} from './category-badge';
 
+export {SpeechBubble} from './speech-bubble';
+export type {SpeechBubbleProperties} from './speech-bubble';
+
 // Calendar components
 export {AddToCalendarButton} from './add-to-calendar-button';
 
