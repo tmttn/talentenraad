@@ -74,7 +74,7 @@ describe('saveEntry (create)', () => {
 
     expect(requireEditorSession).toHaveBeenCalled();
     const call = commitChanges.mock.calls[0][0] as {message: string; changes: Array<{path: string; content: Buffer | string; expectedSha?: string | null}>};
-    expect(call.message).toBe('content: toevoegen nieuws "Nieuwe Brief"\n\nBewerkt-door: Rita');
+    expect(call.message).toBe('content: toevoegen nieuws "Nieuwe Brief"');
     expect(call.changes.map(change => change.path)).toEqual([
       'content/nieuws/nieuwe-brief/index.md',
       'content/nieuws/nieuwe-brief/afbeelding.jpg',
@@ -227,7 +227,7 @@ describe('deleteEntry', () => {
 
     expect(pathsUnder).toHaveBeenCalledWith('content/nieuws/oud');
     const call = commitChanges.mock.calls[0][0] as {message: string; changes: unknown[]};
-    expect(call.message).toBe('content: verwijderen nieuws "Oud nieuws"\n\nBewerkt-door: Rita');
+    expect(call.message).toBe('content: verwijderen nieuws "Oud nieuws"');
     expect(call.changes).toEqual([
       {path: 'content/nieuws/oud/index.md', delete: true, expectedSha: 'si'},
       {path: 'content/nieuws/oud/afbeelding.jpg', delete: true, expectedSha: 'sm'},
@@ -278,7 +278,9 @@ describe('saveAnnouncement', () => {
     await expect(saveAnnouncement(empty, values())).rejects.toThrow('NEXT_REDIRECT /admin/content?opgeslagen=1&commit=abc123');
 
     const call = commitChanges.mock.calls[0][0] as {message: string; changes: Array<{path: string; content: string; expectedSha: string}>};
-    expect(call.message).toContain('content: bijwerken aankondiging');
+    expect(call.message).toBe('content: bijwerken aankondiging "Geen training"');
+    // Public repo: the editor's name and e-mail stay out of the commit (they are in the audit log).
+    expect(call.message).not.toMatch(/Rita|@/);
     expect(call.changes[0]).toMatchObject({path: 'content/site.yaml', expectedSha: 'site-sha'});
     expect(call.changes[0].content).toContain('tekst: Geen training');
     expect(call.changes[0].content).toContain('navigatie:');

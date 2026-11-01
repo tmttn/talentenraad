@@ -34,8 +34,9 @@ const oneLine = (value: string, max = 100) => value.replaceAll(/\s+/g, ' ').repl
 
 type EditorSession = Awaited<ReturnType<typeof requireEditorSession>>;
 
-const commitMessage = (verb: string, subject: string, title: string, session: EditorSession) =>
-  `content: ${verb} ${subject} "${oneLine(title)}"\n\nBewerkt-door: ${oneLine(session.user.name ?? session.user.email ?? 'onbekend', 200)}`;
+// No editor name or e-mail in the message: the repo is public. The audit log links each commit to the user.
+const commitMessage = (verb: string, subject: string, title: string) =>
+  `content: ${verb} ${subject} "${oneLine(title)}"`;
 
 async function audit(
   session: EditorSession,
@@ -160,7 +161,7 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
 
     const title = String(parsed.slugSource);
     const {commitSha} = await commitChanges({
-      message: commitMessage(isCreate ? 'toevoegen' : 'bijwerken', type, title, session),
+      message: commitMessage(isCreate ? 'toevoegen' : 'bijwerken', type, title),
       author,
       changes,
     });
@@ -206,7 +207,7 @@ export async function deleteEntry(_previous: FormState, data: FormData): Promise
       ...(path in known ? {expectedSha: known[path]} : {}),
     }));
     const {commitSha} = await commitChanges({
-      message: commitMessage('verwijderen', type, title === '' ? slug : title, session),
+      message: commitMessage('verwijderen', type, title === '' ? slug : title),
       author,
       changes,
     });
@@ -240,7 +241,7 @@ export async function saveAnnouncement(_previous: FormState, data: FormData): Pr
     }
 
     const {commitSha} = await commitChanges({
-      message: `content: bijwerken aankondiging "${oneLine(parsed.aankondiging.tekst)}"\n\nBewerkt-door: ${oneLine(session.user.name ?? session.user.email ?? 'onbekend', 200)}`,
+      message: commitMessage('bijwerken', 'aankondiging', parsed.aankondiging.tekst),
       author,
       changes: [{path: 'content/site.yaml', content: updateAnnouncement(file.text, parsed.aankondiging), expectedSha: file.sha}],
     });
