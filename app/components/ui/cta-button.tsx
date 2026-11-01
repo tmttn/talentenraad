@@ -23,21 +23,31 @@ const buttonStyles = `
 type CtaButtonProperties = {
   text?: string;
   href?: string;
-  variant?: 'primary' | 'secondary' | 'outline' | 'white';
+  variant?: 'primary' | 'secondary' | 'outline' | 'white' | ContourVariant;
   size?: 'sm' | 'md' | 'lg';
   showArrow?: boolean;
 };
 
+type ContourVariant = 'contour' | 'contour-white' | 'contour-outline' | 'contour-on-color';
+
 /**
  * Variant styles using design tokens
  * - Shadow: shadow-elevated on hover
+ * - Contour variants: black outline (contour-sm), hard shadow (shadow-hard-sm), radius-control;
+ *   they press into their shadow when clicked
  */
 const variantStyles = {
   primary: 'bg-primary text-white hover:bg-primary-hover hover:shadow-elevated hover:shadow-primary/25 focus:ring-primary border border-transparent',
   secondary: 'bg-white/10 text-white hover:bg-white/20 border border-white/20 focus:ring-white',
   outline: 'bg-transparent border-2 border-white text-white hover:bg-white/10 focus:ring-white',
   white: 'bg-white text-gray-900 hover:bg-gray-100 focus:ring-white border border-transparent',
+  contour: 'bg-primary text-white contour-sm shadow-hard-sm hover:bg-primary-hover active:translate-x-1 active:translate-y-1 active:shadow-none focus:ring-primary',
+  'contour-white': 'bg-white text-black contour-sm shadow-hard-sm hover:bg-brand-primary-50 active:translate-x-1 active:translate-y-1 active:shadow-none focus:ring-primary',
+  'contour-outline': 'bg-white text-black contour-sm hover:bg-brand-primary-50 focus:ring-primary',
+  'contour-on-color': 'bg-transparent text-white border-(length:--contour-width-sm) border-white hover:bg-white/10 focus:ring-white',
 };
+
+const isContourVariant = (variant: string): variant is ContourVariant => variant.startsWith('contour');
 
 /**
  * Size styles using design tokens
@@ -62,8 +72,9 @@ export function CtaButton({
   size = 'md',
   showArrow = true,
 }: Readonly<CtaButtonProperties>) {
-  // Uses rounded-button token for consistent border radius
-  const baseClasses = `cta-button inline-flex items-center justify-center font-semibold rounded-button focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantStyles[variant]} ${sizeStyles[size]}`;
+  // Uses rounded-button token for consistent border radius; contour variants use the rounder radius-control
+  const shape = isContourVariant(variant) ? 'font-bold rounded-control' : 'font-semibold rounded-button';
+  const baseClasses = `cta-button inline-flex items-center justify-center ${shape} focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantStyles[variant]} ${sizeStyles[size]}`;
 
   return (
     <>

@@ -1,6 +1,7 @@
 import type {Metadata} from 'next';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {PageCtaBanner, PageHero, SectionHeading} from '@components/layout/page-parts';
+import {Faq} from '@features/faq/faq';
 import {InfoCard} from '@features/info/info-card';
 import {TeamGrid} from '@features/team/team-grid';
 import {content} from '@lib/content';
@@ -26,6 +27,10 @@ export default function Page() {
       <div className='pt-6 pb-12'>
         <SectionHeading titel={pagina.leden.titel} tekst={pagina.leden.tekst} />
         <TeamGrid leden={team.filter(lid => lid.categorie === 'lid')} columns={4} showDescription={false} />
+      </div>
+      <div className='py-12 bg-gray-50'>
+        <SectionHeading titel={pagina.faqTitel} />
+        <Faq items={content.getFaq()} />
       </div>
       <PageCtaBanner cta={pagina.cta} />
     </PageWithAnnouncements>

@@ -119,9 +119,12 @@ export const sponsorNiveaus = ['goud', 'zilver', 'brons', 'partner'] as const;
 export const paginaSchemas = {
   home: z.object({
     ...basisPagina,
-    dashboardTitel: z.string(),
-    infokaart,
-    faqTitel: z.string(),
+    hero: z.object({
+      titel: z.string(),
+      ondertitel: z.string(),
+      knoppen: z.array(linkSchema).max(2).default([]),
+    }),
+    citaat: z.string(),
   }),
   kalender: z.object({
     ...basisPagina,
@@ -137,6 +140,7 @@ export const paginaSchemas = {
   'over-ons': z.object({
     ...basisPagina,
     infokaart,
+    faqTitel: z.string().default('Veelgestelde vragen'),
     bestuur: titelTekst,
     leden: titelTekst,
   }),

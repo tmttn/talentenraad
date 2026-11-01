@@ -70,6 +70,34 @@
 	--radius-tooltip: var(--radius-md);
 	--radius-dropdown: var(--radius-lg);
 
+	/* Contour radius: the bold "contour" style (cards and panels with a black outline) */
+	--radius-control: 0.875rem;  /* 14px - contour buttons */
+	--radius-chip: 1.125rem;     /* 18px - contour date badge */
+	--radius-tile: 1.375rem;     /* 22px - contour cards */
+	--radius-panel: 1.75rem;     /* 28px - large contour panels */
+
+	/* ============================================
+	   CONTOUR TOKENS
+	   Black outline + hard offset shadow, after the logo's ink line
+	   ============================================ */
+
+	--color-ink: #000000;
+	--contour-width: 3px;
+	--contour-width-sm: 2.5px;
+	--contour-width-xs: 2px;
+
+	--shadow-hard-xs: 3px 3px 0 var(--color-ink);
+	--shadow-hard-sm: 4px 4px 0 var(--color-ink);
+	--shadow-hard-md: 5px 5px 0 var(--color-ink);
+	--shadow-hard-lg: 6px 6px 0 var(--color-ink);
+
+	/* ============================================
+	   TYPOGRAPHY TOKENS
+	   ============================================ */
+
+	/* Display face for headings in the contour style; --font-bricolage is set by next/font in app/layout.tsx */
+	--font-display: var(--font-bricolage), system-ui, sans-serif;
+
 	/* ============================================
 	   TRANSITION TOKENS
 	   ============================================ */
@@ -113,6 +141,11 @@
 	/* Accent palette (highlights, warnings) */
 	--color-brand-accent-400: #b07d1e; /* Darkened for 4.5:1 contrast on white */
 	--color-brand-accent-500: #946812;
+
+	/* Logo colors: decorative fills only, never text on white */
+	--color-logo-pink: #ed207b;
+	--color-logo-green: #8ec63f;
+	--color-logo-orange: #fcb040;
 
 	/* ----------------------------------------
 	   SEMANTIC TOKENS - Purpose-based mapping
@@ -186,6 +219,19 @@
 
 	/* Gray for text on gray backgrounds - 4.5:1+ on #f3f4f6 */
 	--color-gray-on-gray: #4a5568;
+}
+
+/* Contour outlines: border-width has no theme namespace in Tailwind v4, so these are utilities */
+@utility contour {
+	border: var(--contour-width) solid var(--color-ink);
+}
+
+@utility contour-sm {
+	border: var(--contour-width-sm) solid var(--color-ink);
+}
+
+@utility contour-xs {
+	border: var(--contour-width-xs) solid var(--color-ink);
 }
 
 /* Global focus styles for accessibility */

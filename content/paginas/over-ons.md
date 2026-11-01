@@ -12,6 +12,7 @@ cta:
   knoppen:
     - tekst: Neem contact op
       link: /contact
+faqTitel: Veelgestelde vragen
 infokaart:
   titel: Onze Missie
 bestuur:

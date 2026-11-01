@@ -20,12 +20,14 @@ export const enkeleCta = {...cta, knoppen: [{tekst: 'Enige knop', link: '/enige'
 export const home: Pagina<'home'> = {
   ...basis,
   titel: 'Fictieve start',
-  hero: {titel: 'Hero titel start', ondertitel: 'Hero ondertitel start'},
+  hero: {
+    titel: 'Hero titel start',
+    ondertitel: 'Hero ondertitel start',
+    knoppen: [{tekst: 'Hero knop', link: '/hero'}, {tekst: 'Tweede hero knop', link: '/hero-twee'}],
+  },
+  citaat: 'Fictief citaat',
   cta,
-  dashboardTitel: 'Dashboard titel',
-  infokaart: {titel: 'Infokaart titel start'},
-  faqTitel: 'Veelgestelde fictie',
-  html: '<p>Infokaart body start</p>',
+  html: '<p>Bijschrift start</p>',
 };
 
 export const kalender: Pagina<'kalender'> = {
@@ -59,6 +61,7 @@ export const overOns: Pagina<'over-ons'> = {
   hero: {titel: 'Hero titel over', ondertitel: 'Hero ondertitel over'},
   cta: enkeleCta,
   infokaart: {titel: 'Infokaart titel over'},
+  faqTitel: 'Veelgestelde fictie',
   bestuur: {titel: 'Bestuur titel', tekst: 'Bestuur tekst'},
   leden: {titel: 'Leden titel', tekst: 'Leden tekst'},
   html: '<p>Infokaart body over</p>',

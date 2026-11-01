@@ -76,4 +76,11 @@ describe('CategoryBadge', () => {
     const badge = screen.getByText('Test');
     expect(badge).toHaveClass('custom-class');
   });
+
+  it('renders an outline pill in the current text color', () => {
+    render(<CategoryBadge category='feest' variant='outline' />);
+    const badge = screen.getByText('feest');
+    expect(badge).toHaveClass('border-2', 'border-current', 'font-bold');
+    expect(badge).not.toHaveClass('bg-category-event-bg');
+  });
 });

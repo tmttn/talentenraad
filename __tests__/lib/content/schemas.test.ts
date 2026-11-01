@@ -44,7 +44,7 @@ describe('collection schemas', () => {
 });
 
 describe('paginaSchemas', () => {
-  const home = {...basis, cta, dashboardTitel: 'D', infokaart: {titel: 'I'}, faqTitel: 'F'};
+  const home = {...basis, cta, citaat: 'C'};
 
   it('accepts a valid home page', () => {
     expect(paginaSchemas.home.parse(home).concept).toBe(false);
@@ -54,6 +54,12 @@ describe('paginaSchemas', () => {
     expect(() => paginaSchemas.home.parse({...home, cta: {...cta, knoppen: []}})).toThrow();
     const drie = [1, 2, 3].map(n => ({tekst: String(n), link: '/'}));
     expect(() => paginaSchemas.home.parse({...home, cta: {...cta, knoppen: drie}})).toThrow();
+  });
+
+  it('defaults hero knoppen to none and allows at most two', () => {
+    expect(paginaSchemas.home.parse(home).hero.knoppen).toEqual([]);
+    const drie = [1, 2, 3].map(n => ({tekst: String(n), link: '/'}));
+    expect(() => paginaSchemas.home.parse({...home, hero: {...home.hero, knoppen: drie}})).toThrow();
   });
 
   it('allows a missing cta', () => {

@@ -1,6 +1,10 @@
 import {render, screen} from '@testing-library/react';
 import RootLayout, {metadata} from '../../app/layout';
 
+vi.mock('next/font/google', () => ({
+  Bricolage_Grotesque: () => ({variable: 'font-bricolage-variable', className: 'font-bricolage'}),
+}));
+
 describe('RootLayout', () => {
   it('renders children content', () => {
     render(<RootLayout>
@@ -51,5 +55,10 @@ describe('metadata', () => {
   it('has Twitter card metadata', () => {
     expect(metadata.twitter).toBeDefined();
     expect(metadata.twitter?.card).toBe('summary_large_image');
+  });
+
+  it('exposes the display font as a CSS variable on html', () => {
+    render(<RootLayout><div>Content</div></RootLayout>);
+    expect(document.documentElement).toHaveClass('font-bricolage-variable');
   });
 });

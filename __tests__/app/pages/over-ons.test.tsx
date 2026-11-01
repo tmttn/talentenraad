@@ -1,11 +1,15 @@
 import {render, screen} from '@testing-library/react';
 import {content} from '@lib/content';
 import * as paginas from '../../fixtures/paginas';
-import {makeTeamlid} from '../../fixtures/content';
+import {makeFaq, makeTeamlid} from '../../fixtures/content';
 import OverOnsPage, {generateMetadata} from '../../../app/(main)/over-ons/page';
 import {expectInOrder} from './helpers';
 
-vi.mock('@lib/content', () => ({content: {getPagina: vi.fn(), getTeam: vi.fn()}}));
+vi.mock('@lib/content', () => ({content: {getPagina: vi.fn(), getTeam: vi.fn(), getFaq: vi.fn()}}));
+
+vi.mock('@features/faq/faq', () => ({
+  Faq: (p: {items: Array<{vraag: string}>}) => <div data-testid='faq'>FAQ {p.items.map(i => i.vraag).join(',')}</div>,
+}));
 
 vi.mock('@components/layout/page-with-announcements', () => ({
   PageWithAnnouncements: ({children}: {children: React.ReactNode}) => <div>{children}</div>,
@@ -24,6 +28,7 @@ describe('Over ons page', () => {
       makeTeamlid({naam: 'Bestuurslid Een', categorie: 'bestuur'}),
       makeTeamlid({naam: 'Gewoon Lid', categorie: 'lid', slug: 'gewoon-lid'}),
     ]);
+    vi.mocked(content.getFaq).mockReturnValue([makeFaq({vraag: 'Waarom?'})]);
   });
 
   it('renders all texts in table order', () => {
@@ -31,6 +36,7 @@ describe('Over ons page', () => {
     expectInOrder(container, [
       'Hero titel over', 'Hero ondertitel over', 'Infokaart titel over', 'Infokaart body over',
       'Bestuur titel', 'Bestuur tekst', 'Bestuurslid Een', 'Leden titel', 'Leden tekst', 'Gewoon Lid',
+      'Veelgestelde fictie', 'FAQ Waarom?',
       'Fictieve oproep', 'Fictieve oproeptekst', 'Enige knop',
     ]);
   });

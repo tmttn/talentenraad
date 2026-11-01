@@ -5,7 +5,7 @@ beschrijving: >-
   technologieën gebruikt op onze website talentenraad.be, in overeenstemming met
   de…
 ---
-Laatst bijgewerkt: 31 oktober 2026
+Laatst bijgewerkt: 1 november 2026
 
 Dit cookiebeleid legt uit hoe de Talentenraad cookies en vergelijkbare technologieën gebruikt op onze website talentenraad.be, in overeenstemming met de Belgische wetgeving inzake elektronische communicatie en de richtlijnen van de Gegevensbeschermingsautoriteit (GBA).
 
@@ -27,7 +27,6 @@ Deze cookies zijn essentieel voor het functioneren van de website. Hiervoor is g
 
 | Naam | Doel | Bewaartermijn | Partij |
 | --- | --- | --- | --- |
-| cookie-consent | Onthoudt dat u de cookiemelding hebt gezien (opgeslagen in de lokale opslag van uw browser) | Tot u deze verwijdert | Eerste partij |
 | tr_session | Houdt een beheerder ingelogd. Wordt alleen geplaatst nadat een beheerder via een eenmalige e-maillink heeft ingelogd; uw gewone bezoek aan de website plaatst deze cookie niet. | 7 dagen | Eerste partij |
 
 **Rechtsgrond:** Legitiem belang - noodzakelijk voor de werking van de website (Art. 6(1)(f) AVG)
@@ -50,11 +49,9 @@ De volgende derde partijen kunnen gegevens ontvangen via cookies op onze website
 
 Onze website wordt gehost bij Hetzner Online GmbH (Gunzenhausen, Duitsland), met servers in een datacenter in Duitsland. Hetzner plaatst geen cookies via onze website.
 
-## 5. Uw toestemming beheren
+## 5. Uw toestemming
 
-Bij uw eerste bezoek aan onze website verschijnt een cookiemelding die uitlegt dat wij alleen strikt noodzakelijke opslag gebruiken. Wij plaatsen geen analytische of advertentiecookies; er valt dus niets te kiezen. Met de knop "Begrepen" verdwijnt de melding en onthoudt uw browser dit in de lokale opslag (item `cookie-consent`).
-
-U kunt de melding opnieuw bekijken via de link "Cookiemelding" onderaan elke pagina van onze website.
+Wij gebruiken alleen strikt noodzakelijke opslag en plaatsen geen analytische of advertentiecookies. Daarvoor is geen toestemming nodig, dus tonen wij geen cookiemelding. Dit cookiebeleid vindt u via de link "Cookiebeleid" onderaan elke pagina van onze website.
 
 ## 6. Cookies verwijderen via uw browser
 

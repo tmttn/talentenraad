@@ -1,7 +1,6 @@
 import {Suspense} from 'react';
 import {Toaster} from 'sonner';
 import {SiteFooterServer} from '@components/layout/site-footer-server';
-import {CookieConsentProvider, CookieBanner} from '@components/cookie-consent';
 import {SiteFooterSkeleton} from '@components/skeletons';
 import {
   SeasonalDecorationsProvider,
@@ -40,7 +39,6 @@ async function SafeSeasonalDecorations({children}: {children: React.ReactNode}) 
  * Main Site Layout
  *
  * Layout wrapper that provides:
- * - Cookie consent management
  * - Seasonal decorations context (controlled by decoraties.enabled in site.yaml)
  * - Site footer with loading skeleton
  */
@@ -50,16 +48,15 @@ export default function MainSiteLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <CookieConsentProvider>
-        <SafeSeasonalDecorations>
-          {children}
-          <Suspense fallback={<SiteFooterSkeleton />}>
-            <SiteFooterServer />
-          </Suspense>
-        </SafeSeasonalDecorations>
-        <CookieBanner />
-        <ConditionalFeedbackButton />
-        <Toaster position='bottom-left' richColors closeButton />
-      </CookieConsentProvider>
+    <>
+      <SafeSeasonalDecorations>
+        {children}
+        <Suspense fallback={<SiteFooterSkeleton />}>
+          <SiteFooterServer />
+        </Suspense>
+      </SafeSeasonalDecorations>
+      <ConditionalFeedbackButton />
+      <Toaster position='bottom-left' richColors closeButton />
+    </>
   );
 }
