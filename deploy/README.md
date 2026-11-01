@@ -65,7 +65,7 @@ Triggers: push naar `main`, elke nacht om 02:00 UTC (voor verse basis-images; el
 
 1. Image bouwen en pushen naar `ghcr.io/tmttn/talentenraad` met tags `latest`, `sha-<7>` en `sha-<7>-<JJJJMMDD>` (datum in Brussel). De datum gaat mee als `BUILD_DATE` build-arg, zodat `next build` elke nacht opnieuw draait (pagina's met "komend/voorbij" worden bij het bouwen berekend) en de dated tag de container elke nacht opnieuw aanmaakt.
 2. `compose.yaml` en `Caddyfile` naar de server kopiëren (scp).
-3. Via SSH: `docker compose pull app`; pas als dat slaagt `docker compose up -d --remove-orphans`, daarna `docker image prune -f`. Mislukt de pull, dan stopt het script en blijft de vorige container draaien.
+3. Via SSH: `docker compose pull app`; pas als dat slaagt het image lokaal ook als `latest` taggen en `docker compose up -d --remove-orphans`, daarna `docker image prune -f`. Door die tag start een handmatige `docker compose up -d` (zonder `TAG`, bv. na een wijziging in `.env`) dezelfde versie als de laatste deploy en niet een oude `latest`. Mislukt de pull, dan stopt het script en blijft de vorige container draaien.
 4. Health check op `https://talentenraad.be/api/health` (10 pogingen, 6 s ertussen). Mislukt die, dan is de job rood.
 
 De deploy pint `TAG=sha-<7>-<JJJJMMDD>`, dus de draaiende versie is altijd herleidbaar.
