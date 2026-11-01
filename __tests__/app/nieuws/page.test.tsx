@@ -18,10 +18,6 @@ vi.mock('@lib/content', () => ({
   content: {getNieuwsItem: vi.fn(), getNieuws: vi.fn()},
 }));
 
-vi.mock('@components/ui', () => ({
-  AnimatedLink: ({children, href}: {children: React.ReactNode; href: string}) => <a href={href}>{children}</a>,
-}));
-
 vi.mock('@components/layout/page-with-announcements', () => ({
   PageWithAnnouncements: ({children}: {children: React.ReactNode}) => <div>{children}</div>,
 }));
@@ -34,32 +30,52 @@ describe('NewsDetailPage', () => {
     vi.clearAllMocks();
   });
 
-  it('renders title, summary, date and html body', async () => {
+  it('renders date, title, summary and body in a reading column', async () => {
     getNieuwsItem.mockReturnValue(makeNieuws({titel: 'Lentebericht', datum: '2025-03-15'}));
+    vi.mocked(content.getNieuws).mockReturnValue([]);
     await renderPage('voorbeeldbericht');
     expect(screen.getByRole('heading', {level: 1, name: 'Lentebericht'})).toBeInTheDocument();
+    expect(screen.getByText('Zaterdag 15 maart 2025')).toHaveAttribute('datetime', '2025-03-15');
     expect(screen.getByText('Een fictieve samenvatting van het bericht.')).toBeInTheDocument();
     expect(screen.getByText('Fictieve inhoud van het bericht')).toBeInTheDocument();
-    expect(screen.getByText(/15 maart 2025/)).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: /Terug naar nieuws/})).toHaveAttribute('href', '/nieuws');
+    expect(screen.queryByText('Meer nieuws')).not.toBeInTheDocument();
   });
 
-  it('renders breadcrumb and back link', async () => {
-    getNieuwsItem.mockReturnValue(makeNieuws());
-    await renderPage('voorbeeldbericht');
-    expect(screen.getByRole('navigation', {name: 'Breadcrumb'})).toBeInTheDocument();
-    expect(screen.getByRole('link', {name: 'Terug naar nieuws'})).toHaveAttribute('href', '/nieuws');
+  it('turns a blockquote into a green speech bubble', async () => {
+    getNieuwsItem.mockReturnValue(makeNieuws({segmenten: [
+      {kind: 'html', html: '<p>Voor</p>'},
+      {kind: 'quote', html: '<p>Een fietsparcours!</p>'},
+      {kind: 'html', html: '<p>Na</p>'},
+    ]}));
+    vi.mocked(content.getNieuws).mockReturnValue([]);
+    const {container} = await renderPage('voorbeeldbericht');
+    const quote = screen.getByText('Een fietsparcours!').closest('blockquote')!;
+    expect(quote.closest('.bg-logo-green')).not.toBeNull();
+    expect(container.textContent).toMatch(/Voor.*Een fietsparcours!.*Na/s);
   });
 
   it('renders the image only when present', async () => {
-    getNieuwsItem.mockReturnValue(makeNieuws({afbeelding: {src: '/content/nieuws/x/foto.png', width: 400, height: 300}}));
+    vi.mocked(content.getNieuws).mockReturnValue([]);
+    getNieuwsItem.mockReturnValue(makeNieuws({afbeelding: {src: '/content/nieuws/x/afbeelding.jpg', width: 800, height: 600}}));
     const {container, unmount} = await renderPage('voorbeeldbericht');
-    expect(container.querySelector('img')).toHaveAttribute('alt', 'Voorbeeldbericht');
+    expect(container.querySelector('img')).not.toBeNull();
     unmount();
 
-    getNieuwsItem.mockReturnValue(makeNieuws({html: ''}));
+    getNieuwsItem.mockReturnValue(makeNieuws());
     const second = await renderPage('voorbeeldbericht');
-    expect(second.container.querySelector('img')).not.toBeInTheDocument();
-    expect(screen.queryByText('Fictieve inhoud van het bericht')).not.toBeInTheDocument();
+    expect(second.container.querySelector('img')).toBeNull();
+  });
+
+  it('lists other news under "Meer nieuws"', async () => {
+    getNieuwsItem.mockReturnValue(makeNieuws({slug: 'voorbeeldbericht'}));
+    vi.mocked(content.getNieuws).mockReturnValue([
+      makeNieuws({slug: 'voorbeeldbericht'}),
+      makeNieuws({slug: 'ander', titel: 'Ander bericht', datum: '2024-10-15'}),
+    ]);
+    await renderPage('voorbeeldbericht');
+    expect(screen.getByRole('heading', {name: 'Meer nieuws'})).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: /Ander bericht/})).toHaveAttribute('href', '/nieuws/ander');
   });
 
   it('redirects an alias to the canonical url', async () => {

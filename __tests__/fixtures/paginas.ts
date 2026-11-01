@@ -49,9 +49,7 @@ export const contact: Pagina<'contact'> = {
   ...basis,
   titel: 'Fictief contact',
   hero: {titel: 'Hero titel contact', ondertitel: 'Hero ondertitel contact'},
-  formulier: {titel: 'Formulier titel', tekst: 'Formulier tekst'},
-  infokaart: {titel: 'Infokaart titel contact'},
-  html: '<p>Infokaart body contact</p>',
+  formulier: {titel: 'Formulier titel'},
 };
 
 export const overOns: Pagina<'over-ons'> = {

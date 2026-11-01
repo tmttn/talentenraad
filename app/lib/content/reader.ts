@@ -2,7 +2,7 @@ import {existsSync, readdirSync, statSync} from 'node:fs';
 import path from 'node:path';
 import type {z} from 'zod';
 import {type ContentImage, readMarkdownFile, readYamlFile, resolveImage} from './files';
-import {renderMarkdown} from './markdown';
+import {type MarkdownSegment, renderMarkdown, renderMarkdownSegments} from './markdown';
 import {slugify} from './slugify';
 import {
   activiteitSchema,
@@ -21,7 +21,8 @@ type WithImage<T, K extends string> = Omit<T, K> & {[P in K]: ContentImage | und
 type Entry<T> = T & {slug: string; html: string};
 
 export type Activiteit = Entry<WithImage<z.infer<typeof activiteitSchema>, 'afbeelding'>>;
-export type NieuwsItem = Entry<WithImage<z.infer<typeof nieuwsSchema>, 'afbeelding'>>;
+/** News also carries its body as segments, so the article page can turn quotes into speech bubbles. */
+export type NieuwsItem = Entry<WithImage<z.infer<typeof nieuwsSchema>, 'afbeelding'>> & {segmenten: MarkdownSegment[]};
 export type Teamlid = Entry<WithImage<z.infer<typeof teamlidSchema>, 'foto'>>;
 export type FaqItem = Entry<z.infer<typeof faqSchema>>;
 export type Tekst = Entry<z.infer<typeof tekstSchema>>;
@@ -125,7 +126,7 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
   const loadCollection = <S extends z.ZodType<{concept: boolean}>, R>(
     dir: string,
     schema: S,
-    build: (data: z.infer<S>, entry: RawEntry) => R,
+    build: (data: z.infer<S>, entry: RawEntry, body: string) => R,
   ): Array<R & {slug: string; html: string}> => cached(dir, () => {
     const items: Array<R & {slug: string; html: string}> = [];
     for (const entry of findEntries(dir)) {
@@ -135,7 +136,7 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
         continue;
       }
 
-      items.push({...build(parsed, entry), slug: entry.slug, html: renderMarkdown(body)});
+      items.push({...build(parsed, entry, body), slug: entry.slug, html: renderMarkdown(body)});
     }
 
     return items;
@@ -144,7 +145,7 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
   const activiteiten = () => loadCollection('activiteiten', activiteitSchema,
     (data, entry) => withImage(data, 'afbeelding', entry.entryDir));
   const nieuws = () => loadCollection('nieuws', nieuwsSchema,
-    (data, entry) => withImage(data, 'afbeelding', entry.entryDir));
+    (data, entry, body) => ({...withImage(data, 'afbeelding', entry.entryDir), segmenten: renderMarkdownSegments(body)}));
   const team = () => loadCollection('team', teamlidSchema,
     (data, entry) => withImage(data, 'foto', entry.entryDir));
   const faq = () => loadCollection('faq', faqSchema, data => data);

@@ -26,4 +26,10 @@ describe('SpeechBubble', () => {
     expect(container.querySelector('svg')).toHaveClass('-bottom-[27px]', '-scale-y-100');
     expect(container.querySelector('path')).toHaveAttribute('fill', 'var(--color-logo-green)');
   });
+
+  it('has an orange tone', () => {
+    const {container} = render(<SpeechBubble tone='orange'>Hallo</SpeechBubble>);
+    expect(screen.getByText('Hallo')).toHaveClass('bg-logo-orange', 'text-black');
+    expect(container.querySelector('path')).toHaveAttribute('fill', 'var(--color-logo-orange)');
+  });
 });
