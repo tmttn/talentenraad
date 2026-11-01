@@ -1,7 +1,7 @@
 ---
-titel: "\U0001F389 De Talentenfuif 2025 komt eraan!"
+titel: De Talentenfuif 2025 komt eraan!
 datum: '2025-02-07'
-tijd: '19:00 - 23:00'
+tijd: 19:00 - 23:00
 locatie: Beversheem
 categorie: feest
 samenvatting: >-
@@ -9,8 +9,9 @@ samenvatting: >-
   Zet de datum in je agenda! Info volgt snel!
 afbeelding: ./afbeelding.jpg
 aliassen:
-  - '-de-talentenfuif-2025-komt-eraan'
+  - -de-talentenfuif-2025-komt-eraan
 ---
+
 Zet vrijdag 7 februari 2025 alvast in je agenda, want de Talentenraad organiseert dé fuif van het jaar!
 
 Kom samen met je klasgenootjes dansen, plezier maken en genieten van een onvergetelijke avond. Of je nu graag danst op de nieuwste hits of gewoon gezellig wil samenzijn met vrienden – er is voor elk talent iets leuks te beleven!
