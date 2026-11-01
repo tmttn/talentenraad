@@ -118,9 +118,11 @@ jobs:
           # Caddy only reads its Caddyfile at start, so reload after `up`: a changed
           # Caddyfile is bind-mounted but not re-read by a running container. `|| true`
           # is safe because a freshly created container already started with the new file.
+          # Tagging the deployed image as latest makes a manual `docker compose up -d`
+          # (without TAG) start this version instead of a stale local latest.
           # Prune keeps ~10 days of rollback images and never removes an image in use.
           ssh -i "$HOME/.ssh/deploy_key" -o StrictHostKeyChecking=yes -o IdentitiesOnly=yes \
-            "deploy@${DEPLOY_HOST}" "set -e; cd /opt/talentenraad; export TAG='${TAG}'; docker compose pull; docker compose up -d --remove-orphans; docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile || true; docker image prune -af --filter until=240h"
+            "deploy@${DEPLOY_HOST}" "set -e; cd /opt/talentenraad; export TAG='${TAG}'; docker compose pull; docker tag 'ghcr.io/tmttn/talentenraad:${TAG}' ghcr.io/tmttn/talentenraad:latest; docker compose up -d --remove-orphans; docker compose exec -T caddy caddy reload --config /etc/caddy/Caddyfile || true; docker image prune -af --filter until=240h"
 
       - name: Health check
         if: steps.config.outputs.enabled == 'true'
