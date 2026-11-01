@@ -76,7 +76,7 @@ export function SiteHeader({
       >
         Ga naar hoofdinhoud
       </a>
-      <header role='banner' className='bg-white shadow-subtle sticky top-0 z-50'>
+      <header role='banner' className='bg-white sticky top-0 z-50'>
         <div className='max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between'>
           <Link href='/' className='flex items-center gap-4'>
             <Image
