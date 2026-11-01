@@ -16,7 +16,7 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 3. [x] Pagina's lezen uit `content/` i.p.v. Builder.io; Builder-code en `scripts/*builder*` verwijderen.
 4. [x] Auth0 → magic links; Resend → SMTP; flags, Sentry, push, claps, Vercel-pakketten eruit.
 5. [x] Postgres → SQLite; `Dockerfile` + `compose.yaml` (app + Caddy); deploy via GitHub Actions. Live sinds 31 oktober 2026 op Hetzner (`cax11`, fsn1, 49.13.27.240); zie `deploy/README.md`.
-6. [ ] Admin-editor die content als commits wegschrijft: `/admin/content` (activiteiten, nieuws, team, faq, aankondiging), rollen `admin`/`redacteur`, commits via de GitHub API (`app/lib/content-store/`, token `GITHUB_CONTENT_TOKEN`, zie `deploy/README.md`). Handleiding voor ouders: `docs/handleiding-editor.md`. Commitberichten bevatten geen naam of e-mail van de redacteur (publieke repo); de audit log koppelt commit en gebruiker.
+6. [x] Admin-editor die content als commits wegschrijft (live sinds 1 november 2026): `/admin/content` (activiteiten, nieuws, team, faq, aankondiging), rollen `admin`/`redacteur`, commits via de GitHub API (`app/lib/content-store/`, token `GITHUB_CONTENT_TOKEN`, zie `deploy/README.md`). Handleiding voor ouders: `docs/handleiding-editor.md`. Commitberichten bevatten geen naam of e-mail van de redacteur (publieke repo); de audit log koppelt commit en gebruiker.
 
 ### Hosting
 - Hetzner Cloud-server, uitrol in `/opt/talentenraad` (Docker Compose: app + Caddy). Secrets staan alleen in `/opt/talentenraad/.env` op de server.
