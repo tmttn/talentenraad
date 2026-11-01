@@ -14,7 +14,7 @@ Ik ben trotse papa van Julie (3de lj.) en Feline (1ste lj.) en gelukkig getrouwd
 
 Wij proberen ons te engageren voor de school door o.a. verschillende activiteiten te organiseren om dan, met de opbrengst, te investeren in onze kinderen. Dit kan bv. zijn: nieuwe boeken, speeltuigen, netten en ballen, stoelen en tafels, veiligheid,... of we proberen mee bij te dragen in kosten van bepaalde schoolreizen/uitstapjes.
 
-**Dit jaar hebben we een nieuw fietsparcours met materialen kunnen realiseren dankzij jullie!**
+> Dit jaar hebben we een nieuw fietsparcours met materialen kunnen realiseren dankzij jullie!
 
 Heb je ideeen of voorstellen, zit je met iets of heb je een probleem met iets of iemand, aarzel zeker niet om ons aan te spreken of een mail te sturen naar: voorzitterouderraad@talentenhuis.be
 

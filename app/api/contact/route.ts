@@ -3,6 +3,7 @@ import {db, submissions} from '@lib/db';
 import {sendContactNotification} from '@lib/email/messages';
 import {verifyRecaptcha} from '@lib/recaptcha';
 import {createRateLimiter, formRateLimit, getClientIp, rateLimitMessage} from '@lib/rate-limit';
+import {contactMessages, isValidSubject, validateContact} from '@lib/contact-validation';
 
 const rateLimiter = createRateLimiter(formRateLimit);
 
@@ -16,12 +17,6 @@ type ContactFormData = {
   website?: string;
 };
 
-// Validation helpers
-function isValidEmail(email: string): boolean {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
-
 function sanitizeInput(input: string): string {
   return input
     .trim()
@@ -33,7 +28,7 @@ function sanitizeInput(input: string): string {
 
 const successResponse = {
   success: true,
-  message: 'Bedankt voor uw bericht! We nemen zo snel mogelijk contact met u op.',
+  message: contactMessages.success,
 };
 
 export async function POST(request: NextRequest) {
@@ -53,26 +48,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate required fields
-    const errors: Record<string, string> = {};
-
-    if (!body.name?.trim()) {
-      errors.name = 'Naam is verplicht';
-    } else if (body.name.trim().length < 2) {
-      errors.name = 'Naam moet minstens 2 karakters bevatten';
-    }
-
-    if (!body.email?.trim()) {
-      errors.email = 'E-mailadres is verplicht';
-    } else if (!isValidEmail(body.email)) {
-      errors.email = 'Ongeldig e-mailadres';
-    }
-
-    if (!body.message?.trim()) {
-      errors.message = 'Bericht is verplicht';
-    } else if (body.message.trim().length < 10) {
-      errors.message = 'Bericht moet minstens 10 karakters bevatten';
-    }
+    // Same rules and messages as the form
+    const errors = validateContact(body);
 
     // Return validation errors if any
     if (Object.keys(errors).length > 0) {
@@ -80,7 +57,7 @@ export async function POST(request: NextRequest) {
         {
           success: false,
           errors,
-          message: 'Validatie mislukt. Controleer de velden.',
+          message: contactMessages.invalid,
         },
         {status: 400},
       );
@@ -95,7 +72,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(
           {
             success: false,
-            message: 'Beveiligingsverificatie mislukt. Probeer het opnieuw.',
+            message: contactMessages.recaptcha,
           },
           {status: 400},
         );
@@ -107,7 +84,7 @@ export async function POST(request: NextRequest) {
       name: sanitizeInput(body.name),
       email: sanitizeInput(body.email),
       phone: body.phone ? sanitizeInput(body.phone) : null,
-      subject: body.subject ? sanitizeInput(body.subject) : 'vraag',
+      subject: isValidSubject(body.subject) ? body.subject : 'vraag',
       message: sanitizeInput(body.message),
     };
 
@@ -144,7 +121,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message: 'Er is een fout opgetreden. Probeer het later opnieuw.',
+        message: contactMessages.failed,
       },
       {status: 500},
     );

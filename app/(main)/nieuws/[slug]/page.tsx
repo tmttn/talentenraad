@@ -1,9 +1,11 @@
 import {notFound, permanentRedirect} from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
-import {Calendar} from 'lucide-react';
-import {AnimatedLink} from '@components/ui';
+import Link from 'next/link';
+import {ArrowLeft} from 'lucide-react';
+import {Card} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
+import {formatLongDate} from '@features/activities/activity-card';
+import {ArticleBody} from '@features/news/article-body';
 import {
   generateMetadata as generateSeoMetadata,
   generateArticleSchema,
@@ -13,21 +15,12 @@ import {
 import {content} from '@lib/content';
 import {parseLocalDate} from '@lib/dates';
 
-const proseClassName = [
-  'prose prose-lg max-w-none prose-headings:text-gray-800 prose-headings:font-bold',
-  'prose-h3:text-xl prose-h3:mt-8 prose-h3:mb-4 prose-p:text-gray-600 prose-p:mb-4',
-  'prose-ul:list-disc prose-ul:pl-6 prose-ul:my-4 prose-li:mb-1',
-  'prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-strong:text-gray-800',
-].join(' ');
-
-function formatDate(dateString: string) {
-  const date = parseLocalDate(dateString);
-  return date.toLocaleDateString('nl-BE', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
+/** "Maandag 1 september 2025" */
+function formatFullDate(datum: string) {
+  const text = parseLocalDate(datum).toLocaleDateString('nl-BE', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   });
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 export function generateStaticParams() {
@@ -68,6 +61,11 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
     permanentRedirect(`/nieuws/${item.slug}`);
   }
 
+  const meer = content.getNieuws()
+    .filter(nieuws => nieuws.slug !== item.slug)
+    .sort((a, b) => b.datum.localeCompare(a.datum))
+    .slice(0, 3);
+
   const articleSchema = generateArticleSchema({
     title: item.titel,
     description: item.samenvatting,
@@ -85,61 +83,50 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
     <PageWithAnnouncements>
       <JsonLd data={articleSchema} />
       <JsonLd data={breadcrumbSchema} />
-      <article className='py-12 px-6'>
-        <div className='max-w-3xl mx-auto'>
-          {/* Breadcrumb */}
-          <nav className='mb-8' aria-label='Breadcrumb'>
-            <ol className='flex items-center gap-2 text-sm text-gray-500'>
-              <li>
-                <Link href='/' className='hover:text-primary'>Home</Link>
-              </li>
-              <li>/</li>
-              <li>
-                <Link href='/nieuws' className='hover:text-primary'>Nieuws</Link>
-              </li>
-              <li>/</li>
-              <li className='text-gray-800 font-medium truncate max-w-[200px]'>
-                {item.titel}
-              </li>
-            </ol>
-          </nav>
+      <article className='px-5 pt-[clamp(32px,4vw,48px)] pb-[clamp(64px,7vw,96px)]'>
+        <div className='max-w-[780px] mx-auto flex flex-col gap-[26px]'>
+          <Link href='/nieuws' className='self-start inline-flex items-center gap-2 font-bold text-primary-text underline-offset-4 hover:underline'>
+            <ArrowLeft className='h-[18px] w-[18px]' strokeWidth={2.5} aria-hidden='true' />
+            Terug naar nieuws
+          </Link>
 
-          {/* Header */}
-          <header className='mb-8'>
-            <time className='text-sm text-primary font-semibold flex items-center gap-2 mb-4'>
-              <Calendar className='h-4 w-4' />
-              {formatDate(item.datum)}
-            </time>
-            <h1 className='text-3xl md:text-4xl font-bold text-gray-800 mb-4'>{item.titel}</h1>
-            <p className='text-xl text-gray-600 leading-relaxed'>{item.samenvatting}</p>
+          <header className='flex flex-col gap-4'>
+            <time dateTime={item.datum} className='text-[15px] font-bold text-secondary-hover'>{formatFullDate(item.datum)}</time>
+            <h1 className='font-display font-extrabold text-black text-[clamp(38px,4.6vw,60px)] leading-none tracking-[-0.02em]'>{item.titel}</h1>
+            <p className='text-gray-700 text-[clamp(18px,1.5vw,21px)] leading-normal'>{item.samenvatting}</p>
           </header>
 
-          {/* Featured Image */}
           {item.afbeelding && (
-            <div className='relative aspect-video rounded-modal overflow-hidden mb-8'>
+            <div className='rounded-tile contour-sm overflow-hidden'>
               <Image
                 src={item.afbeelding.src}
-                alt={item.titel}
-                fill
-                className='object-cover'
+                width={item.afbeelding.width}
+                height={item.afbeelding.height}
+                alt=''
+                sizes='(min-width: 820px) 780px, 100vw'
+                className='w-full h-auto'
                 priority
               />
             </div>
           )}
 
-          {/* Content */}
-          {item.html.trim() && (
-            <div className={proseClassName} dangerouslySetInnerHTML={{__html: item.html}} />
-          )}
-
-          {/* Back link */}
-          <div className='mt-12 pt-8 border-t border-gray-200'>
-            <AnimatedLink href='/nieuws' arrowDirection='left'>
-              Terug naar nieuws
-            </AnimatedLink>
-          </div>
+          {item.html.trim() && <ArticleBody html={item.html} />}
         </div>
       </article>
+
+      {meer.length > 0 && (
+        <section className='bg-gray-50 border-t-(length:--contour-width-sm) border-ink px-5 py-[clamp(48px,5vw,72px)]'>
+          <div className='max-w-[780px] mx-auto flex flex-col gap-5'>
+            <h2 className='font-display font-extrabold text-black text-[clamp(28px,2.8vw,36px)] tracking-[-0.02em]'>Meer nieuws</h2>
+            {meer.map(nieuws => (
+              <Card key={nieuws.slug} variant='contour' padding='none' hover href={`/nieuws/${nieuws.slug}`} className='flex flex-col gap-1.5 px-6 py-[22px]'>
+                <span className='text-sm font-bold text-secondary-hover'>{formatLongDate(nieuws.datum)}</span>
+                <span className='font-display font-bold text-[22px] leading-tight text-black'>{nieuws.titel}</span>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
     </PageWithAnnouncements>
   );
 }

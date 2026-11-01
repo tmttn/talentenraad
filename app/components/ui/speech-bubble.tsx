@@ -4,8 +4,8 @@ type SpeechBubbleProperties = {
   children: ReactNode;
   /** Edge the tail sits on: the top (default), the bottom, or none. */
   tail?: 'top' | 'bottom' | 'none';
-  /** Fill: white (default) or logo green, with black text. */
-  tone?: 'white' | 'green';
+  /** Fill: white (default), or logo green or orange with black text. */
+  tone?: 'white' | 'green' | 'orange';
   /** `lg` for a hero, `md` for a side panel or a card-sized balloon. */
   size?: 'md' | 'lg';
   className?: string;
@@ -14,6 +14,7 @@ type SpeechBubbleProperties = {
 const toneStyles = {
   white: {panel: 'bg-white', fill: 'white'},
   green: {panel: 'bg-logo-green text-black', fill: 'var(--color-logo-green)'},
+  orange: {panel: 'bg-logo-orange text-black', fill: 'var(--color-logo-orange)'},
 };
 
 const sizeStyles = {
