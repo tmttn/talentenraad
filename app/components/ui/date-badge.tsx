@@ -70,11 +70,12 @@ function DateBadge({
   const styles = sizeStyles[size];
   const isContour = variant === 'contour';
   const radius = isContour ? '' : styles.radius;
-  const dayFont = isContour ? 'font-display font-extrabold' : '';
+  // The contour badge sets its day in the display face, extra bold instead of bold
+  const dayClass = isContour ? styles.day.replace('font-bold', 'font-display font-extrabold') : styles.day;
 
   return (
     <div className={`flex-shrink-0 ${styles.container} ${radius} ${variantStyles[variant]} flex flex-col items-center justify-center ${className}`}>
-      <span className={`${styles.day} ${dayFont}`}>{day}</span>
+      <span className={dayClass}>{day}</span>
       <span className={`${styles.month} ${isContour ? 'font-bold' : ''}`}>{month}</span>
     </div>
   );

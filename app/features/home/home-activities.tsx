@@ -51,7 +51,7 @@ function FeaturedActivity({activiteit}: Readonly<{activiteit: Activiteit}>) {
       )}
       <div className='flex-[1_1_380px] min-w-0 p-[clamp(24px,3vw,44px)] flex flex-col gap-[18px] justify-center'>
         <div className='flex gap-[18px] items-center'>
-          <DateBadge date={activiteit.datum} variant='contour' size='lg' className='w-21 h-21' />
+          <DateBadge date={activiteit.datum} variant='contour' size='lg' />
           <div className='flex flex-col gap-1.5 min-w-0'>
             <h3 className='font-display font-extrabold text-black text-[clamp(32px,3.4vw,46px)] leading-none tracking-[-0.02em]'>
               {activiteit.titel}

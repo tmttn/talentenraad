@@ -95,7 +95,8 @@ describe('DateBadge', () => {
     const badge = container.firstChild;
     expect(badge).toHaveClass('bg-logo-orange', 'text-black', 'contour-sm', 'rounded-chip');
     expect(badge).not.toHaveClass('rounded-modal');
-    expect(screen.getByText('29')).toHaveClass('font-display');
+    expect(screen.getByText('29')).toHaveClass('font-display', 'font-extrabold');
+    expect(screen.getByText('29')).not.toHaveClass('font-bold');
   });
 
   it('reads YYYY-MM-DD as a local date', () => {
