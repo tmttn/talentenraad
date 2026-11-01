@@ -34,6 +34,7 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 - Schema's: `z.strictObject`, `min(1)` op verplichte strings.
 - Editor: pagina's en juridische teksten zijn nog niet bewerkbaar; een expliciete status 'uitgeschakeld' voor gebruikers ontbreekt (intrekken = gebruiker verwijderen).
 - Editor: tree-entries van GitHub worden niet op vorm gecontroleerd; fast-forward-detectie leunt op de foutmelding van GitHub (faalt veilig); de recursieve tree wordt per commit voor de hele repo opgehaald.
+- Editor: de eerste opslag van een bestaand item normaliseert de YAML (aanhalingstekens, emoji-escapes, lege `aliassen`) en geeft dus een grotere diff; verwijderen faalt met een melding als een itemmap een bestand buiten de whitelist bevat.
 - Gebruikers-API: dubbele e-mail alleen exact (hoofdlettergevoelig) gecontroleerd; een admin kan zichzelf degraderen.
 
 ## Pre-commit Checklist (MANDATORY)

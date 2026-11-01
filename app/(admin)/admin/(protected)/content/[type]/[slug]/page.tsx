@@ -47,7 +47,7 @@ export default async function EditEntryPage({params}: Readonly<{params: Promise<
   }
 
   const title = entry.values[config.fields[0].name] || slug;
-  const imageUrl = entry.imageSha ? `/api/admin/content/image?type=${type}&slug=${slug}` : undefined;
+  const imageUrl = entry.imageSha ? `/api/admin/content/image?type=${type}&slug=${slug}&v=${entry.imageSha}` : undefined;
 
   return (
     <div className='space-y-6 max-w-5xl'>

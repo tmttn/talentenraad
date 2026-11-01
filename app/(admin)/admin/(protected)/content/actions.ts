@@ -137,7 +137,8 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
     if (mode === 'create') {
       slug = slugify(parsed.slugSource);
       if (slug === '' || reservedSlugs.has(slug) || await slugIsTaken(type, slug)) {
-        return {errors: {[titleKey]: slug === '' ? 'Vul een titel in.' : duplicateMessage}};
+        const message = slug === '' ? 'Vul een titel in.' : (reservedSlugs.has(slug) ? 'Deze titel kan niet. Kies een andere.' : duplicateMessage);
+        return {errors: {[titleKey]: message}};
       }
     } else {
       slug = text(data, '_slug');
@@ -241,7 +242,7 @@ export async function saveAnnouncement(_previous: FormState, data: FormData): Pr
     }
 
     const {commitSha} = await commitChanges({
-      message: commitMessage('bijwerken', 'aankondiging', parsed.aankondiging.tekst),
+      message: commitMessage('bijwerken', 'aankondiging', parsed.aankondiging.tekst || 'zonder tekst'),
       author,
       changes: [{path: 'content/site.yaml', content: updateAnnouncement(file.text, parsed.aankondiging), expectedSha: file.sha}],
     });

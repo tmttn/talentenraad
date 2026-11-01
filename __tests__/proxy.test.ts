@@ -77,6 +77,29 @@ describe('proxy', () => {
     expect(response.headers.get('x-middleware-rewrite')).toBe('http://localhost:3000/admin/not-found-page');
   });
 
+  it.each([
+    '/admin/content',
+    '/admin/content/aankondiging',
+    '/admin/content/activiteiten',
+    '/admin/content/nieuws/nieuw',
+    '/admin/content/team/jan-peeters',
+    '/admin/content/faq/vraag-2',
+  ])('lets the content editor route %s through', async path => {
+    const response = await proxy(request(path, await jwt()));
+
+    expect(response.headers.get('x-middleware-next')).toBe('1');
+  });
+
+  it.each([
+    '/admin/content/foo',
+    '/admin/content/nieuws/a/b',
+    '/admin/content/nieuws/Hoofdletters',
+  ])('rewrites the unknown content route %s to the admin 404 page', async path => {
+    const response = await proxy(request(path, await jwt()));
+
+    expect(response.headers.get('x-middleware-rewrite')).toBe('http://localhost:3000/admin/not-found-page');
+  });
+
   it('leaves public routes alone', async () => {
     const response = await proxy(request('/kalender'));
 

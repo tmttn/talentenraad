@@ -47,6 +47,8 @@ De editor in de admin (`/admin/content`) schrijft elke wijziging als één commi
 
 De token moet de bescherming van `main` (verplichte review en checks) kunnen omzeilen: dat lukt omdat de eigenaar van de token admin van de repo is en admins in de bypass-lijst staan. Commits van de editor staan op naam van `Talentenraad-editor <noreply@talentenraad.be>`, zonder naam of e-mail van de ouder (de repo is publiek); de audit log in de admin koppelt elke commit aan wie hem maakte. `GITHUB_REPO` en `GITHUB_BRANCH` zijn optioneel (standaard `tmttn/talentenraad` en `main`).
 
+Rollen: de migratie `0001` maakt van elke bestaande gebruiker zonder admin-rechten een `redacteur`, die kan inloggen en bewerken. Controleer vóór een migratie op een andere database wie dat betreft: `docker compose exec -T app node -e "console.log(new (require('better-sqlite3'))('/data/talentenraad.db', {readonly: true}).prepare('SELECT email, is_admin FROM users').all())"`. Op de live server stond bij de invoering alleen de admin.
+
 Intrekken: verwijder de token op GitHub; de editor meldt dan "nog niet ingesteld" zodra de variabele leeg is, of een fout bij opslaan zolang hij nog in `.env` staat.
 
 ## GitHub-secrets

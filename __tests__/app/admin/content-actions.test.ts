@@ -95,6 +95,13 @@ describe('saveEntry (create)', () => {
     expect(commitChanges).not.toHaveBeenCalled();
   });
 
+  it('rejects a title that becomes the reserved slug nieuw with its own message', async () => {
+    const state = await saveEntry(empty, newsForm({titel: 'Nieuw'}));
+
+    expect(state.errors?.titel).toBe('Deze titel kan niet. Kies een andere.');
+    expect(commitChanges).not.toHaveBeenCalled();
+  });
+
   it('rejects a title whose slug exists already', async () => {
     listDir.mockResolvedValue([{name: 'nieuwe-brief', path: 'content/nieuws/nieuwe-brief', type: 'dir', sha: 's'}]);
     readFile.mockResolvedValue({text: '---\ntitel: Oud\ndatum: 2025-01-01\nsamenvatting: x\n---\n', sha: 's1'});
