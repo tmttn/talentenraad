@@ -2,6 +2,6 @@
 naam: Anna
 rol: Voorzitter
 categorie: bestuur
-foto: ./lid-a.png
+foto: ./foto.jpg
 volgorde: 1
 ---

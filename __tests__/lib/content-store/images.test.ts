@@ -3,7 +3,7 @@ import sharp from 'sharp';
 import {describe, expect, it} from 'vitest';
 import {ImageError, processImage} from '@lib/content-store/images';
 
-const solid = (width: number, height: number) => sharp({create: {width, height, channels: 3, background: {r: 200, g: 100, b: 50}}});
+const solid = (width: number, height: number) => sharp({create: {width, height, channels: 3, background: {r: 200, g: 100, b: 50}}, limitInputPixels: false});
 
 describe('processImage', () => {
   it('strips EXIF including GPS', async () => {
@@ -54,5 +54,11 @@ describe('processImage', () => {
 
   it('rejects files over 10 MB', async () => {
     await expect(processImage(Buffer.alloc(11 * 1024 * 1024))).rejects.toThrow('De foto is groter dan 10 MB.');
+  });
+
+  it('rejects a tiny file with huge dimensions', async () => {
+    const input = await solid(20000, 20000).png({compressionLevel: 9}).toBuffer();
+    expect(input.length).toBeLessThan(10 * 1024 * 1024);
+    await expect(processImage(input)).rejects.toThrow('De foto is te groot.');
   });
 });

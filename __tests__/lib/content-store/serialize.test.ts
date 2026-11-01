@@ -1,11 +1,12 @@
 // @vitest-environment node
-import {readdirSync, readFileSync} from 'node:fs';
+import {mkdtempSync, readdirSync, readFileSync, writeFileSync} from 'node:fs';
+import {tmpdir} from 'node:os';
 import path from 'node:path';
 import {describe, expect, it} from 'vitest';
 import {load, CORE_SCHEMA} from 'js-yaml';
 import {readMarkdownFile} from '@lib/content/files';
 import {activiteitSchema, faqSchema, nieuwsSchema, siteSchema, teamlidSchema} from '@lib/content/schemas';
-import {parseEntryForm, serializeEntry, updateAnnouncement, type EntryType} from '@lib/content-store/serialize';
+import {normalizeLink, parseAnnouncementForm, parseEntryForm, serializeEntry, updateAnnouncement, type EntryType} from '@lib/content-store/serialize';
 
 const root = path.resolve('content');
 const schemas = {activiteiten: activiteitSchema, nieuws: nieuwsSchema, team: teamlidSchema, faq: faqSchema};
@@ -17,15 +18,18 @@ const normalise = (text: string) => text.replaceAll('\r\n', '\n').trim();
 
 describe('serializeEntry round-trip over real content', () => {
   for (const type of Object.keys(schemas) as EntryType[]) {
+    it(`${type}: has files`, () => {
+      expect(files(type).length).toBeGreaterThan(0);
+    });
+
     for (const file of files(type)) {
       it(`${type}: ${path.relative(root, file)}`, () => {
         const {data, body} = readMarkdownFile(file);
         const frontmatter = schemas[type].parse(data);
         const text = serializeEntry(type, frontmatter, body);
-        const dir = path.join(path.dirname(file), '__roundtrip__.md');
         expect(text.endsWith('\n')).toBe(true);
         expect(text.endsWith('\n\n')).toBe(false);
-        const again = readMarkdownFileFromText(text, dir);
+        const again = readMarkdownFileFromText(text);
         expect(schemas[type].parse(again.data)).toEqual(frontmatter);
         expect(normalise(again.body)).toBe(normalise(body));
       });
@@ -33,10 +37,7 @@ describe('serializeEntry round-trip over real content', () => {
   }
 });
 
-import {mkdtempSync, writeFileSync} from 'node:fs';
-import {tmpdir} from 'node:os';
-
-function readMarkdownFileFromText(text: string, _name: string) {
+function readMarkdownFileFromText(text: string) {
   const dir = mkdtempSync(path.join(tmpdir(), 'rt-'));
   const file = path.join(dir, 'x.md');
   writeFileSync(file, text);
@@ -115,8 +116,8 @@ describe('parseEntryForm', () => {
     expect(result).toEqual({ok: false, errors: {titel: 'Vul een titel in.', datum: 'Kies een geldige datum.'}});
   });
 
-  it('rejects javascript: links in the announcement-like link fields of the schema', () => {
-    const result = parseEntryForm('nieuws', {titel: 'A', datum: '2025-01-01', samenvatting: 'B', afbeelding: 'x'});
+  it('accepts the fixed image path', () => {
+    const result = parseEntryForm('nieuws', {titel: 'A', datum: '2025-01-01', samenvatting: 'B', afbeelding: './afbeelding.jpg'});
     expect(result.ok).toBe(true);
   });
 
@@ -128,5 +129,59 @@ describe('parseEntryForm', () => {
   it('defaults volgorde when empty and rejects bad categories', () => {
     expect(parseEntryForm('team', {naam: 'Jan', rol: 'Lid', categorie: 'lid', volgorde: ''})).toMatchObject({ok: true, frontmatter: {volgorde: 99}});
     expect(parseEntryForm('team', {naam: 'Jan', rol: 'Lid', categorie: 'baas'})).toMatchObject({ok: false, errors: {categorie: 'Kies een geldige categorie.'}});
+  });
+});
+
+describe('parseEntryForm extras', () => {
+  it('gives a Dutch message for a missing date', () => {
+    const result = parseEntryForm('nieuws', {titel: 'A', datum: '', samenvatting: 'B'});
+    expect(result).toEqual({ok: false, errors: {datum: 'Kies een geldige datum.'}});
+  });
+
+  it('treats empty optional strings as absent', () => {
+    const result = parseEntryForm('activiteiten', {titel: 'A', datum: '2025-01-01', categorie: 'feest', samenvatting: 'B', tijd: ' ', locatie: '', afbeelding: ''});
+    expect(result).toMatchObject({ok: true});
+    expect(result.ok && Object.keys(result.frontmatter)).toEqual(['titel', 'datum', 'categorie', 'samenvatting', 'aliassen', 'concept']);
+  });
+
+  it('only allows the fixed image paths', () => {
+    expect(parseEntryForm('nieuws', {titel: 'A', datum: '2025-01-01', samenvatting: 'B', afbeelding: '../x.jpg'})).toMatchObject({ok: false, errors: {afbeelding: expect.any(String)}});
+    expect(parseEntryForm('team', {naam: 'A', rol: 'B', categorie: 'lid', foto: './afbeelding.jpg'})).toMatchObject({ok: false});
+    expect(parseEntryForm('team', {naam: 'A', rol: 'B', categorie: 'lid', foto: './foto.jpg'})).toMatchObject({ok: true});
+  });
+});
+
+describe('normalizeLink', () => {
+  it.each([
+    [' http://example.be/x ', 'https://example.be/x'],
+    ['www.example.be', 'https://www.example.be'],
+    ['/kalender', '/kalender'],
+    ['  mailto:a@b.be ', 'mailto:a@b.be'],
+  ])('%s -> %s', (input, expected) => {
+    expect(normalizeLink(input)).toBe(expected);
+  });
+});
+
+describe('announcement form and empty optionals', () => {
+  const base = {actief: 'on', tekst: ' Let op ', type: 'info'};
+
+  it('drops empty link and linkTekst', () => {
+    const result = parseAnnouncementForm({...base, link: '', linkTekst: ' '});
+    expect(result).toEqual({ok: true, aankondiging: {actief: true, tekst: 'Let op', type: 'info'}});
+  });
+
+  it('upgrades www. links and rejects bad ones with a friendly message', () => {
+    expect(parseAnnouncementForm({...base, link: 'www.example.be'})).toMatchObject({ok: true, aankondiging: {link: 'https://www.example.be'}});
+    expect(parseAnnouncementForm({...base, link: 'javascript:alert(1)'})).toEqual({
+      ok: false,
+      errors: {link: 'Begin de link met https:// (of met / voor een pagina op deze site).'},
+    });
+  });
+
+  it('updateAnnouncement accepts empty optional strings', () => {
+    const text = readFileSync(path.join(root, 'site.yaml'), 'utf8');
+    const next = updateAnnouncement(text, {actief: true, tekst: 'Hoi', type: 'info', link: '', linkTekst: ''});
+    expect(next).not.toContain('link:\'\'');
+    expect(next).toContain('tekst: Hoi');
   });
 });

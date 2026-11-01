@@ -82,8 +82,61 @@ export function serializeEntry(type: EntryType, frontmatter: Record<string, unkn
   return matter.stringify(`\n${trimmed}\n`, data, {engines}).replace(/\n+$/, '\n');
 }
 
+export const formLinkMelding = 'Begin de link met https:// (of met / voor een pagina op deze site).';
+
+/** Form-layer helper: trims, upgrades http:// and www. to https://. The schema still has the final say. */
+export function normalizeLink(value: string): string {
+  const trimmed = value.trim();
+  if (/^http:\/\//i.test(trimmed)) {
+    return `https://${trimmed.slice(7)}`;
+  }
+
+  if (/^www\./i.test(trimmed)) {
+    return `https://${trimmed}`;
+  }
+
+  return trimmed;
+}
+
+const cleanOptional = (value: string | undefined) => {
+  const trimmed = value?.trim();
+  return trimmed === undefined || trimmed === '' ? undefined : trimmed;
+};
+
+const cleanAnnouncement = (input: Record<string, unknown>) => {
+  const link = cleanOptional(input.link as string | undefined);
+  return {
+    ...input,
+    tekst: typeof input.tekst === 'string' ? input.tekst.trim() : input.tekst,
+    link: link === undefined ? undefined : normalizeLink(link),
+    linkTekst: cleanOptional(input.linkTekst as string | undefined),
+  };
+};
+
+export function parseAnnouncementForm(values: FormValues):
+{ok: true; aankondiging: Aankondiging} | {ok: false; errors: Record<string, string>} {
+  const result = aankondigingSchema.safeParse(cleanAnnouncement({
+    actief: checked(getValue(values, 'actief')),
+    tekst: getValue(values, 'tekst') ?? '',
+    type: getValue(values, 'type'),
+    link: getValue(values, 'link'),
+    linkTekst: getValue(values, 'linkTekst'),
+  }));
+  if (result.success) {
+    return {ok: true, aankondiging: result.data};
+  }
+
+  const errors: Record<string, string> = {};
+  for (const issue of result.error.issues) {
+    const key = String(issue.path[0] ?? 'form');
+    errors[key] ??= key === 'link' ? formLinkMelding : issue.message;
+  }
+
+  return {ok: false, errors};
+}
+
 export function updateAnnouncement(siteYamlText: string, aankondiging: Aankondiging, validate = true): string {
-  const parsed = aankondigingSchema.parse(aankondiging);
+  const parsed = aankondigingSchema.parse(cleanAnnouncement(aankondiging));
   const block = toYaml({
     aankondiging: {
       actief: parsed.actief,

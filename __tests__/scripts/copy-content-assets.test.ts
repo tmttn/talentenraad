@@ -19,10 +19,10 @@ describe('copyContentAssets', () => {
 
   it('copies only non-text assets, keeping their relative path', async () => {
     const result = await copyContentAssets(fixtures, tmp);
-    expect(result).toContain('activiteiten/met-foto/foto.png');
-    expect(result).toContain('team/lid-a.png');
+    expect(result).toContain('activiteiten/met-foto/afbeelding.jpg');
+    expect(result).toContain('team/foto.jpg');
     expect(result.some(file => file.endsWith('.md') || file.endsWith('.yaml'))).toBe(false);
-    expect(fs.existsSync(path.join(tmp, 'content/activiteiten/met-foto/foto.png'))).toBe(true);
+    expect(fs.existsSync(path.join(tmp, 'content/activiteiten/met-foto/afbeelding.jpg'))).toBe(true);
     expect(fs.existsSync(path.join(tmp, 'content/site.yaml'))).toBe(false);
   });
 

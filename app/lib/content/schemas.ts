@@ -1,5 +1,7 @@
 import {z} from 'zod';
 
+const afbeeldingPad = (name: string) => z.literal(`./${name}`, {error: `Gebruik ./${name}.`});
+
 const concept = z.boolean().default(false);
 const aliassen = z.array(z.string()).default([]);
 const verplicht = (message: string) => z.string({error: message}).trim().min(1, message);
@@ -7,11 +9,11 @@ const volgorde = z.number({error: 'Vul een getal in.'}).default(99);
 
 export const linkMelding = 'Gebruik een link die begint met /, https:// of mailto:.';
 export const linkWaarde = z.string().trim().refine(
-  value => /^(?:\/(?!\/)|https:\/\/|mailto:)\S*$/.test(value),
+  value => /^(?:\/(?![/\\])|https:\/\/(?=[^/\s])|mailto:(?=\S))[^\s\\\u0000-\u001F]*$/.test(value),
   linkMelding,
 );
 
-export const datumSchema = z.string()
+export const datumSchema = z.string({error: 'Kies een geldige datum.'})
   .regex(/^\d{4}-\d{2}-\d{2}$/, 'Kies een geldige datum.')
   .refine(value => {
     const [year, month, day] = value.split('-').map(Number);
@@ -28,7 +30,7 @@ export const activiteitSchema = z.strictObject({
   locatie: z.string().optional(),
   categorie: z.enum(['feest', 'kalender', 'activiteit'], {error: 'Kies een geldige categorie.'}),
   samenvatting: verplicht('Vul een samenvatting in.'),
-  afbeelding: z.string().optional(),
+  afbeelding: afbeeldingPad('afbeelding.jpg').optional(),
   aliassen,
   concept,
 });
@@ -37,7 +39,7 @@ export const nieuwsSchema = z.strictObject({
   titel: verplicht('Vul een titel in.'),
   datum: datumSchema,
   samenvatting: verplicht('Vul een samenvatting in.'),
-  afbeelding: z.string().optional(),
+  afbeelding: afbeeldingPad('afbeelding.jpg').optional(),
   aliassen,
   concept,
 });
@@ -47,7 +49,7 @@ export const teamlidSchema = z.strictObject({
   rol: verplicht('Vul een rol in.'),
   categorie: z.enum(['bestuur', 'lid'], {error: 'Kies een geldige categorie.'}),
   volgorde,
-  foto: z.string().optional(),
+  foto: afbeeldingPad('foto.jpg').optional(),
   concept,
 });
 

@@ -26,8 +26,8 @@ describe('renderMarkdown', () => {
 
 describe('resolveImage', () => {
   it('returns src and dimensions', () => {
-    expect(resolveImage(fixtures, 'activiteiten/met-foto', './foto.png'))
-      .toEqual({src: '/content/activiteiten/met-foto/foto.png', width: 2, height: 2});
+    expect(resolveImage(fixtures, 'activiteiten/met-foto', './afbeelding.jpg'))
+      .toEqual({src: '/content/activiteiten/met-foto/afbeelding.jpg', width: 2, height: 2});
   });
 
   it('throws for missing files with the ref', () => {
