@@ -26,9 +26,28 @@ Zie `.env.example` voor de volledige lijst met uitleg. Verplicht in productie (d
 - `ADMIN_EMAILS`: komma-gescheiden adressen die altijd admin zijn.
 - `DATABASE_PATH`: in de container `/data/talentenraad.db`.
 
-Optioneel: `ADMIN_NOTIFICATION_EMAIL`, `RECAPTCHA_SECRET_KEY` (runtime, in `.env`), `RECAPTCHA_PROJECT_ID`.
+Optioneel: `GITHUB_CONTENT_TOKEN` (content-editor, zie hieronder), `ADMIN_NOTIFICATION_EMAIL`, `RECAPTCHA_SECRET_KEY` (runtime, in `.env`), `RECAPTCHA_PROJECT_ID`.
 
 De reCAPTCHA site key (`NEXT_PUBLIC_RECAPTCHA_SITE_KEY`) wordt bij het bouwen in de code ingebakken. Zet hem als GitHub-repovariabele (geen secret) `RECAPTCHA_SITE_KEY`; leeg betekent reCAPTCHA uit.
+
+## Token voor de content-editor
+
+De editor in de admin (`/admin/content`) schrijft elke wijziging als één commit op `main` via de GitHub API; die push start de gewone deploy. Daarvoor staat in `.env` een fine-grained personal access token:
+
+1. GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token.
+2. Resource owner: `tmttn`; Repository access: *Only select repositories* → `tmttn/talentenraad`.
+3. Permissions: **Contents: Read and write** en **Actions: Read** (voor de status "Online" na opslaan). Verder niets.
+4. Vervaldatum: maximaal een jaar; zet een herinnering om hem te vernieuwen. Een verlopen token geeft in de editor een foutmelding bij opslaan, de site zelf blijft werken.
+5. Zet hem zelf op de server (nooit in chat, issues of commits plakken):
+   ```bash
+   ssh -t deploy@<host> "TERM=xterm-256color nano /opt/talentenraad/.env"
+   # GITHUB_CONTENT_TOKEN=github_pat_...
+   cd /opt/talentenraad && docker compose up -d app
+   ```
+
+De token moet de bescherming van `main` (verplichte review en checks) kunnen omzeilen: dat lukt omdat de eigenaar van de token admin van de repo is en admins in de bypass-lijst staan. Commits van de editor staan op naam van `Talentenraad-editor <noreply@talentenraad.be>`, zonder naam of e-mail van de ouder (de repo is publiek); de audit log in de admin koppelt elke commit aan wie hem maakte. `GITHUB_REPO` en `GITHUB_BRANCH` zijn optioneel (standaard `tmttn/talentenraad` en `main`).
+
+Intrekken: verwijder de token op GitHub; de editor meldt dan "nog niet ingesteld" zodra de variabele leeg is, of een fout bij opslaan zolang hij nog in `.env` staat.
 
 ## GitHub-secrets
 
