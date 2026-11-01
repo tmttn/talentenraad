@@ -1,39 +1,16 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  AddToCalendarButton, Card, CategoryBadge, DateBadge,
-} from '@components/ui';
+import {AddToCalendarButton, DateBadge} from '@components/ui';
 import {CtaButton} from '@components/ui/cta-button';
+import {contourTitle as sectionTitle} from '@components/layout/contour-parts';
+import {ActivityCard, formatMeta} from '@features/activities/activity-card';
 import type {Activiteit} from '@lib/content';
-import {parseLocalDate} from '@lib/dates';
 import {siteConfig} from '@lib/seo';
 
 type HomeActivitiesProperties = {
   /** Upcoming activities, soonest first. */
   activiteiten: Activiteit[];
 };
-
-/** Header colors of the small cards, in turn; text colors pass 4.5:1 on each. */
-const headerStyles = [
-  'bg-primary text-white',
-  'bg-logo-green text-black',
-  'bg-logo-orange text-black',
-];
-
-const capitalize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1);
-
-/** "vr 19 dec" */
-function formatShortDate(datum: string) {
-  return parseLocalDate(datum)
-    .toLocaleDateString('nl-BE', {weekday: 'short', day: 'numeric', month: 'short'})
-    .replaceAll('.', '');
-}
-
-/** "Zaterdag · 19:00 - 23:00 · Beversheem" */
-function formatMeta(activiteit: Activiteit) {
-  const weekday = capitalize(parseLocalDate(activiteit.datum).toLocaleDateString('nl-BE', {weekday: 'long'}));
-  return [weekday, activiteit.tijd, activiteit.locatie].filter(Boolean).join(' · ');
-}
 
 function FeaturedActivity({activiteit}: Readonly<{activiteit: Activiteit}>) {
   const href = `/activiteiten/${activiteit.slug}`;
@@ -77,27 +54,6 @@ function FeaturedActivity({activiteit}: Readonly<{activiteit: Activiteit}>) {
     </article>
   );
 }
-
-function ActivityCard({activiteit, index}: Readonly<{activiteit: Activiteit; index: number}>) {
-  return (
-    <Card variant='contour' padding='none' href={`/activiteiten/${activiteit.slug}`} hover className='flex flex-col'>
-      <span className={`flex justify-between items-center gap-3 px-5 py-3.5 border-b-(length:--contour-width-sm) border-ink ${headerStyles[index % headerStyles.length]}`}>
-        <span className='font-display font-bold text-[22px]'>{formatShortDate(activiteit.datum)}</span>
-        <CategoryBadge category={capitalize(activiteit.categorie)} variant='outline' size='sm' className='text-[13px]' />
-      </span>
-      <span className='flex flex-col gap-2 p-5'>
-        <span className='text-xl font-bold leading-snug text-black'>{activiteit.titel}</span>
-        {(activiteit.tijd ?? activiteit.locatie) && (
-          <span className='text-[15px] text-gray-600'>
-            {[activiteit.tijd, activiteit.locatie].filter(Boolean).join(' · ')}
-          </span>
-        )}
-      </span>
-    </Card>
-  );
-}
-
-const sectionTitle = 'font-display font-extrabold text-black text-[clamp(32px,3.2vw,44px)] tracking-[-0.02em]';
 
 /** "Eerstvolgende activiteit" (featured) plus up to three more as cards. */
 function HomeActivities({activiteiten}: Readonly<HomeActivitiesProperties>) {
@@ -144,4 +100,4 @@ function HomeActivities({activiteiten}: Readonly<HomeActivitiesProperties>) {
   );
 }
 
-export {HomeActivities, formatShortDate, formatMeta, sectionTitle};
+export {HomeActivities};

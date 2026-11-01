@@ -18,7 +18,6 @@ export async function SiteFooterServer() {
         title: group.titel,
         links: group.links.map(item => ({text: item.tekst, url: item.link})),
       }))}
-      socialLinks={footer.sociaal.map(item => ({platform: item.platform, url: item.link}))}
       copyrightText={footer.copyright}
     />
   );

@@ -15,4 +15,9 @@ describe('AddToCalendarButton', () => {
     render(<AddToCalendarButton id='feest' title='Feest' date='2026-12-19' variant='contour' />);
     expect(screen.getByRole('button')).toHaveClass('contour-xs', 'bg-brand-primary-100', 'text-black', 'rounded-full');
   });
+
+  it('takes a label and has a solid contour variant for side panels', () => {
+    render(<AddToCalendarButton id='feest' title='Feest' date='2026-12-19' variant='contour-solid' label='In mijn agenda' />);
+    expect(screen.getByRole('button', {name: 'In mijn agenda'})).toHaveClass('bg-primary', 'text-white', 'shadow-hard-sm', 'rounded-control');
+  });
 });

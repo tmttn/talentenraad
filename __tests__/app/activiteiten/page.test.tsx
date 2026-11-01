@@ -1,4 +1,4 @@
-import {render, screen} from '@testing-library/react';
+import {render, screen, within} from '@testing-library/react';
 import {content} from '@lib/content';
 import ActivityDetailPage, {generateMetadata, generateStaticParams} from '../../../app/(main)/activiteiten/[slug]/page';
 import {makeActiviteit} from '../../fixtures/content';
@@ -16,12 +16,6 @@ vi.mock('next/navigation', () => ({notFound, permanentRedirect}));
 
 vi.mock('@lib/content', () => ({
   content: {getActiviteit: vi.fn(), getActiviteiten: vi.fn()},
-}));
-
-vi.mock('@components/ui', () => ({
-  AnimatedButton: ({children, href}: {children: React.ReactNode; href: string}) => <a href={href}>{children}</a>,
-  AnimatedLink: ({children, href}: {children: React.ReactNode; href: string}) => <a href={href}>{children}</a>,
-  AddToCalendarButton: ({title}: {title: string}) => <button type='button'>Agenda: {title}</button>,
 }));
 
 vi.mock('@components/layout/page-with-announcements', () => ({
@@ -42,41 +36,70 @@ describe('ActivityDetailPage', () => {
     vi.useRealTimers();
   });
 
-  it('renders the item and its html body', async () => {
-    getActiviteit.mockReturnValue(makeActiviteit({titel: 'Zomerfeest'}));
+  it('renders the item, its details and its html body', async () => {
+    getActiviteit.mockReturnValue(makeActiviteit({titel: 'Zomerfeest', datum: '2025-06-15'}));
+    vi.mocked(content.getActiviteiten).mockReturnValue([]);
     await render_('voorbeeldfeest');
     expect(screen.getByRole('heading', {level: 1, name: 'Zomerfeest'})).toBeInTheDocument();
     expect(screen.getByText('Fictieve inhoud van het feest')).toBeInTheDocument();
-    expect(screen.getByText('Over deze activiteit')).toBeInTheDocument();
-    expect(screen.getByText('Voorbeeldzaal')).toBeInTheDocument();
-    expect(screen.getByText('14:00')).toBeInTheDocument();
-    expect(screen.getByText('feest')).toHaveClass('bg-category-event-bg');
-    expect(screen.getByRole('link', {name: 'Terug naar kalender'})).toHaveAttribute('href', '/kalender');
+    expect(screen.getByText('Zondag 15 juni')).toBeInTheDocument();
+    expect(screen.getByText('14:00 · Voorbeeldzaal')).toBeInTheDocument();
+    expect(screen.getByText('Feest')).toHaveClass('bg-category-event-bg', 'contour-xs');
+    expect(screen.getByRole('link', {name: /Terug naar de kalender/})).toHaveAttribute('href', '/kalender');
+    expect(screen.getByRole('link', {name: /Route naar Voorbeeldzaal/})).toHaveAttribute('href', expect.stringContaining('google.com/maps'));
   });
 
-  it('shows calendar button and CTA for upcoming items only', async () => {
+  it('shows the programme instead of the time when there is one', async () => {
+    getActiviteit.mockReturnValue(makeActiviteit({
+      datum: '2025-06-15',
+      programma: [{uur: '14:00', titel: 'Kerstspel kleuters', info: 'Deuren vanaf 13:30'}, {uur: '15:00', titel: 'Instuif'}],
+    }));
+    vi.mocked(content.getActiviteiten).mockReturnValue([]);
+    await render_('voorbeeldfeest');
+    const programma = screen.getByRole('list', {name: 'Programma'});
+    expect(within(programma).getAllByRole('listitem')).toHaveLength(2);
+    expect(within(programma).getByText('Deuren vanaf 13:30')).toBeInTheDocument();
+    expect(screen.getByText('Voorbeeldzaal')).toBeInTheDocument();
+  });
+
+  it('offers the calendar for upcoming items only and marks past ones', async () => {
+    vi.mocked(content.getActiviteiten).mockReturnValue([]);
     getActiviteit.mockReturnValue(makeActiviteit({datum: '2025-01-01'}));
     const {unmount} = await render_('voorbeeldfeest');
-    expect(screen.getByText(/Agenda:/)).toBeInTheDocument();
-    expect(screen.getByText('Vragen over deze activiteit?')).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: /Toevoegen aan agenda/})).toBeInTheDocument();
     expect(screen.queryByText('Afgelopen')).not.toBeInTheDocument();
     unmount();
 
     getActiviteit.mockReturnValue(makeActiviteit({datum: '2024-12-31'}));
     await render_('voorbeeldfeest');
-    expect(screen.queryByText(/Agenda:/)).not.toBeInTheDocument();
-    expect(screen.queryByText('Vragen over deze activiteit?')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: /Toevoegen aan agenda/})).not.toBeInTheDocument();
     expect(screen.getByText('Afgelopen')).toBeInTheDocument();
   });
 
-  it('renders the image when present and skips an empty body', async () => {
+  it('shows the poster whole and skips an empty body', async () => {
+    vi.mocked(content.getActiviteiten).mockReturnValue([]);
     getActiviteit.mockReturnValue(makeActiviteit({
       html: '',
       afbeelding: {src: '/content/activiteiten/x/foto.png', width: 400, height: 300},
     }));
     const {container} = await render_('voorbeeldfeest');
-    expect(container.querySelector('img')).toHaveAttribute('alt', 'Voorbeeldfeest');
-    expect(screen.queryByText('Over deze activiteit')).not.toBeInTheDocument();
+    const img = container.querySelector('img');
+    expect(img).toHaveAttribute('alt', 'Affiche of foto van Voorbeeldfeest');
+    expect(img).toHaveClass('object-contain');
+    expect(container.querySelector('.prose')).toBeNull();
+  });
+
+  it('lists other upcoming activities, not itself or past ones', async () => {
+    getActiviteit.mockReturnValue(makeActiviteit({slug: 'voorbeeldfeest', datum: '2025-06-15'}));
+    vi.mocked(content.getActiviteiten).mockReturnValue([
+      makeActiviteit({slug: 'voorbeeldfeest', datum: '2025-06-15'}),
+      makeActiviteit({slug: 'later', titel: 'Later feest', datum: '2025-07-01'}),
+      makeActiviteit({slug: 'oud', titel: 'Oud feest', datum: '2024-07-01'}),
+    ]);
+    await render_('voorbeeldfeest');
+    expect(screen.getByRole('heading', {name: 'Ook op de kalender'})).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: /Later feest/})).toHaveAttribute('href', '/activiteiten/later');
+    expect(screen.queryByText('Oud feest')).not.toBeInTheDocument();
   });
 
   it('redirects an alias to the canonical url', async () => {

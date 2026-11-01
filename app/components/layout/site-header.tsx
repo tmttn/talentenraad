@@ -28,6 +28,19 @@ const defaultLinks: NavigationLink[] = [
   {url: '/contact', text: 'Contact'},
 ];
 
+/** A section stays active on its detail pages; activities live under the calendar. */
+function isActive(url: string, pathname: string) {
+  if (url === '/') {
+    return pathname === '/';
+  }
+
+  if (url === '/kalender' && pathname.startsWith('/activiteiten/')) {
+    return true;
+  }
+
+  return pathname === url || pathname.startsWith(`${url}/`);
+}
+
 export function SiteHeader({
   logoUrl = '/Logo.png',
   logoAlt = 'Talentenraad Logo',
@@ -76,7 +89,7 @@ export function SiteHeader({
       >
         Ga naar hoofdinhoud
       </a>
-      <header role='banner' className='bg-white sticky top-0 z-50'>
+      <header role='banner' className='bg-white sticky top-0 z-50 border-b-(length:--contour-width-sm) border-ink'>
         <div className='max-w-[1280px] mx-auto px-6 py-4 flex items-center justify-between'>
           <Link href='/' className='flex items-center gap-4'>
             <Image
@@ -95,12 +108,12 @@ export function SiteHeader({
                 href={item.url}
                 className={item.url === ctaUrl
                   ? 'ml-1.5 px-4 py-2.5 font-bold text-white bg-primary hover:bg-primary-hover contour-sm rounded-xl shadow-hard-xs transition-colors'
-                  : `px-3 py-2.5 transition-colors hover:text-primary-text focus:text-primary-text focus:outline-none focus:underline underline-offset-4 ${
-                    pathname === item.url
-                      ? 'font-bold text-primary-text'
-                      : 'font-semibold text-gray-900'
+                  : `px-3 py-2.5 font-semibold border-b-3 transition-colors hover:text-primary-text focus:text-primary-text focus:outline-none focus-visible:underline underline-offset-4 ${
+                    isActive(item.url, pathname)
+                      ? `text-primary-text ${item.url === '/' ? 'border-transparent' : 'border-primary'}`
+                      : 'text-gray-900 border-transparent'
                   }`}
-                aria-current={pathname === item.url ? 'page' : undefined}
+                aria-current={isActive(item.url, pathname) ? 'page' : undefined}
               >
                 {item.text}
               </Link>
@@ -142,7 +155,7 @@ export function SiteHeader({
                   setIsMenuOpen(false);
                 }}
                 className={`block py-3 px-4 rounded-button font-medium transition-all duration-fast focus:outline-none focus:ring-2 focus:ring-focus focus:ring-inset ${
-                  pathname === item.url
+                  isActive(item.url, pathname)
                     ? 'bg-primary/10 text-primary-text'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-primary'
                 }`}
@@ -151,7 +164,7 @@ export function SiteHeader({
                   transform: isMenuOpen ? 'translateX(0)' : 'translateX(-10px)',
                   opacity: isMenuOpen ? 1 : 0,
                 }}
-                aria-current={pathname === item.url ? 'page' : undefined}
+                aria-current={isActive(item.url, pathname) ? 'page' : undefined}
                 tabIndex={isMenuOpen ? 0 : -1}
               >
                 {item.text}

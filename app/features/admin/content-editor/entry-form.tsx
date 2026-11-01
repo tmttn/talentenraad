@@ -8,6 +8,7 @@ import {entryTypes, type EntryType} from '@lib/content-store/entry-types';
 import {saveEntry, type FormState} from '../../../(admin)/admin/(protected)/content/actions';
 import {ImageField} from './image-field';
 import {MarkdownField} from './markdown-field';
+import {ProgrammaField} from './programma-field';
 import {primaryButton, secondaryButton} from './styles';
 import {useFormFeedback} from './use-form-feedback';
 
@@ -53,7 +54,12 @@ export function EntryForm({
   const [body, setBody] = useState(initial?.body ?? '');
   const [concept, setConcept] = useState(initial?.concept ?? false);
   const errors = state.errors ?? {};
-  const visible = [...config.fields.map(field => field.name), config.bodyField, ...(config.imageField ? [config.imageField] : [])];
+  const visible = [
+    ...config.fields.map(field => field.name),
+    config.bodyField,
+    ...(config.imageField ? [config.imageField] : []),
+    ...(config.listField ? [config.listField] : []),
+  ];
   const {formRef, messageRef, message} = useFormFeedback(state, visible);
 
   const set = (name: string, value: string) => {
@@ -120,6 +126,15 @@ export function EntryForm({
           </FormField>
         ))}
       </div>
+
+      {config.listField && (
+        // No remount key: unlike the photo, the rows survive a failed save
+        <ProgrammaField
+          name={config.listField}
+          initial={values[config.listField]}
+          error={errors[config.listField]}
+        />
+      )}
 
       <MarkdownField
         name={config.bodyField}

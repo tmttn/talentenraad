@@ -71,9 +71,8 @@ describe('paginaSchemas', () => {
     expect(paginaSchemas.nieuws.parse(basis).titel).toBe('T');
     expect(paginaSchemas.kalender.parse({
       ...basis,
-      lijst: {titel: 'a', ondertitel: 'b'},
       archief: {titel: 'c', ondertitel: 'd'},
-    }).lijst.titel).toBe('a');
+    }).archief.titel).toBe('c');
     expect(paginaSchemas.contact.parse({
       ...basis,
       formulier: {titel: 'a', tekst: 'b'},

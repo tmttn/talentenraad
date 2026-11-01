@@ -16,7 +16,7 @@ export type Aankondiging = z.infer<typeof aankondigingSchema>;
 type FormValues = FormData | Record<string, string | File | undefined>;
 
 const fieldOrder: Record<EntryType, string[]> = {
-  activiteiten: ['titel', 'datum', 'tijd', 'locatie', 'categorie', 'samenvatting', 'afbeelding', 'aliassen', 'concept'],
+  activiteiten: ['titel', 'datum', 'tijd', 'locatie', 'categorie', 'samenvatting', 'programma', 'afbeelding', 'aliassen', 'concept'],
   nieuws: ['titel', 'datum', 'samenvatting', 'afbeelding', 'aliassen', 'concept'],
   team: ['naam', 'rol', 'categorie', 'volgorde', 'foto', 'concept'],
   faq: ['vraag', 'volgorde', 'concept'],
@@ -197,6 +197,32 @@ const getValue = (values: FormValues, key: string): string | undefined => {
 
 const checked = (value: string | undefined) => value !== undefined && ['on', 'true', '1', 'ja'].includes(value.toLowerCase());
 
+/**
+ * The programme arrives as JSON rows from the form. Rows left completely empty are dropped,
+ * an empty `info` is left out; whatever remains goes to the schema, which has the final say.
+ */
+function parseProgramma(value: string): unknown {
+  let rows: unknown;
+  try {
+    rows = JSON.parse(value);
+  } catch {
+    return Number.NaN; // Not a list: the schema reports it
+  }
+
+  if (!Array.isArray(rows)) {
+    return rows;
+  }
+
+  return rows
+    .map(row => {
+      const record = (row ?? {}) as Record<string, unknown>;
+      const text = (key: string) => (typeof record[key] === 'string' ? record[key].trim() : '');
+      const info = text('info');
+      return {uur: text('uur'), titel: text('titel'), ...(info === '' ? {} : {info})};
+    })
+    .filter(row => row.uur !== '' || row.titel !== '' || row.info !== undefined);
+}
+
 export type ParsedEntryForm =
   | {ok: true; frontmatter: Record<string, unknown>; body: string; slugSource: string}
   | {ok: false; errors: Record<string, string>};
@@ -215,6 +241,8 @@ export function parseEntryForm(type: EntryType, values: FormValues): ParsedEntry
       input[key] = /^-?\d+$/.test(value) ? Number(value) : Number.NaN;
     } else if (key === 'aliassen') {
       input[key] = value.split(/[\n,]/).map(item => item.trim()).filter(Boolean);
+    } else if (key === 'programma') {
+      input[key] = parseProgramma(value);
     } else {
       input[key] = value;
     }

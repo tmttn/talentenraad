@@ -5,11 +5,7 @@ import {SiteFooterServer} from '../../../app/components/layout/site-footer-serve
 
 vi.mock('@lib/content', () => ({content: {getSite: vi.fn()}}));
 
-vi.mock('@components/cookie-consent', () => ({
-  useCookieConsent: () => ({
-    openPreferences: vi.fn(),
-  }),
-}));
+vi.mock('@components/feedback', () => ({FeedbackLink: () => <button type='button'>Geef feedback</button>}));
 
 describe('SiteFooterServer', () => {
   beforeEach(() => {
@@ -20,8 +16,7 @@ describe('SiteFooterServer', () => {
     render(await SiteFooterServer());
 
     expect(screen.getByText(/Een fictieve ouderraad/)).toBeInTheDocument();
-    expect(screen.getByText('Voorbeeldstraat 1')).toBeInTheDocument();
-    expect(screen.getByText('1000 Voorbeeldstad')).toBeInTheDocument();
+    expect(screen.getByText(/Voorbeeldstraat 1, 1000 Voorbeeldstad/)).toBeInTheDocument();
     expect(screen.getByRole('link', {name: 'info@voorbeeld.test'})).toHaveAttribute('href', 'mailto:info@voorbeeld.test');
   });
 
@@ -36,7 +31,7 @@ describe('SiteFooterServer', () => {
   it('opens external links in a new window and keeps internal links in place', async () => {
     render(await SiteFooterServer());
 
-    const external = screen.getByRole('link', {name: 'Buitenlands (opent in nieuw venster)'});
+    const external = screen.getByRole('link', {name: /^Buitenlands.*opent in nieuw venster/});
     expect(external).toHaveAttribute('href', 'https://voorbeeld.test/buiten');
     expect(external).toHaveAttribute('target', '_blank');
     expect(external).toHaveAttribute('rel', 'noopener noreferrer');
@@ -46,14 +41,10 @@ describe('SiteFooterServer', () => {
     expect(internal).not.toHaveAttribute('rel');
   });
 
-  it('renders social links in a new window', async () => {
+  it('ends the last group with the feedback link', async () => {
     render(await SiteFooterServer());
 
-    const facebook = screen.getByRole('link', {name: 'facebook (opent in nieuw venster)'});
-    expect(facebook).toHaveAttribute('href', 'https://facebook.test/raad');
-    expect(facebook).toHaveAttribute('target', '_blank');
-    expect(facebook).toHaveAttribute('rel', 'noopener noreferrer');
-    expect(screen.getByRole('link', {name: 'instagram (opent in nieuw venster)'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Geef feedback'})).toBeInTheDocument();
   });
 
   it('renders the copyright text', async () => {

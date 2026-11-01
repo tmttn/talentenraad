@@ -1,3 +1,2 @@
-export {FloatingFeedbackButton} from './floating-feedback-button';
-export {ConditionalFeedbackButton} from './conditional-feedback-button';
+export {FeedbackLink} from './feedback-link';
 export {StarRating} from './star-rating';

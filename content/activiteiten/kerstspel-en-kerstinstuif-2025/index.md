@@ -7,6 +7,13 @@ categorie: feest
 samenvatting: >-
   Op 19 december zetten we het Beversheem op stelten met een fantastisch
   Kerstspel, gevolgd door een gezellige Kerstinstuif!
+programma:
+  - uur: '14:00'
+    titel: Kerstspel kleuters
+    info: Deuren vanaf 13:30 · inkom 2 euro
+  - uur: '15:00'
+    titel: Kerstinstuif tot 18:00
+    info: Gratis inkom · hapjes, drankjes en Vlaamse kermis
 aliassen: []
 ---
 Op 19 december zetten we het Beversheem op stelten! Na schooltijd openen we om 15 uur de deuren voor alle kinderen van de lagere school én hun families, helemaal gratis. Er wachten hen een vrolijke Vlaamse kermis, gratis lolly's en heel wat leuke verrassingen.

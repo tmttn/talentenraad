@@ -22,6 +22,8 @@ export type EntryTypeConfig = {
   imageFile?: 'afbeelding.jpg' | 'foto.jpg';
   /** faq items are a single file; the others are a folder with index.md. */
   singleFile: boolean;
+  /** A frontmatter list edited as repeatable rows (the activity programme), sent as JSON. */
+  listField?: 'programma';
 };
 
 export const entryTypes: Record<EntryType, EntryTypeConfig> = {
@@ -52,6 +54,7 @@ export const entryTypes: Record<EntryType, EntryTypeConfig> = {
     imageField: 'afbeelding',
     imageFile: 'afbeelding.jpg',
     singleFile: false,
+    listField: 'programma',
   },
   nieuws: {
     label: 'Nieuws',

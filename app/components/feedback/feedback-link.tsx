@@ -1,7 +1,7 @@
 'use client';
 
 import {useState, useCallback} from 'react';
-import {MessageCircle, Send, X} from 'lucide-react';
+import {Send, X} from 'lucide-react';
 import {toast} from 'sonner';
 import {Modal} from '@components/ui/interactive/Modal';
 import {HoneypotField} from '@components/ui/honeypot-field';
@@ -26,7 +26,8 @@ const initialFormData: FeedbackFormData = {
   email: '',
 };
 
-export function FloatingFeedbackButton() {
+/** "Geef feedback" in the footer: a link-styled button that opens the feedback form for the current page. */
+export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<FeedbackFormData>(initialFormData);
@@ -105,23 +106,13 @@ export function FloatingFeedbackButton() {
 
   return (
     <>
-      {/* Floating Action Button - positioned above reCAPTCHA badge */}
       <button
         type='button'
         onClick={() => setIsOpen(true)}
-        className='
-					fixed bottom-24 right-6 z-40
-					w-14 h-14 rounded-full
-					bg-primary text-white
-					shadow-floating hover:shadow-high
-					flex items-center justify-center
-					transition-all duration-200
-					hover:scale-105 active:scale-95
-					focus:outline-none focus:ring-2 focus:ring-primary/20 focus:ring-offset-2
-				'
-        aria-label='Geef feedback'
+        aria-haspopup='dialog'
+        className={`text-left font-semibold text-primary-text underline-offset-4 hover:underline ${className}`}
       >
-        <MessageCircle className='w-6 h-6' />
+        Geef feedback
       </button>
 
       {/* Feedback Modal */}

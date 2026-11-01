@@ -1,4 +1,4 @@
-import {render, screen} from '@testing-library/react';
+import {fireEvent, render, screen} from '@testing-library/react';
 import {SiteFooter} from '../../app/components/layout/site-footer';
 
 // Mock icons
@@ -47,15 +47,15 @@ describe('SiteFooter', () => {
   it('renders default navigation when none provided', () => {
     render(<SiteFooter />);
 
-    expect(screen.getByText('Navigatie')).toBeInTheDocument();
-    expect(screen.getByText('Over Ons')).toBeInTheDocument();
+    expect(screen.getByText('Site')).toBeInTheDocument();
     expect(screen.getByText('School')).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: 'Kalender'})).toHaveAttribute('href', '/kalender');
   });
 
   it('renders logo', () => {
     render(<SiteFooter />);
 
-    const logo = screen.getByRole('img', {name: 'Talentenraad Logo'});
+    const logo = screen.getByRole('img', {name: 'Talentenraad, naar de startpagina'});
     expect(logo).toBeInTheDocument();
   });
 
@@ -75,19 +75,22 @@ describe('SiteFooter', () => {
   it('renders address', () => {
     render(<SiteFooter address={{street: 'Test Street 1', city: 'Test City'}} />);
 
-    expect(screen.getByText('Test Street 1')).toBeInTheDocument();
-    expect(screen.getByText('Test City')).toBeInTheDocument();
+    expect(screen.getByText(/Test Street 1, Test City/)).toBeInTheDocument();
   });
 
-  it('renders social links', () => {
-    const socialLinks = [
-      {platform: 'facebook' as const, url: 'https://facebook.com/test'},
-      {platform: 'instagram' as const, url: 'https://instagram.com/test'},
-    ];
-    render(<SiteFooter socialLinks={socialLinks} />);
+  it('replaces the floating feedback button with a link-styled button in the last group', () => {
+    render(<SiteFooter navigationGroups={mockNavigationGroups} />);
 
-    expect(screen.getByRole('link', {name: 'facebook (opent in nieuw venster)'})).toHaveAttribute('href', 'https://facebook.com/test');
-    expect(screen.getByRole('link', {name: 'instagram (opent in nieuw venster)'})).toHaveAttribute('href', 'https://instagram.com/test');
+    const feedback = screen.getByRole('button', {name: 'Geef feedback'});
+    expect(feedback.closest('nav')).toHaveAccessibleName('Support');
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('opens the feedback form from the footer', () => {
+    render(<SiteFooter />);
+
+    fireEvent.click(screen.getByRole('button', {name: 'Geef feedback'}));
+    expect(screen.getByRole('dialog', {name: 'Geef ons je feedback'})).toBeInTheDocument();
   });
 
   it('renders copyright text', () => {

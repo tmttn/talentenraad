@@ -100,6 +100,12 @@ describe('DateBadge', () => {
   });
 
   it('reads YYYY-MM-DD as a local date', () => {
-    expect(formatDateParts('2026-03-01')).toEqual({day: 1, month: 'MRT'});
+    expect(formatDateParts('2026-03-01')).toEqual({day: 1, month: 'MRT', weekday: 'ZO'});
+  });
+
+  it('colors the contour badge by tone and can show the weekday', () => {
+    const {container} = render(<DateBadge date='2026-12-19' size='lg' variant='contour' tone='pink' label='weekday' />);
+    expect(container.firstChild).toHaveClass('bg-primary', 'text-white', 'contour-sm');
+    expect(screen.getByText('ZA')).toBeInTheDocument();
   });
 });

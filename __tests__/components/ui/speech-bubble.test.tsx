@@ -19,4 +19,11 @@ describe('SpeechBubble', () => {
     expect(container.querySelector('[aria-hidden="true"]')).toBeNull();
     expect(container.firstChild).toHaveClass('extra');
   });
+
+  it('can put a flipped tail at the bottom and be green', () => {
+    const {container} = render(<SpeechBubble tail='bottom' tone='green' size='md'>Hallo</SpeechBubble>);
+    expect(screen.getByText('Hallo')).toHaveClass('bg-logo-green', 'p-7');
+    expect(container.querySelector('svg')).toHaveClass('-bottom-[27px]', '-scale-y-100');
+    expect(container.querySelector('path')).toHaveAttribute('fill', 'var(--color-logo-green)');
+  });
 });

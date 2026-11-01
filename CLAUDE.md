@@ -32,10 +32,10 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 - Mail-linkscanners (bv. Outlook SafeLinks) kunnen het eenmalige login-token opgebruiken; overweeg later een bevestigingspagina vóór het verbruiken.
 - `vitest.config.mts`: commentaar verwijst nog naar Auth0-sessies; `app/features/admin/**` kan terug in coverage (beschermd bestand, toestemming Tom).
 - Schema's: `z.strictObject`, `min(1)` op verplichte strings.
-- Editor: pagina's en juridische teksten zijn nog niet bewerkbaar; een expliciete status 'uitgeschakeld' voor gebruikers ontbreekt (intrekken = gebruiker verwijderen).
+- Editor: activiteiten hebben een optioneel `programma` (rijen uur/titel/info, als JSON in één verborgen veld). Pagina's en juridische teksten zijn nog niet bewerkbaar; een expliciete status 'uitgeschakeld' voor gebruikers ontbreekt (intrekken = gebruiker verwijderen).
 - Editor: tree-entries van GitHub worden niet op vorm gecontroleerd; fast-forward-detectie leunt op de foutmelding van GitHub (faalt veilig); de recursieve tree wordt per commit voor de hele repo opgehaald.
 - Editor: de eerste opslag van een bestaand item normaliseert de YAML (aanhalingstekens, emoji-escapes, lege `aliassen`) en geeft dus een grotere diff; verwijderen faalt met een melding als een itemmap een bestand buiten de whitelist bevat.
-- Homepagina (contourstijl, nov 2026): de hero toont cirkels in logokleuren tot er een sfeerfoto is (nog geen `afbeelding`-veld op pagina's); andere pagina's gebruiken nog de oude stijl en `Typography` nog niet `font-display`.
+- Contourstijl (nov 2026): homepagina, kalender, activiteit, nieuws en over ons. De hero toont cirkels in logokleuren tot er een sfeerfoto is (nog geen `afbeelding`-veld op pagina's). Contact, sponsors, nieuwsdetail en de juridische teksten gebruiken nog de oude stijl; `Typography` nog niet `font-display`.
 - Gebruikers-API: dubbele e-mail alleen exact (hoofdlettergevoelig) gecontroleerd; een admin kan zichzelf degraderen.
 
 ## Pre-commit Checklist (MANDATORY)

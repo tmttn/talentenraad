@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 type CardProperties = {
   children: ReactNode;
-  variant?: 'default' | 'elevated' | 'bordered' | 'ghost' | 'contour' | 'contour-lg';
+  variant?: 'default' | 'elevated' | 'bordered' | 'ghost' | 'contour' | 'contour-lg' | 'contour-flat';
   padding?: 'none' | 'sm' | 'md' | 'lg';
   className?: string;
   hover?: boolean;
@@ -24,6 +24,7 @@ const variantStyles = {
   ghost: 'rounded-card bg-gray-50',
   contour: 'rounded-tile bg-white contour-sm shadow-hard-md overflow-hidden',
   'contour-lg': 'rounded-panel bg-white contour shadow-hard-lg overflow-hidden',
+  'contour-flat': 'rounded-tile bg-white contour-xs overflow-hidden',
 };
 
 const hoverStyles = {
@@ -50,7 +51,7 @@ function Card({
   hover = false,
   href,
 }: Readonly<CardProperties>) {
-  const isContour = variant === 'contour' || variant === 'contour-lg';
+  const isContour = variant.startsWith('contour');
   const hoverClass = hover ? hoverStyles[isContour ? 'contour' : 'default'] : '';
   const classes = `${variantStyles[variant]} ${paddingStyles[padding]} ${hoverClass} ${className}`;
 

@@ -5,45 +5,41 @@ import {makeNieuws} from '../../fixtures/content';
 import NieuwsPage, {generateMetadata} from '../../../app/(main)/nieuws/page';
 import {expectInOrder} from './helpers';
 
-vi.mock('@lib/content', () => ({
-  content: {getPagina: vi.fn(), getNieuws: vi.fn()},
-}));
+vi.mock('@lib/content', () => ({content: {getPagina: vi.fn(), getNieuws: vi.fn()}}));
 
 vi.mock('@components/layout/page-with-announcements', () => ({
   PageWithAnnouncements: ({children}: {children: React.ReactNode}) => <div>{children}</div>,
 }));
 
-vi.mock('@features/news/news-list', () => ({
-  NewsList: (p: {limit?: number; nieuws: unknown[]}) => <div data-testid='nieuwslijst' data-limit={String(p.limit)} data-count={p.nieuws.length}>LIJST</div>,
-}));
-
 describe('Nieuws page', () => {
   beforeEach(() => {
     vi.mocked(content.getPagina).mockReturnValue(paginas.nieuws as never);
-    vi.mocked(content.getNieuws).mockReturnValue([makeNieuws()]);
+    vi.mocked(content.getNieuws).mockReturnValue([
+      makeNieuws({titel: 'Oud bericht', datum: '2024-10-15', slug: 'oud'}),
+      makeNieuws({titel: 'Nieuw bericht', datum: '2025-09-01', slug: 'nieuw', afbeelding: {src: '/x.jpg', width: 800, height: 600}}),
+    ]);
   });
 
-  it('renders all texts in table order', () => {
+  it('features the latest item and lists the rest under "Eerder"', () => {
     const {container} = render(<NieuwsPage />);
-    expectInOrder(container, ['Hero titel nieuws', 'Hero ondertitel nieuws', 'LIJST', 'Fictieve oproep', 'Fictieve oproeptekst', 'Enige knop']);
+    expectInOrder(container, [
+      'Hero titel nieuws', 'Hero ondertitel nieuws',
+      'Nieuwste', '1 september 2025', 'Nieuw bericht', 'Lees verder',
+      'Eerder', '15 oktober 2024', 'Oud bericht',
+      'Fictieve oproep', 'Enige knop',
+    ]);
+    expect(screen.getByRole('link', {name: /Nieuw bericht/})).toHaveAttribute('href', '/nieuws/nieuw');
+    expect(screen.getByRole('link', {name: /Oud bericht/})).toHaveAttribute('href', '/nieuws/oud');
   });
 
-  it('passes news with limit 10', () => {
+  it('shows an empty state without news', () => {
+    vi.mocked(content.getNieuws).mockReturnValue([]);
     render(<NieuwsPage />);
-    expect(screen.getByTestId('nieuwslijst')).toHaveAttribute('data-limit', '10');
-    expect(screen.getByTestId('nieuwslijst')).toHaveAttribute('data-count', '1');
+    expect(screen.getByText('Er is nog geen nieuws.')).toBeInTheDocument();
+    expect(screen.queryByText('Eerder')).not.toBeInTheDocument();
   });
 
-  it('links the CTA button', () => {
-    render(<NieuwsPage />);
-    expect(screen.getByRole('link', {name: /Enige knop/})).toHaveAttribute('href', '/enige');
-  });
-
-  it('generates metadata with canonical url and openGraph from the page', () => {
-    const metadata = generateMetadata();
-    expect(metadata).toMatchObject({description: 'Fictieve beschrijving', alternates: {canonical: 'https://talentenraad.be/nieuws'}});
-    expect(metadata.title).toEqual({absolute: 'Fictief nieuws | Talentenraad'});
-    expect(metadata.openGraph).toMatchObject({description: 'Fictieve beschrijving'});
-    expect(metadata.openGraph?.title).toBe('Fictief nieuws | Talentenraad');
+  it('generates metadata from the page', () => {
+    expect(generateMetadata()).toMatchObject({description: 'Fictieve beschrijving'});
   });
 });

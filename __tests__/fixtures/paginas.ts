@@ -35,7 +35,6 @@ export const kalender: Pagina<'kalender'> = {
   titel: 'Fictieve agenda',
   hero: {titel: 'Hero titel agenda', ondertitel: 'Hero ondertitel agenda'},
   cta: enkeleCta,
-  lijst: {titel: 'Lijst titel', ondertitel: 'Lijst ondertitel'},
   archief: {titel: 'Archief titel', ondertitel: 'Archief ondertitel'},
 };
 
@@ -60,11 +59,10 @@ export const overOns: Pagina<'over-ons'> = {
   titel: 'Fictief over ons',
   hero: {titel: 'Hero titel over', ondertitel: 'Hero ondertitel over'},
   cta: enkeleCta,
-  infokaart: {titel: 'Infokaart titel over'},
   faqTitel: 'Veelgestelde fictie',
   bestuur: {titel: 'Bestuur titel', tekst: 'Bestuur tekst'},
   leden: {titel: 'Leden titel', tekst: 'Leden tekst'},
-  html: '<p>Infokaart body over</p>',
+  html: '<p>Citaat over ons</p>',
 };
 
 export const sponsors: Pagina<'sponsors'> = {

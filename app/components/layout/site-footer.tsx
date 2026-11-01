@@ -2,13 +2,8 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  siFacebook,
-  siInstagram,
-  siX,
-  siYoutube,
-} from 'simple-icons';
 import {Icicles} from '@components/seasonal-decorations';
+import {FeedbackLink} from '@components/feedback';
 
 type NavigationLink = {
   text: string;
@@ -20,11 +15,6 @@ type NavigationGroup = {
   links: NavigationLink[];
 };
 
-type SocialLink = {
-  platform: string;
-  url: string;
-};
-
 type SiteFooterProperties = {
   logoUrl?: string;
   tagline?: string;
@@ -34,25 +24,17 @@ type SiteFooterProperties = {
   };
   email?: string;
   navigationGroups?: NavigationGroup[];
-  socialLinks?: SocialLink[];
   copyrightText?: string;
 };
 
 const defaultNavigationGroups: NavigationGroup[] = [
   {
-    title: 'Navigatie',
+    title: 'Site',
     links: [
-      {url: '/', text: 'Home'},
       {url: '/kalender', text: 'Kalender'},
       {url: '/nieuws', text: 'Nieuws'},
-    ],
-  },
-  {
-    title: 'Over Ons',
-    links: [
-      {url: '/over-ons', text: 'Het Team'},
+      {url: '/over-ons', text: 'Over ons'},
       {url: '/contact', text: 'Contact'},
-      {url: '/admin/login', text: 'Inloggen'},
     ],
   },
   {
@@ -65,149 +47,93 @@ const defaultNavigationGroups: NavigationGroup[] = [
   },
 ];
 
-const defaultSocialLinks: SocialLink[] = [
-  {platform: 'facebook', url: 'https://facebook.com/talentenhuis'},
-  {platform: 'instagram', url: 'https://instagram.com/talentenhuis'},
+const legalLinks = [
+  {url: '/privacybeleid', text: 'Privacybeleid'},
+  {url: '/cookiebeleid', text: 'Cookiebeleid'},
+  {url: '/algemene-voorwaarden', text: 'Algemene voorwaarden'},
 ];
 
-type SimpleIcon = {
-  title: string;
-  slug: string;
-  path: string;
-};
-
-const socialIcons: Record<string, SimpleIcon> = {
-  facebook: siFacebook,
-  instagram: siInstagram,
-  twitter: siX, // X (formerly Twitter)
-  youtube: siYoutube,
-};
+const linkClass = 'text-gray-700 hover:text-primary-text focus:text-primary-text focus:outline-none focus-visible:underline transition-colors';
 
 export function SiteFooter({
   logoUrl = '/Logo.png',
-  tagline = 'De ouderraad van Het Talentenhuis\nSchool met een hart voor ieder kind',
+  tagline = 'De ouderraad van Het Talentenhuis',
   address = {street: 'Zonhoevestraat 32', city: '3740 Bilzen-Hoeselt'},
   email = 'voorzitterouderraad@talentenhuis.be',
   navigationGroups,
-  socialLinks,
   copyrightText = 'Talentenraad Het Talentenhuis. Alle rechten voorbehouden.',
 }: Readonly<SiteFooterProperties>) {
   const groups = navigationGroups ?? defaultNavigationGroups;
-  const socials = socialLinks ?? defaultSocialLinks;
 
   return (
     <footer role='contentinfo' className='bg-white border-t-(length:--contour-width) border-ink'>
       {/* Seasonal icicles decoration */}
       <Icicles />
-      <div className='max-w-[1280px] mx-auto px-6 py-12'>
-        <div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
-          {/* Logo and info */}
-          <div className='md:col-span-1'>
-            <Link href='/' className='block mb-4'>
+      <div className='max-w-[1240px] mx-auto px-5 pt-12 pb-8 flex flex-col gap-8'>
+        <div className='flex flex-wrap justify-between items-start gap-8'>
+          <div className='flex-[1_1_260px] flex flex-col gap-2.5'>
+            <Link href='/' className='self-start'>
               <Image
                 src={logoUrl}
-                alt='Talentenraad Logo'
+                alt='Talentenraad, naar de startpagina'
                 width={150}
                 height={100}
-                className='h-16 w-auto'
+                className='h-13 w-auto'
               />
             </Link>
-            <p className='text-gray-600 text-sm whitespace-pre-line'>
-              {tagline}
+            <p className='text-[15px] leading-relaxed text-gray-600'>
+              <span className='whitespace-pre-line'>{tagline}</span>
+              {address && (address.street ?? address.city) && (
+                <>
+                  <br />
+                  {[address.street, address.city].filter(Boolean).join(', ')}
+                </>
+              )}
             </p>
-            {address && (
-              <div className='mt-4 text-sm text-gray-700'>
-                {address.street && <p>{address.street}</p>}
-                {address.city && <p>{address.city}</p>}
-              </div>
-            )}
             {email && (
-              <div className='mt-4'>
-                <a
-                  href={`mailto:${email}`}
-                  className='text-sm text-primary hover:underline focus:underline focus:outline-none'
-                >
-                  {email}
-                </a>
-              </div>
+              <a href={`mailto:${email}`} className='self-start text-[15px] text-primary-text underline-offset-4 hover:underline'>
+                {email}
+              </a>
             )}
           </div>
 
-          {/* Navigation columns */}
-          {groups.map((group, index) => (
-            <nav key={group.title} aria-labelledby={`footer-nav-${index}`}>
-              <h3 id={`footer-nav-${index}`} className='font-bold text-gray-800 mb-4'>{group.title}</h3>
-              <ul className='space-y-2'>
-                {group.links.map(link => (
-                  <li key={link.url}>
-                    <Link
-                      href={link.url}
-                      className='text-gray-600 hover:text-primary focus:text-primary focus:outline-none focus:underline transition-colors text-sm'
-                      {...(link.url.startsWith('http')
-                        ? {
-                          target: '_blank',
-                          rel: 'noopener noreferrer',
-                          'aria-label': `${link.text} (opent in nieuw venster)`,
-                        }
-                        : {})}
-                    >
-                      {link.text}
-                      {link.url.startsWith('http') && (
-                        <span className='sr-only'> (opent in nieuw venster)</span>
-                      )}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          ))}
+          <div className='flex flex-wrap gap-12'>
+            {groups.map((group, index) => (
+              <nav key={group.title} aria-labelledby={`footer-nav-${index}`}>
+                <h2 id={`footer-nav-${index}`} className='sr-only'>{group.title}</h2>
+                <ul className='flex flex-col gap-2.5'>
+                  {group.links.map(link => (
+                    <li key={link.url}>
+                      <Link
+                        href={link.url}
+                        className={linkClass}
+                        {...(link.url.startsWith('http') ? {target: '_blank', rel: 'noopener noreferrer'} : {})}
+                      >
+                        {link.text}
+                        {link.url.startsWith('http') && <span className='sr-only'> (opent in nieuw venster)</span>}
+                      </Link>
+                    </li>
+                  ))}
+                  {index === groups.length - 1 && (
+                    <li><FeedbackLink /></li>
+                  )}
+                </ul>
+              </nav>
+            ))}
+          </div>
         </div>
 
-        {/* Bottom bar */}
-        <div className='border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4'>
-          <p className='text-gray-700 text-sm'>
-            © {new Date().getFullYear()} {copyrightText}
-          </p>
-
-          {/* Legal links; there is no cookie notice, only necessary storage (see /cookiebeleid) */}
-          <div className='flex flex-wrap justify-center gap-4 text-sm'>
-            <Link href='/privacybeleid' className='text-gray-700 hover:text-primary transition-colors'>
-              Privacybeleid
-            </Link>
-            <Link href='/cookiebeleid' className='text-gray-700 hover:text-primary transition-colors'>
-              Cookiebeleid
-            </Link>
-            <Link href='/algemene-voorwaarden' className='text-gray-700 hover:text-primary transition-colors'>
-              Algemene Voorwaarden
-            </Link>
-          </div>
-
-          <div className='flex gap-4'>
-            {socials.map(social => {
-              const icon = socialIcons[social.platform];
-              return (
-                <a
-                  key={social.platform}
-                  href={social.url}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='text-gray-400 hover:text-primary focus:text-primary focus:outline-none focus:ring-2 focus:ring-focus focus:ring-offset-2 rounded transition-colors'
-                  aria-label={`${social.platform} (opent in nieuw venster)`}
-                >
-                  {icon && (
-                    <svg
-                      role='img'
-                      viewBox='0 0 24 24'
-                      className='w-5 h-5 fill-current'
-                      aria-hidden='true'
-                    >
-                      <path d={icon.path} />
-                    </svg>
-                  )}
-                </a>
-              );
-            })}
-          </div>
+        <div className='flex flex-wrap justify-between gap-3 pt-5 border-t border-gray-200 text-sm text-gray-600'>
+          <p>© {new Date().getFullYear()} {copyrightText}</p>
+          <ul className='flex flex-wrap gap-4'>
+            {legalLinks.map(link => (
+              <li key={link.url}>
+                <Link href={link.url} className='text-gray-600 underline-offset-4 hover:text-primary-text hover:underline'>
+                  {link.text}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </footer>
