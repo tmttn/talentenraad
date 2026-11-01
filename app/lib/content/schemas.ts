@@ -2,50 +2,58 @@ import {z} from 'zod';
 
 const concept = z.boolean().default(false);
 const aliassen = z.array(z.string()).default([]);
+const verplicht = (message: string) => z.string({error: message}).trim().min(1, message);
+const volgorde = z.number({error: 'Vul een getal in.'}).default(99);
+
+export const linkMelding = 'Gebruik een link die begint met /, https:// of mailto:.';
+export const linkWaarde = z.string().trim().refine(
+  value => /^(?:\/(?!\/)|https:\/\/|mailto:)\S*$/.test(value),
+  linkMelding,
+);
 
 export const datumSchema = z.string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Verwacht formaat JJJJ-MM-DD')
+  .regex(/^\d{4}-\d{2}-\d{2}$/, 'Kies een geldige datum.')
   .refine(value => {
     const [year, month, day] = value.split('-').map(Number);
     const date = new Date(Date.UTC(year, month - 1, day));
     return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
-  }, 'Ongeldige datum');
+  }, 'Kies een geldige datum.');
 
-const linkSchema = z.object({tekst: z.string(), link: z.string()});
+const linkSchema = z.object({tekst: z.string(), link: linkWaarde});
 
-export const activiteitSchema = z.object({
-  titel: z.string(),
+export const activiteitSchema = z.strictObject({
+  titel: verplicht('Vul een titel in.'),
   datum: datumSchema,
   tijd: z.string().optional(),
   locatie: z.string().optional(),
-  categorie: z.enum(['feest', 'kalender', 'activiteit']),
-  samenvatting: z.string(),
+  categorie: z.enum(['feest', 'kalender', 'activiteit'], {error: 'Kies een geldige categorie.'}),
+  samenvatting: verplicht('Vul een samenvatting in.'),
   afbeelding: z.string().optional(),
   aliassen,
   concept,
 });
 
-export const nieuwsSchema = z.object({
-  titel: z.string(),
+export const nieuwsSchema = z.strictObject({
+  titel: verplicht('Vul een titel in.'),
   datum: datumSchema,
-  samenvatting: z.string(),
+  samenvatting: verplicht('Vul een samenvatting in.'),
   afbeelding: z.string().optional(),
   aliassen,
   concept,
 });
 
-export const teamlidSchema = z.object({
-  naam: z.string(),
-  rol: z.string(),
-  categorie: z.enum(['bestuur', 'lid']),
-  volgorde: z.number().default(99),
+export const teamlidSchema = z.strictObject({
+  naam: verplicht('Vul een naam in.'),
+  rol: verplicht('Vul een rol in.'),
+  categorie: z.enum(['bestuur', 'lid'], {error: 'Kies een geldige categorie.'}),
+  volgorde,
   foto: z.string().optional(),
   concept,
 });
 
-export const faqSchema = z.object({
-  vraag: z.string(),
-  volgorde: z.number().default(99),
+export const faqSchema = z.strictObject({
+  vraag: verplicht('Vul een vraag in.'),
+  volgorde,
   concept,
 });
 
@@ -55,6 +63,14 @@ export const tekstSchema = z.object({
   concept,
 });
 
+export const aankondigingSchema = z.strictObject({
+  actief: z.boolean(),
+  tekst: z.string().trim(),
+  type: z.enum(['info', 'waarschuwing', 'belangrijk'], {error: 'Kies een geldig type.'}),
+  link: linkWaarde.optional(),
+  linkTekst: z.string().optional(),
+}).refine(value => !value.actief || value.tekst !== '', {message: 'Vul een tekst in.', path: ['tekst']});
+
 export const siteSchema = z.object({
   navigatie: z.array(linkSchema),
   footer: z.object({
@@ -62,7 +78,7 @@ export const siteSchema = z.object({
     adres: z.object({straat: z.string(), gemeente: z.string()}),
     email: z.string(),
     groepen: z.array(z.object({titel: z.string(), links: z.array(linkSchema)})),
-    sociaal: z.array(z.object({platform: z.string(), link: z.string()})),
+    sociaal: z.array(z.object({platform: z.string(), link: linkWaarde})),
     copyright: z.string(),
   }),
   cta: z.object({titel: z.string(), tekst: z.string(), knop: linkSchema}),
@@ -77,13 +93,7 @@ export const siteSchema = z.object({
       christmasBalls: z.boolean(),
     }),
   }),
-  aankondiging: z.object({
-    actief: z.boolean(),
-    tekst: z.string(),
-    type: z.enum(['info', 'waarschuwing', 'belangrijk']),
-    link: z.string().optional(),
-    linkTekst: z.string().optional(),
-  }),
+  aankondiging: aankondigingSchema,
 });
 
 const basisPagina = {
@@ -133,7 +143,7 @@ export const paginaSchemas = {
     sponsors: z.array(z.object({
       naam: z.string(),
       niveau: z.enum(sponsorNiveaus),
-      link: z.string().optional(),
+      link: linkWaarde.optional(),
       logo: z.string().optional(),
     })).default([]),
     legeTekst: z.object({
