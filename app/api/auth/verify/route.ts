@@ -1,5 +1,5 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {ensureAdminUser, safeReturnTo, verifyAdmin} from '@lib/auth/admin';
+import {ensureAdminUser, safeReturnTo, canLogin} from '@lib/auth/admin';
 import {logSessionEvent} from '@lib/auth/audit';
 import {consumeLoginToken} from '@lib/auth/tokens';
 import {createSessionCookie, sessionCookieName, sessionCookieOptions} from '@lib/auth/session';
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest) {
     // Marks the token used before anything else, so a second click always fails.
     const consumed = await consumeLoginToken(token);
 
-    if (!consumed || !await verifyAdmin(consumed.email)) {
+    if (!consumed || !await canLogin(consumed.email)) {
       return failure;
     }
 

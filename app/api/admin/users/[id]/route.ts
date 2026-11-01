@@ -1,7 +1,8 @@
 import {type NextRequest, NextResponse} from 'next/server';
 import {isAdminEmail, normalizeEmail} from '@lib/auth/admin';
-import {getSession} from '@lib/auth/session';
+import {guardAdminApi} from '@lib/auth/api-guard';
 import {db, users} from '@lib/db';
+import {isRole, type Role} from '@lib/db/schema';
 import {eq} from 'drizzle-orm';
 import {sendInvitationEmail} from '@lib/email/messages';
 import {logAudit, createAuditContext} from '@lib/audit';
@@ -15,11 +16,13 @@ export async function GET(
   _request: NextRequest,
   context: RouteContext,
 ) {
-  const session = await getSession();
+  const guard = await guardAdminApi();
 
-  if (!session) {
-    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  if (guard.response) {
+    return guard.response;
   }
+
+  const {session} = guard;
 
   const {id} = await context.params;
 
@@ -43,18 +46,20 @@ export async function PUT(
   request: NextRequest,
   context: RouteContext,
 ) {
-  const session = await getSession();
+  const guard = await guardAdminApi();
 
-  if (!session) {
-    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  if (guard.response) {
+    return guard.response;
   }
+
+  const {session} = guard;
 
   const {id} = await context.params;
 
   try {
     const body = await request.json() as {
       name?: string;
-      isAdmin?: boolean;
+      role?: string;
       resendInvitation?: boolean;
     };
 
@@ -105,20 +110,27 @@ export async function PUT(
       return NextResponse.json({success: true, user: updatedUser});
     }
 
+    if (body.role !== undefined && !isRole(body.role)) {
+      return NextResponse.json({error: 'Invalid role'}, {status: 400});
+    }
+
+    const role: Role = body.role ?? existingUser.role;
+
     // Prevent removing admin from yourself
-    if (normalizeEmail(session.user.email) === existingUser.email && body.isAdmin === false) {
+    if (normalizeEmail(session.user.email) === existingUser.email && role !== 'admin') {
       return NextResponse.json({error: 'Cannot remove admin from yourself'}, {status: 400});
     }
 
     // Prevent removing admin from protected admin emails
-    if (isAdminEmail(existingUser.email) && body.isAdmin === false) {
+    if (isAdminEmail(existingUser.email) && role !== 'admin') {
       return NextResponse.json({error: 'Cannot remove admin from protected admin email'}, {status: 400});
     }
 
     const [updatedUser] = await db.update(users)
       .set({
         name: body.name ?? existingUser.name,
-        isAdmin: body.isAdmin ?? existingUser.isAdmin,
+        role,
+        isAdmin: role === 'admin',
         updatedAt: new Date(),
       })
       .where(eq(users.id, id))
@@ -126,8 +138,8 @@ export async function PUT(
 
     // Log audit event with before/after diff
     const diff = computeDataDiff(
-      {name: existingUser.name, isAdmin: existingUser.isAdmin},
-      {name: updatedUser.name, isAdmin: updatedUser.isAdmin},
+      {name: existingUser.name, role: existingUser.role},
+      {name: updatedUser.name, role: updatedUser.role},
     );
     if (diff.before ?? diff.after) {
       await logAudit({
@@ -151,11 +163,13 @@ export async function DELETE(
   request: NextRequest,
   context: RouteContext,
 ) {
-  const session = await getSession();
+  const guard = await guardAdminApi();
 
-  if (!session) {
-    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  if (guard.response) {
+    return guard.response;
   }
+
+  const {session} = guard;
 
   const {id} = await context.params;
 
@@ -189,7 +203,7 @@ export async function DELETE(
       dataBefore: {
         email: existingUser.email,
         name: existingUser.name,
-        isAdmin: existingUser.isAdmin,
+        role: existingUser.role,
       },
       dataAfter: null,
       context: createAuditContext(request, session),

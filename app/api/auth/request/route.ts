@@ -1,5 +1,5 @@
 import {after, type NextRequest, NextResponse} from 'next/server';
-import {normalizeEmail, safeReturnTo, verifyAdmin} from '@lib/auth/admin';
+import {normalizeEmail, safeReturnTo, canLogin} from '@lib/auth/admin';
 import {createLoginToken} from '@lib/auth/tokens';
 import {getSiteUrl} from '@lib/email/mailer';
 import {sendLoginLink} from '@lib/email/messages';
@@ -30,7 +30,7 @@ function buildLoginUrl(token: string, returnTo: unknown): string {
 
 async function handleLoginRequest(email: string, returnTo: unknown): Promise<void> {
   try {
-    if (!await verifyAdmin(email)) {
+    if (!await canLogin(email)) {
       return;
     }
 

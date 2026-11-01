@@ -4,7 +4,7 @@ import {
   afterEach, beforeEach, describe, expect, it, vi,
 } from 'vitest';
 
-const verifyAdmin = vi.fn();
+const canLogin = vi.fn();
 const ensureAdminUser = vi.fn();
 const createLoginToken = vi.fn();
 const consumeLoginToken = vi.fn();
@@ -25,7 +25,7 @@ vi.mock('next/server', async () => {
 
 vi.mock('@lib/auth/admin', async () => {
   const actual = await vi.importActual<typeof import('@lib/auth/admin')>('@lib/auth/admin');
-  return {...actual, verifyAdmin, ensureAdminUser};
+  return {...actual, canLogin, ensureAdminUser};
 });
 vi.mock('@lib/auth/tokens', () => ({createLoginToken, consumeLoginToken}));
 vi.mock('@lib/email/messages', () => ({sendLoginLink}));
@@ -68,7 +68,7 @@ const requestLogin = async (body: unknown) => {
 
 describe('POST /api/auth/request', () => {
   it('mails a login link to an admin under the rate limit', async () => {
-    verifyAdmin.mockResolvedValue(true);
+    canLogin.mockResolvedValue(true);
     createLoginToken.mockResolvedValue('the-token');
     sendLoginLink.mockResolvedValue(undefined);
 
@@ -77,7 +77,7 @@ describe('POST /api/auth/request', () => {
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({message: neutral});
-    expect(verifyAdmin).toHaveBeenCalledWith('admin@test.com');
+    expect(canLogin).toHaveBeenCalledWith('admin@test.com');
     expect(createLoginToken).toHaveBeenCalledWith('admin@test.com');
     expect(sendLoginLink).toHaveBeenCalledWith({
       to: 'admin@test.com',
@@ -86,7 +86,7 @@ describe('POST /api/auth/request', () => {
   });
 
   it('drops an unsafe returnTo from the link', async () => {
-    verifyAdmin.mockResolvedValue(true);
+    canLogin.mockResolvedValue(true);
     createLoginToken.mockResolvedValue('the-token');
     sendLoginLink.mockResolvedValue(undefined);
 
@@ -99,7 +99,7 @@ describe('POST /api/auth/request', () => {
   });
 
   it('gives a non-admin the same answer without token or mail', async () => {
-    verifyAdmin.mockResolvedValue(false);
+    canLogin.mockResolvedValue(false);
 
     const response = await requestLogin({email: 'ouder@example.com'});
     await flush();
@@ -111,7 +111,7 @@ describe('POST /api/auth/request', () => {
   });
 
   it('gives the same answer and sends no mail when rate limited', async () => {
-    verifyAdmin.mockResolvedValue(true);
+    canLogin.mockResolvedValue(true);
     createLoginToken.mockResolvedValue(undefined);
 
     const response = await requestLogin({email: 'admin@test.com'});
@@ -128,11 +128,11 @@ describe('POST /api/auth/request', () => {
       await expect(response.json()).resolves.toEqual({message: neutral});
     }
 
-    expect(verifyAdmin).not.toHaveBeenCalled();
+    expect(canLogin).not.toHaveBeenCalled();
   });
 
   it('logs a failing mail without the token and still answers neutrally', async () => {
-    verifyAdmin.mockResolvedValue(true);
+    canLogin.mockResolvedValue(true);
     createLoginToken.mockResolvedValue('secret-token');
     sendLoginLink.mockRejectedValue(new Error('smtp down'));
     const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
@@ -146,7 +146,7 @@ describe('POST /api/auth/request', () => {
   });
 
   it('answers neutrally when the database fails, logging without the token', async () => {
-    verifyAdmin.mockRejectedValue(new Error('db down'));
+    canLogin.mockRejectedValue(new Error('db down'));
     const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
     const response = await requestLogin({email: 'admin@test.com'});
@@ -158,12 +158,12 @@ describe('POST /api/auth/request', () => {
   });
 
   it('answers before any admin check, token or mail work runs', async () => {
-    verifyAdmin.mockReturnValue(new Promise(() => undefined));
+    canLogin.mockReturnValue(new Promise(() => undefined));
 
     const response = await requestLogin({email: 'admin@test.com'});
 
     expect(response.status).toBe(200);
-    expect(verifyAdmin).not.toHaveBeenCalled();
+    expect(canLogin).not.toHaveBeenCalled();
     expect(createLoginToken).not.toHaveBeenCalled();
     expect(afterCallbacks).toHaveLength(1);
   });
@@ -179,7 +179,7 @@ describe('GET /api/auth/verify', () => {
 
   it('sets the session cookie and redirects to a safe returnTo', async () => {
     consumeLoginToken.mockResolvedValue({email: user.email});
-    verifyAdmin.mockResolvedValue(true);
+    canLogin.mockResolvedValue(true);
     ensureAdminUser.mockResolvedValue(user);
     const {readSession} = await import('@lib/auth/session');
 
@@ -205,7 +205,7 @@ describe('GET /api/auth/verify', () => {
 
   it('does not loop back to the login page for a returnTo of /admin/login', async () => {
     consumeLoginToken.mockResolvedValue({email: user.email});
-    verifyAdmin.mockResolvedValue(true);
+    canLogin.mockResolvedValue(true);
     ensureAdminUser.mockResolvedValue(user);
 
     const response = await verify('?token=abc&returnTo=/admin/login');
@@ -215,7 +215,7 @@ describe('GET /api/auth/verify', () => {
 
   it('ignores an external returnTo', async () => {
     consumeLoginToken.mockResolvedValue({email: user.email});
-    verifyAdmin.mockResolvedValue(true);
+    canLogin.mockResolvedValue(true);
     ensureAdminUser.mockResolvedValue(user);
 
     const response = await verify('?token=abc&returnTo=https://evil.example');
@@ -244,7 +244,7 @@ describe('GET /api/auth/verify', () => {
     ['consumeLoginToken', () => consumeLoginToken.mockRejectedValue(new Error('db down'))],
     ['ensureAdminUser', () => {
       consumeLoginToken.mockResolvedValue({email: user.email});
-      verifyAdmin.mockResolvedValue(true);
+      canLogin.mockResolvedValue(true);
       ensureAdminUser.mockRejectedValue(new Error('db down'));
     }],
   ])('redirects to the login error and logs when %s throws', async (_name, arrange) => {
@@ -260,7 +260,7 @@ describe('GET /api/auth/verify', () => {
 
   it('refuses a valid token for someone who lost admin access since requesting it', async () => {
     consumeLoginToken.mockResolvedValue({email: user.email});
-    verifyAdmin.mockResolvedValue(false);
+    canLogin.mockResolvedValue(false);
 
     const response = await verify('?token=abc');
 

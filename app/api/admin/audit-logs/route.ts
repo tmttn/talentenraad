@@ -2,14 +2,14 @@ import {type NextRequest, NextResponse} from 'next/server';
 import {
   desc, eq, and, gte, lte, like, sql,
 } from 'drizzle-orm';
-import {getSession} from '@lib/auth/session';
+import {guardAdminApi} from '@lib/auth/api-guard';
 import {db, auditLogs, type AuditActionType} from '@lib/db';
 
 export async function GET(request: NextRequest) {
-  const session = await getSession();
+  const guard = await guardAdminApi();
 
-  if (!session) {
-    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  if (guard.response) {
+    return guard.response;
   }
 
   const {searchParams} = request.nextUrl;

@@ -59,3 +59,32 @@ describe('admin API routes without a session', () => {
     expect(dbAccess).not.toHaveBeenCalled();
   });
 });
+
+// Routes a redacteur may use; everything else is admin-only.
+const editorRoutes = new Set(['session GET']);
+const adminOnlyRoutes = routes.filter(([name, method]) => !editorRoutes.has(`${name} ${method}`));
+
+describe('admin API routes as redacteur', () => {
+  it.each(adminOnlyRoutes)('%s %s answers 403 and never queries the database', async (_name, method, load) => {
+    getSession.mockResolvedValue({user: {id: 'u2', email: 'editor@test.com', name: null, role: 'redacteur'}});
+    const handler = (await load())[method] as Handler;
+    const request = new NextRequest('http://localhost:3000/api/admin/x', {
+      method,
+      body: method === 'GET' ? undefined : JSON.stringify({}),
+    });
+
+    const response = await handler(request, {params: Promise.resolve({id: 'x'})});
+
+    expect(response.status).toBe(403);
+    expect(dbAccess).not.toHaveBeenCalled();
+  });
+
+  it('the session route stays open for a redacteur', async () => {
+    getSession.mockResolvedValue({user: {id: 'u2', email: 'editor@test.com', name: null, role: 'redacteur'}});
+    const {GET} = await import('../../app/api/admin/session/route');
+
+    const response = await GET();
+
+    expect(response.status).toBe(200);
+  });
+});

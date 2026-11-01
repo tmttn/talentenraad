@@ -103,12 +103,29 @@ describe('session token', () => {
 });
 
 describe('getSession', () => {
-  it('returns the user when the cookie is valid and the user is still an admin', async () => {
+  it('returns the user with role when the cookie is valid', async () => {
     const {createSessionCookie, getSession} = await import('@lib/auth/session');
     cookieValue.mockReturnValue(await createSessionCookie(user));
-    findFirst.mockResolvedValue({...user, name: 'Admin', isAdmin: true});
+    findFirst.mockResolvedValue({...user, name: 'Admin', role: 'admin'});
 
-    await expect(getSession()).resolves.toEqual({user: {...user, name: 'Admin'}});
+    await expect(getSession()).resolves.toEqual({user: {...user, name: 'Admin', role: 'admin'}});
+  });
+
+  it('returns the redacteur role for an editor', async () => {
+    const {createSessionCookie, getSession} = await import('@lib/auth/session');
+    cookieValue.mockReturnValue(await createSessionCookie(user));
+    findFirst.mockResolvedValue({...user, name: null, role: 'redacteur'});
+
+    await expect(getSession()).resolves.toEqual({user: {...user, name: null, role: 'redacteur'}});
+  });
+
+  it('ADMIN_EMAILS is always admin, whatever the row says', async () => {
+    const {createSessionCookie, getSession} = await import('@lib/auth/session');
+    vi.stubEnv('ADMIN_EMAILS', user.email);
+    cookieValue.mockReturnValue(await createSessionCookie(user));
+    findFirst.mockResolvedValue({...user, name: null, role: 'redacteur'});
+
+    await expect(getSession()).resolves.toMatchObject({user: {role: 'admin'}});
   });
 
   it('returns undefined without a cookie', async () => {
@@ -118,21 +135,13 @@ describe('getSession', () => {
     expect(findFirst).not.toHaveBeenCalled();
   });
 
-  it('returns undefined when the user is no longer an admin', async () => {
-    const {createSessionCookie, getSession} = await import('@lib/auth/session');
-    cookieValue.mockReturnValue(await createSessionCookie(user));
-    findFirst.mockResolvedValue({...user, name: null, isAdmin: false});
-
-    await expect(getSession()).resolves.toBeUndefined();
-  });
-
   it('returns undefined when the user was deleted or the email changed', async () => {
     const {createSessionCookie, getSession} = await import('@lib/auth/session');
     cookieValue.mockReturnValue(await createSessionCookie(user));
     findFirst.mockResolvedValueOnce(undefined);
     await expect(getSession()).resolves.toBeUndefined();
 
-    findFirst.mockResolvedValueOnce({...user, email: 'someone-else@test.com', isAdmin: true});
+    findFirst.mockResolvedValueOnce({...user, email: 'someone-else@test.com', role: 'admin'});
     await expect(getSession()).resolves.toBeUndefined();
   });
 });

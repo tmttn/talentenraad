@@ -1,16 +1,19 @@
 import {type NextRequest, NextResponse} from 'next/server';
-import {getSession} from '@lib/auth/session';
+import {guardAdminApi} from '@lib/auth/api-guard';
 import {db, users} from '@lib/db';
+import {isRole, type Role} from '@lib/db/schema';
 import {eq} from 'drizzle-orm';
 import {sendInvitationEmail} from '@lib/email/messages';
 import {logAudit, createAuditContext} from '@lib/audit';
 
 export async function GET() {
-  const session = await getSession();
+  const guard = await guardAdminApi();
 
-  if (!session) {
-    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  if (guard.response) {
+    return guard.response;
   }
+
+  const {session} = guard;
 
   try {
     const allUsers = await db.query.users.findMany({
@@ -25,23 +28,30 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const session = await getSession();
+  const guard = await guardAdminApi();
 
-  if (!session) {
-    return NextResponse.json({error: 'Unauthorized'}, {status: 401});
+  if (guard.response) {
+    return guard.response;
   }
+
+  const {session} = guard;
 
   try {
     const body = await request.json() as {
       email: string;
       name?: string;
-      isAdmin?: boolean;
+      role?: string;
     };
 
     if (!body.email?.trim()) {
       return NextResponse.json({error: 'Email is required'}, {status: 400});
     }
 
+    if (body.role !== undefined && !isRole(body.role)) {
+      return NextResponse.json({error: 'Invalid role'}, {status: 400});
+    }
+
+    const role: Role = body.role ?? 'redacteur';
     const email = body.email.toLowerCase().trim();
 
     // Check if user already exists
@@ -56,7 +66,8 @@ export async function POST(request: NextRequest) {
     const [newUser] = await db.insert(users).values({
       email,
       name: body.name?.trim() ?? undefined,
-      isAdmin: body.isAdmin ?? false,
+      role,
+      isAdmin: role === 'admin',
       invitedAt: new Date(),
     }).returning();
 
@@ -70,7 +81,7 @@ export async function POST(request: NextRequest) {
         id: newUser.id,
         email: newUser.email,
         name: newUser.name,
-        isAdmin: newUser.isAdmin,
+        role: newUser.role,
       },
       context: createAuditContext(request, session),
     });

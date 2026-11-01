@@ -1,5 +1,5 @@
 import type {Metadata} from 'next';
-import {requireAdminSession} from '@lib/auth/require-admin';
+import {requireEditorSession} from '@lib/auth/require-admin';
 import {Suspense} from 'react';
 import {count, isNull, desc} from 'drizzle-orm';
 import Link from 'next/link';
@@ -246,7 +246,19 @@ async function DashboardContent() {
 }
 
 export default async function AdminDashboardPage() {
-  await requireAdminSession();
+  const session = await requireEditorSession();
+
+  // Messages contain parents' personal data: a redacteur gets a welcome only.
+  if (session.user.role !== 'admin') {
+    return (
+      <div className='space-y-6 sm:space-y-8'>
+        <DashboardHeader />
+        <div className='bg-white rounded-card shadow-base p-4 sm:p-5 text-gray-600'>
+          Je bent ingelogd als redacteur. Hier vind je binnenkort de plek om de inhoud van de website te bewerken.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='space-y-6 sm:space-y-8'>
