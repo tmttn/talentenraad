@@ -9,7 +9,9 @@ describe('SpeechBubble', () => {
 
   it('draws a decorative tail by default', () => {
     const {container} = render(<SpeechBubble>Hallo</SpeechBubble>);
-    expect(container.querySelector('[aria-hidden="true"]')).toHaveClass('rotate-45');
+    const tail = container.querySelector('svg[aria-hidden="true"]');
+    expect(tail).not.toBeNull();
+    expect(tail!.querySelectorAll('path')).toHaveLength(2);
   });
 
   it('can leave the tail out', () => {
