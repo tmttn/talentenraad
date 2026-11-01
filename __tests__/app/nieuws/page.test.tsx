@@ -43,7 +43,11 @@ describe('NewsDetailPage', () => {
   });
 
   it('turns a blockquote into a green speech bubble', async () => {
-    getNieuwsItem.mockReturnValue(makeNieuws({html: '<p>Voor</p>\n<blockquote>\n<p>Een fietsparcours!</p>\n</blockquote>\n<p>Na</p>'}));
+    getNieuwsItem.mockReturnValue(makeNieuws({segmenten: [
+      {kind: 'html', html: '<p>Voor</p>'},
+      {kind: 'quote', html: '<p>Een fietsparcours!</p>'},
+      {kind: 'html', html: '<p>Na</p>'},
+    ]}));
     vi.mocked(content.getNieuws).mockReturnValue([]);
     const {container} = await renderPage('voorbeeldbericht');
     const quote = screen.getByText('Een fietsparcours!').closest('blockquote')!;

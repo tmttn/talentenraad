@@ -110,7 +110,7 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
             </div>
           )}
 
-          {item.html.trim() && <ArticleBody html={item.html} />}
+          {item.segmenten.length > 0 && <ArticleBody segmenten={item.segmenten} />}
         </div>
       </article>
 
