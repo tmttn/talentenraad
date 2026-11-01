@@ -11,6 +11,7 @@ import {
   Mail,
   Users,
   History,
+  FileText,
   ChevronLeft,
   ChevronRight,
   X,
@@ -45,6 +46,7 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   {href: '/admin', label: 'Dashboard', icon: Home},
+  {href: '/admin/content', label: 'Content', icon: FileText},
   {
     href: '/admin/submissions', label: 'Berichten', icon: Mail, adminOnly: true,
   },

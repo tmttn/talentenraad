@@ -155,7 +155,9 @@ export function createFakeGitHub(initial: Record<string, string>) {
       return json(200, {});
     }
     if (method === 'GET' && path.startsWith('/actions/workflows/deploy.yml/runs')) {
-      return json(200, { workflow_runs: state.runs ?? [] });
+      const sha = /head_sha=([^&]+)/.exec(url.search)?.[1];
+      const all = (state.runs ?? []) as { head_sha?: string }[];
+      return json(200, { workflow_runs: sha ? all.filter(run => run.head_sha === sha) : all });
     }
     return json(404, { message: 'Not Found' });
   });

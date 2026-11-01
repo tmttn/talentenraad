@@ -36,11 +36,11 @@ export function resolveImage(rootDir: string, entryDir: string, ref: string): Co
 // CORE_SCHEMA keeps unquoted dates as strings, so no Date objects, rollover or timezone shifts.
 const parseYaml = (source: string): unknown => load(source, {schema: CORE_SCHEMA});
 
-export function readMarkdownFile(file: string): {data: Record<string, unknown>; body: string} {
+export function parseMarkdownSource(source: string, file: string): {data: Record<string, unknown>; body: string} {
   const disabled = () => {
     throw new Error(`Uitvoerbare frontmatter is niet toegestaan: ${file}`);
   };
-  const parsed = matter(readFileSync(file, 'utf8'), {
+  const parsed = matter(source, {
     engines: {
       yaml: {parse: source => parseYaml(source) as object, stringify: () => ''},
       js: disabled,
@@ -48,6 +48,10 @@ export function readMarkdownFile(file: string): {data: Record<string, unknown>; 
     },
   });
   return {data: parsed.data, body: parsed.content};
+}
+
+export function readMarkdownFile(file: string): {data: Record<string, unknown>; body: string} {
+  return parseMarkdownSource(readFileSync(file, 'utf8'), file);
 }
 
 export function readYamlFile(file: string): unknown {

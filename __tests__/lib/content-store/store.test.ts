@@ -309,6 +309,33 @@ describe('latestDeployStatus', () => {
     expect(gh.calls[0].path).toBe('/actions/workflows/deploy.yml/runs?branch=main&per_page=1');
   });
 
+  describe('for a commit', () => {
+    const sha = 'a'.repeat(40);
+    const base = { created_at: '2026-11-01T10:00:00Z' };
+
+    it('is bezig when only an older run exists', async () => {
+      gh.runs = [{ ...base, head_sha: 'b'.repeat(40), status: 'completed', conclusion: 'success' }];
+      expect((await latestDeployStatus(sha)).state).toBe('bezig');
+      expect(gh.calls[0].path).toContain(`head_sha=${sha}`);
+    });
+
+    it('maps the run of the commit', async () => {
+      gh.runs = [{ ...base, head_sha: sha, status: 'completed', conclusion: 'success' }];
+      expect((await latestDeployStatus(sha)).state).toBe('klaar');
+      gh.runs = [{ ...base, head_sha: sha, status: 'completed', conclusion: 'failure' }];
+      expect((await latestDeployStatus(sha)).state).toBe('mislukt');
+      gh.runs = [{ ...base, head_sha: sha, status: 'in_progress', conclusion: null }];
+      expect((await latestDeployStatus(sha)).state).toBe('bezig');
+    });
+
+    it('follows the newest run on the branch when the run was cancelled', async () => {
+      gh.runs = [{ ...base, head_sha: sha, status: 'completed', conclusion: 'cancelled' }, { ...base, head_sha: 'c'.repeat(40), status: 'in_progress', conclusion: null }];
+      expect((await latestDeployStatus(sha)).state).toBe('mislukt');
+      gh.runs = [{ ...base, head_sha: sha, status: 'completed', conclusion: 'cancelled' }];
+      expect((await latestDeployStatus(sha)).state).toBe('mislukt');
+    });
+  });
+
   it('is onbekend (no throw) when GitHub fails', async () => {
     gh.errorStatus = 500;
     expect(await latestDeployStatus()).toEqual({ state: 'onbekend' });

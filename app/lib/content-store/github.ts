@@ -147,32 +147,58 @@ export async function listDir(path: string): Promise<DirEntry[]> {
   }));
 }
 
-export async function latestDeployStatus(): Promise<{ state: DeployState; startedAt?: string }> {
+type Run = { status: string; conclusion: string | null; run_started_at?: string; created_at?: string };
+
+const runsPath = (branch: string, headSha?: string) =>
+  `/actions/workflows/deploy.yml/runs?branch=${encodeURIComponent(branch)}&per_page=1${headSha ? `&head_sha=${headSha}` : ''}`;
+
+async function newestRun(branch: string, headSha?: string): Promise<Run | undefined> {
+  const { data } = await api('GET', runsPath(branch, headSha));
+  const runs = (data as { workflow_runs?: unknown } | undefined)?.workflow_runs;
+  return Array.isArray(runs) ? runs[0] as Run | undefined : undefined;
+}
+
+function stateOf(run: Run): { state: DeployState; startedAt?: string } {
+  const startedAt = run.run_started_at ?? run.created_at;
+  if (run.status !== 'completed') {
+    return { state: 'bezig', startedAt };
+  }
+
+  if (run.conclusion === 'success') {
+    return { state: 'klaar', startedAt };
+  }
+
+  if (['failure', 'cancelled', 'timed_out', 'startup_failure'].includes(run.conclusion ?? '')) {
+    return { state: 'mislukt', startedAt };
+  }
+
+  return { state: 'onbekend', startedAt };
+}
+
+/**
+ * Deploy state of the newest run on the branch. With `commit`, the run for that commit:
+ * no run yet means 'bezig'; a cancelled run was replaced by a newer run (concurrency
+ * group) that includes the commit, so the newest run on the branch decides.
+ */
+export async function latestDeployStatus(commit?: string): Promise<{ state: DeployState; startedAt?: string }> {
   try {
     const { branch } = getConfig();
-    const { data } = await api('GET', `/actions/workflows/deploy.yml/runs?branch=${encodeURIComponent(branch)}&per_page=1`);
-    const runs = (data as { workflow_runs?: unknown } | undefined)?.workflow_runs;
-    const run = Array.isArray(runs)
-      ? runs[0] as { status: string; conclusion: string | null; run_started_at?: string; created_at?: string } | undefined
-      : undefined;
-    if (!run) {
-      return { state: 'onbekend' };
+    if (commit === undefined) {
+      const run = await newestRun(branch);
+      return run ? stateOf(run) : { state: 'onbekend' };
     }
 
-    const startedAt = run.run_started_at ?? run.created_at;
-    if (run.status !== 'completed') {
-      return { state: 'bezig', startedAt };
+    const own = await newestRun(branch, commit);
+    if (!own) {
+      return { state: 'bezig' };
     }
 
-    if (run.conclusion === 'success') {
-      return { state: 'klaar', startedAt };
+    if (own.status === 'completed' && own.conclusion === 'cancelled') {
+      const newest = await newestRun(branch);
+      return newest ? stateOf(newest) : { state: 'onbekend' };
     }
 
-    if (['failure', 'cancelled', 'timed_out', 'startup_failure'].includes(run.conclusion ?? '')) {
-      return { state: 'mislukt', startedAt };
-    }
-
-    return { state: 'onbekend', startedAt };
+    return stateOf(own);
   } catch {
     return { state: 'onbekend' };
   }
