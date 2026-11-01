@@ -1,7 +1,18 @@
 // @vitest-environment node
+import {crc32} from 'node:zlib';
 import sharp from 'sharp';
 import {describe, expect, it} from 'vitest';
 import {ImageError, processImage} from '@lib/content-store/images';
+
+/** A small PNG whose header claims other dimensions (a "decompression bomb" without the cost of encoding one). */
+const withClaimedSize = (png: Buffer, width: number, height: number) => {
+  const out = Buffer.from(png);
+  // Signature (8) + length (4) + "IHDR" (4), then width and height; the chunk CRC follows the 13-byte IHDR data.
+  out.writeUInt32BE(width, 16);
+  out.writeUInt32BE(height, 20);
+  out.writeUInt32BE(crc32(out.subarray(12, 29)), 29);
+  return out;
+};
 
 const solid = (width: number, height: number) => sharp({create: {width, height, channels: 3, background: {r: 200, g: 100, b: 50}}, limitInputPixels: false});
 
@@ -57,8 +68,8 @@ describe('processImage', () => {
   });
 
   it('rejects a tiny file with huge dimensions', async () => {
-    const input = await solid(20000, 20000).png({compressionLevel: 9}).toBuffer();
-    expect(input.length).toBeLessThan(10 * 1024 * 1024);
+    const input = withClaimedSize(await solid(16, 16).png().toBuffer(), 20000, 20000);
+    expect((await sharp(input, {limitInputPixels: false}).metadata()).width).toBe(20000);
     await expect(processImage(input)).rejects.toThrow('De foto is te groot.');
   });
 });
