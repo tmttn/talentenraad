@@ -197,6 +197,27 @@ describe('commitChanges', () => {
     expect(gh.calls).toHaveLength(0);
   });
 
+  it('does not retry or report a conflict on a non-fast-forward-unrelated 422', async () => {
+    const original = gh.fetchMock.getMockImplementation()!;
+    gh.fetchMock.mockImplementation(async (input, init) => {
+      if (init?.method === 'PATCH') {
+        gh.calls.push({ method: 'PATCH', path: new URL(String(input)).pathname.slice(`/repos/${REPO}`.length) });
+        return new Response(JSON.stringify({ message: 'Repository rule violations found' }), { status: 422 });
+      }
+      return original(input, init);
+    });
+    const error = await caught(commitChanges({ message: 'm', author, changes: [{ path: A, content: 'x' }] }));
+    expect(error).toBeInstanceOf(ContentStoreError);
+    expect(error).not.toBeInstanceOf(ConflictError);
+    expect(error.message).toContain('beveiligde branch');
+    expect(gh.calls.filter(call => call.method === 'PATCH')).toHaveLength(1);
+  });
+
+  it('throws when a non-delete change has no content', async () => {
+    await expect(commitChanges({ message: 'm', author, changes: [{ path: A }] })).rejects.toThrow(ContentStoreError);
+    expect(gh.calls).toHaveLength(0);
+  });
+
   it('rejects empty changes and duplicate paths without network calls', async () => {
     await expect(commitChanges({ message: 'm', author, changes: [] })).rejects.toThrow();
     await expect(commitChanges({ message: 'm', author, changes: [{ path: A, content: 'a' }, { path: A, delete: true }] })).rejects.toThrow();
@@ -222,6 +243,35 @@ describe('error handling', () => {
     const logged = JSON.stringify(vi.mocked(console.error).mock.calls);
     expect(logged).not.toContain(TOKEN);
     expect(logged).toContain('401');
+  });
+
+  it('maps a timeout abort to the unreachable error', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => {
+      throw new DOMException('The operation timed out', 'TimeoutError');
+    }));
+    const error = await caught(readFile(A));
+    expect(error).toBeInstanceOf(ContentStoreError);
+    expect(error.message).toContain('niet bereikbaar');
+    expect(error.message).not.toContain(TOKEN);
+  });
+
+  it('passes an abort signal with every request', async () => {
+    await readFile(A);
+    expect((gh.fetchMock.mock.calls[0][1] as RequestInit).signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('throws a safe ContentStoreError on malformed responses', async () => {
+    const original = gh.fetchMock.getMockImplementation()!;
+    gh.fetchMock.mockImplementation(async (input, init) => {
+      if (String(input).includes('/git/ref/heads/')) {
+        return new Response(JSON.stringify({ unexpected: true }), { status: 200 });
+      }
+      return original(input, init);
+    });
+    const error = await caught(commitChanges({ message: 'm', author, changes: [{ path: A, content: 'x' }] }));
+    expect(error).toBeInstanceOf(ContentStoreError);
+    expect(error).not.toBeInstanceOf(TypeError);
+    expect(error.message).toContain('onverwacht');
   });
 
   it('wraps network failures safely', async () => {

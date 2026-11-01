@@ -1,5 +1,5 @@
 import { ConflictError, ContentStoreError } from './errors';
-import { api, getConfig } from './github';
+import { api, field, getConfig } from './github';
 import { assertAllowedDir, assertAllowedPath } from './paths';
 
 export { readFile as readItemFile, listDir as listItems } from './github';
@@ -16,10 +16,14 @@ type TreeListing = { tree: { path: string; type: string; sha: string }[]; trunca
 async function headTree(): Promise<{ head: string; treeSha: string; files: Map<string, string> }> {
   const { branch } = getConfig();
   const ref = await api('GET', `/git/ref/heads/${encodeURIComponent(branch)}`);
-  const head = (ref.data as { object: { sha: string } }).object.sha;
+  const head = field(ref.data, 'object', 'sha');
   const commit = await api('GET', `/git/commits/${head}`);
-  const treeSha = (commit.data as { tree: { sha: string } }).tree.sha;
-  const listing = (await api('GET', `/git/trees/${treeSha}?recursive=1`)).data as TreeListing;
+  const treeSha = field(commit.data, 'tree', 'sha');
+  const listing = (await api('GET', `/git/trees/${treeSha}?recursive=1`)).data as TreeListing | undefined;
+  if (!listing || !Array.isArray(listing.tree)) {
+    throw new ContentStoreError('GitHub gaf een onverwacht antwoord. Probeer het later opnieuw.');
+  }
+
   if (listing.truncated) {
     throw new ContentStoreError('De repository is te groot om te lezen.');
   }
@@ -68,9 +72,9 @@ async function attempt(options: {
       continue;
     }
 
-    const data = Buffer.from(change.content ?? '');
+    const data = Buffer.from(change.content as Buffer | string);
     const blob = await api('POST', '/git/blobs', { body: { content: data.toString('base64'), encoding: 'base64' } });
-    entries.push({ path: change.path, mode: '100644', type: 'blob', sha: (blob.data as { sha: string }).sha });
+    entries.push({ path: change.path, mode: '100644', type: 'blob', sha: field(blob.data, 'sha') });
   }
 
   const tree = await api('POST', '/git/trees', { body: { base_tree: treeSha, tree: entries } });
@@ -78,20 +82,25 @@ async function attempt(options: {
   const commit = await api('POST', '/git/commits', {
     body: {
       message: options.message,
-      tree: (tree.data as { sha: string }).sha,
+      tree: field(tree.data, 'sha'),
       parents: [head],
       author: identity,
       committer: identity,
     },
   });
-  const commitSha = (commit.data as { sha: string }).sha;
+  const commitSha = field(commit.data, 'sha');
 
   const update = await api('PATCH', `/git/refs/heads/${encodeURIComponent(branch)}`, {
     body: { sha: commitSha, force: false },
     allow: [422],
   });
   if (update.status === 422) {
-    throw new NotFastForward();
+    if (/fast.?forward/i.test(String((update.data as { message?: unknown } | undefined)?.message ?? ''))) {
+      throw new NotFastForward();
+    }
+
+    console.error('GitHub weigerde de ref-update (422, geen fast-forward)');
+    throw new ContentStoreError('GitHub weigert de wijziging (beveiligde branch). Vraag de beheerder om de toegang te controleren.', 422);
   }
 
   return commitSha;
@@ -114,6 +123,10 @@ export async function commitChanges(options: {
   const seen = new Set<string>();
   for (const change of options.changes) {
     assertAllowedPath(change.path);
+    if (!change.delete && change.content === undefined) {
+      throw new ContentStoreError('Er ontbreekt inhoud voor een wijziging.');
+    }
+
     if (seen.has(change.path)) {
       throw new ContentStoreError('Hetzelfde bestand staat twee keer in de wijziging.');
     }

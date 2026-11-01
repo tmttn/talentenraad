@@ -41,6 +41,22 @@ function messageFor(status: number): string {
   return 'GitHub gaf een fout. Probeer het later opnieuw.';
 }
 
+const MALFORMED = 'GitHub gaf een onverwacht antwoord. Probeer het later opnieuw.';
+
+/** Reads a required string field from an API response or throws a safe error. */
+export function field(value: unknown, ...keys: string[]): string {
+  let current: unknown = value;
+  for (const key of keys) {
+    current = typeof current === 'object' && current !== null ? (current as Record<string, unknown>)[key] : undefined;
+  }
+
+  if (typeof current !== 'string' || current === '') {
+    throw new ContentStoreError(MALFORMED);
+  }
+
+  return current;
+}
+
 export type ApiResult = { status: number; data: unknown };
 
 /**
@@ -66,6 +82,7 @@ export async function api(
       },
       body: options.body === undefined ? undefined : JSON.stringify(options.body),
       cache: 'no-store',
+      signal: AbortSignal.timeout(10_000),
     });
   } catch {
     console.error('GitHub request failed (network)', method, path.split('?')[0]);
@@ -99,19 +116,19 @@ export async function readFile(path: string): Promise<{ text: string; sha: strin
     return undefined;
   }
 
-  const file = data as { type?: string; sha: string; content?: string; encoding?: string };
-  if (Array.isArray(data) || file.type !== 'file') {
+  if (Array.isArray(data) || field(data, 'type') !== 'file') {
     throw new ContentStoreError('Dit is geen bestand.');
   }
 
-  if (file.encoding === 'base64' && file.content) {
-    return { text: Buffer.from(file.content, 'base64').toString('utf8'), sha: file.sha };
+  const sha = field(data, 'sha');
+  const inline = (data as { content?: unknown; encoding?: unknown });
+  if (inline.encoding === 'base64' && typeof inline.content === 'string' && inline.content !== '') {
+    return { text: Buffer.from(inline.content, 'base64').toString('utf8'), sha };
   }
 
   // Files over 1 MB come back without content: fetch the blob instead.
-  const blob = await api('GET', `/git/blobs/${encodeURIComponent(file.sha)}`);
-  const { content } = blob.data as { content: string };
-  return { text: Buffer.from(content, 'base64').toString('utf8'), sha: file.sha };
+  const blob = await api('GET', `/git/blobs/${encodeURIComponent(sha)}`);
+  return { text: Buffer.from(field(blob.data, 'content'), 'base64').toString('utf8'), sha };
 }
 
 export async function listDir(path: string): Promise<DirEntry[]> {
@@ -122,14 +139,22 @@ export async function listDir(path: string): Promise<DirEntry[]> {
     return [];
   }
 
-  return (data as DirEntry[]).map(item => ({ name: item.name, path: item.path, type: item.type, sha: item.sha }));
+  return data.map(item => ({
+    name: field(item, 'name'),
+    path: field(item, 'path'),
+    type: field(item, 'type'),
+    sha: field(item, 'sha'),
+  }));
 }
 
 export async function latestDeployStatus(): Promise<{ state: DeployState; startedAt?: string }> {
   try {
     const { branch } = getConfig();
     const { data } = await api('GET', `/actions/workflows/deploy.yml/runs?branch=${encodeURIComponent(branch)}&per_page=1`);
-    const run = (data as { workflow_runs?: { status: string; conclusion: string | null; run_started_at?: string; created_at?: string }[] }).workflow_runs?.[0];
+    const runs = (data as { workflow_runs?: unknown } | undefined)?.workflow_runs;
+    const run = Array.isArray(runs)
+      ? runs[0] as { status: string; conclusion: string | null; run_started_at?: string; created_at?: string } | undefined
+      : undefined;
     if (!run) {
       return { state: 'onbekend' };
     }
