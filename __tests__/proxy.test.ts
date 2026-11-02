@@ -4,7 +4,7 @@ import {NextRequest} from 'next/server';
 import {
   afterEach, beforeEach, describe, expect, it, vi,
 } from 'vitest';
-import {proxy} from '../proxy';
+import {config, hasValidPercentEncoding, proxy} from '../proxy';
 
 const secret = 'test-secret-that-is-at-least-32-chars!!';
 
@@ -106,3 +106,44 @@ describe('proxy', () => {
     expect(response.headers.get('x-middleware-next')).toBe('1');
   });
 });
+
+describe('invalid percent-encoding', () => {
+  it.each([
+    '/nieuws/kapot%E0%A4',
+    '/activiteiten/%C3',
+    '/contact?onderwerp=%E0',
+    '/admin/content/%FF',
+  ])('answers %s with a short 400 page before any route', async path => {
+    const response = await proxy(request(path));
+    expect(response.status).toBe(400);
+    expect(response.headers.get('content-type')).toContain('text/html');
+    const html = await response.text();
+    expect(html).toContain('Dit adres klopt niet');
+    expect(html).toContain('href="/"');
+  });
+
+  it.each([
+    '/nieuws/nieuwsbrief-start-schooljaar-2025',
+    '/zoek/caf%C3%A9',
+    '/a%20b',
+    '/contact?onderwerp=sponsoring&naam=Lies+Peeters',
+  ])('lets valid addresses like %s through', path => {
+    expect(hasValidPercentEncoding(`http://localhost:3000${path}`)).toBe(true);
+  });
+
+  it('passes public pages on untouched', async () => {
+    const response = await proxy(request('/kalender'));
+    expect(response.status).toBe(200);
+    expect(response.headers.get('x-middleware-next')).toBe('1');
+  });
+
+  it('runs for every address except the Next.js build files', () => {
+    const [matcher] = config.matcher;
+    const regex = new RegExp(`^${matcher}$`);
+    expect(regex.test('/nieuws/kapot%E0%A4')).toBe(true);
+    expect(regex.test('/admin')).toBe(true);
+    expect(regex.test('/_next/static/chunks/app.js')).toBe(false);
+    expect(regex.test('/_next/image')).toBe(false);
+  });
+});
+
