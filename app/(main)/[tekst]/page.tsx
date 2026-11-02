@@ -10,6 +10,9 @@ type PageProperties = {
   params: Promise<{tekst: string}>;
 };
 
+// Only the known texts exist: any other one-segment URL gets the 404 rendered on the server, also without JavaScript
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return content.listTeksten().map(tekst => ({tekst: tekst.slug}));
 }

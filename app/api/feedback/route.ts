@@ -1,8 +1,13 @@
 import {type NextRequest, NextResponse} from 'next/server';
 import {db, feedback} from '@lib/db';
-import {createRateLimiter, formRateLimit, getClientIp, rateLimitMessage} from '@lib/rate-limit';
+import {checkFormToken, issueFormToken, minimumFillMs} from '@lib/form-timing';
+import {createPersistentRateLimiter} from '@lib/persistent-rate-limit';
+import {formRateLimit, getClientIp, rateLimitMessage} from '@lib/rate-limit';
 
-const rateLimiter = createRateLimiter(formRateLimit);
+// Same purpose string as GET /api/feedback/token signs with
+const feedbackFormPurpose = 'feedback';
+
+const rateLimiter = createPersistentRateLimiter({scope: feedbackFormPurpose, ...formRateLimit});
 
 type FeedbackFormData = {
   rating: number;
@@ -11,6 +16,8 @@ type FeedbackFormData = {
   pageUrl?: string;
   pageTitle?: string;
   website?: string;
+  /** Signed "opened at" token from GET /api/feedback/token. */
+  formToken?: string;
 };
 
 function isValidEmail(email: string): boolean {
@@ -71,6 +78,25 @@ export async function POST(request: NextRequest) {
           success: false,
           errors,
           message: 'Validatie mislukt. Controleer de velden.',
+        },
+        {status: 400},
+      );
+    }
+
+    // After validation, like the contact form; too fast or forged gets the normal answer but is not stored
+    const timing = checkFormToken(feedbackFormPurpose, body.formToken);
+    if (timing === 'too-fast' || timing === 'invalid') {
+      console.warn(`spam: form timing (${timing})`);
+      return NextResponse.json(successResponse, {status: 200});
+    }
+
+    if (timing === 'expired') {
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Het formulier stond te lang open. Verstuur je feedback opnieuw.',
+          // Dated back by the minimum fill time: this person already filled in the form
+          formToken: issueFormToken(feedbackFormPurpose, Date.now() - minimumFillMs),
         },
         {status: 400},
       );
