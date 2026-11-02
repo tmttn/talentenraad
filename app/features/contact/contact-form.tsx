@@ -5,40 +5,25 @@ import {
   Suspense,
   type SyntheticEvent,
   type ChangeEvent,
+  type ReactNode,
 } from 'react';
+import Link from 'next/link';
 import {useSearchParams} from 'next/navigation';
-import {
-  CheckCircle, XCircle, Send, Loader2,
-} from 'lucide-react';
-import {Container, Grid} from '@components/ui/layout';
+import {ArrowRight, Loader2, XCircle} from 'lucide-react';
+import {SpeechBubble} from '@components/ui';
 import {HoneypotField} from '@components/ui/honeypot-field';
+import {
+  contactMessages, isValidSubject, subjectOptions, validateContact, type ContactErrors,
+} from '@lib/contact-validation';
 import {useRecaptcha} from './use-recaptcha';
 
-/**
- * Submit button using design tokens
- * - Border radius: rounded-card
- * - Transition: duration-fast
- * - Gap: gap-gap-xs
- */
-const submitButtonClassName = [
-  'w-full py-4 px-6 bg-primary-hover hover:bg-brand-primary-700 text-white font-semibold rounded-card',
-  'transition-colors duration-fast disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-gap-xs',
-  'focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2',
-].join(' ');
-
 type ContactFormProperties = {
+  titel?: string;
   showPhone?: boolean;
   showSubject?: boolean;
 };
 
-type FormErrors = {
-  name?: string;
-  email?: string;
-  phone?: string;
-  subject?: string;
-  message?: string;
-  general?: string;
-};
+type FormErrors = ContactErrors & {general?: string};
 
 type FormData = {
   name: string;
@@ -54,254 +39,92 @@ type ApiResponse = {
   errors?: FormErrors;
 };
 
-/**
- * Shared input styles using design tokens
- * - Border radius: rounded-button
- * - Transition: duration-fast
- */
-const inputBaseStyles = `
-	w-full px-4 py-3
-	border-2 border-gray-400 rounded-button
-	bg-white text-gray-900
-	placeholder:text-gray-500
-	transition-colors duration-fast
-	focus:border-primary-hover focus:ring-2 focus:ring-primary/30 focus:outline-none
-	focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-hover
-	hover:border-gray-500
-`.replaceAll(/\s+/g, ' ').trim();
+const labelClass = 'font-bold text-[15px] text-gray-900';
+const inputClass = [
+  'w-full px-3.5 py-[13px] text-[17px] text-gray-900 bg-white rounded-control',
+  'border-(length:--contour-width-sm) border-ink transition-colors',
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2',
+].join(' ');
+// Error state as on the artboard: red outline, light red fill, message under the field
+const inputErrorClass = 'border-red-700 bg-red-50';
+const errorClass = 'text-sm font-semibold text-red-700';
 
-const inputErrorStyles = 'border-red-500 focus:border-red-500 focus:ring-red-500/20';
-
-const labelStyles = 'block text-sm font-semibold text-gray-800 mb-2';
-
-// Extracted form field components to reduce complexity
-type TextFieldProps = {
+type FieldProps = {
   id: string;
-  label: string;
-  type?: 'text' | 'email' | 'tel';
-  required?: boolean;
-  placeholder: string;
-  value: string;
+  label: ReactNode;
   error?: string;
-  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+  children: (describedBy: string | undefined) => ReactNode;
 };
 
-function TextField({id, label, type = 'text', required = false, placeholder, value, error, onChange}: TextFieldProps) {
+function Field({id, label, error, className = '', children}: FieldProps) {
   return (
-    <div>
-      <label className={labelStyles} htmlFor={id}>
-        {label} {required && <span className='text-primary-hover' aria-hidden='true'>*</span>}
-        {required && <span className='sr-only'>(verplicht)</span>}
-        {!required && <span className='text-gray-500 font-normal'>(optioneel)</span>}
-      </label>
-      <input
-        type={type}
-        id={id}
-        name={id}
-        required={required}
-        aria-required={required}
-        aria-invalid={Boolean(error)}
-        aria-describedby={error ? `${id}-error` : undefined}
-        className={`${inputBaseStyles} ${error ? inputErrorStyles : ''}`}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-      />
-      {error && (
-        <p id={`${id}-error`} className='mt-1 text-sm text-red-600 font-medium' role='alert'>
-          {error}
-        </p>
-      )}
+    <div className={`flex flex-col gap-2 ${className}`}>
+      <label htmlFor={id} className={labelClass}>{label}</label>
+      {children(error ? `${id}-fout` : undefined)}
+      {error && <p id={`${id}-fout`} className={errorClass}>{error}</p>}
     </div>
   );
 }
 
-type TextAreaFieldProps = {
-  id: string;
-  label: string;
-  placeholder: string;
-  value: string;
-  error?: string;
-  onChange: (event: ChangeEvent<HTMLTextAreaElement>) => void;
-};
-
-function TextAreaField({id, label, placeholder, value, error, onChange}: TextAreaFieldProps) {
-  return (
-    <div className='mt-6'>
-      <label className={labelStyles} htmlFor={id}>
-        {label} <span className='text-primary-hover' aria-hidden='true'>*</span>
-        <span className='sr-only'>(verplicht)</span>
-      </label>
-      <textarea
-        id={id}
-        name={id}
-        required
-        aria-required='true'
-        aria-invalid={Boolean(error)}
-        aria-describedby={error ? `${id}-error` : undefined}
-        rows={5}
-        className={`${inputBaseStyles} resize-y min-h-[120px] ${error ? inputErrorStyles : ''}`}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-      />
-      {error && (
-        <p id={`${id}-error`} className='mt-1 text-sm text-red-600 font-medium' role='alert'>
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
-
-type SelectFieldProps = {
-  id: string;
-  label: string;
-  value: string;
-  error?: string;
-  options: Array<{value: string; label: string}>;
-  onChange: (event: ChangeEvent<HTMLSelectElement>) => void;
-};
-
-function SelectField({id, label, value, error, options, onChange}: SelectFieldProps) {
-  return (
-    <div className='mt-6'>
-      <label className={labelStyles} htmlFor={id}>
-        {label} <span className='text-primary-hover' aria-hidden='true'>*</span>
-        <span className='sr-only'>(verplicht)</span>
-      </label>
-      <select
-        id={id}
-        name={id}
-        required
-        aria-required='true'
-        aria-invalid={Boolean(error)}
-        aria-describedby={error ? `${id}-error` : undefined}
-        className={`${inputBaseStyles} ${error ? inputErrorStyles : ''}`}
-        value={value}
-        onChange={onChange}
-      >
-        {options.map(option => (
-          <option key={option.value} value={option.value}>{option.label}</option>
-        ))}
-      </select>
-      {error && (
-        <p id={`${id}-error`} className='mt-1 text-sm text-red-600 font-medium' role='alert'>
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
-
-const subjectOptions = [
-  {value: '', label: 'Selecteer een onderwerp'},
-  {value: 'vraag', label: 'Algemene vraag'},
-  {value: 'activiteit', label: 'Vraag over activiteit'},
-  {value: 'lidmaatschap', label: 'Lid worden'},
-  {value: 'sponsoring', label: 'Sponsoring'},
-  {value: 'anders', label: 'Anders'},
-];
-
-const validSubjectValues = new Set(['vraag', 'activiteit', 'lidmaatschap', 'sponsoring', 'anders']);
-
-// Extracted component for success message - uses rounded-modal, p-component-lg tokens
 function SuccessMessage() {
   return (
-    <section className='py-section-sm px-6 bg-gray-50'>
-      <Container size='sm' className='text-center'>
-        <div className='bg-success-600 text-white p-component-lg rounded-modal' role='alert'>
-          <CheckCircle className='h-16 w-16 mx-auto mb-4' aria-hidden='true' />
-          <h3 className='text-2xl font-bold mb-2'>Bedankt voor uw bericht!</h3>
-          <p>We nemen zo snel mogelijk contact met u op.</p>
-        </div>
-      </Container>
-    </section>
-  );
-}
-
-// Extracted component for general error message - uses rounded-button token
-function GeneralErrorMessage({message}: {message: string}) {
-  return (
-    <div className='mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-button' role='alert'>
-      <p className='text-red-800 font-medium flex items-center gap-2'>
-        <XCircle className='h-5 w-5' aria-hidden='true' />
-        {message}
-      </p>
+    <div role='status' className='pb-8'>
+      <SpeechBubble tone='green' tail='bottom' size='md'>
+        <h2 className='mb-2 font-display font-extrabold text-black text-3xl leading-tight'>Bedankt voor je bericht!</h2>
+        <p className='text-[17px] text-black'>We antwoorden zo snel mogelijk.</p>
+      </SpeechBubble>
     </div>
   );
 }
 
-// Extracted component for submit button
+function GeneralErrorMessage({message}: {message: string}) {
+  return (
+    <p className='flex items-center gap-2 p-4 rounded-control border-(length:--contour-width-sm) border-red-700 bg-red-50 font-semibold text-red-700' role='alert'>
+      <XCircle className='h-5 w-5 shrink-0' aria-hidden='true' />
+      {message}
+    </p>
+  );
+}
+
 function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
   return (
     <button
       type='submit'
       disabled={isSubmitting}
-      className={submitButtonClassName}
+      className={[
+        'inline-flex items-center gap-2.5 px-6 py-3.5 text-[17px] font-bold text-white bg-primary rounded-control',
+        'contour-sm shadow-hard-sm hover:bg-primary-hover active:translate-x-1 active:translate-y-1 active:shadow-none',
+        'disabled:opacity-60 disabled:cursor-not-allowed transition',
+        'focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2',
+      ].join(' ')}
     >
       {isSubmitting
         ? (
           <>
             <Loader2 className='animate-spin h-5 w-5' aria-hidden='true' />
-            <span>Verzenden...</span>
+            Bezig met versturen…
           </>
         )
         : (
           <>
-            <span>Verstuur bericht</span>
-            <Send className='h-5 w-5' aria-hidden='true' />
+            Verstuur je bericht
+            <ArrowRight className='h-5 w-5' strokeWidth={2.5} aria-hidden='true' />
           </>
         )}
     </button>
   );
 }
 
-// Validation functions extracted
-function validateName(name: string): string | undefined {
-  if (!name.trim()) {
-    return 'Naam is verplicht';
-  }
-
-  if (name.trim().length < 2) {
-    return 'Naam moet minstens 2 karakters bevatten';
-  }
-
-  return undefined;
-}
-
-function validateEmail(email: string): string | undefined {
-  if (!email.trim()) {
-    return 'E-mailadres is verplicht';
-  }
-
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return 'Ongeldig e-mailadres';
-  }
-
-  return undefined;
-}
-
-function validateMessage(message: string): string | undefined {
-  if (!message.trim()) {
-    return 'Bericht is verplicht';
-  }
-
-  if (message.trim().length < 10) {
-    return 'Bericht moet minstens 10 karakters bevatten';
-  }
-
-  return undefined;
-}
-
 type ContactFormInnerProperties = ContactFormProperties & {
-  defaultSubject?: string;
+  defaultSubject: string;
 };
 
 function ContactFormInner({
-  showPhone = false,
+  titel = 'Stuur ons een bericht',
+  showPhone = true,
   showSubject = true,
-  defaultSubject = '',
+  defaultSubject,
 }: Readonly<ContactFormInnerProperties>) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -317,22 +140,7 @@ function ContactFormInner({
   });
   const {executeRecaptcha} = useRecaptcha();
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {
-      name: validateName(formData.name),
-      email: validateEmail(formData.email),
-      subject: showSubject && !formData.subject ? 'Selecteer een onderwerp' : undefined,
-      message: validateMessage(formData.message),
-    };
-
-    // Remove undefined values
-    const filteredErrors = Object.fromEntries(Object.entries(newErrors).filter(([, v]) => v !== undefined)) as FormErrors;
-
-    setErrors(filteredErrors);
-    return Object.keys(filteredErrors).length === 0;
-  };
-
-  const handleInputChange = (field: keyof FormData) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (field: keyof FormData) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData(previous => ({...previous, [field]: event.target.value}));
     if (errors[field]) {
       setErrors(previous => ({...previous, [field]: undefined}));
@@ -343,16 +151,23 @@ function ContactFormInner({
     event.preventDefault();
     setStatusMessage('');
 
-    if (!validateForm()) {
-      setStatusMessage('Controleer de gemarkeerde velden.');
+    const form = event.currentTarget;
+    const found = validateContact(formData, showSubject);
+    if (Object.keys(found).length > 0) {
+      setErrors(found);
+      setStatusMessage(contactMessages.invalid);
+      // Move to the first field that needs attention, after the error state has rendered
+      requestAnimationFrame(() => {
+        form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      });
       return;
     }
 
+    setErrors({});
     setIsSubmitting(true);
-    setStatusMessage('Bericht wordt verzonden...');
+    setStatusMessage('Je bericht wordt verstuurd…');
 
     try {
-      // Get reCAPTCHA token
       const recaptchaToken = await executeRecaptcha('contact_form');
 
       const response = await fetch('/api/contact', {
@@ -366,19 +181,19 @@ function ContactFormInner({
       if (!response.ok) {
         if (data.errors) {
           setErrors(data.errors);
-        } else if (response.status === 429 && data.message) {
-          setErrors({general: data.message});
+        } else {
+          setErrors({general: data.message ?? contactMessages.failed});
         }
 
-        setStatusMessage(data.message ?? 'Er is een fout opgetreden.');
+        setStatusMessage(data.message ?? contactMessages.failed);
         return;
       }
 
       setIsSubmitted(true);
-      setStatusMessage('Bericht succesvol verzonden!');
+      setStatusMessage(contactMessages.success);
     } catch {
-      setErrors({general: 'Netwerkfout. Controleer uw internetverbinding.'});
-      setStatusMessage('Er is een fout opgetreden bij het verzenden.');
+      setErrors({general: contactMessages.network});
+      setStatusMessage(contactMessages.network);
     } finally {
       setIsSubmitting(false);
     }
@@ -389,122 +204,148 @@ function ContactFormInner({
   }
 
   return (
-    <div>
+    <form
+      onSubmit={handleSubmit}
+      noValidate
+      aria-labelledby='contact-form-titel'
+      className='bg-white rounded-panel contour shadow-hard-lg p-[clamp(24px,3.5vw,44px)] flex flex-col gap-[22px]'
+    >
       <div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
         {statusMessage}
       </div>
+      <h2 id='contact-form-titel' className='font-display font-extrabold text-black text-[clamp(28px,2.6vw,34px)] tracking-[-0.01em]'>{titel}</h2>
 
       {errors.general && <GeneralErrorMessage message={errors.general} />}
 
-      <form onSubmit={handleSubmit} className='bg-white p-component-lg rounded-modal shadow-elevated' noValidate>
-        <HoneypotField id='contact-website' value={website} onChange={setWebsite} />
-        <Grid cols={1} colsMd={2} gap='md'>
-          <TextField
-            id='name'
-            label='Naam'
-            required
-            placeholder='Uw naam'
-            value={formData.name}
-            error={errors.name}
-            onChange={handleInputChange('name')}
-          />
-          <TextField
-            id='email'
-            label='E-mail'
-            type='email'
-            required
-            placeholder='uw.email@voorbeeld.be'
-            value={formData.email}
-            error={errors.email}
-            onChange={handleInputChange('email')}
-          />
-        </Grid>
-        {showPhone && (
-          <div className='mt-6'>
-            <TextField
+      <HoneypotField id='contact-website' value={website} onChange={setWebsite} />
+
+      <div className='flex flex-wrap gap-5'>
+        <Field id='name' label='Naam' error={errors.name} className='flex-[1_1_220px] min-w-0'>
+          {describedBy => (
+            <input
+              id='name'
+              name='name'
+              type='text'
+              autoComplete='name'
+              required
+              aria-invalid={errors.name ? true : undefined}
+              aria-describedby={describedBy}
+              className={`${inputClass} ${errors.name ? inputErrorClass : ''}`}
+              value={formData.name}
+              onChange={handleInputChange('name')}
+            />
+          )}
+        </Field>
+        <Field id='email' label='E-mail' error={errors.email} className='flex-[1_1_220px] min-w-0'>
+          {describedBy => (
+            <input
+              id='email'
+              name='email'
+              type='email'
+              autoComplete='email'
+              required
+              aria-invalid={errors.email ? true : undefined}
+              aria-describedby={describedBy}
+              className={`${inputClass} ${errors.email ? inputErrorClass : ''}`}
+              value={formData.email}
+              onChange={handleInputChange('email')}
+            />
+          )}
+        </Field>
+      </div>
+
+      {showPhone && (
+        <Field id='phone' label={<>Telefoon <span className='font-medium text-gray-600'>(niet verplicht)</span></>} error={errors.phone}>
+          {describedBy => (
+            <input
               id='phone'
-              label='Telefoonnummer'
+              name='phone'
               type='tel'
-              placeholder='+32 xxx xx xx xx'
+              autoComplete='tel'
+              aria-describedby={describedBy}
+              className={`${inputClass} max-w-80`}
               value={formData.phone}
               onChange={handleInputChange('phone')}
             />
+          )}
+        </Field>
+      )}
+
+      {showSubject && (
+        <fieldset aria-describedby={errors.subject ? 'subject-fout' : undefined} className='flex flex-col gap-2.5'>
+          <legend className={`${labelClass} mb-2.5`}>Waarover gaat het?</legend>
+          <div className='flex flex-wrap gap-2.5'>
+            {subjectOptions.map((option, index) => (
+              <label
+                key={option.value}
+                className={[
+                  'inline-flex items-center gap-2 px-4 py-[9px] font-bold rounded-full contour-xs cursor-pointer transition-colors',
+                  'bg-white text-black hover:bg-brand-primary-50',
+                  'has-[:checked]:bg-black has-[:checked]:text-white',
+                  'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-focus has-[:focus-visible]:ring-offset-2',
+                ].join(' ')}
+              >
+                <input
+                  type='radio'
+                  name='subject'
+                  value={option.value}
+                  checked={formData.subject === option.value}
+                  aria-invalid={errors.subject && index === 0 ? true : undefined}
+                  onChange={handleInputChange('subject')}
+                  className='m-0 accent-primary focus:outline-none'
+                />
+                {option.label}
+              </label>
+            ))}
           </div>
-        )}
-        {showSubject && (
-          <SelectField
-            id='subject'
-            label='Onderwerp'
-            value={formData.subject}
-            error={errors.subject}
-            options={subjectOptions}
-            onChange={handleInputChange('subject')}
+          {errors.subject && <p id='subject-fout' className={errorClass}>{errors.subject}</p>}
+        </fieldset>
+      )}
+
+      <Field id='message' label='Je bericht' error={errors.message}>
+        {describedBy => (
+          <textarea
+            id='message'
+            name='message'
+            rows={6}
+            required
+            aria-invalid={errors.message ? true : undefined}
+            aria-describedby={describedBy}
+            className={`${inputClass} leading-normal resize-y ${errors.message ? inputErrorClass : ''}`}
+            value={formData.message}
+            onChange={handleInputChange('message')}
           />
         )}
-        <TextAreaField
-          id='message'
-          label='Bericht'
-          placeholder='Uw bericht...'
-          value={formData.message}
-          error={errors.message}
-          onChange={handleInputChange('message')}
-        />
-        <div className='mt-8'>
-          <SubmitButton isSubmitting={isSubmitting} />
-        </div>
-      </form>
-    </div>
+      </Field>
+
+      <div className='flex flex-wrap items-center justify-between gap-4 pt-1'>
+        <p className='flex-[1_1_260px] text-sm leading-normal text-gray-600'>
+          We gebruiken je gegevens alleen om je te antwoorden. Meer in ons{' '}
+          <Link href='/privacybeleid' className='text-primary-text underline underline-offset-2'>privacybeleid</Link>.
+        </p>
+        <SubmitButton isSubmitting={isSubmitting} />
+      </div>
+    </form>
   );
 }
 
-// Loading skeleton for Suspense fallback - uses rounded-modal, shadow-elevated, p-component-lg tokens
 function ContactFormSkeleton() {
-  return (
-    <div className='bg-white p-component-lg rounded-modal shadow-elevated animate-pulse'>
-      <Grid cols={1} colsMd={2} gap='md'>
-        <div>
-          <div className='h-4 w-16 bg-gray-200 rounded mb-2' />
-          <div className='h-12 bg-gray-200 rounded-button' />
-        </div>
-        <div>
-          <div className='h-4 w-16 bg-gray-200 rounded mb-2' />
-          <div className='h-12 bg-gray-200 rounded-button' />
-        </div>
-      </Grid>
-      <div className='mt-6'>
-        <div className='h-4 w-24 bg-gray-200 rounded mb-2' />
-        <div className='h-12 bg-gray-200 rounded-button' />
-      </div>
-      <div className='mt-6'>
-        <div className='h-4 w-16 bg-gray-200 rounded mb-2' />
-        <div className='h-32 bg-gray-200 rounded-button' />
-      </div>
-      <div className='mt-8'>
-        <div className='h-14 bg-gray-200 rounded-card' />
-      </div>
-    </div>
-  );
+  return <div aria-hidden='true' className='h-[640px] rounded-panel contour bg-gray-50 animate-pulse' />;
 }
 
-// Wrapper component that reads URL parameters
+/** Reads ?onderwerp= so links like /contact?onderwerp=activiteit preselect the subject. */
 function ContactFormWithParameters(props: Readonly<ContactFormProperties>) {
   const searchParameters = useSearchParams();
   const urlSubject = searchParameters.get('onderwerp');
-
-  // Validate that the URL param is a valid subject value
-  const defaultSubject = urlSubject && validSubjectValues.has(urlSubject) ? urlSubject : '';
+  const defaultSubject = isValidSubject(urlSubject) ? urlSubject : 'vraag';
 
   return <ContactFormInner {...props} defaultSubject={defaultSubject} />;
 }
 
-// Main exported component with Suspense boundary
 export function ContactForm(props: Readonly<ContactFormProperties>) {
-  const showPhone = props.showPhone;
-  const showSubject = props.showSubject !== false;
-
   return (
     <Suspense fallback={<ContactFormSkeleton />}>
-      <ContactFormWithParameters {...props} showPhone={showPhone} showSubject={showSubject} />
+      <ContactFormWithParameters {...props} />
     </Suspense>
   );
 }

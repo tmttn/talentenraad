@@ -93,35 +93,18 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
             Terug naar de kalender
           </Link>
 
-          <div className='flex flex-wrap items-start gap-[clamp(32px,4vw,56px)]'>
-            <article className='flex-[999_1_560px] min-w-0 flex flex-col gap-6'>
-              <div className='flex flex-wrap gap-2'>
-                <CategoryBadge category={categoryLabels[item.categorie]} variant='contour' size='sm' className='text-[13px]' />
-                {isPast && <span className='rounded-full contour-xs bg-gray-100 px-2 py-1 text-[13px] font-bold text-gray-700'>Afgelopen</span>}
-              </div>
-              <h1 className='font-display font-extrabold text-black text-[clamp(40px,5vw,64px)] leading-[0.98] tracking-[-0.02em]'>{item.titel}</h1>
-              <p className='text-gray-700 text-[clamp(18px,1.5vw,21px)] leading-normal'>{item.samenvatting}</p>
-              {item.afbeelding && (
-                // A poster is shown whole, never cropped
-                <div className='rounded-tile contour-sm overflow-hidden bg-gray-50'>
-                  <Image
-                    src={item.afbeelding.src}
-                    width={item.afbeelding.width}
-                    height={item.afbeelding.height}
-                    alt={`Affiche of foto van ${item.titel}`}
-                    sizes='(min-width: 1240px) 760px, 100vw'
-                    className='w-full h-auto max-h-[640px] object-contain'
-                  />
-                </div>
-              )}
-              {item.html.trim() && (
-                <div
-                  className='max-w-[720px] prose prose-lg prose-p:text-gray-700 prose-headings:font-display prose-headings:text-black prose-a:text-primary-text'
-                  dangerouslySetInnerHTML={{__html: item.html}}
-                />
-              )}
-            </article>
+          {/* Title and intro span the full width; on a phone the side panel follows them directly */}
+          <header className='max-w-[820px] flex flex-col gap-[18px]'>
+            <div className='flex flex-wrap gap-2'>
+              <CategoryBadge category={categoryLabels[item.categorie]} variant='contour' size='sm' className='text-[13px]' />
+              {isPast && <span className='rounded-full contour-xs bg-gray-100 px-2 py-1 text-[13px] font-bold text-gray-700'>Afgelopen</span>}
+            </div>
+            <h1 className='font-display font-extrabold text-black text-[clamp(40px,5vw,64px)] leading-[0.98] tracking-[-0.02em]'>{item.titel}</h1>
+            <p className='text-gray-700 text-[clamp(18px,1.5vw,21px)] leading-normal'>{item.samenvatting}</p>
+          </header>
 
+          {/* The panel comes first in the HTML (and on a phone); row-reverse puts it on the right on wide screens */}
+          <div className='flex flex-row-reverse flex-wrap items-start gap-[clamp(32px,4vw,56px)]'>
             <aside className='flex-[1_1_340px] min-w-0 pt-3.5' aria-label='Praktisch'>
               <SpeechBubble size='md'>
                 <div className='flex flex-col gap-[22px]'>
@@ -180,6 +163,28 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
                 </div>
               </SpeechBubble>
             </aside>
+
+            <article className='flex-[999_1_560px] min-w-0 flex flex-col gap-6'>
+              {item.afbeelding && (
+                // A poster is shown whole, never cropped
+                <div className='rounded-tile contour-sm overflow-hidden bg-gray-50'>
+                  <Image
+                    src={item.afbeelding.src}
+                    width={item.afbeelding.width}
+                    height={item.afbeelding.height}
+                    alt={`Affiche of foto van ${item.titel}`}
+                    sizes='(min-width: 1240px) 760px, 100vw'
+                    className='w-full h-auto max-h-[640px] object-contain'
+                  />
+                </div>
+              )}
+              {item.html.trim() && (
+                <div
+                  className='max-w-[720px] prose prose-lg prose-p:text-gray-700 prose-headings:font-display prose-headings:text-black prose-a:text-primary-text'
+                  dangerouslySetInnerHTML={{__html: item.html}}
+                />
+              )}
+            </article>
           </div>
         </div>
       </section>

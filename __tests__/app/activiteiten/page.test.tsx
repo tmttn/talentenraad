@@ -102,6 +102,15 @@ describe('ActivityDetailPage', () => {
     expect(screen.queryByText('Oud feest')).not.toBeInTheDocument();
   });
 
+  it('puts title and intro first, then the side panel before the text, so phones see it right away', async () => {
+    getActiviteit.mockReturnValue(makeActiviteit({datum: '2025-06-15'}));
+    vi.mocked(content.getActiviteiten).mockReturnValue([]);
+    const {container} = await render_('voorbeeldfeest');
+    const order = [...container.querySelectorAll('h1, aside, .prose')].map(element => element.tagName === 'ASIDE' ? 'aside' : (element.tagName === 'H1' ? 'h1' : 'tekst'));
+    expect(order).toEqual(['h1', 'aside', 'tekst']);
+    expect(container.querySelector('aside')!.parentElement).toHaveClass('flex-row-reverse');
+  });
+
   it('redirects an alias to the canonical url', async () => {
     getActiviteit.mockReturnValue(makeActiviteit({slug: 'echte-slug'}));
     await expect(render_('-oude-slug')).rejects.toThrow('NEXT_REDIRECT:/activiteiten/echte-slug');

@@ -25,6 +25,7 @@ export const makeNieuws = (overrides: Partial<NieuwsItem> = {}): NieuwsItem => (
   concept: false,
   slug: 'voorbeeldbericht',
   html: '<p>Fictieve inhoud van het bericht</p>',
+  segmenten: [{kind: 'html', html: '<p>Fictieve inhoud van het bericht</p>'}],
   ...overrides,
 });
 

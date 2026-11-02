@@ -35,7 +35,7 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 - Editor: activiteiten hebben een optioneel `programma` (rijen uur/titel/info, als JSON in één verborgen veld). Pagina's en juridische teksten zijn nog niet bewerkbaar; een expliciete status 'uitgeschakeld' voor gebruikers ontbreekt (intrekken = gebruiker verwijderen).
 - Editor: tree-entries van GitHub worden niet op vorm gecontroleerd; fast-forward-detectie leunt op de foutmelding van GitHub (faalt veilig); de recursieve tree wordt per commit voor de hele repo opgehaald.
 - Editor: de eerste opslag van een bestaand item normaliseert de YAML (aanhalingstekens, emoji-escapes, lege `aliassen`) en geeft dus een grotere diff; verwijderen faalt met een melding als een itemmap een bestand buiten de whitelist bevat.
-- Contourstijl (nov 2026): homepagina, kalender, activiteit, nieuws en over ons. De hero toont cirkels in logokleuren tot er een sfeerfoto is (nog geen `afbeelding`-veld op pagina's). Contact, sponsors, nieuwsdetail en de juridische teksten gebruiken nog de oude stijl; `Typography` nog niet `font-display`.
+- Contourstijl (nov 2026): homepagina, kalender, activiteit, nieuws(bericht), over ons en contact. De hero toont cirkels in logokleuren tot er een sfeerfoto is (nog geen `afbeelding`-veld op pagina's). Sponsors en de juridische teksten gebruiken nog de oude stijl; `Typography` nog niet `font-display`. Foutmeldingen van het contactformulier staan in `app/lib/contact-validation.ts` (formulier en API delen ze).
 - Gebruikers-API: dubbele e-mail alleen exact (hoofdlettergevoelig) gecontroleerd; een admin kan zichzelf degraderen.
 
 ## Pre-commit Checklist (MANDATORY)

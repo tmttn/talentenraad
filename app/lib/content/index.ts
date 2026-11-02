@@ -33,4 +33,5 @@ export type {
   Tekst,
 } from './reader';
 export type {ContentImage} from './files';
+export type {MarkdownSegment} from './markdown';
 export type {PaginaNaam, Site} from './schemas';

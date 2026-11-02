@@ -75,9 +75,8 @@ describe('paginaSchemas', () => {
     }).archief.titel).toBe('c');
     expect(paginaSchemas.contact.parse({
       ...basis,
-      formulier: {titel: 'a', tekst: 'b'},
-      infokaart: {titel: 'c'},
-    }).formulier.tekst).toBe('b');
+      formulier: {titel: 'a'},
+    }).formulier.titel).toBe('a');
     expect(paginaSchemas['over-ons'].parse({
       ...basis,
       infokaart: {titel: 'i'},

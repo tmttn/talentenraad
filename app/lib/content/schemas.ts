@@ -120,7 +120,6 @@ const basisPagina = {
 
 const titelTekst = z.object({titel: z.string(), tekst: z.string()});
 const titelOndertitel = z.object({titel: z.string(), ondertitel: z.string()});
-const infokaart = z.object({titel: z.string()});
 
 export const sponsorNiveaus = ['goud', 'zilver', 'brons', 'partner'] as const;
 
@@ -141,8 +140,7 @@ export const paginaSchemas = {
   nieuws: z.object(basisPagina),
   contact: z.object({
     ...basisPagina,
-    formulier: titelTekst,
-    infokaart,
+    formulier: z.object({titel: z.string()}),
   }),
   'over-ons': z.object({
     ...basisPagina,

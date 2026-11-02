@@ -54,7 +54,7 @@ export function MarkdownField({
         htmlFor={name}
         required={required}
         error={error}
-        hint='Opmaak: **vet**, *schuin*, - lijst, [link](https://…)'
+        hint='Opmaak: **vet**, *schuin*, - lijst, [link](https://…), > citaat (wordt een spraakballon in nieuwsberichten)'
       >
         <Textarea
           id={name}
