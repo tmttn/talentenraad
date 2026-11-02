@@ -65,6 +65,13 @@ const arrowSizes = {
   lg: 'h-5 w-5',
 };
 
+/** Classes of a CtaButton, for a real `<button>` that should look the same (retry, go back). */
+export function ctaButtonClassName(variant: NonNullable<CtaButtonProperties['variant']> = 'primary', size: NonNullable<CtaButtonProperties['size']> = 'md') {
+  // Uses rounded-button token for consistent border radius; contour variants use the rounder radius-control
+  const shape = isContourVariant(variant) ? 'font-bold rounded-control' : 'font-semibold rounded-button';
+  return `cta-button inline-flex items-center justify-center ${shape} focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantStyles[variant]} ${sizeStyles[size]}`;
+}
+
 export function CtaButton({
   text = 'Klik hier',
   href = '#',
@@ -72,9 +79,7 @@ export function CtaButton({
   size = 'md',
   showArrow = true,
 }: Readonly<CtaButtonProperties>) {
-  // Uses rounded-button token for consistent border radius; contour variants use the rounder radius-control
-  const shape = isContourVariant(variant) ? 'font-bold rounded-control' : 'font-semibold rounded-button';
-  const baseClasses = `cta-button inline-flex items-center justify-center ${shape} focus:outline-none focus:ring-2 focus:ring-offset-2 ${variantStyles[variant]} ${sizeStyles[size]}`;
+  const baseClasses = ctaButtonClassName(variant, size);
 
   return (
     <>

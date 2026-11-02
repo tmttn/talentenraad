@@ -1,47 +1,20 @@
 /**
  * UI Components - Main Export
  *
- * This barrel file exports all UI components for easy importing.
+ * Contour style components for the public site, and the form and dialog
+ * components the admin and editor still use.
  *
  * Usage:
- * import { Container, Section, Stack, Input, Modal } from '@/app/components/ui'
+ * import {Card, SpeechBubble, FormField, Input} from '@components/ui'
  */
 
-// ===========================================
-// NEW DESIGN SYSTEM COMPONENTS
-// ===========================================
-
-// Layout Components
+// Form Components (admin, editor)
 export {
-  Container, Section, Stack, Cluster, Grid, Divider,
-} from './layout';
-
-// Form Components
-export {
-  FormField, Input, Textarea, Select, Checkbox, RadioGroup, Switch,
+  FormField, Input, Textarea, Select, Switch,
 } from './form';
 
-// Interactive Components
-export {
-  Modal, Tabs, Accordion, Tooltip,
-} from './interactive';
-
-// Feedback Components
-export {VisuallyHidden, Spinner} from './feedback';
-
-// Decorative Components
-export {DecorativeBlob, GradientBackground} from './decorative';
-
-// ===========================================
-// EXISTING COMPONENTS (to be migrated)
-// ===========================================
-
-// Animated components
-export {AnimatedLink, linkStyles} from './animated-link';
-export type {AnimatedLinkProperties} from './animated-link';
-
-export {AnimatedButton, buttonStyles} from './animated-button';
-export type {AnimatedButtonProperties} from './animated-button';
+// Dialog (feedback form)
+export {Modal} from './interactive';
 
 // Card components
 export {Card} from './card';
@@ -59,4 +32,3 @@ export type {SpeechBubbleProperties} from './speech-bubble';
 
 // Calendar components
 export {AddToCalendarButton} from './add-to-calendar-button';
-

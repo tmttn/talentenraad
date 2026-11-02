@@ -2,8 +2,6 @@ import {render, screen, fireEvent} from '@testing-library/react';
 import {
   ErrorPage,
   NotFoundPage,
-  ForbiddenPage,
-  UnauthorizedPage,
   ServerErrorPage,
   AdminErrorPage,
 } from '../../app/components/error-pages';
@@ -92,15 +90,11 @@ describe('ErrorPage', () => {
     expect(mockRetry).toHaveBeenCalledTimes(1);
   });
 
-  it('shows search button when showSearchButton is true', () => {
-    render(<ErrorPage
-      code='404'
-      title='Test'
-      description='Test'
-      showSearchButton
-    />);
-
-    expect(screen.getByRole('link', {name: /zoeken/i})).toBeInTheDocument();
+  it('uses the contour style: a speech bubble and contour buttons', () => {
+    render(<ErrorPage code='404' title='Test' description='Test' />);
+    expect(screen.getByRole('heading', {level: 1}).closest('.contour')).not.toBeNull();
+    expect(screen.getByRole('link', {name: /Naar home/})).toHaveClass('contour-sm', 'rounded-control');
+    expect(screen.getByRole('button', {name: /Ga terug/})).toHaveClass('contour-sm');
   });
 
   it('renders contact link', () => {
@@ -120,25 +114,7 @@ describe('NotFoundPage', () => {
 
     expect(screen.getByText('Foutcode 404')).toBeInTheDocument();
     expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Oeps, verdwaald!');
-    expect(screen.getByRole('link', {name: /zoeken/i})).toBeInTheDocument();
-  });
-});
-
-describe('ForbiddenPage', () => {
-  it('renders 403 page with correct content', () => {
-    render(<ForbiddenPage />);
-
-    expect(screen.getByText('Foutcode 403')).toBeInTheDocument();
-    expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Hier mag je niet komen');
-  });
-});
-
-describe('UnauthorizedPage', () => {
-  it('renders 401 page with correct content', () => {
-    render(<UnauthorizedPage />);
-
-    expect(screen.getByText('Foutcode 401')).toBeInTheDocument();
-    expect(screen.getByRole('heading', {level: 1})).toHaveTextContent('Sleutel vergeten?');
+    expect(screen.getByRole('link', {name: /Naar home/})).toHaveAttribute('href', '/');
   });
 });
 
