@@ -25,7 +25,7 @@ describe('ContactForm', () => {
   });
 
   it('labels every field in the je-form, with the phone visibly optional', () => {
-    render(<ContactForm action={action} />);
+    render(<ContactForm formToken='123.token' action={action} />);
     expect(screen.getByRole('heading', {name: 'Stuur ons een bericht'})).toBeInTheDocument();
     expect(screen.getByLabelText('Naam')).toHaveAttribute('autocomplete', 'name');
     expect(screen.getByLabelText('E-mail')).toHaveAttribute('type', 'email');
@@ -34,7 +34,7 @@ describe('ContactForm', () => {
   });
 
   it('offers the subjects as radio pills, the general question chosen by default', () => {
-    render(<ContactForm action={action} />);
+    render(<ContactForm formToken='123.token' action={action} />);
     const group = screen.getByRole('group', {name: 'Waarover gaat het?'});
     const radios = within(group).getAllByRole('radio');
     expect(radios.map(radio => radio.closest('label')?.textContent)).toEqual(['Algemene vraag', 'Een activiteit', 'Lid worden', 'Sponsoring', 'Iets anders']);
@@ -46,14 +46,14 @@ describe('ContactForm', () => {
   });
 
   it('can leave out the subject and the phone', () => {
-    render(<ContactForm action={action} showSubject={false} showPhone={false} />);
+    render(<ContactForm formToken='123.token' action={action} showSubject={false} showPhone={false} />);
     expect(screen.queryByRole('group', {name: 'Waarover gaat het?'})).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/Telefoon/)).not.toBeInTheDocument();
   });
 
   describe('validation', () => {
     it('shows each message under its field, marks it and does not send', async () => {
-      render(<ContactForm action={action} />);
+      render(<ContactForm formToken='123.token' action={action} />);
       submit();
 
       expect(await screen.findByText('Vul je naam in.')).toBeInTheDocument();
@@ -67,14 +67,14 @@ describe('ContactForm', () => {
     });
 
     it('asks for a complete e-mail address, as on the artboard', async () => {
-      render(<ContactForm action={action} />);
+      render(<ContactForm formToken='123.token' action={action} />);
       fill({email: 'lies.peeters@'});
       submit();
       expect(await screen.findByText('Vul een volledig e-mailadres in, bv. naam@voorbeeld.be')).toBeInTheDocument();
     });
 
     it('asks for a full name and a longer message', async () => {
-      render(<ContactForm action={action} />);
+      render(<ContactForm formToken='123.token' action={action} />);
       fill({naam: 'L', bericht: 'Kort'});
       submit();
       expect(await screen.findByText('Vul je volledige naam in.')).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe('ContactForm', () => {
     });
 
     it('clears a message when you type in the field', async () => {
-      render(<ContactForm action={action} />);
+      render(<ContactForm formToken='123.token' action={action} />);
       submit();
       await screen.findByText('Vul je naam in.');
       fireEvent.change(screen.getByLabelText('Naam'), {target: {value: 'Lies'}});
@@ -92,14 +92,14 @@ describe('ContactForm', () => {
   });
 
   it('preselects the subject it is given', () => {
-    render(<ContactForm action={action} defaultSubject='activiteit' />);
+    render(<ContactForm formToken='123.token' action={action} defaultSubject='activiteit' />);
     expect(screen.getByRole('radio', {name: 'Een activiteit'})).toBeChecked();
   });
 
   describe('sending', () => {
     it('sends the fields with the chosen subject and thanks you', async () => {
       action.mockResolvedValue({status: 'sent'});
-      render(<ContactForm action={action} />);
+      render(<ContactForm formToken='123.token' action={action} />);
       fill();
       fireEvent.change(screen.getByLabelText('Telefoon (niet verplicht)'), {target: {value: '0470 12 34 56'}});
       fireEvent.click(screen.getByRole('radio', {name: 'Lid worden'}));
@@ -108,7 +108,7 @@ describe('ContactForm', () => {
       expect(await screen.findByRole('heading', {name: 'Bedankt voor je bericht!'})).toBeInTheDocument();
       const data = action.mock.calls[0][1];
       expect(Object.fromEntries(data)).toMatchObject({
-        name: 'Lies Peeters', email: 'lies@voorbeeld.be', phone: '0470 12 34 56', subject: 'lidmaatschap', website: '', recaptchaToken: '',
+        name: 'Lies Peeters', email: 'lies@voorbeeld.be', phone: '0470 12 34 56', subject: 'lidmaatschap', website: '', formToken: '123.token',
       });
     });
 
@@ -117,7 +117,7 @@ describe('ContactForm', () => {
       action.mockReturnValue(new Promise(r => {
         resolve = r;
       }));
-      render(<ContactForm action={action} />);
+      render(<ContactForm formToken='123.token' action={action} />);
       fill();
       submit();
       expect(await screen.findByRole('button', {name: /Bezig met versturen/})).toBeDisabled();
@@ -132,7 +132,7 @@ describe('ContactForm', () => {
         errors: {email: 'Vul een volledig e-mailadres in, bv. naam@voorbeeld.be'},
         values: {name: 'Lies Peeters', email: 'lies@voorbeeld', phone: '', subject: 'sponsoring', message: 'Een bericht dat lang genoeg is.'},
       });
-      render(<ContactForm action={action} />);
+      render(<ContactForm formToken='123.token' action={action} />);
       fill({email: 'lies@voorbeeld.be'});
       submit();
       expect(await screen.findByText('Vul een volledig e-mailadres in, bv. naam@voorbeeld.be')).toBeInTheDocument();
@@ -149,7 +149,7 @@ describe('ContactForm', () => {
     it('shows a message for the whole form, such as the rate limit', async () => {
       const message = 'Te veel berichten in korte tijd. Probeer het over enkele minuten opnieuw.';
       action.mockResolvedValue({status: 'error', message, values: {name: 'Lies Peeters', email: 'lies@voorbeeld.be', phone: '', subject: 'vraag', message: 'Een bericht dat lang genoeg is.'}});
-      render(<ContactForm action={action} />);
+      render(<ContactForm formToken='123.token' action={action} />);
       fill();
       submit();
       await waitFor(() => {
@@ -158,7 +158,7 @@ describe('ContactForm', () => {
     });
 
     it('has a hidden, unfocusable honeypot field', () => {
-      const {container} = render(<ContactForm action={action} />);
+      const {container} = render(<ContactForm formToken='123.token' action={action} />);
       const honeypot = container.querySelector<HTMLInputElement>('input[name="website"]')!;
       expect(honeypot).toHaveAttribute('tabindex', '-1');
       expect(honeypot.closest('[aria-hidden="true"]')).not.toBeNull();

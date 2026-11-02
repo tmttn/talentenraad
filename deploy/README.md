@@ -26,9 +26,9 @@ Zie `.env.example` voor de volledige lijst met uitleg. Verplicht in productie (d
 - `ADMIN_EMAILS`: komma-gescheiden adressen die altijd admin zijn.
 - `DATABASE_PATH`: in de container `/data/talentenraad.db`.
 
-Optioneel: `GITHUB_CONTENT_TOKEN` (content-editor, zie hieronder), `ADMIN_NOTIFICATION_EMAIL`, `RECAPTCHA_SECRET_KEY` (runtime, in `.env`), `RECAPTCHA_PROJECT_ID`.
+Optioneel: `GITHUB_CONTENT_TOKEN` (content-editor, zie hieronder), `ADMIN_NOTIFICATION_EMAIL`.
 
-De reCAPTCHA site key (`NEXT_PUBLIC_RECAPTCHA_SITE_KEY`) wordt bij het bouwen in de code ingebakken. Zet hem als GitHub-repovariabele (geen secret) `RECAPTCHA_SITE_KEY`; leeg betekent reCAPTCHA uit.
+Het contactformulier gebruikt geen reCAPTCHA meer: honeypot, een ondertekende tijdscontrole (met `AUTH_SECRET`) en een rate limit in SQLite. Oude `RECAPTCHA_*`-regels in `/opt/talentenraad/.env` en de repovariabele `RECAPTCHA_SITE_KEY` mogen weg.
 
 ## Token voor de content-editor
 

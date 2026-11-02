@@ -24,7 +24,7 @@ export const isValidSubject = (value: string | undefined | null): value is strin
 export const contactMessages = {
   success: 'Bedankt voor je bericht! We antwoorden zo snel mogelijk.',
   invalid: 'Er klopt nog iets niet. Kijk de rode velden na.',
-  recaptcha: 'We konden niet nagaan of je bericht van een mens komt. Probeer het opnieuw.',
+  expired: 'Het formulier stond te lang open. Kijk je bericht na en verstuur het opnieuw.',
   network: 'Je bericht is niet verstuurd. Kijk je internetverbinding na en probeer het opnieuw.',
   failed: 'Er ging iets mis bij het versturen. Probeer het later opnieuw.',
 };

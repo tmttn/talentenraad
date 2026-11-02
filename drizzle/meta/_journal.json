@@ -15,6 +15,13 @@
       "when": 1793533025294,
       "tag": "0001_strange_toxin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1793611403664,
+      "tag": "0002_rate_limit_hits",
+      "breakpoints": true
     }
   ]
 }

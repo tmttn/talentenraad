@@ -138,3 +138,16 @@ export type NewFeedback = typeof feedback.$inferInsert;
 
 // Re-export shared types for convenience
 export type {SeasonalDecorationsConfig} from '../types';
+
+// Rate limit hits for public forms, so the limit survives a restart. The key is an HMAC of the
+// client IP (never the IP itself); rows older than the window are deleted on every check.
+export const rateLimitHits = sqliteTable('rate_limit_hits', {
+  id: id(),
+  scope: text('scope').notNull(),
+  keyHash: text('key_hash').notNull(),
+  hitAt: integer('hit_at', {mode: 'timestamp_ms'}).notNull(),
+}, table => [
+  index('rate_limit_hits_scope_key_hit_at_idx').on(table.scope, table.keyHash, table.hitAt),
+  index('rate_limit_hits_hit_at_idx').on(table.hitAt),
+]);
+

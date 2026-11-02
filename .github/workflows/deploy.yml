@@ -62,7 +62,6 @@ jobs:
             ${{ env.IMAGE }}:${{ steps.meta.outputs.tag }}
           build-args: |
             BUILD_DATE=${{ steps.meta.outputs.build_date }}
-            NEXT_PUBLIC_RECAPTCHA_SITE_KEY=${{ vars.RECAPTCHA_SITE_KEY }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

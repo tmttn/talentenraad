@@ -1,11 +1,15 @@
 import {db, submissions} from '@lib/db';
 import {sendContactNotification} from '@lib/email/messages';
-import {verifyRecaptcha} from '@lib/recaptcha';
-import {createRateLimiter, formRateLimit} from '@lib/rate-limit';
+import {checkFormToken} from '@lib/form-timing';
+import {createPersistentRateLimiter} from '@lib/persistent-rate-limit';
+import {formRateLimit} from '@lib/rate-limit';
 import {isValidSubject, validateContact, type ContactErrors, type ContactFields} from '@lib/contact-validation';
 
+export const contactFormPurpose = 'contact';
+
 export type ContactInput = ContactFields & {
-  recaptchaToken?: string | null;
+  /** Signed "shown at" token from the page (see form-timing). */
+  formToken?: string | null;
   /** Honeypot: hidden from people, filled in by bots. */
   website?: string;
 };
@@ -14,10 +18,10 @@ export type ContactResult =
   | {status: 'sent'}
   | {status: 'invalid'; errors: ContactErrors}
   | {status: 'limited'}
-  | {status: 'recaptcha'}
+  | {status: 'expired'}
   | {status: 'failed'};
 
-const rateLimiter = createRateLimiter(formRateLimit);
+const rateLimiter = createPersistentRateLimiter({scope: contactFormPurpose, ...formRateLimit});
 
 function sanitizeInput(input: string): string {
   return input
@@ -30,10 +34,10 @@ function sanitizeInput(input: string): string {
 
 /**
  * Handles one contact form submission: spam checks, validation, storing it and mailing the board.
- * The server action calls this; the order of the checks is the same as the old /api/contact route.
+ * Spam (honeypot filled in, sent faster than a person can type, or a forged token) gets the same
+ * answer as a real message, so a bot learns nothing; it is logged without its contents.
  */
 export async function submitContact(input: ContactInput, clientIp: string): Promise<ContactResult> {
-  // Honeypot: pretend it worked, store nothing
   if (typeof input.website === 'string' && input.website.trim() !== '') {
     console.warn('spam: honeypot');
     return {status: 'sent'};
@@ -48,13 +52,15 @@ export async function submitContact(input: ContactInput, clientIp: string): Prom
     return {status: 'invalid', errors};
   }
 
-  // Without JavaScript (or without a site key) there is no token; the honeypot and rate limit still apply
-  if (input.recaptchaToken) {
-    const recaptchaResult = await verifyRecaptcha(input.recaptchaToken);
-    if (!recaptchaResult.success) {
-      console.warn('reCAPTCHA verification failed:', recaptchaResult.error);
-      return {status: 'recaptcha'};
-    }
+  // After validation, so a person who sends an empty form quickly still sees what is missing
+  const timing = checkFormToken(contactFormPurpose, input.formToken);
+  if (timing === 'too-fast' || timing === 'invalid') {
+    console.warn(`spam: form timing (${timing})`);
+    return {status: 'sent'};
+  }
+
+  if (timing === 'expired') {
+    return {status: 'expired'};
   }
 
   const data = {

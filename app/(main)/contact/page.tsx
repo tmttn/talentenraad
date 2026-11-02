@@ -6,6 +6,8 @@ import {LogoStripe} from '@components/layout/contour-parts';
 import {ContactForm} from '@features/contact/contact-form';
 import {content} from '@lib/content';
 import {isValidSubject} from '@lib/contact-validation';
+import {contactFormPurpose} from '@lib/contact-submit';
+import {issueFormToken} from '@lib/form-timing';
 import {generateMetadata as generateSeoMetadata} from '@lib/seo';
 
 export function generateMetadata(): Metadata {
@@ -60,7 +62,7 @@ export default async function Page({searchParams}: Readonly<PageProperties>) {
           </div>
 
           <div className='flex-[2_1_520px] min-w-0'>
-            <ContactForm titel={pagina.formulier.titel} defaultSubject={defaultSubject} />
+            <ContactForm titel={pagina.formulier.titel} defaultSubject={defaultSubject} formToken={issueFormToken(contactFormPurpose)} />
           </div>
         </div>
       </section>

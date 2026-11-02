@@ -3,6 +3,7 @@ import {content} from '@lib/content';
 import * as paginas from '../../fixtures/paginas';
 import {fixtureSite} from '../../fixtures/site';
 import ContactPage, {generateMetadata} from '../../../app/(main)/contact/page';
+import {checkFormToken} from '@lib/form-timing';
 import {expectInOrder} from './helpers';
 
 vi.mock('@lib/content', () => ({content: {getPagina: vi.fn(), getSite: vi.fn()}}));
@@ -12,8 +13,12 @@ vi.mock('@components/layout/page-with-announcements', () => ({
 }));
 
 vi.mock('@features/contact/contact-form', () => ({
-  ContactForm: (p: {titel?: string; defaultSubject?: string}) => <form data-testid='form' data-subject={p.defaultSubject ?? ''}>FORMULIER {p.titel}</form>,
+  ContactForm: (p: {titel?: string; defaultSubject?: string; formToken: string}) => (
+    <form data-testid='form' data-subject={p.defaultSubject ?? ''} data-token={p.formToken}>FORMULIER {p.titel}</form>
+  ),
 }));
+
+vi.stubEnv('AUTH_SECRET', 'x'.repeat(40));
 
 describe('Contact page', () => {
   beforeEach(() => {
@@ -44,6 +49,13 @@ describe('Contact page', () => {
     unmount();
     render(await ContactPage({searchParams: Promise.resolve({onderwerp: 'hack'})}));
     expect(screen.getByTestId('form')).toHaveAttribute('data-subject', '');
+  });
+
+  it('gives the form a timing token signed for the contact form, issued now', async () => {
+    render(await ContactPage({searchParams: Promise.resolve({})}));
+    const token = screen.getByTestId('form').dataset.token;
+    expect(checkFormToken('contact', token)).toBe('too-fast');
+    expect(checkFormToken('contact', token, Date.now() + 5000)).toBe('ok');
   });
 
   it('generates metadata from the page', () => {
