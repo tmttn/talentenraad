@@ -1,4 +1,4 @@
-import {notFound, permanentRedirect} from 'next/navigation';
+import {notFound} from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import {ArrowLeft} from 'lucide-react';
@@ -22,6 +22,10 @@ function formatFullDate(datum: string) {
   });
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
+
+// Only real slugs are rendered: old addresses (aliassen) redirect before routing (next.config.js), and any
+// other slug gets the 404 rendered on the server, also without JavaScript
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return content.getNieuws().map(item => ({slug: item.slug}));
@@ -55,10 +59,6 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
 
   if (!item) {
     notFound();
-  }
-
-  if (item.slug !== slug) {
-    permanentRedirect(`/nieuws/${item.slug}`);
   }
 
   const meer = content.getNieuws()

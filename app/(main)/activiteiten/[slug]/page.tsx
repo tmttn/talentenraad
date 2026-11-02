@@ -1,4 +1,4 @@
-import {notFound, permanentRedirect} from 'next/navigation';
+import {notFound} from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import {ArrowLeft, MapPin} from 'lucide-react';
@@ -19,6 +19,10 @@ import {
 } from '@lib/seo';
 import {content} from '@lib/content';
 import {todayString} from '@lib/dates';
+
+// Only real slugs are rendered: old addresses (aliassen) redirect before routing (next.config.js), and any
+// other slug gets the 404 rendered on the server, also without JavaScript
+export const dynamicParams = false;
 
 export function generateStaticParams() {
   return content.getActiviteiten().map(item => ({slug: item.slug}));
@@ -54,10 +58,6 @@ export default async function ActivityDetailPage({params}: Readonly<PageProperti
 
   if (!item) {
     notFound();
-  }
-
-  if (item.slug !== slug) {
-    permanentRedirect(`/activiteiten/${item.slug}`);
   }
 
   const today = todayString();

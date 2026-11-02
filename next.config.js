@@ -1,4 +1,6 @@
+const path = require('node:path');
 const packageJson = require('./package.json');
+const {contentRedirects} = require('./scripts/content-redirects.js');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -50,6 +52,10 @@ nextConfig.headers = async () => [
     ],
   },
 ];
+
+// Old addresses of activities and news (`aliassen` in content/) redirect permanently (308) to the current slug.
+// Read at build time; the detail pages only render known slugs (dynamicParams = false).
+nextConfig.redirects = async () => contentRedirects(path.join(__dirname, 'content'));
 
 // Expose version to client
 nextConfig.env = {
