@@ -1,22 +1,23 @@
 ---
-titel: Onze Sponsors
+titel: Onze sponsors
 beschrijving: Met dank aan onze sponsors en partners die de Talentenraad ondersteunen.
 hero:
-  titel: Onze Sponsors
+  titel: Onze sponsors
   ondertitel: Met dank aan onze sponsors en partners die de Talentenraad ondersteunen.
 cta:
-  titel: Word sponsor!
+  titel: Word sponsor
   tekst: >-
-    Wilt u de Talentenraad ondersteunen en zichtbaarheid krijgen bij onze
-    schoolgemeenschap? Neem contact met ons op om de mogelijkheden te bespreken.
+    Wil je de Talentenraad steunen en zichtbaar zijn bij onze
+    schoolgemeenschap? Laat het ons weten, dan bekijken we samen de
+    mogelijkheden.
   knoppen:
     - tekst: Neem contact op
-      link: /contact
+      link: /contact?onderwerp=sponsoring
 sponsors: []
 legeTekst:
-  goud: Nog geen gouden sponsors. Interesse? Neem contact met ons op!
-  zilver: Nog geen zilveren sponsors. Interesse? Neem contact met ons op!
-  brons: Nog geen bronzen sponsors. Interesse? Neem contact met ons op!
-  partner: Nog geen partners. Interesse? Neem contact met ons op!
+  goud: Nog geen gouden sponsors. Wil jij de eerste zijn?
+  zilver: Nog geen zilveren sponsors.
+  brons: Nog geen bronzen sponsors.
+  partner: Nog geen partners. Werk je graag met ons samen? Laat het weten.
 ---
 

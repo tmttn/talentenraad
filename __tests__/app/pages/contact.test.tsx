@@ -12,7 +12,7 @@ vi.mock('@components/layout/page-with-announcements', () => ({
 }));
 
 vi.mock('@features/contact/contact-form', () => ({
-  ContactForm: (p: {titel?: string}) => <form data-testid='form'>FORMULIER {p.titel}</form>,
+  ContactForm: (p: {titel?: string; defaultSubject?: string}) => <form data-testid='form' data-subject={p.defaultSubject ?? ''}>FORMULIER {p.titel}</form>,
 }));
 
 describe('Contact page', () => {
@@ -21,8 +21,8 @@ describe('Contact page', () => {
     vi.mocked(content.getSite).mockReturnValue(fixtureSite);
   });
 
-  it('renders intro, the two ways to reach us and the form', () => {
-    const {container} = render(<ContactPage />);
+  it('renders intro, the two ways to reach us and the form', async () => {
+    const {container} = render(await ContactPage({searchParams: Promise.resolve({})}));
     expectInOrder(container, [
       'Hero titel contact', 'Hero ondertitel contact',
       'Liever mailen?', 'info@voorbeeld.test',
@@ -32,10 +32,18 @@ describe('Contact page', () => {
     ]);
   });
 
-  it('links the e-mail address and the membership page', () => {
-    render(<ContactPage />);
+  it('links the e-mail address and the membership page', async () => {
+    render(await ContactPage({searchParams: Promise.resolve({})}));
     expect(screen.getByRole('link', {name: 'info@voorbeeld.test'})).toHaveAttribute('href', 'mailto:info@voorbeeld.test');
     expect(screen.getByRole('link', {name: 'Wil je lid worden? Zo werkt het'})).toHaveAttribute('href', '/over-ons');
+  });
+
+  it('passes a valid ?onderwerp= to the form and ignores others', async () => {
+    const {unmount} = render(await ContactPage({searchParams: Promise.resolve({onderwerp: 'sponsoring'})}));
+    expect(screen.getByTestId('form')).toHaveAttribute('data-subject', 'sponsoring');
+    unmount();
+    render(await ContactPage({searchParams: Promise.resolve({onderwerp: 'hack'})}));
+    expect(screen.getByTestId('form')).toHaveAttribute('data-subject', '');
   });
 
   it('generates metadata from the page', () => {

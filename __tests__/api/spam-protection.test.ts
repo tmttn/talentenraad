@@ -19,7 +19,7 @@ vi.mock('@lib/db', async () => {
 });
 
 const {submissions, feedback} = await import('@lib/db/schema');
-const contact = await import('../../app/api/contact/route');
+const {submitContact} = await import('@lib/contact-submit');
 const feedbackRoute = await import('../../app/api/feedback/route');
 const testDb = test.current as unknown as ReturnType<typeof createTestDb>;
 
@@ -48,19 +48,20 @@ afterAll(() => {
 describe('honeypot', () => {
   it('contact: answers like a success but stores and mails nothing', async () => {
     const log = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-    const real = await contact.POST(post('/api/contact', contactBody, newIp()));
-    const realBody = await real.json() as unknown;
-    testDb.reset();
-    sendContactNotification.mockClear();
 
-    const spam = await contact.POST(post('/api/contact', {...contactBody, website: 'http://spam.example'}, newIp()));
+    const spam = await submitContact({...contactBody, website: 'http://spam.example'}, newIp());
 
-    expect(spam.status).toBe(real.status);
-    expect(await spam.json()).toEqual(realBody);
+    expect(spam).toEqual({status: 'sent'});
     expect(await testDb.db.select().from(submissions)).toHaveLength(0);
     expect(sendContactNotification).not.toHaveBeenCalled();
     expect(log).toHaveBeenCalledWith('spam: honeypot');
     expect(JSON.stringify(log.mock.calls)).not.toContain('spam.example');
+  });
+
+  it('contact: a real message is stored and mailed', async () => {
+    expect(await submitContact(contactBody, newIp())).toEqual({status: 'sent'});
+    expect(await testDb.db.select().from(submissions)).toHaveLength(1);
+    expect(sendContactNotification).toHaveBeenCalledWith(expect.objectContaining({email: 'ouder@example.com', subject: 'vraag'}));
   });
 
   it('feedback: answers like a success but stores nothing', async () => {
@@ -78,16 +79,14 @@ describe('honeypot', () => {
 });
 
 describe('rate limit', () => {
-  it('contact: 6th request from the same IP gets 429, another IP is fine', async () => {
+  it('contact: 6th message from the same IP is refused, another IP is fine', async () => {
     const ip = newIp();
     for (let index = 0; index < 5; index++) {
-      expect((await contact.POST(post('/api/contact', contactBody, ip))).status).toBe(200);
+      expect(await submitContact(contactBody, ip)).toEqual({status: 'sent'});
     }
 
-    const blocked = await contact.POST(post('/api/contact', contactBody, ip));
-    expect(blocked.status).toBe(429);
-    expect(await blocked.json()).toMatchObject({success: false, message: limitMessage});
-    expect((await contact.POST(post('/api/contact', contactBody, newIp()))).status).toBe(200);
+    expect(await submitContact(contactBody, ip)).toEqual({status: 'limited'});
+    expect(await submitContact(contactBody, newIp())).toEqual({status: 'sent'});
   });
 
   it('feedback: 6th request from the same IP gets 429, another IP is fine', async () => {
@@ -105,7 +104,7 @@ describe('rate limit', () => {
   it('limits are per form', async () => {
     const ip = newIp();
     for (let index = 0; index < 5; index++) {
-      await contact.POST(post('/api/contact', contactBody, ip));
+      await submitContact(contactBody, ip);
     }
 
     expect((await feedbackRoute.POST(post('/api/feedback', feedbackBody, ip))).status).toBe(200);

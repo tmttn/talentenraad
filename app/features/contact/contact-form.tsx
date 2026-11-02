@@ -1,43 +1,36 @@
 'use client';
 
 import {
+  useActionState,
+  useEffect,
+  useRef,
   useState,
-  Suspense,
   type SyntheticEvent,
-  type ChangeEvent,
   type ReactNode,
 } from 'react';
 import Link from 'next/link';
-import {useSearchParams} from 'next/navigation';
 import {ArrowRight, Loader2, XCircle} from 'lucide-react';
 import {SpeechBubble} from '@components/ui';
 import {HoneypotField} from '@components/ui/honeypot-field';
 import {
-  contactMessages, isValidSubject, subjectOptions, validateContact, type ContactErrors,
+  contactMessages, subjectOptions, validateContact, type ContactErrors,
 } from '@lib/contact-validation';
+import {sendContact, type ContactState} from '../../(main)/contact/actions';
 import {useRecaptcha} from './use-recaptcha';
 
 type ContactFormProperties = {
   titel?: string;
+  /** Subject chosen up front, e.g. from /contact?onderwerp=activiteit. */
+  defaultSubject?: string;
   showPhone?: boolean;
   showSubject?: boolean;
+  /** For tests; the page uses the real server action. */
+  action?: (state: ContactState, data: FormData) => Promise<ContactState>;
 };
 
-type FormErrors = ContactErrors & {general?: string};
+type Field = keyof ContactErrors;
 
-type FormData = {
-  name: string;
-  email: string;
-  phone: string;
-  subject: string;
-  message: string;
-};
-
-type ApiResponse = {
-  success?: boolean;
-  message?: string;
-  errors?: FormErrors;
-};
+const initialState: ContactState = {status: 'idle'};
 
 const labelClass = 'font-bold text-[15px] text-gray-900';
 const inputClass = [
@@ -78,20 +71,11 @@ function SuccessMessage() {
   );
 }
 
-function GeneralErrorMessage({message}: {message: string}) {
-  return (
-    <p className='flex items-center gap-2 p-4 rounded-control border-(length:--contour-width-sm) border-red-700 bg-red-50 font-semibold text-red-700' role='alert'>
-      <XCircle className='h-5 w-5 shrink-0' aria-hidden='true' />
-      {message}
-    </p>
-  );
-}
-
-function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
+function SubmitButton({pending}: {pending: boolean}) {
   return (
     <button
       type='submit'
-      disabled={isSubmitting}
+      disabled={pending}
       className={[
         'inline-flex items-center gap-2.5 px-6 py-3.5 text-[17px] font-bold text-white bg-primary rounded-control',
         'contour-sm shadow-hard-sm hover:bg-primary-hover active:translate-x-1 active:translate-y-1 active:shadow-none',
@@ -99,7 +83,7 @@ function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2',
       ].join(' ')}
     >
-      {isSubmitting
+      {pending
         ? (
           <>
             <Loader2 className='animate-spin h-5 w-5' aria-hidden='true' />
@@ -116,108 +100,118 @@ function SubmitButton({isSubmitting}: {isSubmitting: boolean}) {
   );
 }
 
-type ContactFormInnerProperties = ContactFormProperties & {
-  defaultSubject: string;
+const formValues = (form: HTMLFormElement) => {
+  const data = new FormData(form);
+  const text = (key: string) => {
+    const value = data.get(key);
+    return typeof value === 'string' ? value : '';
+  };
+
+  return {name: text('name'), email: text('email'), subject: text('subject'), message: text('message')};
 };
 
-function ContactFormInner({
+/**
+ * Contact form on a server action. Without JavaScript the browser posts it and the server renders
+ * the errors or the thank-you; with JavaScript it validates first, adds a reCAPTCHA token when a
+ * site key is configured, and shows the same messages without reloading.
+ */
+export function ContactForm({
   titel = 'Stuur ons een bericht',
+  defaultSubject = 'vraag',
   showPhone = true,
   showSubject = true,
-  defaultSubject,
-}: Readonly<ContactFormInnerProperties>) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [statusMessage, setStatusMessage] = useState('');
-  const [website, setWebsite] = useState('');
-  const [formData, setFormData] = useState<FormData>({
-    name: '',
-    email: '',
-    phone: '',
-    subject: defaultSubject,
-    message: '',
-  });
+  action = sendContact,
+}: Readonly<ContactFormProperties>) {
+  const [state, formAction, pending] = useActionState(action, initialState);
+  const [clientErrors, setClientErrors] = useState<ContactErrors | undefined>();
+  // Server errors the visitor has started fixing, remembered per answer from the server
+  const [fixed, setFixed] = useState<{state: ContactState; fields: Field[]}>({state, fields: []});
+  const tokenRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const {executeRecaptcha} = useRecaptcha();
 
-  const handleInputChange = (field: keyof FormData) => (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData(previous => ({...previous, [field]: event.target.value}));
-    if (errors[field]) {
-      setErrors(previous => ({...previous, [field]: undefined}));
+  const serverErrors = state.status === 'error' ? state.errors : undefined;
+  const errors: ContactErrors = clientErrors ?? Object.fromEntries(Object.entries(serverErrors ?? {})
+    .filter(([field]) => !(fixed.state === state && fixed.fields.includes(field as Field))));
+  const values = state.values;
+
+  // After the server answers, move to the first field (or message) that needs attention
+  useEffect(() => {
+    if (state.status === 'error') {
+      const form = formRef.current;
+      (form?.querySelector<HTMLElement>('[aria-invalid="true"]') ?? form?.querySelector<HTMLElement>('[role="alert"]'))?.focus();
+    }
+  }, [state]);
+
+  const markFixed = (field: Field) => () => {
+    if (clientErrors?.[field]) {
+      setClientErrors(previous => {
+        const next = {...previous};
+        delete next[field];
+        return Object.keys(next).length > 0 ? next : undefined;
+      });
+    } else if (serverErrors?.[field]) {
+      setFixed(previous => ({state, fields: previous.state === state ? [...previous.fields, field] : [field]}));
     }
   };
 
-  const handleSubmit = async (event: SyntheticEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setStatusMessage('');
-
+  const handleSubmit = (event: SyntheticEvent<HTMLFormElement>) => {
     const form = event.currentTarget;
-    const found = validateContact(formData, showSubject);
+    const found = validateContact(formValues(form), showSubject);
     if (Object.keys(found).length > 0) {
-      setErrors(found);
-      setStatusMessage(contactMessages.invalid);
-      // Move to the first field that needs attention, after the error state has rendered
+      event.preventDefault();
+      setClientErrors(found);
       requestAnimationFrame(() => {
         form.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
       });
       return;
     }
 
-    setErrors({});
-    setIsSubmitting(true);
-    setStatusMessage('Je bericht wordt verstuurd…');
-
-    try {
-      const recaptchaToken = await executeRecaptcha('contact_form');
-
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({...formData, website, recaptchaToken}),
+    setClientErrors(undefined);
+    const tokenInput = tokenRef.current;
+    if (process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && tokenInput && tokenInput.value === '') {
+      // Fetch a token first, then submit again; that second submit goes straight to the action
+      event.preventDefault();
+      void executeRecaptcha('contact_form').then(token => {
+        tokenInput.value = token ?? '';
+        form.requestSubmit();
+        tokenInput.value = '';
       });
-
-      const data = await response.json() as ApiResponse;
-
-      if (!response.ok) {
-        if (data.errors) {
-          setErrors(data.errors);
-        } else {
-          setErrors({general: data.message ?? contactMessages.failed});
-        }
-
-        setStatusMessage(data.message ?? contactMessages.failed);
-        return;
-      }
-
-      setIsSubmitted(true);
-      setStatusMessage(contactMessages.success);
-    } catch {
-      setErrors({general: contactMessages.network});
-      setStatusMessage(contactMessages.network);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
-  if (isSubmitted) {
+  if (state.status === 'sent') {
     return <SuccessMessage />;
   }
 
+  const hasFieldErrors = Object.keys(errors).length > 0;
+  const formMessage = state.status === 'error' && !state.errors ? state.message : (hasFieldErrors ? contactMessages.invalid : undefined);
+  const invalid = (field: Field) => (errors[field] ? true : undefined);
+
   return (
     <form
+      ref={formRef}
+      action={formAction}
       onSubmit={handleSubmit}
       noValidate
       aria-labelledby='contact-form-titel'
       className='bg-white rounded-panel contour shadow-hard-lg p-[clamp(24px,3.5vw,44px)] flex flex-col gap-[22px]'
     >
-      <div className='sr-only' role='status' aria-live='polite' aria-atomic='true'>
-        {statusMessage}
-      </div>
       <h2 id='contact-form-titel' className='font-display font-extrabold text-black text-[clamp(28px,2.6vw,34px)] tracking-[-0.01em]'>{titel}</h2>
 
-      {errors.general && <GeneralErrorMessage message={errors.general} />}
+      {formMessage && (
+        <p
+          role='alert'
+          tabIndex={-1}
+          className='flex items-center gap-2 p-4 rounded-control border-(length:--contour-width-sm) border-red-700 bg-red-50 font-semibold text-red-700 focus:outline-none'
+        >
+          <XCircle className='h-5 w-5 shrink-0' aria-hidden='true' />
+          {formMessage}
+        </p>
+      )}
 
-      <HoneypotField id='contact-website' value={website} onChange={setWebsite} />
+      <HoneypotField id='contact-website' />
+      <input ref={tokenRef} type='hidden' name='recaptchaToken' defaultValue='' />
 
       <div className='flex flex-wrap gap-5'>
         <Field id='name' label='Naam' error={errors.name} className='flex-[1_1_220px] min-w-0'>
@@ -228,11 +222,11 @@ function ContactFormInner({
               type='text'
               autoComplete='name'
               required
-              aria-invalid={errors.name ? true : undefined}
+              defaultValue={values?.name}
+              aria-invalid={invalid('name')}
               aria-describedby={describedBy}
               className={`${inputClass} ${errors.name ? inputErrorClass : ''}`}
-              value={formData.name}
-              onChange={handleInputChange('name')}
+              onChange={markFixed('name')}
             />
           )}
         </Field>
@@ -244,28 +238,26 @@ function ContactFormInner({
               type='email'
               autoComplete='email'
               required
-              aria-invalid={errors.email ? true : undefined}
+              defaultValue={values?.email}
+              aria-invalid={invalid('email')}
               aria-describedby={describedBy}
               className={`${inputClass} ${errors.email ? inputErrorClass : ''}`}
-              value={formData.email}
-              onChange={handleInputChange('email')}
+              onChange={markFixed('email')}
             />
           )}
         </Field>
       </div>
 
       {showPhone && (
-        <Field id='phone' label={<>Telefoon <span className='font-medium text-gray-600'>(niet verplicht)</span></>} error={errors.phone}>
-          {describedBy => (
+        <Field id='phone' label={<>Telefoon <span className='font-medium text-gray-600'>(niet verplicht)</span></>}>
+          {() => (
             <input
               id='phone'
               name='phone'
               type='tel'
               autoComplete='tel'
-              aria-describedby={describedBy}
+              defaultValue={values?.phone}
               className={`${inputClass} max-w-80`}
-              value={formData.phone}
-              onChange={handleInputChange('phone')}
             />
           )}
         </Field>
@@ -289,9 +281,9 @@ function ContactFormInner({
                   type='radio'
                   name='subject'
                   value={option.value}
-                  checked={formData.subject === option.value}
+                  defaultChecked={(values?.subject ?? defaultSubject) === option.value}
                   aria-invalid={errors.subject && index === 0 ? true : undefined}
-                  onChange={handleInputChange('subject')}
+                  onChange={markFixed('subject')}
                   className='m-0 accent-primary focus:outline-none'
                 />
                 {option.label}
@@ -309,11 +301,11 @@ function ContactFormInner({
             name='message'
             rows={6}
             required
-            aria-invalid={errors.message ? true : undefined}
+            defaultValue={values?.message}
+            aria-invalid={invalid('message')}
             aria-describedby={describedBy}
             className={`${inputClass} leading-normal resize-y ${errors.message ? inputErrorClass : ''}`}
-            value={formData.message}
-            onChange={handleInputChange('message')}
+            onChange={markFixed('message')}
           />
         )}
       </Field>
@@ -323,29 +315,8 @@ function ContactFormInner({
           We gebruiken je gegevens alleen om je te antwoorden. Meer in ons{' '}
           <Link href='/privacybeleid' className='text-primary-text underline underline-offset-2'>privacybeleid</Link>.
         </p>
-        <SubmitButton isSubmitting={isSubmitting} />
+        <SubmitButton pending={pending} />
       </div>
     </form>
-  );
-}
-
-function ContactFormSkeleton() {
-  return <div aria-hidden='true' className='h-[640px] rounded-panel contour bg-gray-50 animate-pulse' />;
-}
-
-/** Reads ?onderwerp= so links like /contact?onderwerp=activiteit preselect the subject. */
-function ContactFormWithParameters(props: Readonly<ContactFormProperties>) {
-  const searchParameters = useSearchParams();
-  const urlSubject = searchParameters.get('onderwerp');
-  const defaultSubject = isValidSubject(urlSubject) ? urlSubject : 'vraag';
-
-  return <ContactFormInner {...props} defaultSubject={defaultSubject} />;
-}
-
-export function ContactForm(props: Readonly<ContactFormProperties>) {
-  return (
-    <Suspense fallback={<ContactFormSkeleton />}>
-      <ContactFormWithParameters {...props} />
-    </Suspense>
   );
 }

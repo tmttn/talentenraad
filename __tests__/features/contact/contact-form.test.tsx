@@ -2,9 +2,12 @@ import {
   render, screen, fireEvent, waitFor, within,
 } from '@testing-library/react';
 import {ContactForm} from '../../../app/features/contact/contact-form';
+import type {ContactState} from '../../../app/(main)/contact/actions';
 
-const mockFetch = vi.fn();
-global.fetch = mockFetch;
+// The real action talks to the database; the form gets a stand-in through its `action` prop
+vi.mock('../../../app/(main)/contact/actions', () => ({sendContact: vi.fn()}));
+
+const action = vi.fn<(state: ContactState, data: FormData) => Promise<ContactState>>();
 
 const fill = (values: Partial<Record<'naam' | 'email' | 'bericht', string>> = {}) => {
   fireEvent.change(screen.getByLabelText('Naam'), {target: {value: values.naam ?? 'Lies Peeters'}});
@@ -18,11 +21,11 @@ const submit = () => {
 
 describe('ContactForm', () => {
   beforeEach(() => {
-    mockFetch.mockReset();
+    action.mockReset();
   });
 
   it('labels every field in the je-form, with the phone visibly optional', () => {
-    render(<ContactForm />);
+    render(<ContactForm action={action} />);
     expect(screen.getByRole('heading', {name: 'Stuur ons een bericht'})).toBeInTheDocument();
     expect(screen.getByLabelText('Naam')).toHaveAttribute('autocomplete', 'name');
     expect(screen.getByLabelText('E-mail')).toHaveAttribute('type', 'email');
@@ -31,7 +34,7 @@ describe('ContactForm', () => {
   });
 
   it('offers the subjects as radio pills, the general question chosen by default', () => {
-    render(<ContactForm />);
+    render(<ContactForm action={action} />);
     const group = screen.getByRole('group', {name: 'Waarover gaat het?'});
     const radios = within(group).getAllByRole('radio');
     expect(radios.map(radio => radio.closest('label')?.textContent)).toEqual(['Algemene vraag', 'Een activiteit', 'Lid worden', 'Sponsoring', 'Iets anders']);
@@ -43,14 +46,14 @@ describe('ContactForm', () => {
   });
 
   it('can leave out the subject and the phone', () => {
-    render(<ContactForm showSubject={false} showPhone={false} />);
+    render(<ContactForm action={action} showSubject={false} showPhone={false} />);
     expect(screen.queryByRole('group', {name: 'Waarover gaat het?'})).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/Telefoon/)).not.toBeInTheDocument();
   });
 
   describe('validation', () => {
     it('shows each message under its field, marks it and does not send', async () => {
-      render(<ContactForm />);
+      render(<ContactForm action={action} />);
       submit();
 
       expect(await screen.findByText('Vul je naam in.')).toBeInTheDocument();
@@ -60,18 +63,18 @@ describe('ContactForm', () => {
       expect(naam).toHaveAttribute('aria-invalid', 'true');
       expect(naam).toHaveAccessibleDescription('Vul je naam in.');
       expect(naam).toHaveClass('border-red-700', 'bg-red-50');
-      expect(mockFetch).not.toHaveBeenCalled();
+      expect(action).not.toHaveBeenCalled();
     });
 
     it('asks for a complete e-mail address, as on the artboard', async () => {
-      render(<ContactForm />);
+      render(<ContactForm action={action} />);
       fill({email: 'lies.peeters@'});
       submit();
       expect(await screen.findByText('Vul een volledig e-mailadres in, bv. naam@voorbeeld.be')).toBeInTheDocument();
     });
 
     it('asks for a full name and a longer message', async () => {
-      render(<ContactForm />);
+      render(<ContactForm action={action} />);
       fill({naam: 'L', bericht: 'Kort'});
       submit();
       expect(await screen.findByText('Vul je volledige naam in.')).toBeInTheDocument();
@@ -79,7 +82,7 @@ describe('ContactForm', () => {
     });
 
     it('clears a message when you type in the field', async () => {
-      render(<ContactForm />);
+      render(<ContactForm action={action} />);
       submit();
       await screen.findByText('Vul je naam in.');
       fireEvent.change(screen.getByLabelText('Naam'), {target: {value: 'Lies'}});
@@ -88,53 +91,65 @@ describe('ContactForm', () => {
     });
   });
 
+  it('preselects the subject it is given', () => {
+    render(<ContactForm action={action} defaultSubject='activiteit' />);
+    expect(screen.getByRole('radio', {name: 'Een activiteit'})).toBeChecked();
+  });
+
   describe('sending', () => {
     it('sends the fields with the chosen subject and thanks you', async () => {
-      mockFetch.mockResolvedValue({ok: true, json: () => Promise.resolve({success: true})});
-      render(<ContactForm />);
+      action.mockResolvedValue({status: 'sent'});
+      render(<ContactForm action={action} />);
       fill();
       fireEvent.change(screen.getByLabelText('Telefoon (niet verplicht)'), {target: {value: '0470 12 34 56'}});
       fireEvent.click(screen.getByRole('radio', {name: 'Lid worden'}));
       submit();
 
       expect(await screen.findByRole('heading', {name: 'Bedankt voor je bericht!'})).toBeInTheDocument();
-      const sent = JSON.parse((mockFetch.mock.calls[0] as [string, {body: string}])[1].body) as Record<string, string>;
-      expect(sent).toMatchObject({name: 'Lies Peeters', email: 'lies@voorbeeld.be', phone: '0470 12 34 56', subject: 'lidmaatschap', website: ''});
+      const data = action.mock.calls[0][1];
+      expect(Object.fromEntries(data)).toMatchObject({
+        name: 'Lies Peeters', email: 'lies@voorbeeld.be', phone: '0470 12 34 56', subject: 'lidmaatschap', website: '', recaptchaToken: '',
+      });
     });
 
     it('shows a busy state while sending', async () => {
-      let resolve: (value: unknown) => void = () => {};
-      mockFetch.mockReturnValue(new Promise(r => {
+      let resolve: (value: ContactState) => void = () => {};
+      action.mockReturnValue(new Promise(r => {
         resolve = r;
       }));
-      render(<ContactForm />);
+      render(<ContactForm action={action} />);
       fill();
       submit();
       expect(await screen.findByRole('button', {name: /Bezig met versturen/})).toBeDisabled();
-      resolve({ok: true, json: () => Promise.resolve({success: true})});
+      resolve({status: 'sent'});
       await screen.findByRole('heading', {name: 'Bedankt voor je bericht!'});
     });
 
-    it('shows the server messages per field', async () => {
-      mockFetch.mockResolvedValue({ok: false, status: 400, json: () => Promise.resolve({errors: {email: 'Vul een volledig e-mailadres in, bv. naam@voorbeeld.be'}, message: 'Er klopt nog iets niet.'})});
-      render(<ContactForm />);
-      fill();
+    it('shows the server messages per field and keeps what you typed', async () => {
+      action.mockResolvedValue({
+        status: 'error',
+        message: 'Er klopt nog iets niet. Kijk de rode velden na.',
+        errors: {email: 'Vul een volledig e-mailadres in, bv. naam@voorbeeld.be'},
+        values: {name: 'Lies Peeters', email: 'lies@voorbeeld', phone: '', subject: 'sponsoring', message: 'Een bericht dat lang genoeg is.'},
+      });
+      render(<ContactForm action={action} />);
+      fill({email: 'lies@voorbeeld.be'});
       submit();
       expect(await screen.findByText('Vul een volledig e-mailadres in, bv. naam@voorbeeld.be')).toBeInTheDocument();
+      expect(screen.getByLabelText('Naam')).toHaveValue('Lies Peeters');
+      expect(screen.getByRole('radio', {name: 'Sponsoring'})).toBeChecked();
+      await waitFor(() => {
+        expect(screen.getByLabelText('E-mail')).toHaveFocus();
+      });
+
+      fireEvent.change(screen.getByLabelText('E-mail'), {target: {value: 'lies@voorbeeld.com'}});
+      expect(screen.queryByText('Vul een volledig e-mailadres in, bv. naam@voorbeeld.be')).not.toBeInTheDocument();
     });
 
-    it('explains a network failure', async () => {
-      mockFetch.mockRejectedValue(new Error('offline'));
-      render(<ContactForm />);
-      fill();
-      submit();
-      expect(await screen.findByRole('alert')).toHaveTextContent('Je bericht is niet verstuurd.');
-    });
-
-    it('shows the rate limit message', async () => {
+    it('shows a message for the whole form, such as the rate limit', async () => {
       const message = 'Te veel berichten in korte tijd. Probeer het over enkele minuten opnieuw.';
-      mockFetch.mockResolvedValue({ok: false, status: 429, json: () => Promise.resolve({success: false, message})});
-      render(<ContactForm />);
+      action.mockResolvedValue({status: 'error', message, values: {name: 'Lies Peeters', email: 'lies@voorbeeld.be', phone: '', subject: 'vraag', message: 'Een bericht dat lang genoeg is.'}});
+      render(<ContactForm action={action} />);
       fill();
       submit();
       await waitFor(() => {
@@ -143,7 +158,7 @@ describe('ContactForm', () => {
     });
 
     it('has a hidden, unfocusable honeypot field', () => {
-      const {container} = render(<ContactForm />);
+      const {container} = render(<ContactForm action={action} />);
       const honeypot = container.querySelector<HTMLInputElement>('input[name="website"]')!;
       expect(honeypot).toHaveAttribute('tabindex', '-1');
       expect(honeypot.closest('[aria-hidden="true"]')).not.toBeNull();
