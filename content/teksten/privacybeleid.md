@@ -5,7 +5,7 @@ beschrijving: >-
   verzamelt, gebruikt en beschermt in overeenstemming met de Algemene
   Verordening…
 ---
-Laatst bijgewerkt: 31 oktober 2026
+Laatst bijgewerkt: 2 november 2026
 
 Dit privacybeleid beschrijft hoe de Talentenraad uw persoonsgegevens verzamelt, gebruikt en beschermt in overeenstemming met de Algemene Verordening Gegevensbescherming (AVG/GDPR) en de Belgische Wet van 30 juli 2018 betreffende de bescherming van natuurlijke personen met betrekking tot de verwerking van persoonsgegevens.
 
@@ -60,7 +60,6 @@ Uw persoonsgegevens kunnen worden gedeeld met de volgende ontvangers:
 
 -   **Hetzner Online GmbH** (Gunzenhausen, Duitsland) - Hosting van onze website en database. De servers staan in een datacenter in Duitsland.
 -   **Gandi SAS** (Parijs, Frankrijk) - E-mailprovider; berichten van het contactformulier en inloglinks voor beheerders worden via hun mailbox verstuurd.
--   **Google** (reCAPTCHA) - Alleen wanneer ingeschakeld: beveiliging van het contactformulier tegen spam. Google kan hierbij gegevens zoals uw IP-adres verwerken.
 -   **Bestuursleden Talentenraad** - Voor het beantwoorden van vragen en organiseren van activiteiten
 -   **School Het Talentenhuis** - Alleen indien noodzakelijk voor de organisatie van gezamenlijke activiteiten
 
@@ -68,7 +67,7 @@ Uw persoonsgegevens kunnen worden gedeeld met de volgende ontvangers:
 
 ## 4. Doorgifte buiten de EER
 
-Onze hosting en e-mail bevinden zich in de Europese Unie (Duitsland en Frankrijk). Alleen wanneer reCAPTCHA is ingeschakeld, kan Google gegevens verwerken buiten de EER. Die doorgifte vindt plaats op basis van het EU-US Data Privacy Framework en/of standaardcontractbepalingen (SCCs) goedgekeurd door de Europese Commissie.
+Wij geven geen persoonsgegevens door buiten de EER. Onze hosting en e-mail bevinden zich in de Europese Unie (Duitsland en Frankrijk), en het contactformulier gebruikt geen diensten van derden.
 
 ## 5. Hoe lang bewaren wij uw gegevens?
 
@@ -80,6 +79,7 @@ Wij bewaren uw persoonsgegevens niet langer dan noodzakelijk voor de doeleinden 
 | Activiteiteninschrijvingen | 1 jaar na datum activiteit |
 | Auditlogs van beheeracties | 90 dagen |
 | Inlogcodes voor beheerders | 15 minuten (alleen als hash bewaard) |
+| Beveiliging van het contactformulier tegen misbruik (alleen een hash van uw IP-adres, nooit het adres zelf) | 10 minuten |
 
 ## 6. Uw rechten
 

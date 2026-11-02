@@ -6,8 +6,6 @@ COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
-ARG NEXT_PUBLIC_RECAPTCHA_SITE_KEY=
-ENV NEXT_PUBLIC_RECAPTCHA_SITE_KEY=$NEXT_PUBLIC_RECAPTCHA_SITE_KEY
 # A new date busts the cache from here on, so date-dependent static pages are rebuilt nightly.
 ARG BUILD_DATE=unknown
 ENV BUILD_DATE=$BUILD_DATE

@@ -5,7 +5,6 @@ import {Send, X} from 'lucide-react';
 import {toast} from 'sonner';
 import {Modal} from '@components/ui/interactive/Modal';
 import {HoneypotField} from '@components/ui/honeypot-field';
-import {useRecaptcha} from '@features/contact/use-recaptcha';
 import {StarRating} from './star-rating';
 
 type FeedbackFormData = {
@@ -34,8 +33,6 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
   const [errors, setErrors] = useState<FormErrors>({});
   const [website, setWebsite] = useState('');
 
-  const {isReady: isRecaptchaReady, executeRecaptcha} = useRecaptcha();
-
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
@@ -63,9 +60,6 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
     setIsSubmitting(true);
 
     try {
-      // Execute reCAPTCHA
-      const recaptchaToken = await executeRecaptcha('feedback');
-
       const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -76,7 +70,6 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
           pageUrl: window.location.pathname,
           pageTitle: document.title,
           website,
-          recaptchaToken,
         }),
       });
 
@@ -95,7 +88,7 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, website, executeRecaptcha]);
+  }, [formData, website]);
 
   const handleClose = () => {
     if (!isSubmitting) {
@@ -237,7 +230,7 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
             <button
               type='button'
               onClick={handleSubmit}
-              disabled={isSubmitting || !isRecaptchaReady || formData.rating === 0}
+              disabled={isSubmitting || formData.rating === 0}
               className='
 								flex-1 px-4 py-2.5 rounded-button
 								bg-primary text-white
@@ -252,10 +245,6 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
             </button>
           </div>
 
-          {/* reCAPTCHA notice */}
-          <p className='text-xs text-gray-400 text-center'>
-            Beschermd door reCAPTCHA
-          </p>
         </div>
       </Modal>
     </>

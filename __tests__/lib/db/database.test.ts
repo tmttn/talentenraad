@@ -9,7 +9,7 @@ import {runMigrations} from '@lib/db/migrate';
 import {auditLogs, submissions, users} from '@lib/db/schema';
 import {createTestDb} from '../../helpers/db';
 
-const tables = ['audit_logs', 'feedback', 'login_tokens', 'submissions', 'users'];
+const tables = ['audit_logs', 'feedback', 'login_tokens', 'rate_limit_hits', 'submissions', 'users'];
 
 describe('migrations on an empty database (first start)', () => {
   it('creates exactly the app tables', () => {

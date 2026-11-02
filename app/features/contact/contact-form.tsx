@@ -16,12 +16,13 @@ import {
   contactMessages, subjectOptions, validateContact, type ContactErrors,
 } from '@lib/contact-validation';
 import {sendContact, type ContactState} from '../../(main)/contact/actions';
-import {useRecaptcha} from './use-recaptcha';
 
 type ContactFormProperties = {
   titel?: string;
   /** Subject chosen up front, e.g. from /contact?onderwerp=activiteit. */
   defaultSubject?: string;
+  /** Signed "shown at" token from the page; the server refuses forms sent faster than a person types. */
+  formToken: string;
   showPhone?: boolean;
   showSubject?: boolean;
   /** For tests; the page uses the real server action. */
@@ -112,12 +113,13 @@ const formValues = (form: HTMLFormElement) => {
 
 /**
  * Contact form on a server action. Without JavaScript the browser posts it and the server renders
- * the errors or the thank-you; with JavaScript it validates first, adds a reCAPTCHA token when a
- * site key is configured, and shows the same messages without reloading.
+ * the errors or the thank-you; with JavaScript it validates first and shows the same messages
+ * without reloading. Spam protection: a honeypot and a signed timing token (see form-timing).
  */
 export function ContactForm({
   titel = 'Stuur ons een bericht',
   defaultSubject = 'vraag',
+  formToken,
   showPhone = true,
   showSubject = true,
   action = sendContact,
@@ -126,9 +128,7 @@ export function ContactForm({
   const [clientErrors, setClientErrors] = useState<ContactErrors | undefined>();
   // Server errors the visitor has started fixing, remembered per answer from the server
   const [fixed, setFixed] = useState<{state: ContactState; fields: Field[]}>({state, fields: []});
-  const tokenRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
-  const {executeRecaptcha} = useRecaptcha();
 
   const serverErrors = state.status === 'error' ? state.errors : undefined;
   const errors: ContactErrors = clientErrors ?? Object.fromEntries(Object.entries(serverErrors ?? {})
@@ -168,16 +168,6 @@ export function ContactForm({
     }
 
     setClientErrors(undefined);
-    const tokenInput = tokenRef.current;
-    if (process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY && tokenInput && tokenInput.value === '') {
-      // Fetch a token first, then submit again; that second submit goes straight to the action
-      event.preventDefault();
-      void executeRecaptcha('contact_form').then(token => {
-        tokenInput.value = token ?? '';
-        form.requestSubmit();
-        tokenInput.value = '';
-      });
-    }
   };
 
   if (state.status === 'sent') {
@@ -211,7 +201,7 @@ export function ContactForm({
       )}
 
       <HoneypotField id='contact-website' />
-      <input ref={tokenRef} type='hidden' name='recaptchaToken' defaultValue='' />
+      <input type='hidden' name='formToken' value={state.formToken ?? formToken} />
 
       <div className='flex flex-wrap gap-5'>
         <Field id='name' label='Naam' error={errors.name} className='flex-[1_1_220px] min-w-0'>
