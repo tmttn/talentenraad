@@ -1,18 +1,15 @@
 import {render, screen, within} from '@testing-library/react';
 import {content} from '@lib/content';
-import ActivityDetailPage, {generateMetadata, generateStaticParams} from '../../../app/(main)/activiteiten/[slug]/page';
+import ActivityDetailPage, {dynamicParams, generateMetadata, generateStaticParams} from '../../../app/(main)/activiteiten/[slug]/page';
 import {makeActiviteit} from '../../fixtures/content';
 
-const {notFound, permanentRedirect} = vi.hoisted(() => ({
+const {notFound} = vi.hoisted(() => ({
   notFound: vi.fn(() => {
     throw new Error('NEXT_NOT_FOUND');
   }),
-  permanentRedirect: vi.fn((url: string) => {
-    throw new Error(`NEXT_REDIRECT:${url}`);
-  }),
 }));
 
-vi.mock('next/navigation', () => ({notFound, permanentRedirect}));
+vi.mock('next/navigation', () => ({notFound}));
 
 vi.mock('@lib/content', () => ({
   content: {getActiviteit: vi.fn(), getActiviteiten: vi.fn()},
@@ -111,10 +108,8 @@ describe('ActivityDetailPage', () => {
     expect(container.querySelector('aside')!.parentElement).toHaveClass('flex-row-reverse');
   });
 
-  it('redirects an alias to the canonical url', async () => {
-    getActiviteit.mockReturnValue(makeActiviteit({slug: 'echte-slug'}));
-    await expect(render_('-oude-slug')).rejects.toThrow('NEXT_REDIRECT:/activiteiten/echte-slug');
-    expect(permanentRedirect).toHaveBeenCalledWith('/activiteiten/echte-slug');
+  it('only renders real slugs: aliases redirect in next.config.js, other slugs get the server 404', () => {
+    expect(dynamicParams).toBe(false);
   });
 
   it('calls notFound for an unknown slug', async () => {
