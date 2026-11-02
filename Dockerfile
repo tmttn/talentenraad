@@ -1,4 +1,4 @@
-FROM node:24-bookworm-slim AS build
+FROM node:26-bookworm-slim AS build
 WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ \
   && rm -rf /var/lib/apt/lists/*
@@ -13,7 +13,7 @@ ARG BUILD_DATE=unknown
 ENV BUILD_DATE=$BUILD_DATE
 RUN echo "Building for $BUILD_DATE" && npm run build
 
-FROM node:24-bookworm-slim AS runtime
+FROM node:26-bookworm-slim AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends tzdata \
   && rm -rf /var/lib/apt/lists/* \
   && mkdir /data && chown node:node /data
