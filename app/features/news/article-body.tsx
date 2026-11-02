@@ -1,10 +1,15 @@
 import {SpeechBubble} from '@components/ui';
 import type {MarkdownSegment} from '@lib/content';
 
-const proseClassName = [
-  'prose prose-lg max-w-none text-gray-800 prose-p:text-gray-800 prose-p:leading-[1.75]',
-  'prose-headings:font-display prose-headings:text-black prose-strong:text-black',
+/** Text styling of the reading column, shared by news articles and the text pages (privacy, cookies, …). */
+export const articleProse = [
+  'prose prose-lg max-w-none text-gray-800 prose-p:text-gray-800 prose-p:leading-[1.75] prose-li:text-gray-800',
+  // Long Dutch compounds ("Verwerkingsverantwoordelijke") are hyphenated instead of widening the page
+  'prose-headings:font-display prose-headings:text-black prose-headings:hyphens-auto prose-headings:break-words prose-strong:text-black',
   'prose-a:text-primary-text prose-a:font-semibold prose-a:underline-offset-2',
+  // Tables (cookie overview) get a contour and scroll sideways on a phone instead of breaking the column
+  'prose-table:block prose-table:overflow-x-auto prose-table:rounded-tile prose-table:contour-xs',
+  'prose-th:bg-gray-50 prose-th:px-3 prose-th:py-2 prose-td:px-3 prose-td:py-2',
 ].join(' ');
 
 /**
@@ -26,7 +31,7 @@ export function ArticleBody({segmenten}: Readonly<{segmenten: MarkdownSegment[]}
             </SpeechBubble>
           </figure>
         )
-        : <div key={index} className={proseClassName} dangerouslySetInnerHTML={{__html: segment.html}} />))}
+        : <div key={index} className={articleProse} dangerouslySetInnerHTML={{__html: segment.html}} />))}
     </div>
   );
 }

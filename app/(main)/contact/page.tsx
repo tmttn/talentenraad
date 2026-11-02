@@ -5,6 +5,7 @@ import {PageWithAnnouncements} from '@components/layout/page-with-announcements'
 import {LogoStripe} from '@components/layout/contour-parts';
 import {ContactForm} from '@features/contact/contact-form';
 import {content} from '@lib/content';
+import {isValidSubject} from '@lib/contact-validation';
 import {generateMetadata as generateSeoMetadata} from '@lib/seo';
 
 export function generateMetadata(): Metadata {
@@ -14,8 +15,15 @@ export function generateMetadata(): Metadata {
 
 const bubbleTitle = 'font-display font-extrabold text-black text-2xl';
 
-export default function Page() {
+type PageProperties = {
+  searchParams: Promise<{onderwerp?: string | string[]}>;
+};
+
+export default async function Page({searchParams}: Readonly<PageProperties>) {
   const pagina = content.getPagina('contact');
+  // Links like /contact?onderwerp=activiteit preselect the subject; read here so the form is in the HTML
+  const {onderwerp} = await searchParams;
+  const defaultSubject = typeof onderwerp === 'string' && isValidSubject(onderwerp) ? onderwerp : undefined;
   const {footer} = content.getSite();
 
   return (
@@ -52,7 +60,7 @@ export default function Page() {
           </div>
 
           <div className='flex-[2_1_520px] min-w-0'>
-            <ContactForm titel={pagina.formulier.titel} />
+            <ContactForm titel={pagina.formulier.titel} defaultSubject={defaultSubject} />
           </div>
         </div>
       </section>

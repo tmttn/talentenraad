@@ -61,6 +61,6 @@ describe('Tekst page', () => {
     const {container} = render(await TekstPage({params: Promise.resolve({tekst: 'fictief-beleid'})}));
     const script = container.querySelector('script[type="application/ld+json"]');
     const data = JSON.parse(script?.textContent ?? '{}') as {itemListElement: Array<{name: string; item: string}>};
-    expect(data.itemListElement.map(i => i.name)).toEqual(['Home', 'Fictief Beleid']);
+    expect(data.itemListElement.map(i => i.name)).toEqual(['Home', 'Fictief beleid']);
   });
 });

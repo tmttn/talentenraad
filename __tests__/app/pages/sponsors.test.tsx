@@ -19,9 +19,9 @@ describe('Sponsors page', () => {
     const {container} = render(<SponsorsPage />);
     expectInOrder(container, [
       'Hero titel sponsors', 'Hero ondertitel sponsors',
-      'Gouden Sponsors', 'Gouden Voorbeeld',
-      'Zilveren Sponsors', 'Geen zilver',
-      'Bronzen Sponsors', 'Geen brons',
+      'Goud', 'Gouden Voorbeeld',
+      'Zilver', 'Geen zilver',
+      'Brons', 'Geen brons',
       'Partners',
       'Fictieve oproep', 'Fictieve oproeptekst', 'Enige knop',
     ]);
