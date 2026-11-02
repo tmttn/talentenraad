@@ -26,7 +26,7 @@ describe('GlobalError', () => {
     const error = new Error('Test error');
     render(<GlobalError error={error} reset={mockReset} />);
 
-    expect(screen.getByText('500')).toBeInTheDocument();
+    expect(screen.getByText('Foutcode 500')).toBeInTheDocument();
   });
 
   it('logs the error to the console', () => {
@@ -47,7 +47,7 @@ describe('GlobalError', () => {
     const error = new Error('Test error');
     render(<GlobalError error={error} reset={mockReset} />);
 
-    expect(screen.getByRole('link', {name: /naar homepagina/i})).toHaveAttribute('href', '/');
+    expect(screen.getByRole('link', {name: /naar home/i})).toHaveAttribute('href', '/');
   });
 
   it('calls reset when retry button is clicked', () => {

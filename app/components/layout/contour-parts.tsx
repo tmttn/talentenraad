@@ -15,6 +15,17 @@ export function LogoStripe() {
   );
 }
 
+/** Decorative panel of overlapping circles in the logo colors (hero, error pages); `className` sets its height. */
+export function LogoCircles({className = ''}: Readonly<{className?: string}>) {
+  return (
+    <div aria-hidden='true' className={`relative rounded-[clamp(18px,2vw,28px)] bg-brand-primary-50 overflow-hidden ${className}`}>
+      <div className='absolute -left-[8%] -top-[30%] w-[45%] aspect-square rounded-full bg-logo-pink/80' />
+      <div className='absolute left-[38%] -bottom-[45%] w-[38%] aspect-square rounded-full bg-logo-orange/80' />
+      <div className='absolute -right-[6%] -top-[10%] w-[34%] aspect-square rounded-full bg-logo-green/80' />
+    </div>
+  );
+}
+
 /** Opening of a page in the contour style: stripe, title and intro, with optional content on the right (filters, a quote). */
 export function PageIntro({titel, intro, children}: Readonly<{titel: string; intro?: string; children?: ReactNode}>) {
   return (

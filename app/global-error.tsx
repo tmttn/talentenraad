@@ -1,7 +1,12 @@
 'use client';
 
 import {useEffect} from 'react';
-import {Home, RefreshCw, ServerCrash} from 'lucide-react';
+import {Home, RefreshCw} from 'lucide-react';
+import {SpeechBubble} from '@components/ui';
+import {ctaButtonClassName} from '@components/ui/cta-button';
+import {LogoCircles} from '@components/layout/contour-parts';
+// This boundary replaces the root layout, so it brings the stylesheet itself
+import './globals.css';
 
 type GlobalErrorProperties = {
   error: Error & {digest?: string};
@@ -12,7 +17,8 @@ type GlobalErrorProperties = {
  * Global Error Boundary
  *
  * This catches errors at the root level, including errors in layouts.
- * Since it replaces the root layout, it must include <html> and <body> tags.
+ * Since it replaces the root layout, it must include <html> and <body> tags,
+ * and it uses plain links: a full reload is the point when the layout itself broke.
  */
 export default function GlobalError({error, reset}: Readonly<GlobalErrorProperties>) {
   useEffect(() => {
@@ -21,59 +27,36 @@ export default function GlobalError({error, reset}: Readonly<GlobalErrorProperti
 
   return (
     <html lang='nl'>
-      <body className='min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4'>
-        <div className='text-center max-w-lg'>
-          {/* Icon */}
-          <div className='mb-6 flex justify-center'>
-            <div className='p-4 rounded-full bg-red-100 text-red-500'>
-              <ServerCrash className='w-16 h-16' strokeWidth={1.5} />
+      <body className='min-h-screen bg-white px-3 py-10 sm:px-6'>
+        <main className='max-w-[1000px] mx-auto'>
+          <LogoCircles className='h-[clamp(180px,26vw,320px)]' />
+          <SpeechBubble className='-mt-[clamp(48px,7vw,110px)] mx-2 sm:mx-[clamp(8px,3vw,40px)] max-w-[640px]'>
+            <div className='flex flex-col items-start gap-[18px]'>
+              <p className='rounded-full contour-xs bg-logo-orange px-3 py-0.5 text-sm font-bold text-black'>Foutcode 500</p>
+              <h1 className='font-display font-extrabold text-black text-[clamp(38px,4.6vw,58px)] leading-none tracking-[-0.02em]'>Er ging iets mis</h1>
+              <p className='text-gray-700 text-[clamp(17px,1.4vw,19px)] leading-relaxed'>
+                Sorry, er is een onverwachte fout opgetreden. Probeer het zo opnieuw; we werken eraan.
+              </p>
+              <div className='flex flex-wrap gap-3.5 pt-1'>
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- root layout is stuk; volle reload is de bedoeling */}
+                <a href='/' className={`${ctaButtonClassName('contour')} gap-2`}>
+                  <Home className='h-5 w-5' aria-hidden='true' />
+                  Naar home
+                </a>
+                <button type='button' onClick={reset} className={`${ctaButtonClassName('contour-outline')} gap-2`}>
+                  <RefreshCw className='h-5 w-5' aria-hidden='true' />
+                  Probeer opnieuw
+                </button>
+              </div>
+              <p className='text-sm text-gray-600'>
+                Blijft dit probleem? Neem dan{' '}
+                {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- root layout is stuk; volle reload is de bedoeling */}
+                <a href='/contact' className='font-bold text-primary-text underline underline-offset-2'>contact</a>{' '}
+                met ons op.
+              </p>
             </div>
-          </div>
-
-          {/* Error code */}
-          <p className='text-8xl font-bold text-gray-200 mb-2'>500</p>
-
-          {/* Title */}
-          <h1 className='text-2xl md:text-3xl font-bold text-gray-900 mb-4'>
-            Er ging iets mis
-          </h1>
-
-          {/* Description */}
-          <p className='text-gray-600 mb-8 text-lg'>
-            Sorry, er is een onverwachte fout opgetreden. We werken eraan om dit op te lossen.
-          </p>
-
-          {/* Action buttons */}
-          <div className='flex flex-wrap justify-center gap-3'>
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- root layout is stuk; volle reload is de bedoeling */}
-            <a
-              href='/'
-              className='inline-flex items-center gap-2 px-6 py-3 bg-pink-600 text-white font-semibold rounded-button hover:bg-pink-700 transition-colors'
-            >
-              <Home className='w-5 h-5' />
-              Naar homepagina
-            </a>
-
-            <button
-              type='button'
-              onClick={reset}
-              className='inline-flex items-center gap-2 px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-button hover:bg-gray-200 transition-colors'
-            >
-              <RefreshCw className='w-5 h-5' />
-              Probeer opnieuw
-            </button>
-          </div>
-
-          {/* Help text */}
-          <p className='mt-8 text-sm text-gray-500'>
-            Blijft dit probleem? Neem dan{' '}
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- root layout is stuk; volle reload is de bedoeling */}
-            <a href='/contact' className='text-pink-600 hover:underline font-medium'>
-              contact
-            </a>{' '}
-            met ons op.
-          </p>
-        </div>
+          </SpeechBubble>
+        </main>
       </body>
     </html>
   );
