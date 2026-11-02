@@ -1,10 +1,11 @@
 'use client';
 
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useRef} from 'react';
 import {Send, X} from 'lucide-react';
 import {toast} from 'sonner';
 import {Modal} from '@components/ui/interactive/Modal';
 import {HoneypotField} from '@components/ui/honeypot-field';
+import {minimumFillMs} from '@lib/form-timing-limits';
 import {StarRating} from './star-rating';
 
 type FeedbackFormData = {
@@ -32,6 +33,23 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
   const [formData, setFormData] = useState<FeedbackFormData>(initialFormData);
   const [errors, setErrors] = useState<FormErrors>({});
   const [website, setWebsite] = useState('');
+  // Timing token from the server, fetched when the form opens (the footer around this form is static)
+  const timing = useRef<{token: string; receivedAt: number} | undefined>(undefined);
+
+  const fetchToken = useCallback(async () => {
+    try {
+      const response = await fetch('/api/feedback/token', {cache: 'no-store'});
+      const {token} = await response.json() as {token?: string};
+      timing.current = token ? {token, receivedAt: Date.now()} : undefined;
+    } catch {
+      timing.current = undefined;
+    }
+  }, []);
+
+  const openForm = () => {
+    setIsOpen(true);
+    void fetchToken();
+  };
 
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
@@ -60,6 +78,24 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
     setIsSubmitting(true);
 
     try {
+      if (!timing.current) {
+        await fetchToken();
+      }
+
+      const current = timing.current;
+      if (!current) {
+        toast.error('Feedback versturen lukt nu niet. Probeer het later opnieuw.');
+        return;
+      }
+
+      // Feedback is quick to fill in: rather than let the server drop a fast but real message, wait out the minimum
+      const remaining = minimumFillMs + 250 - (Date.now() - current.receivedAt);
+      if (remaining > 0) {
+        await new Promise(resolve => {
+          setTimeout(resolve, remaining);
+        });
+      }
+
       const response = await fetch('/api/feedback', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
@@ -70,12 +106,19 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
           pageUrl: window.location.pathname,
           pageTitle: document.title,
           website,
+          formToken: current.token,
         }),
       });
 
-      const data = await response.json() as {success: boolean; message: string};
+      const data = await response.json() as {success: boolean; message: string; formToken?: string};
+
+      if (data.formToken) {
+        // The form was open too long: the server sends a fresh token for a second try
+        timing.current = {token: data.formToken, receivedAt: Date.now() - minimumFillMs};
+      }
 
       if (data.success) {
+        timing.current = undefined;
         toast.success(data.message);
         setFormData(initialFormData);
         setErrors({});
@@ -88,7 +131,7 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [formData, website]);
+  }, [formData, website, fetchToken]);
 
   const handleClose = () => {
     if (!isSubmitting) {
@@ -101,7 +144,7 @@ export function FeedbackLink({className = ''}: Readonly<{className?: string}>) {
     <>
       <button
         type='button'
-        onClick={() => setIsOpen(true)}
+        onClick={openForm}
         aria-haspopup='dialog'
         className={`text-left font-semibold text-primary-text underline-offset-4 hover:underline ${className}`}
       >

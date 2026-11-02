@@ -1,9 +1,9 @@
 import {createHmac, timingSafeEqual} from 'node:crypto';
+import {maximumAgeMs, minimumFillMs} from './form-timing-limits';
 
 /** Spam check without third parties: a form carries a signed "shown at" time; bots post faster than people type. */
 
-export const minimumFillMs = 3000;
-export const maximumAgeMs = 24 * 60 * 60 * 1000;
+export {maximumAgeMs, minimumFillMs} from './form-timing-limits';
 // A little leeway for a server clock that moves between showing and sending
 const clockSkewMs = 5000;
 

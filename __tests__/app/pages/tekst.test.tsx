@@ -1,6 +1,6 @@
 import {render, screen} from '@testing-library/react';
 import {content} from '@lib/content';
-import TekstPage, {generateMetadata, generateStaticParams} from '../../../app/(main)/[tekst]/page';
+import TekstPage, {dynamicParams, generateMetadata, generateStaticParams} from '../../../app/(main)/[tekst]/page';
 
 const {notFound} = vi.hoisted(() => ({
   notFound: vi.fn(() => {
@@ -28,6 +28,10 @@ describe('Tekst page', () => {
   beforeEach(() => {
     vi.mocked(content.listTeksten).mockReturnValue([tekst]);
     vi.mocked(content.getTekst).mockImplementation(slug => slug === tekst.slug ? tekst : undefined);
+  });
+
+  it('only serves the known texts, so an unknown URL gets the server-rendered 404', () => {
+    expect(dynamicParams).toBe(false);
   });
 
   it('generates static params from listTeksten', () => {
