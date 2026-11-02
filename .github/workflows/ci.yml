@@ -61,7 +61,7 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm install --legacy-peer-deps
+      run: npm ci
 
     - name: Build application
       run: npm run build
@@ -104,7 +104,7 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm install --legacy-peer-deps
+      run: npm ci
 
     - name: Run Vitest tests with coverage
       run: npm run test:coverage
@@ -151,7 +151,7 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm install --legacy-peer-deps
+      run: npm ci
 
     - name: Run TypeScript type checking
       run: npm run type-check
@@ -184,7 +184,7 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: npm install --legacy-peer-deps
+      run: npm ci
 
     - name: Check for new vulnerabilities
       run: npx audit-ci --config .audit-ci.jsonc
