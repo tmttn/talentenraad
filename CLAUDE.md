@@ -18,6 +18,16 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 5. [x] Postgres → SQLite; `Dockerfile` + `compose.yaml` (app + Caddy); deploy via GitHub Actions. Live sinds 31 oktober 2026 op Hetzner (`cax11`, fsn1, 49.13.27.240); zie `deploy/README.md`.
 6. [x] Admin-editor die content als commits wegschrijft (live sinds 1 november 2026): `/admin/content` (activiteiten, nieuws, team, faq, aankondiging), rollen `admin`/`redacteur`, commits via de GitHub API (`app/lib/content-store/`, token `GITHUB_CONTENT_TOKEN`, zie `deploy/README.md`). Handleiding voor ouders: `docs/handleiding-editor.md`. Commitberichten bevatten geen naam of e-mail van de redacteur (publieke repo); de audit log koppelt commit en gebruiker.
 
+7. [ ] Bestelsysteem fase 1 (spec "Bestelsysteem voor acties" op claude.ai, plan `docs/superpowers/plans/2026-11-05-bestelsysteem.md`). Gedaan: acties in `content/acties/` + editor (PR #822), bestellen, mails, QR en `/b/[token]` (PR #823), beheer `/admin/bestellingen` + vinkje `bankToegang` + bewaartermijn (PR #825). Nog: PR 4 (rol `helper`, afhaal-app `/admin/afhalen` met scanner; `Permissions-Policy: camera=()` in `next.config.js` moet daar `camera=(self)` worden; QR lezen op iPhone met `jsqr`, npm-registry was onbereikbaar), design system bijwerken.
+
+### Bestelsysteem
+- Code in `app/lib/bestellingen/`; tabellen `orders`, `order_lines`. Bedragen altijd in cent. Statussen: `wacht`, `betaald`, `afgehaald`, `geannuleerd`, `terugbetalen` (terugbetaald = `geannuleerd` + `terugbetaaldOp`).
+- Rekeningnummer in `content/site.yaml` (`bestellingen.rekening`); nu het **voorbeeldnummer** `BE68 5390 0754 7034`: zolang dat staat, opent in productie geen enkele actie. Tom geeft het echte nummer nog (in een oude activiteit staat `BE62 7340 6932 1461`, niet gecontroleerd).
+- QR-codes uit een eigen encoder (`qr-encoder.ts`, byte-modus, niveau M, versie 1–10), geen dependency.
+- Betalingen bevestigen alleen met `users.bankToegang` (server-side, `rechten.ts`), los van de rol.
+- Persoonsgegevens van bestellingen worden 3 maanden na het laatste afhaalmoment gewist (`bewaartermijn.ts`, dagelijks via `instrumentation.ts`).
+- Lokaal testen: een actie met `concept: true` en datums rond vandaag; zonder `SMTP_HOST` staan mails in de console.
+
 ### Hosting
 - Hetzner Cloud-server, uitrol in `/opt/talentenraad` (Docker Compose: app + Caddy). Secrets staan alleen in `/opt/talentenraad/.env` op de server.
 - Deploy via GitHub Actions bij een push naar `main` en elke nacht (herbouw). Zie `deploy/README.md`.
