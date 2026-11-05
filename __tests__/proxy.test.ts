@@ -84,6 +84,8 @@ describe('proxy', () => {
     '/admin/content/nieuws/nieuw',
     '/admin/content/team/jan-peeters',
     '/admin/content/faq/vraag-2',
+    '/admin/content/acties',
+    '/admin/content/acties/pizzaverkoop-2027',
   ])('lets the content editor route %s through', async path => {
     const response = await proxy(request(path, await jwt()));
 

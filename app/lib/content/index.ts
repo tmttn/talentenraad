@@ -17,6 +17,8 @@ export const content: ContentReader = {
   getTekst: slug => reader().getTekst(slug),
   getActiviteiten: () => reader().getActiviteiten(),
   getActiviteit: slug => reader().getActiviteit(slug),
+  getActies: () => reader().getActies(),
+  getActie: slug => reader().getActie(slug),
   getNieuws: () => reader().getNieuws(),
   getNieuwsItem: slug => reader().getNieuwsItem(slug),
   getTeam: () => reader().getTeam(),
@@ -24,6 +26,7 @@ export const content: ContentReader = {
 };
 
 export type {
+  Actie,
   Activiteit,
   ContentReader,
   FaqItem,

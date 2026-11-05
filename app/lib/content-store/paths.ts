@@ -3,10 +3,11 @@ import { ContentStoreError } from './errors';
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-const COLLECTIONS = ['activiteiten', 'nieuws', 'team', 'faq'] as const;
+const COLLECTIONS = ['activiteiten', 'acties', 'nieuws', 'team', 'faq'] as const;
 
 const ITEM_FILES: Record<string, readonly string[]> = {
   activiteiten: ['index.md', 'afbeelding.jpg'],
+  acties: ['index.md', 'afbeelding.jpg'],
   nieuws: ['index.md', 'afbeelding.jpg'],
   team: ['index.md', 'foto.jpg'],
 };

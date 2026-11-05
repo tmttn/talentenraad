@@ -12,6 +12,8 @@ describe('assertAllowedPath', () => {
     'content/team/jan/index.md',
     'content/team/jan/foto.jpg',
     'content/faq/hoe-laat.md',
+    'content/acties/pizzaverkoop-2027/index.md',
+    'content/acties/pizzaverkoop-2027/afbeelding.jpg',
   ])('allows %s', path => {
     expect(() => assertAllowedPath(path)).not.toThrow();
   });
@@ -26,6 +28,8 @@ describe('assertAllowedPath', () => {
     'content/activiteiten/-x/index.md',
     'content/activiteiten/x--y/index.md',
     'content/activiteiten/x/foto.jpg',
+    'content/acties/x/foto.jpg',
+    'content/acties/x/script.js',
     'content/team/jan/afbeelding.jpg',
     'content/activiteiten/x/index.md/extra',
     'content/activiteiten/x/index.md ',

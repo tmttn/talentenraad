@@ -29,7 +29,7 @@ const validAdminExactPaths = new Set([
 const adminDynamicPatterns = [
   /^\/admin\/submissions\/[\w-]+$/,
   // Content editor: list, new and edit per type (slugs as in app/lib/content-store/paths.ts)
-  /^\/admin\/content\/(?:activiteiten|nieuws|team|faq)(?:\/[a-z\d]+(?:-[a-z\d]+)*)?$/,
+  /^\/admin\/content\/(?:activiteiten|acties|nieuws|team|faq)(?:\/[a-z\d]+(?:-[a-z\d]+)*)?$/,
 ];
 
 /**

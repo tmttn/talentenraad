@@ -3,20 +3,25 @@ import {CORE_SCHEMA, dump, load} from 'js-yaml';
 import type {z} from 'zod';
 import {
   aankondigingSchema,
+  actieSchema,
   activiteitSchema,
   faqSchema,
   nieuwsSchema,
   siteSchema,
   teamlidSchema,
 } from '../content/schemas';
+import {
+  actieFoutVeld, afhalenInvoer, compactActie, leesAfhaalRijen, leesProductRijen, productenInvoer,
+} from './actie-form';
 
-export type EntryType = 'activiteiten' | 'nieuws' | 'team' | 'faq';
+export type EntryType = 'activiteiten' | 'acties' | 'nieuws' | 'team' | 'faq';
 export type Aankondiging = z.infer<typeof aankondigingSchema>;
 
 type FormValues = FormData | Record<string, string | File | undefined>;
 
 const fieldOrder: Record<EntryType, string[]> = {
   activiteiten: ['titel', 'datum', 'tijd', 'locatie', 'categorie', 'samenvatting', 'programma', 'afbeelding', 'aliassen', 'concept'],
+  acties: ['titel', 'samenvatting', 'afbeelding', 'bestellen', 'betalen', 'vraag', 'afhalen', 'producten', 'aliassen', 'concept'],
   nieuws: ['titel', 'datum', 'samenvatting', 'afbeelding', 'aliassen', 'concept'],
   team: ['naam', 'rol', 'categorie', 'volgorde', 'foto', 'concept'],
   faq: ['vraag', 'volgorde', 'concept'],
@@ -24,6 +29,7 @@ const fieldOrder: Record<EntryType, string[]> = {
 
 const schemas = {
   activiteiten: activiteitSchema,
+  acties: actieSchema,
   nieuws: nieuwsSchema,
   team: teamlidSchema,
   faq: faqSchema,
@@ -31,6 +37,7 @@ const schemas = {
 
 const bodyField: Record<EntryType, string> = {
   activiteiten: 'inhoud',
+  acties: 'inhoud',
   nieuws: 'inhoud',
   team: 'beschrijving',
   faq: 'antwoord',
@@ -38,6 +45,7 @@ const bodyField: Record<EntryType, string> = {
 
 const slugField: Record<EntryType, string> = {
   activiteiten: 'titel',
+  acties: 'titel',
   nieuws: 'titel',
   team: 'naam',
   faq: 'vraag',
@@ -227,7 +235,53 @@ export type ParsedEntryForm =
   | {ok: true; frontmatter: Record<string, unknown>; body: string; slugSource: string}
   | {ok: false; errors: Record<string, string>};
 
+/**
+ * The actie form: dates, ways to pay and two lists of rows (pickup moments, products with options)
+ * that arrive as JSON. Prices come in as euro text and are stored in cents.
+ */
+export function parseActieForm(values: FormValues): ParsedEntryForm {
+  const wijzen = [
+    ...(checked(getValue(values, 'wijzeOverschrijving')) ? ['overschrijving'] : []),
+    ...(checked(getValue(values, 'wijzeCash')) ? ['cash'] : []),
+  ];
+  const binnenDagen = getValue(values, 'binnenDagen');
+  const aliassen = getValue(values, 'aliassen');
+  const input = {
+    titel: getValue(values, 'titel'),
+    samenvatting: getValue(values, 'samenvatting'),
+    afbeelding: getValue(values, 'afbeelding'),
+    bestellen: {van: getValue(values, 'bestellenVan'), tot: getValue(values, 'bestellenTot')},
+    betalen: {
+      wijzen,
+      ...(binnenDagen === undefined ? {} : {binnenDagen: /^\d{1,3}$/.test(binnenDagen) ? Number(binnenDagen) : Number.NaN}),
+    },
+    vraag: {kind: checked(getValue(values, 'vraagKind'))},
+    afhalen: afhalenInvoer(leesAfhaalRijen(getValue(values, 'afhalen'))),
+    producten: productenInvoer(leesProductRijen(getValue(values, 'producten'))),
+    aliassen: aliassen === undefined ? [] : aliassen.split(/[\n,]/).map(item => item.trim()).filter(Boolean),
+    concept: checked(getValue(values, 'concept')),
+  };
+
+  const body = getValue(values, 'inhoud') ?? '';
+  const result = actieSchema.safeParse(input);
+  if (!result.success) {
+    const errors: Record<string, string> = {};
+    for (const issue of result.error.issues) {
+      const [key, message] = actieFoutVeld(issue.path, issue.message);
+      errors[key] ??= message;
+    }
+
+    return {ok: false, errors};
+  }
+
+  return {ok: true, frontmatter: compactActie(result.data as Record<string, unknown>), body, slugSource: result.data.titel};
+}
+
 export function parseEntryForm(type: EntryType, values: FormValues): ParsedEntryForm {
+  if (type === 'acties') {
+    return parseActieForm(values);
+  }
+
   const input: Record<string, unknown> = {};
   for (const key of fieldOrder[type]) {
     const value = getValue(values, key);

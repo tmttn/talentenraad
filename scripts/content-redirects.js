@@ -1,4 +1,4 @@
-// Permanent redirects for the old addresses (`aliassen`) of activities and news, read from content/ when
+// Permanent redirects for the old addresses (`aliassen`) of activities, news and sales (acties), read from content/ when
 // next.config.js loads, so they are part of the build. CommonJS because next.config.js requires it.
 const fs = require('node:fs');
 const path = require('node:path');
@@ -8,6 +8,7 @@ const {CORE_SCHEMA, load} = require('js-yaml');
 const collections = [
   {dir: 'activiteiten', route: '/activiteiten'},
   {dir: 'nieuws', route: '/nieuws'},
+  {dir: 'acties', route: '/acties'},
 ];
 
 // Anything else would mean something in a Next.js path pattern (`:`, `(`, `*`, …)
