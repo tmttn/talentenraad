@@ -1,4 +1,5 @@
 import {parseMarkdownSource} from '../content/files';
+import {actieFormWaarden} from './actie-form';
 import {entryTypes, type EntryType} from './entry-types';
 import {listDir, readFile} from './github';
 
@@ -24,18 +25,21 @@ export type EntrySummary = {
   aliases: string[];
 };
 
-const titleField: Record<EntryType, string> = {activiteiten: 'titel', nieuws: 'titel', team: 'naam', faq: 'vraag'};
-const subtitleField: Record<EntryType, string> = {activiteiten: 'datum', nieuws: 'datum', team: 'rol', faq: ''};
+const titleField: Record<EntryType, string> = {activiteiten: 'titel', acties: 'titel', nieuws: 'titel', team: 'naam', faq: 'vraag'};
+const subtitleField: Record<EntryType, string> = {activiteiten: 'datum', acties: '', nieuws: 'datum', team: 'rol', faq: ''};
 
 const asText = (value: unknown) => (typeof value === 'string' ? value : '');
 
 export function summarize(type: EntryType, slug: string, text: string): EntrySummary {
   const {data} = parseMarkdownSource(text, slug);
-  const datum = typeof data.datum === 'string' ? data.datum : undefined;
+  // A sale is dated by the first day of ordering
+  const bestellen = (data.bestellen ?? {}) as Record<string, unknown>;
+  const datumBron = type === 'acties' ? bestellen.van : data.datum;
+  const datum = typeof datumBron === 'string' ? datumBron : undefined;
   return {
     slug,
     title: asText(data[titleField[type]]) || slug,
-    subtitle: asText(data[subtitleField[type]]),
+    subtitle: type === 'acties' ? (datum ?? '') : asText(data[subtitleField[type]]),
     concept: data.concept === true,
     datum,
     volgorde: typeof data.volgorde === 'number' ? data.volgorde : 99,
@@ -65,7 +69,7 @@ export async function listEntries(type: EntryType): Promise<EntrySummary[]> {
     return file ? summarize(type, slug, file.text) : undefined;
   }));
   const items = summaries.filter((item): item is EntrySummary => item !== undefined);
-  if (type === 'nieuws' || type === 'activiteiten') {
+  if (type === 'nieuws' || type === 'activiteiten' || type === 'acties') {
     return items.sort((a, b) => (b.datum ?? '').localeCompare(a.datum ?? ''));
   }
 
@@ -100,6 +104,10 @@ export async function loadEntry(type: EntryType, slug: string): Promise<LoadedEn
   if (config.listField) {
     const list = data[config.listField];
     values[config.listField] = JSON.stringify(Array.isArray(list) ? list : []);
+  }
+
+  if (config.actie) {
+    Object.assign(values, actieFormWaarden(data));
   }
 
   let imageSha = '';

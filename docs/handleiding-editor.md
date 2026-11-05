@@ -13,12 +13,29 @@ Geen mail gekregen? Kijk in je spam, of vraag de beheerder om je uitnodiging opn
 ## Wat je kunt bewerken
 
 - **Activiteiten**: titel, datum, tijd, locatie, categorie, samenvatting, tekst en een afbeelding.
+- **Acties**: een verkoop waarvoor ouders online bestellen (pizza's, ontbijtmanden, fuifkaarten). Zie hieronder.
 - **Nieuws**: titel, datum, samenvatting, tekst en een afbeelding.
 - **Team**: naam, rol, categorie (bestuur of lid), volgorde, een korte tekst en een foto.
 - **Veelgestelde vragen**: vraag, antwoord en volgorde.
 - **Aankondiging**: de balk bovenaan de site, met een soort (info, waarschuwing of belangrijk), een korte tekst en eventueel een link.
 
 Bij **Volgorde** komen lagere nummers eerst; leeg betekent helemaal achteraan.
+
+## Een actie opzetten
+
+Een actie heeft, naast titel, samenvatting, beschrijving en afbeelding:
+
+- **Bestellen vanaf** en **Bestellen tot en met**: in die periode staat het bestelformulier open. Daarna sluit het vanzelf, en kunnen ouders ook niet meer zelf annuleren.
+- **Betalen binnen (dagen)**: de uiterste betaaldatum, gerekend vanaf de dag van bestellen.
+- **Betalen**: overschrijving (met een gestructureerde mededeling per bestelling) en/of cash. Het rekeningnummer staat één keer voor de hele site ingesteld.
+- **Afhaalmomenten**: datum, uur (bv. `17:00 - 19:00`) en plaats. Ouders kiezen er één.
+- **Producten**: naam, prijs in euro (bv. `12,50`), eventueel wat erin zit, een voorraad (leeg = onbeperkt) en een maximum per bestelling (leeg = 10).
+- **Opties** bij een product, bv. Brood met de keuzes Wit, Bruin en Glutenvrij (+ 2,00). Ouders kiezen dan per stuk.
+
+Tips:
+
+- Zet een nieuwe actie eerst als **Concept**: dan staat ze nog niet op de site.
+- Pas na de eerste bestelling geen producten meer weg of aan als het kan: een bestelling onthoudt naam en prijs zoals ze waren, maar de productielijst telt per product.
 
 ## Iets toevoegen of aanpassen
 

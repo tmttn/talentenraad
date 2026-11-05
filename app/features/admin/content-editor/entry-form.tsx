@@ -4,8 +4,10 @@ import {useActionState, useRef, useState} from 'react';
 import Link from 'next/link';
 import {Save} from 'lucide-react';
 import {FormField, Input, Select, Switch} from '@components/ui';
+import {actieVelden} from '@lib/content-store/actie-form';
 import {entryTypes, type EntryType} from '@lib/content-store/entry-types';
 import {saveEntry, type FormState} from '../../../(admin)/admin/(protected)/content/actions';
+import {ActieFields} from './actie-fields';
 import {ImageField} from './image-field';
 import {MarkdownField} from './markdown-field';
 import {ProgrammaField} from './programma-field';
@@ -59,6 +61,7 @@ export function EntryForm({
     config.bodyField,
     ...(config.imageField ? [config.imageField] : []),
     ...(config.listField ? [config.listField] : []),
+    ...(config.actie ? actieVelden : []),
   ];
   const {formRef, messageRef, message} = useFormFeedback(state, visible);
 
@@ -126,6 +129,8 @@ export function EntryForm({
           </FormField>
         ))}
       </div>
+
+      {config.actie && <ActieFields values={initial?.values ?? {}} errors={errors} />}
 
       {config.listField && (
         // No remount key: unlike the photo, the rows survive a failed save

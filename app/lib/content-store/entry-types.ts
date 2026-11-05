@@ -1,5 +1,5 @@
 /** Shared (client-safe) description of the editable content types: labels, form fields and file layout. */
-export type EntryType = 'activiteiten' | 'nieuws' | 'team' | 'faq';
+export type EntryType = 'activiteiten' | 'acties' | 'nieuws' | 'team' | 'faq';
 
 export type FieldConfig = {
   name: string;
@@ -24,6 +24,8 @@ export type EntryTypeConfig = {
   singleFile: boolean;
   /** A frontmatter list edited as repeatable rows (the activity programme), sent as JSON. */
   listField?: 'programma';
+  /** A sale: ordering period, ways to pay, pickup moments and products (see actie-form.ts). */
+  actie?: true;
 };
 
 export const entryTypes: Record<EntryType, EntryTypeConfig> = {
@@ -55,6 +57,21 @@ export const entryTypes: Record<EntryType, EntryTypeConfig> = {
     imageFile: 'afbeelding.jpg',
     singleFile: false,
     listField: 'programma',
+  },
+  acties: {
+    label: 'Acties',
+    singular: 'actie',
+    addLabel: 'Actie toevoegen',
+    fields: [
+      {name: 'titel', label: 'Titel', kind: 'text', required: true, hint: 'Bijvoorbeeld Pizzaverkoop of Moederdag-ontbijtmanden 2027.'},
+      {name: 'samenvatting', label: 'Samenvatting', kind: 'text', required: true, hint: 'Een korte zin voor op de homepagina en in de kalender.'},
+    ],
+    bodyField: 'inhoud',
+    bodyLabel: 'Beschrijving',
+    imageField: 'afbeelding',
+    imageFile: 'afbeelding.jpg',
+    singleFile: false,
+    actie: true,
   },
   nieuws: {
     label: 'Nieuws',
