@@ -1,0 +1,1 @@
+ALTER TABLE `users` ADD `bank_toegang` integer DEFAULT false NOT NULL;

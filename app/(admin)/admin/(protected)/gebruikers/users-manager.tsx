@@ -30,12 +30,14 @@ type FormData = {
   email: string;
   name: string;
   role: Role;
+  bankToegang: boolean;
 };
 
 const emptyForm: FormData = {
   email: '',
   name: '',
   role: 'redacteur',
+  bankToegang: false,
 };
 
 const roleOptions = [
@@ -78,6 +80,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
       email: user.email,
       name: user.name ?? '',
       role: user.role,
+      bankToegang: user.bankToegang,
     });
     setIsCreating(false);
   };
@@ -109,8 +112,8 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
         : '/api/admin/users';
 
       const body = editingId
-        ? {name: formData.name || undefined, role: formData.role}
-        : {email: formData.email, name: formData.name || undefined, role: formData.role};
+        ? {name: formData.name || undefined, role: formData.role, bankToegang: formData.bankToegang}
+        : {email: formData.email, name: formData.name || undefined, role: formData.role, bankToegang: formData.bankToegang};
 
       const response = await fetch(url, {
         method: editingId ? 'PUT' : 'POST',
@@ -376,8 +379,26 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
             ))}
           </select>
           <p className='mt-1 text-sm text-gray-500'>
-            Redacteurs kunnen inloggen en de inhoud van de site bewerken. Beheerders beheren ook gebruikers en zien de berichten en audit logs.
+            Redacteurs kunnen inloggen, de inhoud van de site bewerken en bestellingen beheren. Beheerders beheren ook gebruikers en zien de berichten en audit logs.
           </p>
+        </div>
+
+        <div className='flex items-start gap-3'>
+          <input
+            type='checkbox'
+            id='user-bank'
+            checked={formData.bankToegang}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              setFormData(previous => ({...previous, bankToegang: e.target.checked}));
+            }}
+            className='mt-1 w-4 h-4 rounded border-gray-300 accent-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary'
+          />
+          <div>
+            <label htmlFor='user-bank' className='block text-sm font-medium text-gray-700'>Toegang tot de bankrekening</label>
+            <p className='text-sm text-gray-500'>
+              Alleen wie de rekening kan nakijken, mag bestellingen als betaald markeren en terugbetalingen afvinken.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -512,7 +533,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                                   ? 'bg-green-100 text-green-800'
                                   : 'bg-gray-100 text-gray-600'
                               }`}>
-                                {user.role === 'admin' ? 'Beheerder' : 'Redacteur'}
+                                {user.role === 'admin' ? 'Beheerder' : 'Redacteur'}{user.bankToegang ? ' · bank' : ''}
                               </span>
                               {user.invitedAt && !user.acceptedAt && (
                                 <span className='px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit bg-amber-100 text-amber-800'>
@@ -659,7 +680,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                             ? 'bg-green-100 text-green-800'
                             : 'bg-gray-100 text-gray-600'
                         }`}>
-                          {user.role === 'admin' ? 'Beheerder' : 'Redacteur'}
+                          {user.role === 'admin' ? 'Beheerder' : 'Redacteur'}{user.bankToegang ? ' · bank' : ''}
                         </span>
                         {user.invitedAt && !user.acceptedAt && (
                           <span className='px-2 py-1 text-xs font-medium rounded bg-amber-100 text-amber-800'>

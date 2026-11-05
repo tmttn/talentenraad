@@ -60,6 +60,7 @@ export async function PUT(
     const body = await request.json() as {
       name?: string;
       role?: string;
+      bankToegang?: unknown;
       resendInvitation?: boolean;
     };
 
@@ -114,6 +115,10 @@ export async function PUT(
       return NextResponse.json({error: 'Invalid role'}, {status: 400});
     }
 
+    if (body.bankToegang !== undefined && typeof body.bankToegang !== 'boolean') {
+      return NextResponse.json({error: 'Invalid bankToegang'}, {status: 400});
+    }
+
     const role: Role = body.role ?? existingUser.role;
 
     // Prevent removing admin from yourself
@@ -131,6 +136,7 @@ export async function PUT(
         name: body.name ?? existingUser.name,
         role,
         isAdmin: role === 'admin',
+        bankToegang: typeof body.bankToegang === 'boolean' ? body.bankToegang : existingUser.bankToegang,
         updatedAt: new Date(),
       })
       .where(eq(users.id, id))
@@ -138,8 +144,8 @@ export async function PUT(
 
     // Log audit event with before/after diff
     const diff = computeDataDiff(
-      {name: existingUser.name, role: existingUser.role},
-      {name: updatedUser.name, role: updatedUser.role},
+      {name: existingUser.name, role: existingUser.role, bankToegang: existingUser.bankToegang},
+      {name: updatedUser.name, role: updatedUser.role, bankToegang: updatedUser.bankToegang},
     );
     if (diff.before ?? diff.after) {
       await logAudit({

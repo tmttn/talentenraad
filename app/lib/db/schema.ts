@@ -40,6 +40,8 @@ export const users = sqliteTable('users', {
   // Legacy flag, no longer read; role is the source of truth. Kept in sync on writes.
   isAdmin: integer('is_admin', {mode: 'boolean'}).default(false).notNull(),
   role: text('role', {enum: roles}).default('redacteur').notNull(),
+  /** Has access to the bank account: may confirm payments and refunds, apart from the role. */
+  bankToegang: integer('bank_toegang', {mode: 'boolean'}).default(false).notNull(),
   invitedAt: integer('invited_at', {mode: 'timestamp_ms'}),
   acceptedAt: integer('accepted_at', {mode: 'timestamp_ms'}),
   createdAt: createdAt(),

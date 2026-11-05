@@ -17,6 +17,7 @@ import {
   X,
   Menu,
   LogOut,
+  ShoppingBag,
   type LucideIcon,
 } from 'lucide-react';
 import type {Role} from '@lib/db/schema';
@@ -47,6 +48,7 @@ type NavItem = {
 const navItems: NavItem[] = [
   {href: '/admin', label: 'Dashboard', icon: Home},
   {href: '/admin/content', label: 'Content', icon: FileText},
+  {href: '/admin/bestellingen', label: 'Bestellingen', icon: ShoppingBag},
   {
     href: '/admin/submissions', label: 'Berichten', icon: Mail, adminOnly: true,
   },
@@ -235,7 +237,7 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
   return (
     <>
       {/* Mobile header with hamburger */}
-      <div className='lg:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between'>
+      <div className='lg:hidden print:hidden fixed top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between'>
         <button
           type='button'
           onClick={() => setIsOpen(true)}
@@ -268,7 +270,7 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
       {/* Sidebar */}
       <aside
         className={`
-					fixed inset-y-0 left-0 z-50
+					fixed inset-y-0 left-0 z-50 print:hidden
 					w-72 ${isCollapsed ? 'lg:w-16' : 'lg:w-64'} bg-white border-r border-gray-200
 					flex flex-col
 					transform transition-all duration-slow ease-in-out
@@ -280,7 +282,7 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
 
       {/* Spacer to push content right of fixed sidebar on desktop */}
       <div
-        className='hidden lg:block flex-shrink-0 transition-all duration-slow'
+        className='hidden lg:block print:hidden flex-shrink-0 transition-all duration-slow'
         style={{width: isCollapsed ? '4rem' : '16rem'}}
       />
     </>

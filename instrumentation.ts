@@ -17,5 +17,9 @@ export async function register() {
     // Replaces the old daily cron: runs now and then every 24 hours.
     const {startAuditCleanup} = await import('@lib/audit/schedule');
     startAuditCleanup();
+
+    // Personal data of orders goes three months after the last pickup moment of a sale
+    const {startBewaartermijn} = await import('@lib/bestellingen/bewaartermijn');
+    startBewaartermijn();
   }
 }
