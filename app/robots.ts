@@ -6,6 +6,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
+      // Order pages (/b/<token>) are private links
+      disallow: '/b/',
     },
     sitemap: `${siteConfig.url}/sitemap.xml`,
   };

@@ -6,7 +6,7 @@ import KalenderPage, {generateMetadata} from '../../../app/(main)/kalender/page'
 import {expectInOrder} from './helpers';
 
 vi.mock('@lib/content', () => ({
-  content: {getPagina: vi.fn(), getActiviteiten: vi.fn()},
+  content: {getPagina: vi.fn(), getActiviteiten: vi.fn(), getActies: vi.fn(() => [])},
 }));
 
 vi.mock('@lib/dates', async importOriginal => ({
