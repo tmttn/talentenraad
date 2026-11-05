@@ -9,6 +9,7 @@ describe('robots', () => {
       rules: {
         userAgent: '*',
         allow: '/',
+        disallow: '/b/',
       },
       sitemap: `${siteConfig.url}/sitemap.xml`,
     });

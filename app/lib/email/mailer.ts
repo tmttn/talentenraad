@@ -1,10 +1,21 @@
 import nodemailer from 'nodemailer';
 
+export type MailAttachment = {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+  /** Content-ID, so the HTML can show it inline as `cid:<cid>`. */
+  cid?: string;
+};
+
 export type MailMessage = {
   to: string;
   subject: string;
   html: string;
   text: string;
+  /** Where a reply goes, e.g. the board's address for questions about an order. */
+  replyTo?: string;
+  attachments?: MailAttachment[];
 };
 
 const defaultFrom = 'Talentenraad <noreply@talentenraad.be>';

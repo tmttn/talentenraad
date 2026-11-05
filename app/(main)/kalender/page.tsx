@@ -4,6 +4,7 @@ import {PageWithAnnouncements} from '@components/layout/page-with-announcements'
 import {ContourCta, contourTitle} from '@components/layout/contour-parts';
 import {formatLongDate} from '@features/activities/activity-card';
 import {CalendarList} from '@features/activities/calendar-list';
+import {OpenActies} from '@features/bestellen/actie-kaart';
 import {content} from '@lib/content';
 import {todayString} from '@lib/dates';
 import {generateMetadata as generateSeoMetadata} from '@lib/seo';
@@ -31,6 +32,7 @@ export default function Page() {
   return (
     <PageWithAnnouncements>
       <CalendarList titel={pagina.hero.titel} intro={pagina.hero.ondertitel} items={komend} thisYear={Number(today.slice(0, 4))} />
+      <OpenActies acties={content.getActies()} today={today} className='pb-[clamp(56px,6vw,80px)]' />
       {voorbij.length > 0 && (
         <section className='bg-gray-50 border-t-(length:--contour-width-sm) border-ink px-5 py-[clamp(56px,6vw,80px)]'>
           <div className='max-w-[1240px] mx-auto flex flex-col gap-7'>

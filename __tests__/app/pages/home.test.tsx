@@ -5,9 +5,10 @@ import * as paginas from '../../fixtures/paginas';
 import {makeActiviteit, makeNieuws, makeTeamlid} from '../../fixtures/content';
 import HomePage, {generateMetadata} from '../../../app/(main)/page';
 import {expectInOrder} from './helpers';
+import {testActie} from '../../helpers/acties';
 
 vi.mock('@lib/content', () => ({
-  content: {getPagina: vi.fn(), getActiviteiten: vi.fn(), getNieuws: vi.fn(), getTeam: vi.fn()},
+  content: {getPagina: vi.fn(), getActiviteiten: vi.fn(), getNieuws: vi.fn(), getTeam: vi.fn(), getActies: vi.fn(() => [])},
 }));
 
 vi.mock('@lib/dates', async importOriginal => ({
@@ -99,5 +100,18 @@ describe('Home page', () => {
     expect(metadata.title).toEqual({absolute: 'Fictieve start | Talentenraad'});
     expect(metadata.openGraph).toMatchObject({description: 'Fictieve beschrijving'});
     expect(metadata.openGraph?.title).toBe('Fictieve start | Talentenraad');
+  });
+
+  it('shows a sale while parents can order', () => {
+    vi.mocked(content.getActies).mockReturnValue([
+      testActie({bestellen: {van: '2026-10-20', tot: '2026-11-15'}}, 'pizzaverkoop'),
+      testActie({titel: 'Later', bestellen: {van: '2026-12-01', tot: '2026-12-10'}}, 'later'),
+    ]);
+    render(<HomePage />);
+    const sectie = screen.getByRole('region', {name: 'Nu te bestellen'});
+    expect(within(sectie).getByRole('link', {name: /Pizzaverkoop/})).toHaveAttribute('href', '/acties/pizzaverkoop');
+    expect(within(sectie).getByText('Bestellen tot en met zondag 15 november')).toBeInTheDocument();
+    expect(within(sectie).queryByText('Later')).not.toBeInTheDocument();
+    vi.mocked(content.getActies).mockReturnValue([]);
   });
 });

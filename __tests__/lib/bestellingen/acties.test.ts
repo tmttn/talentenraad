@@ -1,5 +1,5 @@
 import {
-  actieStatus, afhaalLabel, leesVeldnaam, plusDagen, productVarianten, veldnaam, weekdag,
+  actieStatus, afhaalLabel, kanBestellen, leesVeldnaam, plusDagen, productVarianten, veldnaam, weekdag,
 } from '@lib/bestellingen/acties';
 
 const periode = {bestellen: {van: '2027-01-04', tot: '2027-01-17'}};
@@ -61,5 +61,23 @@ describe('veldnaam', () => {
     expect(leesVeldnaam(veldnaam('mand', ''))).toEqual({productId: 'mand', sleutel: ''});
     expect(leesVeldnaam(veldnaam('mand', 'Wit/Cava'))).toEqual({productId: 'mand', sleutel: 'Wit/Cava'});
     expect(leesVeldnaam('naam')).toBeUndefined();
+  });
+});
+
+describe('kanBestellen', () => {
+  const actie = {...periode, concept: false};
+  const voorbeeld = 'BE68 5390 0754 7034';
+  const echt = 'NL91 ABNA 0417 1643 00';
+
+  it('follows the ordering period', () => {
+    expect(kanBestellen(actie, echt, '2027-01-03', true)).toEqual({open: false, reden: 'binnenkort'});
+    expect(kanBestellen(actie, echt, '2027-01-10', true)).toEqual({open: true});
+    expect(kanBestellen(actie, echt, '2027-01-18', true)).toEqual({open: false, reden: 'gesloten'});
+  });
+
+  it('stays closed in production with the example account or as a draft', () => {
+    expect(kanBestellen(actie, voorbeeld, '2027-01-10', true)).toEqual({open: false, reden: 'voorbeeldrekening'});
+    expect(kanBestellen({...actie, concept: true}, echt, '2027-01-10', true)).toEqual({open: false, reden: 'concept'});
+    expect(kanBestellen({...actie, concept: true}, voorbeeld, '2027-01-10', false)).toEqual({open: true});
   });
 });

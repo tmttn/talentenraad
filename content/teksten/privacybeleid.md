@@ -5,7 +5,7 @@ beschrijving: >-
   verzamelt, gebruikt en beschermt in overeenstemming met de Algemene
   Verordening…
 ---
-Laatst bijgewerkt: 2 november 2026
+Laatst bijgewerkt: 5 november 2026
 
 Dit privacybeleid beschrijft hoe de Talentenraad uw persoonsgegevens verzamelt, gebruikt en beschermt in overeenstemming met de Algemene Verordening Gegevensbescherming (AVG/GDPR) en de Belgische Wet van 30 juli 2018 betreffende de bescherming van natuurlijke personen met betrekking tot de verwerking van persoonsgegevens.
 
@@ -38,6 +38,13 @@ Wij verwerken de volgende categorieën persoonsgegevens voor de onderstaande doe
 -   **Doel:** Organisatie en uitvoering van schoolactiviteiten
 -   **Rechtsgrond:** Uitvoering van een overeenkomst (Art. 6(1)(b) AVG)
 
+### Bestellingen bij acties
+
+-   **Gegevens:** Naam en e-mailadres, telefoonnummer als u dat invult, en naam en klas van uw kind alleen als een actie daarom vraagt. Verder wat u bestelde, het bedrag, het gekozen afhaalmoment, de status van uw betaling en wanneer u uw bestelling afhaalde. Wij bewaren geen bankgegevens: alleen dat en wanneer er betaald is.
+-   **Doel:** Uw bestelling afhandelen: u de betaalgegevens en uw afhaalcode mailen, betalingen nakijken en de bestelling meegeven bij het afhalen. De QR-code in uw afhaalmail bevat alleen een willekeurige link, geen persoonsgegevens. Wij gebruiken deze gegevens niet voor een nieuwsbrief of iets anders zonder uw aparte toestemming.
+-   **Wie ziet wat:** Het bestuur ziet alle gegevens van een bestelling. Ouders die bij het afhalen helpen, zien alleen naam, bestelde producten en of er betaald is, geen e-mailadres of telefoonnummer.
+-   **Rechtsgrond:** Uitvoering van een overeenkomst (Art. 6(1)(b) AVG)
+
 ### Beheerders van de website
 
 -   **Gegevens:** E-mailadres en naam van bestuursleden die de website beheren, een tijdelijke inlogcode (alleen als hash bewaard, 15 minuten geldig), de sessiecookie `tr_session` en een auditlog van beheeracties (wie deed wat en wanneer)
@@ -59,7 +66,7 @@ Wij gebruiken geen analyse- of trackingdiensten. De webserver (Caddy) en de cont
 Uw persoonsgegevens kunnen worden gedeeld met de volgende ontvangers:
 
 -   **Hetzner Online GmbH** (Gunzenhausen, Duitsland) - Hosting van onze website en database. De servers staan in een datacenter in Duitsland.
--   **Gandi SAS** (Parijs, Frankrijk) - E-mailprovider; berichten van het contactformulier en inloglinks voor beheerders worden via hun mailbox verstuurd.
+-   **Gandi SAS** (Parijs, Frankrijk) - E-mailprovider; berichten van het contactformulier, bevestigingen van bestellingen en inloglinks voor beheerders worden via hun mailbox verstuurd.
 -   **Bestuursleden Talentenraad** - Voor het beantwoorden van vragen en organiseren van activiteiten
 -   **School Het Talentenhuis** - Alleen indien noodzakelijk voor de organisatie van gezamenlijke activiteiten
 
@@ -77,9 +84,11 @@ Wij bewaren uw persoonsgegevens niet langer dan noodzakelijk voor de doeleinden 
 | --- | --- |
 | Contactformulier berichten | 1 jaar na afhandeling vraag |
 | Activiteiteninschrijvingen | 1 jaar na datum activiteit |
+| Bestellingen bij acties: naam, e-mailadres, telefoonnummer, naam en klas van uw kind | Automatisch gewist 3 maanden na het laatste afhaalmoment van de actie |
+| Bestellingen bij acties: bestelnummer, producten, bedragen en data (zonder naam) | Voor de rekening van het schooljaar |
 | Auditlogs van beheeracties | 90 dagen |
 | Inlogcodes voor beheerders | 15 minuten (alleen als hash bewaard) |
-| Beveiliging van het contactformulier tegen misbruik (alleen een hash van uw IP-adres, nooit het adres zelf) | 10 minuten |
+| Beveiliging van het contact- en bestelformulier tegen misbruik (alleen een hash van uw IP-adres, nooit het adres zelf) | 10 minuten |
 
 ## 6. Uw rechten
 

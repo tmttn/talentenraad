@@ -1,5 +1,6 @@
 /** Pure helpers for a sale (actie): status, pickup labels and product variants. Client-safe. */
 import type {Afhaalmoment, Product} from '../content/schemas';
+import {isVoorbeeldRekening} from '../content/iban';
 
 export type ActieStatus = 'binnenkort' | 'open' | 'gesloten';
 
@@ -86,4 +87,32 @@ export function leesVeldnaam(name: string): {productId: string; sleutel: string}
   const rest = name.slice(veldPrefix.length);
   const colon = rest.indexOf(':');
   return colon === -1 ? {productId: rest, sleutel: ''} : {productId: rest.slice(0, colon), sleutel: rest.slice(colon + 1)};
+}
+
+export type GeslotenReden = 'binnenkort' | 'gesloten' | 'voorbeeldrekening' | 'concept';
+
+/**
+ * Whether parents can order now. In production a draft sale never opens, and no sale opens while
+ * site.yaml still holds the example account number: parents would pay into the wrong account.
+ */
+export function kanBestellen(
+  actie: Periode & {concept: boolean},
+  iban: string,
+  today: string,
+  production = process.env.NODE_ENV === 'production',
+): {open: true} | {open: false; reden: GeslotenReden} {
+  const status = actieStatus(actie, today);
+  if (status !== 'open') {
+    return {open: false, reden: status};
+  }
+
+  if (production && actie.concept) {
+    return {open: false, reden: 'concept'};
+  }
+
+  if (production && isVoorbeeldRekening(iban)) {
+    return {open: false, reden: 'voorbeeldrekening'};
+  }
+
+  return {open: true};
 }

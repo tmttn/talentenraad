@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {HomeHero} from '@features/home/home-hero';
 import {HomeActivities} from '@features/home/home-activities';
+import {OpenActies} from '@features/bestellen/actie-kaart';
 import {HomeNewsAndTeam, HomePhotoWall, HomeQuote} from '@features/home/home-sections';
 import {ContourCta} from '@components/layout/contour-parts';
 import {content} from '@lib/content';
@@ -32,6 +33,7 @@ export default function Page() {
   return (
     <PageWithAnnouncements>
       <HomeHero titel={pagina.hero.titel} ondertitel={pagina.hero.ondertitel} knoppen={pagina.hero.knoppen} />
+      <OpenActies acties={content.getActies()} today={today} className='pt-[clamp(64px,7vw,96px)]' />
       <HomeActivities activiteiten={komend} />
       <HomeQuote citaat={pagina.citaat} bijschriftHtml={pagina.html} />
       <HomeNewsAndTeam nieuws={laatsteNieuws} team={bestuur} />

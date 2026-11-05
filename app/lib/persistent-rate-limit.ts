@@ -19,7 +19,16 @@ function hashKey(scope: string, key: string): string {
  * Each check runs in one transaction: drop expired hits, count, and record the new hit when allowed.
  */
 export function createPersistentRateLimiter({scope, limit, windowMs}: PersistentRateLimiterOptions) {
+  const recentHits = (keyHash: string, since: Date) => db.select({hits: count()}).from(rateLimitHits)
+    .where(and(eq(rateLimitHits.scope, scope), eq(rateLimitHits.keyHash, keyHash), gte(rateLimitHits.hitAt, since)))
+    .all()[0].hits;
+
   return {
+    /** True when the key is over the limit now; counts nothing (for limits on failures only). */
+    isLimited(key: string, now = Date.now()): boolean {
+      return recentHits(hashKey(scope, key), new Date(now - windowMs)) >= limit;
+    },
+
     /** Returns true when the request is allowed (and counts it), false when over the limit. */
     check(key: string, now = Date.now()): boolean {
       const keyHash = hashKey(scope, key);
