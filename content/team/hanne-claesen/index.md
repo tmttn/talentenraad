@@ -1,7 +1,6 @@
 ---
 naam: Hanne Claesen
-rol: Secretaris
-categorie: bestuur
-volgorde: 2
+rol: Lid
+categorie: lid
+volgorde: 99
 ---
-Ik zorg voor de verslaggeving van onze vergaderingen.
