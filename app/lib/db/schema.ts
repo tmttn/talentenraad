@@ -1,9 +1,10 @@
-import {sql} from 'drizzle-orm';
+import {relations, sql} from 'drizzle-orm';
 import {
   sqliteTable,
   text,
   integer,
   index,
+  uniqueIndex,
 } from 'drizzle-orm/sqlite-core';
 
 // Ids are UUID strings generated in the app; timestamps are epoch milliseconds.
@@ -151,3 +152,91 @@ export const rateLimitHits = sqliteTable('rate_limit_hits', {
   index('rate_limit_hits_hit_at_idx').on(table.hitAt),
 ]);
 
+
+// Orders for a sale (actie, content/acties/<slug>). Names, prices and choices are copied from the
+// content at the time of ordering, so editing a sale never changes an existing order.
+export const orderStatuses = ['wacht', 'betaald', 'afgehaald', 'geannuleerd', 'terugbetalen'] as const;
+export type OrderStatus = typeof orderStatuses[number];
+export const betaalwijzen = ['overschrijving', 'cash'] as const;
+export const betaalbronnen = ['manueel', 'bank', 'online'] as const;
+
+const timestamp = (name: string) => integer(name, {mode: 'timestamp_ms'});
+
+export const orders = sqliteTable('orders', {
+  id: id(),
+  actie: text('actie').notNull(),
+  /** Runs per sale: 1, 2, 3 … */
+  nummer: integer('nummer').notNull(),
+  /** Runs over all sales; the structured payment reference is made from it. */
+  volgnummer: integer('volgnummer').notNull().unique(),
+  /** Structured reference as 12 digits (shown as +++123/4567/89002+++). */
+  mededeling: text('mededeling').notNull().unique(),
+  /** 128-bit random token in the QR link /b/<token>; cleared when the personal data is wiped. */
+  token: text('token').unique(),
+  /** Six characters without look-alikes, for when scanning fails. */
+  korteCode: text('korte_code').notNull(),
+  naam: text('naam').notNull(),
+  email: text('email').notNull(),
+  telefoon: text('telefoon'),
+  kindNaam: text('kind_naam'),
+  kindKlas: text('kind_klas'),
+  afhaalId: text('afhaal_id').notNull(),
+  /** YYYY-MM-DD, also the start of the retention period. */
+  afhaalDatum: text('afhaal_datum').notNull(),
+  /** `Vrijdag 22 januari, 17:00 - 19:00`, as it was when ordering. */
+  afhaalLabel: text('afhaal_label').notNull(),
+  afhaalPlaats: text('afhaal_plaats').notNull(),
+  totaalCent: integer('totaal_cent').notNull(),
+  status: text('status', {enum: orderStatuses}).notNull(),
+  betaalwijze: text('betaalwijze', {enum: betaalwijzen}),
+  betaalbron: text('betaalbron', {enum: betaalbronnen}),
+  betaaldOp: timestamp('betaald_op'),
+  betaaldDoor: text('betaald_door'),
+  afgehaaldOp: timestamp('afgehaald_op'),
+  afgehaaldDoor: text('afgehaald_door'),
+  geannuleerdOp: timestamp('geannuleerd_op'),
+  geannuleerdDoor: text('geannuleerd_door'),
+  annuleerReden: text('annuleer_reden'),
+  terugbetaaldOp: timestamp('terugbetaald_op'),
+  terugbetaaldDoor: text('terugbetaald_door'),
+  notitie: text('notitie'),
+  bevestigingVerstuurdOp: timestamp('bevestiging_verstuurd_op'),
+  qrVerstuurdOp: timestamp('qr_verstuurd_op'),
+  gewistOp: timestamp('gewist_op'),
+  aangemaaktOp: createdAt(),
+}, table => [
+  uniqueIndex('orders_actie_nummer_idx').on(table.actie, table.nummer),
+  uniqueIndex('orders_actie_korte_code_idx').on(table.actie, table.korteCode),
+  index('orders_actie_status_idx').on(table.actie, table.status),
+  index('orders_actie_afhaal_idx').on(table.actie, table.afhaalId),
+]);
+
+export type GekozenKeuze = {optie: string; keuze: string};
+
+export const orderLines = sqliteTable('order_lines', {
+  id: id(),
+  orderId: text('order_id').notNull().references(() => orders.id, {onDelete: 'cascade'}),
+  volgorde: integer('volgorde').notNull(),
+  productId: text('product_id').notNull(),
+  naam: text('naam').notNull(),
+  keuzes: text('keuzes', {mode: 'json'}).$type<GekozenKeuze[]>().notNull(),
+  /** Price per piece in cents, surcharges included. */
+  prijsCent: integer('prijs_cent').notNull(),
+  aantal: integer('aantal').notNull(),
+  meegegeven: integer('meegegeven', {mode: 'boolean'}).default(false).notNull(),
+}, table => [
+  index('order_lines_order_idx').on(table.orderId),
+]);
+
+export const ordersRelations = relations(orders, ({many}) => ({
+  regels: many(orderLines),
+}));
+
+export const orderLinesRelations = relations(orderLines, ({one}) => ({
+  order: one(orders, {fields: [orderLines.orderId], references: [orders.id]}),
+}));
+
+export type Order = typeof orders.$inferSelect;
+export type NewOrder = typeof orders.$inferInsert;
+export type OrderLine = typeof orderLines.$inferSelect;
+export type NewOrderLine = typeof orderLines.$inferInsert;

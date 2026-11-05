@@ -6,7 +6,7 @@
 
 **Architecture:** Acties zijn Markdown met frontmatter in `content/acties/<slug>/index.md`, met een zod-schema en een eigen formulier in de bestaande editor. Bestellingen staan in SQLite (`orders`, `order_lines`, Drizzle), met een snapshot van naam, prijs en keuzes. Publiek: `/acties`, `/acties/[slug]` (server action, werkt zonder JavaScript) en `/b/[token]`. Beheer onder `/admin/bestellingen`, de afhaal-app onder `/admin/afhalen` (eigen route group, eigen app-layout). Mails via de bestaande SMTP-mailer, QR als ingebedde PNG.
 
-**Tech Stack:** Next.js 16 (app router, server actions), Drizzle + better-sqlite3, zod 4, nodemailer, sharp (PNG van de QR-SVG), `qrcode-generator` (QR maken, geen dependencies) en `jsqr` (QR lezen waar `BarcodeDetector` ontbreekt, alleen dynamisch geladen), Vitest.
+**Tech Stack:** Next.js 16 (app router, server actions), Drizzle + better-sqlite3, zod 4, nodemailer, sharp (PNG van de QR-SVG), een eigen QR-encoder (`app/lib/bestellingen/qr-encoder.ts`, ISO 18004 byte-modus, niveau M, versie 1–10; de npm-registry was tijdens de bouw onbereikbaar en zo is er een dependency minder), voor het lezen `jsqr` waar `BarcodeDetector` ontbreekt (alleen dynamisch geladen), Vitest.
 
 **Spec:** [Bestelsysteem voor acties](https://claude.ai/artifact/VSUZokvGPrTwWmHTNzE6Pu) (Claude Docs, 5 nov 2026) + mockups in de rij "Bestelsysteem" op het [canvas van de site](https://claude.ai/artifact/GvHJCD2D5yFHeXSQhhCpEn) (`Bestellen`, `BestellenMobiel`, `MailBevestiging`, `MailQR`, `Bestelstatus`, `AppScan`, `AppAfgifte`, `AppWaarschuwing`, `Beheer`). Antwoorden van Tom in de spec: voorlopig rekeningnummer kiezen; betalingen bevestigen alleen met toegang tot de bankrekening; eerste actie pizzaverkoop januari 2027; voorlopig altijd afhalen; ouders mogen zelf annuleren tot de bestelperiode sluit; feitelijke vereniging; online betalen voorlopig negeren.
 
@@ -136,8 +136,8 @@
 ### Task 2.4: QR-code en mails
 
 **Files:**
-- Create: `app/lib/bestellingen/qr.ts`, `app/lib/email/bestellingen.ts`, `app/lib/email/escape.ts`
-- Modify: `app/lib/email/mailer.ts` (`attachments`, `replyTo` in `MailMessage`), `package.json` (`qrcode-generator`, `jsqr`)
+- Create: `app/lib/bestellingen/qr-encoder.ts`, `app/lib/bestellingen/qr.ts`, `app/lib/bestellingen/mails.ts`, `app/lib/email/bestellingen.ts`, `app/lib/email/escape.ts`
+- Modify: `app/lib/email/mailer.ts` (`attachments`, `replyTo` in `MailMessage`)
 - Test: `__tests__/lib/bestellingen/qr.test.ts`, `__tests__/lib/email/bestellingen.test.ts`
 
 **Interfaces:**
@@ -145,7 +145,7 @@
 - `stuurBevestiging(order: OrderMetRegels, actie: Actie, site: Site): Promise<void>` en `stuurAfhaalcode(order, actie, site): Promise<void>`; zetten `bevestigingVerstuurdOp` / `qrVerstuurdOp`. Onderwerpen: `Je bestelling voor de <titel> (nr. <n>): zo betaal je`; `Betaling ontvangen: je afhaalcode voor de <titel>`; bij € 0 `Je bestelling voor de <titel> is bevestigd`. Inhoud volgens `MailBevestiging` en `MailQR`, QR als bijlage `cid:afhaalcode`.
 - `escapeHtml(text): string`.
 
-- [ ] Tests (Review Focus 5): QR-PNG begint met de PNG-signatuur en jsQR leest `https://…/b/<token>` terug uit het beeld; bevestigingsmail bevat bedrag, geformatteerde IBAN, begunstigde, mededeling, uiterste betaaldatum en de link; cashregel alleen als `cash` in `wijzen`; naam `<b>O'Brien</b>` staat geëscaped in de HTML; QR-mail heeft een bijlage met `cid`.
+- [ ] Tests (Review Focus 5): Reed-Solomon, format- en versiebits tegen de standaard; QR-PNG begint met de PNG-signatuur; handmatig: Chrome `BarcodeDetector` leest versies 1–10 terug; bevestigingsmail bevat bedrag, geformatteerde IBAN, begunstigde, mededeling, uiterste betaaldatum en de link; cashregel alleen als `cash` in `wijzen`; naam `<b>O'Brien</b>` staat geëscaped in de HTML; QR-mail heeft een bijlage met `cid`.
 - [ ] Implementeren; checklist; commit `feat: order mails with QR code`.
 
 ### Task 2.5: Publieke pagina's
