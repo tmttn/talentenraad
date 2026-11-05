@@ -5,6 +5,7 @@ import {type ContentImage, readMarkdownFile, readYamlFile, resolveImage} from '.
 import {type MarkdownSegment, renderMarkdown, renderMarkdownSegments} from './markdown';
 import {slugify} from './slugify';
 import {
+  actieSchema,
   activiteitSchema,
   faqSchema,
   nieuwsSchema,
@@ -21,6 +22,7 @@ type WithImage<T, K extends string> = Omit<T, K> & {[P in K]: ContentImage | und
 type Entry<T> = T & {slug: string; html: string};
 
 export type Activiteit = Entry<WithImage<z.infer<typeof activiteitSchema>, 'afbeelding'>>;
+export type Actie = Entry<WithImage<z.infer<typeof actieSchema>, 'afbeelding'>>;
 /** News also carries its body as segments, so the article page can turn quotes into speech bubbles. */
 export type NieuwsItem = Entry<WithImage<z.infer<typeof nieuwsSchema>, 'afbeelding'>> & {segmenten: MarkdownSegment[]};
 export type Teamlid = Entry<WithImage<z.infer<typeof teamlidSchema>, 'foto'>>;
@@ -144,6 +146,8 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
 
   const activiteiten = () => loadCollection('activiteiten', activiteitSchema,
     (data, entry) => withImage(data, 'afbeelding', entry.entryDir));
+  const acties = () => loadCollection('acties', actieSchema,
+    (data, entry) => withImage(data, 'afbeelding', entry.entryDir));
   const nieuws = () => loadCollection('nieuws', nieuwsSchema,
     (data, entry, body) => ({...withImage(data, 'afbeelding', entry.entryDir), segmenten: renderMarkdownSegments(body)}));
   const team = () => loadCollection('team', teamlidSchema,
@@ -197,6 +201,14 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
 
     getActiviteit(slug: string): Activiteit | undefined {
       return findBySlug(activiteiten(), slug);
+    },
+
+    getActies(): Actie[] {
+      return cached('acties:sorted', () => [...acties()].sort((a, b) => byText(a.bestellen.van, b.bestellen.van) || byText(a.slug, b.slug)));
+    },
+
+    getActie(slug: string): Actie | undefined {
+      return findBySlug(acties(), slug);
     },
 
     getNieuws(): NieuwsItem[] {

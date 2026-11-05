@@ -32,6 +32,7 @@ describe('content/', () => {
   it('loads every collection and page against the schemas', () => {
     expect(reader.getSite().navigatie.length).toBeGreaterThan(0);
     expect(reader.getActiviteiten().length).toBeGreaterThan(0);
+    expect(reader.getActies().length).toBeGreaterThan(0);
     expect(reader.getNieuws().length).toBeGreaterThan(0);
     expect(reader.getTeam().length).toBeGreaterThan(0);
     expect(reader.getFaq().length).toBeGreaterThan(0);

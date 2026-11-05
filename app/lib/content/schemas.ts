@@ -1,4 +1,5 @@
 import {z} from 'zod';
+import {formatIban, isGeldigeIban, voorbeeldIban} from './iban';
 
 const afbeeldingPad = (name: string) => z.literal(`./${name}`, {error: `Gebruik ./${name}.`});
 
@@ -67,6 +68,99 @@ export const faqSchema = z.strictObject({
   concept,
 });
 
+const codeSchema = (message: string) => z.string({error: message}).regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, message);
+const centSchema = (message: string) => z.number({error: message}).int(message).min(0, message);
+
+/** No product may offer more combinations than this, so the order form stays usable. */
+export const maxVarianten = 12;
+
+const keuzeSchema = z.strictObject({
+  naam: verplicht('Vul bij elke keuze een naam in.'),
+  meerprijs: centSchema('Vul een geldige meerprijs in, bv. 2,00.').default(0),
+});
+
+const optieSchema = z.strictObject({
+  id: codeSchema('Elke optie heeft een geldige code nodig.'),
+  naam: verplicht('Geef elke optie een naam, bv. Brood.'),
+  keuzes: z.array(keuzeSchema).min(1, 'Voeg bij elke optie minstens één keuze toe.'),
+});
+
+const productSchema = z.strictObject({
+  id: codeSchema('Elk product heeft een geldige code nodig.'),
+  naam: verplicht('Vul bij elk product een naam in.'),
+  info: z.string().trim().optional(),
+  /** Price in cents. */
+  prijs: centSchema('Vul bij elk product een geldige prijs in, bv. 12,50.'),
+  /** Optional stock, counted over all orders that are not cancelled. */
+  voorraad: z.number({error: 'Vul een geldige voorraad in, of laat het leeg.'}).int('Vul een geldige voorraad in, of laat het leeg.').min(0, 'Vul een geldige voorraad in, of laat het leeg.').optional(),
+  maxPerBestelling: z.number({error: 'Vul een maximum per bestelling in tussen 1 en 100.'}).int('Vul een maximum per bestelling in tussen 1 en 100.').min(1, 'Vul een maximum per bestelling in tussen 1 en 100.').max(100, 'Vul een maximum per bestelling in tussen 1 en 100.').default(10),
+  opties: z.array(optieSchema).default([]),
+}).superRefine((product, context) => {
+  const optieIds = new Set<string>();
+  for (const [index, optie] of product.opties.entries()) {
+    if (optieIds.has(optie.id)) {
+      context.addIssue({code: 'custom', message: 'Twee opties hebben dezelfde naam.', path: ['opties', index]});
+    }
+
+    optieIds.add(optie.id);
+    const namen = optie.keuzes.map(keuze => keuze.naam.toLowerCase());
+    if (new Set(namen).size !== namen.length) {
+      context.addIssue({code: 'custom', message: `Twee keuzes bij ${optie.naam} hebben dezelfde naam.`, path: ['opties', index]});
+    }
+  }
+
+  const varianten = product.opties.reduce((total, optie) => total * optie.keuzes.length, 1);
+  if (varianten > maxVarianten) {
+    context.addIssue({code: 'custom', message: `Te veel combinaties van keuzes (${varianten}, hoogstens ${maxVarianten}).`, path: ['opties']});
+  }
+});
+
+const afhaalmomentSchema = z.strictObject({
+  id: codeSchema('Elk afhaalmoment heeft een geldige code nodig.'),
+  datum: datumSchema,
+  uur: verplicht('Vul bij elk afhaalmoment een uur in, bv. 17:00 - 19:00.'),
+  plaats: verplicht('Vul bij elk afhaalmoment een plaats in.'),
+});
+
+const uniekeIds = (items: Array<{id: string}>, message: string, context: z.RefinementCtx, path: string) => {
+  const seen = new Set<string>();
+  for (const [index, item] of items.entries()) {
+    if (seen.has(item.id)) {
+      context.addIssue({code: 'custom', message, path: [path, index, 'id']});
+    }
+
+    seen.add(item.id);
+  }
+};
+
+export const betaalwijzen = ['overschrijving', 'cash'] as const;
+
+/** A sale (pizzas, breakfast baskets, party tickets): products, ordering period and pickup moments. */
+export const actieSchema = z.strictObject({
+  titel: verplicht('Vul een titel in.'),
+  samenvatting: verplicht('Vul een samenvatting in.'),
+  afbeelding: afbeeldingPad('afbeelding.jpg').optional(),
+  /** Ordering is open from `van` up to and including `tot`. */
+  bestellen: z.strictObject({van: datumSchema, tot: datumSchema})
+    .refine(periode => periode.tot >= periode.van, {message: 'De laatste besteldag ligt vóór de eerste.', path: ['tot']}),
+  betalen: z.strictObject({
+    wijzen: z.array(z.enum(betaalwijzen, {error: 'Kies een geldige manier om te betalen.'}))
+      .min(1, 'Kies minstens één manier om te betalen.')
+      .refine(wijzen => new Set(wijzen).size === wijzen.length, 'Kies elke manier om te betalen maar één keer.'),
+    /** Payment deadline: this many days after ordering. */
+    binnenDagen: z.number({error: 'Vul een aantal dagen in tussen 0 en 60.'}).int('Vul een aantal dagen in tussen 0 en 60.').min(0, 'Vul een aantal dagen in tussen 0 en 60.').max(60, 'Vul een aantal dagen in tussen 0 en 60.').default(5),
+  }),
+  /** Ask the name and class of a child (for delivery in class, later). */
+  vraag: z.strictObject({kind: z.boolean().default(false)}).default({kind: false}),
+  afhalen: z.array(afhaalmomentSchema).min(1, 'Voeg minstens één afhaalmoment toe.'),
+  producten: z.array(productSchema).min(1, 'Voeg minstens één product toe.'),
+  aliassen,
+  concept,
+}).superRefine((actie, context) => {
+  uniekeIds(actie.producten, 'Twee producten hebben dezelfde code.', context, 'producten');
+  uniekeIds(actie.afhalen, 'Twee afhaalmomenten hebben dezelfde code.', context, 'afhalen');
+});
+
 export const tekstSchema = z.object({
   titel: z.string(),
   beschrijving: z.string(),
@@ -104,6 +198,13 @@ export const siteSchema = z.object({
     }),
   }),
   aankondiging: aankondigingSchema,
+  /** The account parents pay into; until the real one is known, the example number from the specification. */
+  bestellingen: z.object({
+    rekening: z.object({
+      iban: z.string().refine(isGeldigeIban, 'Vul een geldig rekeningnummer (IBAN) in.').transform(formatIban),
+      begunstigde: z.string().trim().min(1, 'Vul in op wiens naam de rekening staat.'),
+    }),
+  }).default({rekening: {iban: formatIban(voorbeeldIban), begunstigde: 'Talentenraad Het Talentenhuis'}}),
 });
 
 const basisPagina = {
@@ -169,6 +270,10 @@ export type PaginaNaam = keyof typeof paginaSchemas;
 export type PaginaFrontmatter<K extends PaginaNaam> = z.infer<(typeof paginaSchemas)[K]>;
 export type ActiviteitFrontmatter = z.infer<typeof activiteitSchema>;
 export type ProgrammaPunt = z.infer<typeof programmaPuntSchema>;
+export type ActieFrontmatter = z.infer<typeof actieSchema>;
+export type Product = ActieFrontmatter['producten'][number];
+export type Afhaalmoment = ActieFrontmatter['afhalen'][number];
+export type Betaalwijze = (typeof betaalwijzen)[number];
 export type NieuwsFrontmatter = z.infer<typeof nieuwsSchema>;
 export type TeamlidFrontmatter = z.infer<typeof teamlidSchema>;
 export type FaqFrontmatter = z.infer<typeof faqSchema>;

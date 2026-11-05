@@ -59,3 +59,8 @@ aankondiging:
   actief: false
   tekst: Geen actieve aankondiging
   type: info
+bestellingen:
+  # Voorbeeldnummer uit de specificatie: zolang dit er staat, kan in productie geen actie open.
+  rekening:
+    iban: BE68 5390 0754 7034
+    begunstigde: Talentenraad Het Talentenhuis
