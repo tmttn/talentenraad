@@ -1,7 +1,6 @@
 ---
 naam: Vanessa Dolce
-rol: Lid
-categorie: lid
-volgorde: 12
+rol: Secretaris
+categorie: bestuur
+volgorde: 2
 ---
-
