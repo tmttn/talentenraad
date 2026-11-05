@@ -86,6 +86,10 @@ describe('proxy', () => {
     '/admin/content/faq/vraag-2',
     '/admin/content/acties',
     '/admin/content/acties/pizzaverkoop-2027',
+    '/admin/bestellingen',
+    '/admin/bestellingen/pizzaverkoop-2027',
+    '/admin/bestellingen/pizzaverkoop-2027/14',
+    '/admin/bestellingen/pizzaverkoop-2027/productielijst',
   ])('lets the content editor route %s through', async path => {
     const response = await proxy(request(path, await jwt()));
 

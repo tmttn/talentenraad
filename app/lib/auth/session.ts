@@ -10,7 +10,7 @@ export {
 } from './session-token';
 
 export type Session = {
-  user: {id: string; email: string; name: string | null; role: Role};
+  user: {id: string; email: string; name: string | null; role: Role; bankToegang: boolean};
 };
 
 /**
@@ -33,5 +33,5 @@ export async function getSession(): Promise<Session | undefined> {
     return undefined;
   }
 
-  return {user: {id: user.id, email: user.email, name: user.name, role: resolveRole(user)}};
+  return {user: {id: user.id, email: user.email, name: user.name, role: resolveRole(user), bankToegang: user.bankToegang}};
 }

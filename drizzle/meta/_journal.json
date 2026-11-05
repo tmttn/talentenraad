@@ -29,6 +29,13 @@
       "when": 1793867706184,
       "tag": "0003_orders",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1793868939065,
+      "tag": "0004_bank_toegang",
+      "breakpoints": true
     }
   ]
 }

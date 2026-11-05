@@ -22,6 +22,7 @@ const validAdminExactPaths = new Set([
   '/admin/audit-logs',
   '/admin/content',
   '/admin/content/aankondiging',
+  '/admin/bestellingen',
   '/admin/not-found-page', // Target for 404 rewrites
 ]);
 
@@ -30,6 +31,8 @@ const adminDynamicPatterns = [
   /^\/admin\/submissions\/[\w-]+$/,
   // Content editor: list, new and edit per type (slugs as in app/lib/content-store/paths.ts)
   /^\/admin\/content\/(?:activiteiten|acties|nieuws|team|faq)(?:\/[a-z\d]+(?:-[a-z\d]+)*)?$/,
+  // Orders: per sale, one order by number, and the production list
+  /^\/admin\/bestellingen\/[a-z\d]+(?:-[a-z\d]+)*(?:\/(?:\d{1,6}|productielijst))?$/,
 ];
 
 /**

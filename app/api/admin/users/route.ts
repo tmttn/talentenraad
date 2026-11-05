@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
       email: string;
       name?: string;
       role?: string;
+      bankToegang?: unknown;
     };
 
     if (!body.email?.trim()) {
@@ -49,6 +50,10 @@ export async function POST(request: NextRequest) {
 
     if (body.role !== undefined && !isRole(body.role)) {
       return NextResponse.json({error: 'Invalid role'}, {status: 400});
+    }
+
+    if (body.bankToegang !== undefined && typeof body.bankToegang !== 'boolean') {
+      return NextResponse.json({error: 'Invalid bankToegang'}, {status: 400});
     }
 
     const role: Role = body.role ?? 'redacteur';
@@ -68,6 +73,7 @@ export async function POST(request: NextRequest) {
       name: body.name?.trim() ?? undefined,
       role,
       isAdmin: role === 'admin',
+      bankToegang: body.bankToegang === true,
       invitedAt: new Date(),
     }).returning();
 
@@ -82,6 +88,7 @@ export async function POST(request: NextRequest) {
         email: newUser.email,
         name: newUser.name,
         role: newUser.role,
+        bankToegang: newUser.bankToegang,
       },
       context: createAuditContext(request, session),
     });

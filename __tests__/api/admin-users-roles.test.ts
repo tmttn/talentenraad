@@ -84,3 +84,31 @@ describe('users API with roles', () => {
     expect(row.role).toBe('admin');
   });
 });
+
+describe('users API: access to the bank account', () => {
+  it('invites without access by default and with access when asked', async () => {
+    await collection.POST(json('POST', {email: 'zonder@test.com'}));
+    await collection.POST(json('POST', {email: 'met@test.com', bankToegang: true}));
+    const rows = await testDb.db.select().from(users);
+    expect(rows.find(row => row.email === 'zonder@test.com')?.bankToegang).toBe(false);
+    expect(rows.find(row => row.email === 'met@test.com')?.bankToegang).toBe(true);
+  });
+
+  it('changes the flag apart from the role and refuses a non-boolean', async () => {
+    const [created] = await testDb.db.insert(users).values({email: 'lid@test.com', role: 'redacteur'}).returning();
+    const put = (body: unknown) => item.PUT(json('PUT', body), {params: Promise.resolve({id: created.id})});
+
+    expect((await put({bankToegang: 'ja'})).status).toBe(400);
+    expect((await put({bankToegang: true})).status).toBe(200);
+    const [row] = await testDb.db.select().from(users).where(eq(users.id, created.id));
+    expect(row).toMatchObject({bankToegang: true, role: 'redacteur'});
+    await put({role: 'admin'});
+    const [again] = await testDb.db.select().from(users).where(eq(users.id, created.id));
+    expect(again).toMatchObject({bankToegang: true, role: 'admin'});
+  });
+
+  it('refuses a redacteur', async () => {
+    getSession.mockResolvedValue({user: {...adminSession.user, email: 'r@test.com', role: 'redacteur'}});
+    expect((await collection.POST(json('POST', {email: 'x@test.com', bankToegang: true}))).status).toBe(403);
+  });
+});
