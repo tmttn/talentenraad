@@ -37,6 +37,40 @@ Tips:
 - Zet een nieuwe actie eerst als **Concept**: dan staat ze nog niet op de site.
 - Pas na de eerste bestelling geen producten meer weg of aan als het kan: een bestelling onthoudt naam en prijs zoals ze waren, maar de productielijst telt per product.
 
+## Bestellingen opvolgen
+
+Links onder **Bestellingen** zie je per actie hoeveel bestellingen er zijn, hoeveel betaald, hoeveel geld er nog moet binnenkomen en hoeveel er al afgehaald is. Je zoekt op naam, bestelnummer, korte code (`K7P-4QX`) of mededeling.
+
+- **Betaald zetten**: vink de bestellingen aan waarvan het geld op de rekening staat, kies bij **Betaald met** overschrijving of cash en klik op **Markeer als betaald en stuur QR-code**. De ouder krijgt dan een mail met de QR-code om af te halen. Alleen wie in **Gebruikers** het vinkje **Toegang tot de bankrekening** heeft, ziet de vinkjes en deze knop (en **Markeer als terugbetaald** en, in de afhaal-app, cash ontvangen).
+- **Annuleren**: met een reden. Was de bestelling al betaald, dan komt ze op de lijst **Terug te betalen**; klik op **Markeer als terugbetaald** zodra het geld teruggestort is.
+- **Productielijst**: hoeveel van elk product (en elke keuze) per afhaalmoment. Handig voor de bakker of de inkoop; je kunt hem afdrukken.
+- **Export CSV**: alle bestellingen als bestand voor Excel.
+
+Na drie maanden na het laatste afhaalmoment worden namen, e-mailadressen en telefoonnummers van een actie automatisch gewist. Bedragen en aantallen blijven.
+
+## Afhalen met de telefoon
+
+Op het afhaalmoment geef je de bestellingen mee met je telefoon.
+
+1. Open [talentenraad.be/admin/afhalen](https://talentenraad.be/admin/afhalen) op je telefoon en log in. Tip: zet de pagina op je beginscherm (in Safari: deel-knop, **Zet op beginscherm**).
+2. Kies de actie en het afhaalmoment waar je helpt.
+3. Tik op **Camera starten** en richt op de QR-code van de ouder (op hun telefoon of afgedrukt). Lukt scannen niet, zoek dan op naam, nummer of de code van zes tekens onder de QR-code.
+4. Je ziet de naam en de producten in grote letters. Geef alles mee, vink eventueel af wat je al gaf, en tik op **Alles meegegeven**.
+
+Let op de melding bovenaan:
+
+- **Betaald · juist afhaalmoment** (groen): je mag meegeven.
+- **Nog niet betaald** (rood): geef niets mee. Verwijs de ouder naar wie de betalingen beheert. Heb je zelf toegang tot de bankrekening, dan kun je het bedrag cash ontvangen en daarna meegeven.
+- **Al afgehaald om 17:42 door …** (rood): iemand gaf deze bestelling al mee. Geef niets meer mee.
+- **Geannuleerd** (rood): geef niets mee.
+- **Ander afhaalmoment** (oker): de bestelling hoort bij een ander moment. Meegeven mag als het voor jullie in orde is.
+
+Bovenaan zie je hoeveel bestellingen al afgehaald zijn, en onderaan welke je net meegaf.
+
+### Helpers
+
+Wie alleen komt helpen bij het afhalen, krijgt in **Gebruikers** de rol **Helper**. Een helper ziet alleen de afhaal-app: naam en producten van de bestelling die gescand wordt, nooit e-mailadressen of telefoonnummers. De login van een helper geldt één dag; op een geleende telefoon hoef je dus niet af te melden (al mag het wel).
+
 ## Iets toevoegen of aanpassen
 
 1. Kies het soort inhoud en klik op de knop om iets toe te voegen, of op **Bewerken** bij een bestaand item.
