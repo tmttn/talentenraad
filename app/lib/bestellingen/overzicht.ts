@@ -1,4 +1,5 @@
-/** Production list and CSV export of a sale's orders. Pure functions over the orders. */
+/** Production list, pickup list and CSV export of a sale's orders. Pure functions over the orders. */
+import {formatTijd} from './afgifte';
 import type {OrderMetRegels} from './bestellingen';
 import {formatKorteCode} from './codes';
 import {formatMededeling} from './mededeling';
@@ -52,6 +53,54 @@ export function productielijst(orders: OrderMetRegels[]): Productielijst {
       .map(([afhaalId, moment]) => ({afhaalId, label: moment.label, bestellingen: moment.orders.length, producten: optellen(moment.orders)})),
     totaal: optellen(tellend),
   };
+}
+
+export type AfhaalRij = {
+  nummer: number;
+  naam: string;
+  /** Name and class of the child, when the sale asked for them. */
+  kind?: string;
+  korteCode: string;
+  /** `2 × Margherita, 1 × Ontbijtmand (glutenvrij)` */
+  producten: string;
+  status: 'betaald' | 'wacht' | 'afgehaald';
+  /** `17:42`, for an order already handed over. */
+  afgehaaldOm?: string;
+};
+export type AfhaalLijst = Array<{afhaalId: string; label: string; plaats: string; rijen: AfhaalRij[]}>;
+
+const opNaam = new Intl.Collator('nl-BE', {sensitivity: 'base', numeric: true});
+
+/**
+ * The printed backup of the pickup app: per pickup moment (soonest first) every order that is not
+ * cancelled, by name. It lies on the pickup table, so no e-mail, phone or amounts: only whether it
+ * is paid.
+ */
+export function afhaallijst(orders: OrderMetRegels[]): AfhaalLijst {
+  const momenten = new Map<string, {label: string; plaats: string; datum: string; rijen: AfhaalRij[]}>();
+  for (const order of orders.filter(telt)) {
+    const moment = momenten.get(order.afhaalId) ?? {label: order.afhaalLabel, plaats: order.afhaalPlaats, datum: order.afhaalDatum, rijen: []};
+    const kind = [order.kindNaam, order.kindKlas].filter(Boolean).join(', ');
+    moment.rijen.push({
+      nummer: order.nummer,
+      naam: order.naam,
+      ...(kind ? {kind} : {}),
+      korteCode: formatKorteCode(order.korteCode),
+      producten: order.regels.map(regel => `${regel.aantal} × ${regelNaam(regel)}`).join(', '),
+      status: order.status as AfhaalRij['status'],
+      ...(order.status === 'afgehaald' && order.afgehaaldOp ? {afgehaaldOm: formatTijd(order.afgehaaldOp)} : {}),
+    });
+    momenten.set(order.afhaalId, moment);
+  }
+
+  return [...momenten.entries()]
+    .sort(([, a], [, b]) => a.datum.localeCompare(b.datum) || a.label.localeCompare(b.label))
+    .map(([afhaalId, moment]) => ({
+      afhaalId,
+      label: moment.label,
+      plaats: moment.plaats,
+      rijen: moment.rijen.sort((a, b) => opNaam.compare(a.naam, b.naam) || a.nummer - b.nummer),
+    }));
 }
 
 /** A cell for Excel: quoted, and a leading = + - @ is neutralized so it is never run as a formula. */
