@@ -51,6 +51,17 @@ nextConfig.headers = async () => [
       },
     ],
   },
+  {
+    // The scanner of the pickup app needs the camera, only on its own pages. Next.js uses the last
+    // matching value of a header, so this overrides camera=() above.
+    source: '/admin/afhalen/:path*',
+    headers: [
+      {
+        key: 'Permissions-Policy',
+        value: 'camera=(self), microphone=(), geolocation=()',
+      },
+    ],
+  },
 ];
 
 // Old addresses of activities and news (`aliassen` in content/) redirect permanently (308) to the current slug.

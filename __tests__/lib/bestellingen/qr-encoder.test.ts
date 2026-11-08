@@ -46,3 +46,40 @@ describe('encodeQr', () => {
     expect(modules[size - 8][8]).toBe(true);
   });
 });
+
+describe('encodeQr read back by jsQR (the scanner of the pickup app on iPhone)', () => {
+  // Renders the matrix as RGBA pixels: 4 px per module and a quiet zone of 4 modules, as on a screen
+  function pixels(matrix: boolean[][]) {
+    const schaal = 4;
+    const rand = 4;
+    const size = (matrix.length + (2 * rand)) * schaal;
+    const data = new Uint8ClampedArray(size * size * 4).fill(255);
+    for (const [y, rij] of matrix.entries()) {
+      for (const [x, donker] of rij.entries()) {
+        if (!donker) {
+          continue;
+        }
+
+        for (let dy = 0; dy < schaal; dy++) {
+          for (let dx = 0; dx < schaal; dx++) {
+            const index = ((((y + rand) * schaal) + dy) * size + (((x + rand) * schaal) + dx)) * 4;
+            data.fill(0, index, index + 3);
+          }
+        }
+      }
+    }
+
+    return {data, size};
+  }
+
+  it.each([
+    'https://talentenraad.be/b/AbCdEfGhIjKlMnOpQrSt_-',
+    'http://localhost:3000/b/0123456789abcdefghij-_',
+    `https://talentenraad.be/${'lang/'.repeat(30)}`,
+  ])('decodes %s', async text => {
+    const {default: jsQR} = await import('jsqr');
+    const {data, size} = pixels(encodeQr(text));
+
+    expect(jsQR(data, size, size, {inversionAttempts: 'dontInvert'})?.data).toBe(text);
+  });
+});
