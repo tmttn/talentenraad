@@ -11,6 +11,9 @@ betalen:
     - overschrijving
     - cash
   binnenDagen: 5
+  rekening:
+    iban: BE71 0961 2345 6769
+    begunstigde: Tom Metten
 afhalen:
   - id: vrijdag
     datum: '2027-01-22'
