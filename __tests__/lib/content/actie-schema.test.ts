@@ -4,7 +4,7 @@ const geldig = {
   titel: 'Pizzaverkoop',
   samenvatting: 'Bestel je pizza.',
   bestellen: {van: '2027-01-04', tot: '2027-01-17'},
-  betalen: {wijzen: ['overschrijving']},
+  betalen: {wijzen: ['overschrijving'], rekening: {iban: 'be68539007547034', begunstigde: 'Talentenraad Het Talentenhuis'}},
   afhalen: [{id: 'vrijdag', datum: '2027-01-22', uur: '17:00 - 19:00', plaats: 'Refter'}],
   producten: [{id: 'margherita', naam: 'Margherita', prijs: 1000}],
 };
@@ -34,7 +34,7 @@ describe('actieSchema', () => {
   });
 
   it('needs a way to pay, a pickup moment and a product', () => {
-    expect(fout({...geldig, betalen: {wijzen: []}})).toContain('Kies minstens één manier om te betalen.');
+    expect(fout({...geldig, betalen: {...geldig.betalen, wijzen: []}})).toContain('Kies minstens één manier om te betalen.');
     expect(fout({...geldig, afhalen: []})).toContain('Voeg minstens één afhaalmoment toe.');
     expect(fout({...geldig, producten: []})).toContain('Voeg minstens één product toe.');
   });
@@ -57,26 +57,23 @@ describe('actieSchema', () => {
   });
 });
 
-describe('siteSchema bestellingen', () => {
-  const site = {
-    navigatie: [],
-    footer: {tagline: '', adres: {straat: '', gemeente: ''}, email: '', groepen: [], sociaal: [], copyright: ''},
-    cta: {titel: '', tekst: '', knop: {tekst: 'a', link: '/'}},
-    decoraties: {
-      enabled: false,
-      season: 'none',
-      decorations: {christmasLights: false, snowfall: false, icicles: false, gingerbreadMan: false, christmasBalls: false},
-    },
-    aankondiging: {actief: false, tekst: '', type: 'info'},
-  };
+describe('actieSchema betalen.rekening', () => {
+  const met = (rekening: unknown) => ({...geldig, betalen: {wijzen: ['overschrijving'], rekening}});
 
-  it('defaults to the example account', () => {
-    expect(siteSchema.parse(site).bestellingen.rekening).toEqual({iban: 'BE68 5390 0754 7034', begunstigde: 'Talentenraad Het Talentenhuis'});
+  it('formats a valid IBAN', () => {
+    expect(actieSchema.parse(geldig).betalen.rekening).toEqual({iban: 'BE68 5390 0754 7034', begunstigde: 'Talentenraad Het Talentenhuis'});
   });
 
-  it('formats a valid IBAN and refuses an invalid one', () => {
-    const met = (iban: string) => ({...site, bestellingen: {rekening: {iban, begunstigde: 'X'}}});
-    expect(siteSchema.parse(met('be68539007547034')).bestellingen.rekening.iban).toBe('BE68 5390 0754 7034');
-    expect(siteSchema.safeParse(met('BE68 5390 0754 7035')).success).toBe(false);
+  it('needs an account with a valid IBAN and a name', () => {
+    expect(fout(met({iban: 'BE68 5390 0754 7035', begunstigde: 'X'}))).toContain('Vul een geldig rekeningnummer (IBAN) in.');
+    expect(fout(met({iban: '', begunstigde: 'X'}))).toContain('Vul het rekeningnummer in.');
+    expect(fout(met({iban: 'BE68539007547034', begunstigde: ' '}))).toContain('Vul in op wiens naam de rekening staat.');
+    expect(fout({...geldig, betalen: {wijzen: ['cash']}})).toContain('Vul het rekeningnummer in.');
+  });
+});
+
+describe('siteSchema', () => {
+  it('has no account any more: that is per sale', () => {
+    expect(Object.keys(siteSchema.shape)).not.toContain('bestellingen');
   });
 });

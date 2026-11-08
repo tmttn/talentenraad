@@ -35,14 +35,20 @@ export async function stuurBevestiging(orderId: string): Promise<void> {
 
   const actie = content.getActie(order.actie);
   const site = content.getSite();
-  const {rekening} = site.bestellingen;
+  // The sale is gone from content/ (removed after ordering): without its account there is nothing to pay into
+  const rekening = actie?.betalen.rekening;
+  if (!rekening) {
+    console.error('Order mail skipped: sale not found');
+    return;
+  }
+
   const mail = bevestigingMail(mailData(order, actie), {
     bedrag: formatEuro(order.totaalCent),
     iban: formatIban(rekening.iban),
     begunstigde: rekening.begunstigde,
     mededeling: formatMededeling(order.mededeling),
-    uiterlijk: formatDag(uitersteBetaaldatum(order, actie ?? {betalen: {binnenDagen: 5}})),
-    cash: actie?.betalen.wijzen.includes('cash') ?? false,
+    uiterlijk: formatDag(uitersteBetaaldatum(order, actie)),
+    cash: actie.betalen.wijzen.includes('cash'),
   });
   await sendMail({to: order.email, replyTo: site.footer.email, ...mail});
   await db.update(orders).set({bevestigingVerstuurdOp: new Date()}).where(eq(orders.id, order.id));

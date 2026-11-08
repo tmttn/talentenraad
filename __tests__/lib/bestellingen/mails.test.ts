@@ -13,7 +13,7 @@ vi.mock('@lib/email/mailer', () => ({sendMail, getSiteUrl: () => 'https://talent
 vi.mock('@lib/content', () => ({
   content: {
     getActie: (slug: string) => (slug === 'pizzaverkoop' ? testActie() : undefined),
-    getSite: () => ({footer: {email: 'bestuur@example.com'}, bestellingen: {rekening: {iban: 'BE68539007547034', begunstigde: 'Talentenraad'}}}),
+    getSite: () => ({footer: {email: 'bestuur@example.com'}}),
   },
 }));
 vi.mock('@lib/db', async () => {

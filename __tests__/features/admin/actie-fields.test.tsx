@@ -13,6 +13,23 @@ describe('ActieFields', () => {
     expect(hidden(container, 'afhalen')).toHaveLength(1);
   });
 
+  it('asks the account per sale: empty for a new one, with the usual name; a saved one keeps its own', () => {
+    const {unmount} = render(<ActieFields values={{}} errors={{}} />);
+    expect(screen.getByRole('textbox', {name: /Rekeningnummer \(IBAN\)/})).toHaveValue('');
+    expect(screen.getByRole('textbox', {name: /Op naam van/})).toHaveValue('Talentenraad Het Talentenhuis');
+    unmount();
+
+    render(<ActieFields
+      values={{bestellenVan: '2027-01-04', rekeningIban: 'BE68 5390 0754 7034', rekeningBegunstigde: 'Ouderraad'}}
+      errors={{rekeningIban: 'Vul een geldig rekeningnummer (IBAN) in.'}}
+    />);
+    const iban = screen.getByRole('textbox', {name: /Rekeningnummer \(IBAN\)/});
+    expect(iban).toHaveValue('BE68 5390 0754 7034');
+    expect(iban).toHaveAttribute('aria-invalid', 'true');
+    expect(screen.getByText('Vul een geldig rekeningnummer (IBAN) in.')).toBeInTheDocument();
+    expect(screen.getByRole('textbox', {name: /Op naam van/})).toHaveValue('Ouderraad');
+  });
+
   it('edits products with options and choices', () => {
     const {container} = render(<ActieFields values={{bestellenVan: '', producten: '[]', afhalen: '[]'}} errors={{}} />);
     fireEvent.change(screen.getByRole('textbox', {name: /^Naam/}), {target: {value: 'Mand'}});

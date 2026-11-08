@@ -65,19 +65,19 @@ describe('veldnaam', () => {
 });
 
 describe('kanBestellen', () => {
-  const actie = {...periode, concept: false};
+  const met = (iban: string, concept = false) => ({...periode, concept, betalen: {rekening: {iban}}});
   const voorbeeld = 'BE68 5390 0754 7034';
   const echt = 'NL91 ABNA 0417 1643 00';
 
   it('follows the ordering period', () => {
-    expect(kanBestellen(actie, echt, '2027-01-03', true)).toEqual({open: false, reden: 'binnenkort'});
-    expect(kanBestellen(actie, echt, '2027-01-10', true)).toEqual({open: true});
-    expect(kanBestellen(actie, echt, '2027-01-18', true)).toEqual({open: false, reden: 'gesloten'});
+    expect(kanBestellen(met(echt), '2027-01-03', true)).toEqual({open: false, reden: 'binnenkort'});
+    expect(kanBestellen(met(echt), '2027-01-10', true)).toEqual({open: true});
+    expect(kanBestellen(met(echt), '2027-01-18', true)).toEqual({open: false, reden: 'gesloten'});
   });
 
-  it('stays closed in production with the example account or as a draft', () => {
-    expect(kanBestellen(actie, voorbeeld, '2027-01-10', true)).toEqual({open: false, reden: 'voorbeeldrekening'});
-    expect(kanBestellen({...actie, concept: true}, echt, '2027-01-10', true)).toEqual({open: false, reden: 'concept'});
-    expect(kanBestellen({...actie, concept: true}, voorbeeld, '2027-01-10', false)).toEqual({open: true});
+  it('stays closed in production with the example account of the sale, or as a draft', () => {
+    expect(kanBestellen(met(voorbeeld), '2027-01-10', true)).toEqual({open: false, reden: 'voorbeeldrekening'});
+    expect(kanBestellen(met(echt, true), '2027-01-10', true)).toEqual({open: false, reden: 'concept'});
+    expect(kanBestellen(met(voorbeeld, true), '2027-01-10', false)).toEqual({open: true});
   });
 });

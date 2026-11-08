@@ -43,6 +43,8 @@ describe('actie form round-trip', () => {
       bestellenTot: '2027-05-02',
       binnenDagen: '5',
       wijzeCash: 'on',
+      rekeningIban: 'be68 5390 0754 7034',
+      rekeningBegunstigde: 'Talentenraad Het Talentenhuis',
       vraagKind: 'on',
       afhalen: JSON.stringify([{id: '', datum: '2027-05-09', uur: '8:00 - 10:00', plaats: 'Refter'}]),
       producten: JSON.stringify([rij({
@@ -60,7 +62,7 @@ describe('actie form round-trip', () => {
     }
 
     expect(parsed.frontmatter).toMatchObject({
-      betalen: {wijzen: ['cash'], binnenDagen: 5},
+      betalen: {wijzen: ['cash'], binnenDagen: 5, rekening: {iban: 'BE68 5390 0754 7034', begunstigde: 'Talentenraad Het Talentenhuis'}},
       vraag: {kind: true},
       afhalen: [{id: 'zondag', datum: '2027-05-09'}],
       producten: [{
@@ -81,6 +83,8 @@ describe('parseActieForm errors', () => {
     bestellenVan: '2027-01-04',
     bestellenTot: '2027-01-17',
     wijzeOverschrijving: 'on',
+    rekeningIban: 'BE68 5390 0754 7034',
+    rekeningBegunstigde: 'Talentenraad',
     afhalen: JSON.stringify([{id: 'vrijdag', datum: '2027-01-22', uur: '17:00', plaats: 'Refter'}]),
     producten: JSON.stringify([rij({naam: 'Margherita', prijs: '10'})]),
   };
@@ -94,6 +98,9 @@ describe('parseActieForm errors', () => {
     expect(errors({...basis, wijzeOverschrijving: ''})).toEqual({betaalwijzen: 'Kies minstens één manier om te betalen.'});
     expect(errors({...basis, bestellenTot: '2027-01-01'})).toEqual({bestellenTot: 'De laatste besteldag ligt vóór de eerste.'});
     expect(errors({...basis, binnenDagen: 'vijf'})).toEqual({binnenDagen: 'Vul een aantal dagen in tussen 0 en 60.'});
+    expect(errors({...basis, rekeningIban: 'BE68 5390 0754 7035'})).toEqual({rekeningIban: 'Vul een geldig rekeningnummer (IBAN) in.'});
+    expect(errors({...basis, rekeningIban: ''})).toEqual({rekeningIban: 'Vul het rekeningnummer in.'});
+    expect(errors({...basis, rekeningBegunstigde: ''})).toEqual({rekeningBegunstigde: 'Vul in op wiens naam de rekening staat.'});
     expect(errors({...basis, producten: JSON.stringify([rij({naam: 'A', prijs: '10'}), rij({naam: 'B', prijs: 'abc'})])}))
       .toEqual({producten: 'Product 2: Vul bij elk product een geldige prijs in, bv. 12,50.'});
     expect(errors({...basis, producten: '[]'})).toEqual({producten: 'Voeg minstens één product toe.'});
@@ -104,6 +111,9 @@ describe('parseActieForm errors', () => {
   it('maps schema paths', () => {
     expect(actieFoutVeld(['bestellen', 'van'], 'x')).toEqual(['bestellenVan', 'x']);
     expect(actieFoutVeld(['betalen', 'wijzen', 0], 'x')).toEqual(['betaalwijzen', 'x']);
+    expect(actieFoutVeld(['betalen', 'rekening', 'iban'], 'x')).toEqual(['rekeningIban', 'x']);
+    expect(actieFoutVeld(['betalen', 'rekening', 'begunstigde'], 'x')).toEqual(['rekeningBegunstigde', 'x']);
+    expect(actieFoutVeld(['betalen', 'rekening'], 'x')).toEqual(['rekeningIban', 'x']);
     expect(actieFoutVeld(['titel'], 'x')).toEqual(['titel', 'x']);
   });
 });

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import {AlertTriangle} from 'lucide-react';
 import type {OrderStatus} from '@lib/db/schema';
 import {formatEuro} from '@lib/bestellingen/geld';
@@ -37,13 +38,14 @@ export function TellerGrid({tellers}: Readonly<{tellers: Tellers}>) {
   );
 }
 
-export function VoorbeeldRekeningMelding() {
+/** For a sale that still has the example account number: it cannot open, and how to fix that. */
+export function VoorbeeldRekeningMelding({slug}: Readonly<{slug: string}>) {
   return (
     <p role='alert' className='flex items-start gap-2 rounded-button border border-amber-300 bg-amber-50 p-3 text-amber-900'>
       <AlertTriangle className='w-5 h-5 shrink-0 mt-0.5' aria-hidden='true' />
       <span>
-        In <code>content/site.yaml</code> staat nog het voorbeeldrekeningnummer. Zolang dat zo is, kan geen actie open op de site.
-        Vraag de beheerder om het echte rekeningnummer in te vullen.
+        Deze actie heeft nog het voorbeeldrekeningnummer. Zolang dat zo is, kan ze niet open op de site.
+        {' '}<Link href={`/admin/content/acties/${slug}`} className='font-semibold underline underline-offset-2'>Vul het echte rekeningnummer in bij de actie</Link>.
       </span>
     </p>
   );

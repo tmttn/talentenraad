@@ -62,8 +62,7 @@ export default async function ActiePage({params}: Readonly<PageProperties>) {
     permanentRedirect(`/acties/${actie.slug}`);
   }
 
-  const {rekening} = content.getSite().bestellingen;
-  const open = kanBestellen(actie, rekening.iban, todayString());
+  const open = kanBestellen(actie, todayString());
   const metVoorraad = actie.producten.filter(product => product.voorraad !== undefined);
   const verbruikt = verbruikteVoorraad(db, actie.slug, metVoorraad.map(product => product.id));
   const over = Object.fromEntries(metVoorraad.map(product => [product.id, Math.max(0, product.voorraad! - (verbruikt.get(product.id) ?? 0))]));

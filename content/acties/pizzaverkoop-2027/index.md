@@ -11,6 +11,10 @@ betalen:
     - overschrijving
     - cash
   binnenDagen: 5
+  # Voorbeeldnummer uit de specificatie: zolang dit er staat, opent de actie niet in productie.
+  rekening:
+    iban: BE68 5390 0754 7034
+    begunstigde: Talentenraad Het Talentenhuis
 afhalen:
   - id: vrijdag
     datum: '2027-01-22'
