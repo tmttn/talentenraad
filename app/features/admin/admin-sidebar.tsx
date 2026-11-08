@@ -18,6 +18,7 @@ import {
   Menu,
   LogOut,
   ShoppingBag,
+  ScanLine,
   type LucideIcon,
 } from 'lucide-react';
 import type {Role} from '@lib/db/schema';
@@ -49,6 +50,7 @@ const navItems: NavItem[] = [
   {href: '/admin', label: 'Dashboard', icon: Home},
   {href: '/admin/content', label: 'Content', icon: FileText},
   {href: '/admin/bestellingen', label: 'Bestellingen', icon: ShoppingBag},
+  {href: '/admin/afhalen', label: 'Afhalen', icon: ScanLine},
   {
     href: '/admin/submissions', label: 'Berichten', icon: Mail, adminOnly: true,
   },

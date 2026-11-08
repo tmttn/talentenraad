@@ -43,7 +43,10 @@ const emptyForm: FormData = {
 const roleOptions = [
   {value: 'admin', label: 'Beheerder'},
   {value: 'redacteur', label: 'Redacteur'},
+  {value: 'helper', label: 'Helper'},
 ];
+
+const roleLabels: Record<Role, string> = {admin: 'Beheerder', redacteur: 'Redacteur', helper: 'Helper'};
 
 const statusOptions = [
   {value: 'active', label: 'Actief'},
@@ -379,7 +382,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
             ))}
           </select>
           <p className='mt-1 text-sm text-gray-500'>
-            Redacteurs kunnen inloggen, de inhoud van de site bewerken en bestellingen beheren. Beheerders beheren ook gebruikers en zien de berichten en audit logs.
+            Helpers kunnen alleen bij het afhalen scannen en meegeven; ze zien naam en producten, geen e-mail of telefoon. Redacteurs bewerken ook de inhoud van de site en beheren bestellingen. Beheerders beheren daarnaast gebruikers en zien de berichten en audit logs.
           </p>
         </div>
 
@@ -533,7 +536,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                                   ? 'bg-green-100 text-green-800'
                                   : 'bg-gray-100 text-gray-600'
                               }`}>
-                                {user.role === 'admin' ? 'Beheerder' : 'Redacteur'}{user.bankToegang ? ' · bank' : ''}
+                                {roleLabels[user.role]}{user.bankToegang ? ' · bank' : ''}
                               </span>
                               {user.invitedAt && !user.acceptedAt && (
                                 <span className='px-2 py-1 text-xs font-medium rounded whitespace-nowrap w-fit bg-amber-100 text-amber-800'>
@@ -680,7 +683,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                             ? 'bg-green-100 text-green-800'
                             : 'bg-gray-100 text-gray-600'
                         }`}>
-                          {user.role === 'admin' ? 'Beheerder' : 'Redacteur'}{user.bankToegang ? ' · bank' : ''}
+                          {roleLabels[user.role]}{user.bankToegang ? ' · bank' : ''}
                         </span>
                         {user.invitedAt && !user.acceptedAt && (
                           <span className='px-2 py-1 text-xs font-medium rounded bg-amber-100 text-amber-800'>

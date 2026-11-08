@@ -5,6 +5,7 @@ import {
 } from 'vitest';
 
 const canLogin = vi.fn();
+const getUserRole = vi.fn();
 const ensureAdminUser = vi.fn();
 const createLoginToken = vi.fn();
 const consumeLoginToken = vi.fn();
@@ -25,7 +26,7 @@ vi.mock('next/server', async () => {
 
 vi.mock('@lib/auth/admin', async () => {
   const actual = await vi.importActual<typeof import('@lib/auth/admin')>('@lib/auth/admin');
-  return {...actual, canLogin, ensureAdminUser};
+  return {...actual, canLogin, getUserRole, ensureAdminUser};
 });
 vi.mock('@lib/auth/tokens', () => ({createLoginToken, consumeLoginToken}));
 vi.mock('@lib/email/messages', () => ({sendLoginLink}));
@@ -179,7 +180,7 @@ describe('GET /api/auth/verify', () => {
 
   it('sets the session cookie and redirects to a safe returnTo', async () => {
     consumeLoginToken.mockResolvedValue({email: user.email});
-    canLogin.mockResolvedValue(true);
+    getUserRole.mockResolvedValue('admin');
     ensureAdminUser.mockResolvedValue(user);
     const {readSession} = await import('@lib/auth/session');
 
@@ -205,7 +206,7 @@ describe('GET /api/auth/verify', () => {
 
   it('does not loop back to the login page for a returnTo of /admin/login', async () => {
     consumeLoginToken.mockResolvedValue({email: user.email});
-    canLogin.mockResolvedValue(true);
+    getUserRole.mockResolvedValue('admin');
     ensureAdminUser.mockResolvedValue(user);
 
     const response = await verify('?token=abc&returnTo=/admin/login');
@@ -215,7 +216,7 @@ describe('GET /api/auth/verify', () => {
 
   it('ignores an external returnTo', async () => {
     consumeLoginToken.mockResolvedValue({email: user.email});
-    canLogin.mockResolvedValue(true);
+    getUserRole.mockResolvedValue('admin');
     ensureAdminUser.mockResolvedValue(user);
 
     const response = await verify('?token=abc&returnTo=https://evil.example');
@@ -244,7 +245,7 @@ describe('GET /api/auth/verify', () => {
     ['consumeLoginToken', () => consumeLoginToken.mockRejectedValue(new Error('db down'))],
     ['ensureAdminUser', () => {
       consumeLoginToken.mockResolvedValue({email: user.email});
-      canLogin.mockResolvedValue(true);
+      getUserRole.mockResolvedValue('admin');
       ensureAdminUser.mockRejectedValue(new Error('db down'));
     }],
   ])('redirects to the login error and logs when %s throws', async (_name, arrange) => {
@@ -260,12 +261,43 @@ describe('GET /api/auth/verify', () => {
 
   it('refuses a valid token for someone who lost admin access since requesting it', async () => {
     consumeLoginToken.mockResolvedValue({email: user.email});
-    canLogin.mockResolvedValue(false);
+    getUserRole.mockResolvedValue(undefined);
 
     const response = await verify('?token=abc');
 
     expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/login?error=link');
     expect(response.cookies.get('tr_session')).toBeUndefined();
+  });
+
+  it('sends a helper to the pickup app with a session of one day', async () => {
+    consumeLoginToken.mockResolvedValue({email: 'helper@test.com'});
+    getUserRole.mockResolvedValue('helper');
+    ensureAdminUser.mockResolvedValue({id: user.id, email: 'helper@test.com'});
+
+    const response = await verify('?token=abc&returnTo=/admin/content');
+
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/afhalen');
+    expect(response.cookies.get('tr_session')).toMatchObject({maxAge: 24 * 60 * 60});
+  });
+
+  it('keeps a returnTo inside the pickup app for a helper', async () => {
+    consumeLoginToken.mockResolvedValue({email: 'helper@test.com'});
+    getUserRole.mockResolvedValue('helper');
+    ensureAdminUser.mockResolvedValue({id: user.id, email: 'helper@test.com'});
+
+    const response = await verify('?token=abc&returnTo=/admin/afhalen/pizzaverkoop/vrijdag');
+
+    expect(response.headers.get('location')).toBe('https://talentenraad.test/admin/afhalen/pizzaverkoop/vrijdag');
+  });
+
+  it('gives an admin or redacteur a session of seven days', async () => {
+    consumeLoginToken.mockResolvedValue({email: user.email});
+    getUserRole.mockResolvedValue('redacteur');
+    ensureAdminUser.mockResolvedValue(user);
+
+    const response = await verify('?token=abc');
+
+    expect(response.cookies.get('tr_session')).toMatchObject({maxAge: 7 * 24 * 60 * 60});
   });
 });
 

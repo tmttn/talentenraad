@@ -49,8 +49,11 @@ export type Filter = {status?: string; afhaalId?: string; zoek?: string};
 const isStatus = (value: string | undefined): value is OrderStatus =>
   ['wacht', 'betaald', 'afgehaald', 'geannuleerd', 'terugbetalen'].includes(value ?? '');
 
-/** The condition for a search: order number, short code, payment reference, or a piece of the name or e-mail. */
-export function zoekVoorwaarde(zoek: string) {
+/**
+ * The condition for a search: order number, short code, payment reference, or a piece of the name or
+ * e-mail. The pickup app searches without e-mail (`email: false`): a helper never sees addresses.
+ */
+export function zoekVoorwaarde(zoek: string, {email = true}: {email?: boolean} = {}) {
   const tekst = zoek.trim();
   const cijfers = mededelingCijfers(tekst);
   if (cijfers) {
@@ -63,10 +66,8 @@ export function zoekVoorwaarde(zoek: string) {
 
   const code = normaliseerKorteCode(tekst);
   const pattern = `%${tekst.toLowerCase().replaceAll(/[%_\\]/g, character => `\\${character}`)}%`;
-  const opNaam = or(
-    sql`lower(${orders.naam}) like ${pattern} escape '\\'`,
-    sql`lower(${orders.email}) like ${pattern} escape '\\'`,
-  );
+  const naam = sql`lower(${orders.naam}) like ${pattern} escape '\\'`;
+  const opNaam = email ? or(naam, sql`lower(${orders.email}) like ${pattern} escape '\\'`) : naam;
   return code.length === 6 && [...code].every(character => korteCodeTekens.includes(character))
     ? or(eq(orders.korteCode, code), opNaam)
     : opNaam;

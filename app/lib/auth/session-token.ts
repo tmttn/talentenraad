@@ -4,6 +4,8 @@ import {SignJWT, jwtVerify} from 'jose';
 
 export const sessionCookieName = 'tr_session';
 export const sessionMaxAgeSeconds = 7 * 24 * 60 * 60;
+/** A helper often logs in on a borrowed phone at the pickup: the session lasts one day. */
+export const helperSessionMaxAgeSeconds = 24 * 60 * 60;
 
 function getSecret(): Uint8Array {
   const secret = process.env.AUTH_SECRET ?? '';
@@ -15,22 +17,22 @@ function getSecret(): Uint8Array {
   return new TextEncoder().encode(secret);
 }
 
-export function sessionCookieOptions() {
+export function sessionCookieOptions(maxAge = sessionMaxAgeSeconds) {
   return {
     httpOnly: true,
     secure: process.env.NODE_ENV !== 'development',
     sameSite: 'lax' as const,
     path: '/',
-    maxAge: sessionMaxAgeSeconds,
+    maxAge,
   };
 }
 
-export async function createSessionCookie(user: {id: string; email: string}): Promise<string> {
+export async function createSessionCookie(user: {id: string; email: string}, maxAge = sessionMaxAgeSeconds): Promise<string> {
   return new SignJWT({email: user.email})
     .setProtectedHeader({alg: 'HS256'})
     .setSubject(user.id)
     .setIssuedAt()
-    .setExpirationTime(`${sessionMaxAgeSeconds}s`)
+    .setExpirationTime(`${maxAge}s`)
     .sign(getSecret());
 }
 

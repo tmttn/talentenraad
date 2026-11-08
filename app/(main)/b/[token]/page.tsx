@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
-import {headers} from 'next/headers';
-import {notFound} from 'next/navigation';
+import {cookies, headers} from 'next/headers';
+import {notFound, redirect} from 'next/navigation';
 import {connection} from 'next/server';
 import {SpeechBubble} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
@@ -13,6 +13,8 @@ import {formatMededeling} from '@lib/bestellingen/mededeling';
 import {bestelUrl, qrSvg} from '@lib/bestellingen/qr';
 import {content} from '@lib/content';
 import {formatIban} from '@lib/content/iban';
+import {getSession} from '@lib/auth/session';
+import {afgifteAdres, momentCookie} from '@lib/bestellingen/qr-link';
 import {createPersistentRateLimiter} from '@lib/persistent-rate-limit';
 import {getClientIp} from '@lib/rate-limit';
 import {annuleer} from './actions';
@@ -27,7 +29,7 @@ const missers = createPersistentRateLimiter({scope: 'bestelpagina', limit: 20, w
 
 type PageProperties = {
   params: Promise<{token: string}>;
-  searchParams: Promise<{besteld?: string; annuleren?: string; geannuleerd?: string}>;
+  searchParams: Promise<{besteld?: string; annuleren?: string; geannuleerd?: string; ouder?: string}>;
 };
 
 const knop = 'inline-flex justify-center items-center px-5 py-3 font-bold rounded-control contour-sm transition focus:outline-none focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2';
@@ -46,7 +48,16 @@ export default async function BestellingPage({params, searchParams}: Readonly<Pa
     notFound();
   }
 
-  const {besteld, annuleren, geannuleerd} = await searchParams;
+  const {besteld, annuleren, geannuleerd, ouder} = await searchParams;
+  // A member who scanned this code with the phone's camera app goes to the hand-over screen
+  const session = await getSession();
+  const afgifte = session && afgifteAdres({
+    rol: session.user.role, gekozen: (await cookies()).get(momentCookie)?.value, order, token, ouder: ouder === '1',
+  });
+  if (afgifte) {
+    redirect(afgifte);
+  }
+
   const actie = content.getActie(order.actie);
   const {rekening} = content.getSite().bestellingen;
   const magAnnuleren = kanOuderAnnuleren(order, actie);

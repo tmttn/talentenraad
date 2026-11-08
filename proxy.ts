@@ -23,6 +23,7 @@ const validAdminExactPaths = new Set([
   '/admin/content',
   '/admin/content/aankondiging',
   '/admin/bestellingen',
+  '/admin/afhalen',
   '/admin/not-found-page', // Target for 404 rewrites
 ]);
 
@@ -33,6 +34,8 @@ const adminDynamicPatterns = [
   /^\/admin\/content\/(?:activiteiten|acties|nieuws|team|faq)(?:\/[a-z\d]+(?:-[a-z\d]+)*)?$/,
   // Orders: per sale, one order by number, and the production list
   /^\/admin\/bestellingen\/[a-z\d]+(?:-[a-z\d]+)*(?:\/(?:\d{1,6}|productielijst))?$/,
+  // Pickup app: scanner per sale and moment, and the hand-over screen per order token
+  /^\/admin\/afhalen\/[a-z\d]+(?:-[a-z\d]+)*\/[a-z\d]+(?:-[a-z\d]+)*(?:\/[\w-]{22})?$/,
 ];
 
 /**

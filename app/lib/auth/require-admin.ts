@@ -6,15 +6,28 @@ import {getSession, type Session} from './session';
 const getCachedSession = cache(getSession);
 
 /**
- * Call at the top of every protected admin page (and the layout): any logged-in
- * user (admin or redacteur). Layouts are not re-rendered on client navigation,
- * so the page must check by itself.
+ * For the pickup app: any logged-in user, helpers included.
  */
-export async function requireEditorSession(): Promise<Session> {
+export async function requireStaffSession(): Promise<Session> {
   const session = await getCachedSession();
 
   if (!session) {
     redirect('/admin/login');
+  }
+
+  return session;
+}
+
+/**
+ * Call at the top of every protected admin page (and the layout): an admin or a
+ * redacteur. A helper only has the pickup app and is sent there. Layouts are not
+ * re-rendered on client navigation, so the page must check by itself.
+ */
+export async function requireEditorSession(): Promise<Session> {
+  const session = await requireStaffSession();
+
+  if (session.user.role === 'helper') {
+    redirect('/admin/afhalen');
   }
 
   return session;
