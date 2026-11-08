@@ -88,3 +88,37 @@ describe('admin API routes as redacteur', () => {
     expect(response.status).toBe(200);
   });
 });
+
+// Every route behind guardEditorApi or guardAdminApi, also the ones of the editor and the orders.
+const editorGuardedRoutes: Array<[string, string, Loader]> = [
+  ...routes,
+  ['content/image', 'GET', async () => import('../../app/api/admin/content/image/route')],
+  ['content/preview', 'POST', async () => import('../../app/api/admin/content/preview/route')],
+  ['content/deploy-status', 'GET', async () => import('../../app/api/admin/content/deploy-status/route')],
+  ['bestellingen/[actie]/export', 'GET', async () => import('../../app/api/admin/bestellingen/[actie]/export/route')],
+];
+
+describe('admin API routes as helper', () => {
+  it.each(editorGuardedRoutes.filter(([name]) => name !== 'session'))('%s %s answers 403 and never queries the database', async (_name, method, load) => {
+    getSession.mockResolvedValue({user: {id: 'u3', email: 'helper@test.com', name: null, role: 'helper'}});
+    const handler = (await load())[method] as Handler;
+    const request = new NextRequest('http://localhost:3000/api/admin/x', {
+      method,
+      body: method === 'GET' ? undefined : JSON.stringify({}),
+    });
+
+    const response = await handler(request, {params: Promise.resolve({id: 'x', actie: 'x'})} as never);
+
+    expect(response.status).toBe(403);
+    expect(dbAccess).not.toHaveBeenCalled();
+  });
+
+  it('guardEditorApi refuses a helper and lets a redacteur through', async () => {
+    const {guardEditorApi} = await import('@lib/auth/api-guard');
+    getSession.mockResolvedValue({user: {id: 'u3', email: 'helper@test.com', name: null, role: 'helper'}});
+    expect((await guardEditorApi()).response?.status).toBe(403);
+
+    getSession.mockResolvedValue({user: {id: 'u2', email: 'editor@test.com', name: null, role: 'redacteur'}});
+    expect((await guardEditorApi()).session).toBeDefined();
+  });
+});

@@ -28,7 +28,8 @@ export const auditActionTypes = [
   'bulk_action',
 ] as const;
 
-export const roles = ['admin', 'redacteur'] as const;
+/** admin: everything; redacteur: content and orders; helper: only the pickup app (scan and hand over). */
+export const roles = ['admin', 'redacteur', 'helper'] as const;
 export type Role = typeof roles[number];
 export const isRole = (value: unknown): value is Role => roles.includes(value as Role);
 

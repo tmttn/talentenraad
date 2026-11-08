@@ -6,7 +6,7 @@ import {resolveRole} from './admin';
 import {readSession, sessionCookieName} from './session-token';
 
 export {
-  createSessionCookie, readSession, sessionCookieName, sessionCookieOptions, sessionMaxAgeSeconds,
+  createSessionCookie, helperSessionMaxAgeSeconds, readSession, sessionCookieName, sessionCookieOptions, sessionMaxAgeSeconds,
 } from './session-token';
 
 export type Session = {
