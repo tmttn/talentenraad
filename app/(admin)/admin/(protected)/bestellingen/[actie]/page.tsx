@@ -68,7 +68,7 @@ export default async function ActieBestellingenPage({params, searchParams}: Read
         </div>
       </div>
 
-      {isVoorbeeldRekening(content.getSite().bestellingen.rekening.iban) && <VoorbeeldRekeningMelding />}
+      {actie && isVoorbeeldRekening(actie.betalen.rekening.iban) && <VoorbeeldRekeningMelding slug={actie.slug} />}
       <Melding code={melding} />
       <TellerGrid tellers={telling} />
 

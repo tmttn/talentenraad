@@ -71,7 +71,6 @@ export function verbruikteVoorraad(tx: Tx | typeof db, actie: string, productIds
  */
 export async function plaatsBestelling(
   actie: Actie,
-  iban: string,
   input: PlaatsInvoer,
   clientIp: string,
   now = new Date(),
@@ -85,7 +84,7 @@ export async function plaatsBestelling(
     return {status: 'beperkt'};
   }
 
-  const open = kanBestellen(actie, iban, todayString(now));
+  const open = kanBestellen(actie, todayString(now));
   if (!open.open) {
     return {status: 'gesloten', reden: open.reden};
   }

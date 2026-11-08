@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import {formatIban, isGeldigeIban, voorbeeldIban} from './iban';
+import {formatIban, isGeldigeIban} from './iban';
 
 const afbeeldingPad = (name: string) => z.literal(`./${name}`, {error: `Gebruik ./${name}.`});
 
@@ -149,6 +149,11 @@ export const actieSchema = z.strictObject({
       .refine(wijzen => new Set(wijzen).size === wijzen.length, 'Kies elke manier om te betalen maar één keer.'),
     /** Payment deadline: this many days after ordering. */
     binnenDagen: z.number({error: 'Vul een aantal dagen in tussen 0 en 60.'}).int('Vul een aantal dagen in tussen 0 en 60.').min(0, 'Vul een aantal dagen in tussen 0 en 60.').max(60, 'Vul een aantal dagen in tussen 0 en 60.').default(5),
+    /** The account parents of this sale pay into. With the example number the sale never opens in production. */
+    rekening: z.strictObject({
+      iban: verplicht('Vul het rekeningnummer in.').refine(isGeldigeIban, 'Vul een geldig rekeningnummer (IBAN) in.').transform(formatIban),
+      begunstigde: verplicht('Vul in op wiens naam de rekening staat.'),
+    }, {error: 'Vul het rekeningnummer in.'}),
   }),
   /** Ask the name and class of a child (for delivery in class, later). */
   vraag: z.strictObject({kind: z.boolean().default(false)}).default({kind: false}),
@@ -198,13 +203,6 @@ export const siteSchema = z.object({
     }),
   }),
   aankondiging: aankondigingSchema,
-  /** The account parents pay into; until the real one is known, the example number from the specification. */
-  bestellingen: z.object({
-    rekening: z.object({
-      iban: z.string().refine(isGeldigeIban, 'Vul een geldig rekeningnummer (IBAN) in.').transform(formatIban),
-      begunstigde: z.string().trim().min(1, 'Vul in op wiens naam de rekening staat.'),
-    }),
-  }).default({rekening: {iban: formatIban(voorbeeldIban), begunstigde: 'Talentenraad Het Talentenhuis'}}),
 });
 
 const basisPagina = {

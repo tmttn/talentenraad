@@ -27,7 +27,8 @@ Een actie heeft, naast titel, samenvatting, beschrijving en afbeelding:
 
 - **Bestellen vanaf** en **Bestellen tot en met**: in die periode staat het bestelformulier open. Daarna sluit het vanzelf, en kunnen ouders ook niet meer zelf annuleren.
 - **Betalen binnen (dagen)**: de uiterste betaaldatum, gerekend vanaf de dag van bestellen.
-- **Betalen**: overschrijving (met een gestructureerde mededeling per bestelling) en/of cash. Het rekeningnummer staat één keer voor de hele site ingesteld.
+- **Betalen**: overschrijving (met een gestructureerde mededeling per bestelling) en/of cash.
+- **Rekeningnummer (IBAN)** en **Op naam van**: de rekening waarop ouders voor deze actie betalen. Kijk het nummer goed na: elke ouder krijgt het in de mail. De site controleert of het een geldig rekeningnummer is, maar niet of het het juiste is.
 - **Afhaalmomenten**: datum, uur (bv. `17:00 - 19:00`) en plaats. Ouders kiezen er één.
 - **Producten**: naam, prijs in euro (bv. `12,50`), eventueel wat erin zit, een voorraad (leeg = onbeperkt) en een maximum per bestelling (leeg = 10).
 - **Opties** bij een product, bv. Brood met de keuzes Wit, Bruin en Glutenvrij (+ 2,00). Ouders kiezen dan per stuk.

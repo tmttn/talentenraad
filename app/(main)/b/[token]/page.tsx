@@ -59,7 +59,6 @@ export default async function BestellingPage({params, searchParams}: Readonly<Pa
   }
 
   const actie = content.getActie(order.actie);
-  const {rekening} = content.getSite().bestellingen;
   const magAnnuleren = kanOuderAnnuleren(order, actie);
 
   return (
@@ -86,13 +85,13 @@ export default async function BestellingPage({params, searchParams}: Readonly<Pa
           <Bestelstatus
             order={order}
             titel={actie?.titel ?? order.actie}
-            betalen={order.status === 'wacht'
+            betalen={order.status === 'wacht' && actie
               ? {
-                iban: formatIban(rekening.iban),
-                begunstigde: rekening.begunstigde,
+                iban: formatIban(actie.betalen.rekening.iban),
+                begunstigde: actie.betalen.rekening.begunstigde,
                 mededeling: formatMededeling(order.mededeling),
-                uiterlijk: formatDag(uitersteBetaaldatum(order, actie ?? {betalen: {binnenDagen: 5}})),
-                cash: actie?.betalen.wijzen.includes('cash') ?? false,
+                uiterlijk: formatDag(uitersteBetaaldatum(order, actie)),
+                cash: actie.betalen.wijzen.includes('cash'),
               }
               : undefined}
             qr={order.status === 'betaald' ? {svg: qrSvg(bestelUrl(token), 'QR-code om je bestelling af te halen'), korteCode: formatKorteCode(order.korteCode)} : undefined}

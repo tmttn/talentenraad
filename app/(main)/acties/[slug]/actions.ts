@@ -44,7 +44,7 @@ export async function bestel(_previous: BestelState, data: FormData): Promise<Be
     return {status: 'error', message: bestelMeldingen.gewijzigd, values};
   }
 
-  const result = await plaatsBestelling(actie, content.getSite().bestellingen.rekening.iban, {
+  const result = await plaatsBestelling(actie, {
     data,
     website: typeof data.get('website') === 'string' ? data.get('website') as string : undefined,
     formToken: typeof data.get('formToken') === 'string' ? data.get('formToken') as string : undefined,

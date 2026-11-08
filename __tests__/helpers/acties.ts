@@ -7,7 +7,7 @@ export function testActie(overrides: Record<string, unknown> = {}, slug = 'pizza
     titel: 'Pizzaverkoop',
     samenvatting: 'Bestel je pizza.',
     bestellen: {van: '2027-01-04', tot: '2027-01-17'},
-    betalen: {wijzen: ['overschrijving', 'cash'], binnenDagen: 5},
+    betalen: {wijzen: ['overschrijving', 'cash'], binnenDagen: 5, rekening: {iban: 'BE68 5390 0754 7034', begunstigde: 'Talentenraad Het Talentenhuis'}},
     afhalen: [
       {id: 'vrijdag', datum: '2027-01-22', uur: '17:00 - 19:00', plaats: 'Refter'},
       {id: 'zaterdag', datum: '2027-01-23', uur: '10:00 - 12:00', plaats: 'Refter'},

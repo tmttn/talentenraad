@@ -1,6 +1,6 @@
-/** IBAN checks for the account in site.yaml (bestellingen.rekening). Client-safe: no node imports. */
+/** IBAN checks for the account of a sale (`betalen.rekening` in content/acties/). Client-safe: no node imports. */
 
-/** The example number from the specification; stands in site.yaml until the real account is known. */
+/** The example number from the specification: a sale with this account never opens in production. */
 export const voorbeeldIban = 'BE68539007547034';
 
 const compact = (value: string) => value.replaceAll(/\s+/g, '').toUpperCase();

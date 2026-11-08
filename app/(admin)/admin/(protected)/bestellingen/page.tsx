@@ -1,13 +1,12 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
-import {ArrowRight} from 'lucide-react';
+import {AlertTriangle, ArrowRight} from 'lucide-react';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {actieStatus, formatDag} from '@lib/bestellingen/acties';
 import {actiesMetBestellingen} from '@lib/bestellingen/beheer';
 import {content} from '@lib/content';
 import {isVoorbeeldRekening} from '@lib/content/iban';
 import {todayString} from '@lib/dates';
-import {VoorbeeldRekeningMelding} from '@features/admin/bestellingen/parts';
 
 export const metadata: Metadata = {title: 'Bestellingen'};
 export const dynamic = 'force-dynamic';
@@ -28,7 +27,6 @@ export default async function BestellingenPage() {
         <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>Bestellingen</h1>
         <p className='text-gray-500 mt-1'>Kies een actie om de bestellingen te bekijken.</p>
       </div>
-      {isVoorbeeldRekening(content.getSite().bestellingen.rekening.iban) && <VoorbeeldRekeningMelding />}
       {acties.length === 0 && losse.length === 0 && (
         <p className='text-gray-600'>Er zijn nog geen acties. Maak er een aan bij <Link href='/admin/content/acties' className='text-primary-text hover:underline'>Content › Acties</Link>.</p>
       )}
@@ -42,6 +40,12 @@ export default async function BestellingenPage() {
                 <p className='text-sm text-gray-500 mt-1'>
                   {statusTekst[status]} · tot en met {formatDag(actie.bestellen.tot)}
                 </p>
+                {isVoorbeeldRekening(actie.betalen.rekening.iban) && (
+                  <p className='flex items-center gap-1.5 text-sm font-semibold text-amber-900 mt-1'>
+                    <AlertTriangle className='w-4 h-4 shrink-0' aria-hidden='true' />
+                    Nog het voorbeeldrekeningnummer
+                  </p>
+                )}
                 <p className='text-3xl font-bold text-gray-800 mt-2'>{aantallen.get(actie.slug) ?? 0}</p>
                 <p className='text-sm text-primary-text mt-3 inline-flex items-center gap-1'>
                   Bestellingen bekijken <ArrowRight className='w-4 h-4' aria-hidden='true' />

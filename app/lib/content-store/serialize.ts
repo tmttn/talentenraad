@@ -254,6 +254,7 @@ export function parseActieForm(values: FormValues): ParsedEntryForm {
     betalen: {
       wijzen,
       ...(binnenDagen === undefined ? {} : {binnenDagen: /^\d{1,3}$/.test(binnenDagen) ? Number(binnenDagen) : Number.NaN}),
+      rekening: {iban: getValue(values, 'rekeningIban') ?? '', begunstigde: getValue(values, 'rekeningBegunstigde') ?? ''},
     },
     vraag: {kind: checked(getValue(values, 'vraagKind'))},
     afhalen: afhalenInvoer(leesAfhaalRijen(getValue(values, 'afhalen'))),

@@ -24,7 +24,6 @@ const {annuleerDoorOuder, vindOpToken, uitersteBetaaldatum} = await import('@lib
 const {issueFormToken} = await import('@lib/form-timing');
 const testDb = test.current as unknown as ReturnType<typeof createTestDb>;
 
-const iban = 'BE68 5390 0754 7034';
 const now = new Date('2027-01-10T10:00:00');
 let ip = 0;
 
@@ -38,7 +37,7 @@ afterAll(() => {
 });
 
 const bestel = (velden: Record<string, string>, actie = testActie()) =>
-  plaatsBestelling(actie, iban, formulier(velden), `10.1.0.${++ip}`, now);
+  plaatsBestelling(actie, formulier(velden), `10.1.0.${++ip}`, now);
 
 describe('plaatsBestelling', () => {
   beforeEach(() => {
@@ -124,9 +123,9 @@ describe('plaatsBestelling', () => {
 
   it('turns away spam without a row and refuses a closed sale', async () => {
     const actie = testActie();
-    expect(await plaatsBestelling(actie, iban, {...formulier({'aantal:margherita': '1'}), website: 'http://spam'}, '10.2.0.1', now)).toEqual({status: 'spam'});
-    expect(await plaatsBestelling(actie, iban, {...formulier({'aantal:margherita': '1'}), formToken: issueFormToken('bestellen', now.getTime())}, '10.2.0.2', now)).toEqual({status: 'spam'});
-    expect(await plaatsBestelling(actie, iban, formulier({'aantal:margherita': '1'}), '10.2.0.3', new Date('2027-01-18T09:00:00'))).toEqual({status: 'gesloten', reden: 'gesloten'});
+    expect(await plaatsBestelling(actie, {...formulier({'aantal:margherita': '1'}), website: 'http://spam'}, '10.2.0.1', now)).toEqual({status: 'spam'});
+    expect(await plaatsBestelling(actie, {...formulier({'aantal:margherita': '1'}), formToken: issueFormToken('bestellen', now.getTime())}, '10.2.0.2', now)).toEqual({status: 'spam'});
+    expect(await plaatsBestelling(actie, formulier({'aantal:margherita': '1'}), '10.2.0.3', new Date('2027-01-18T09:00:00'))).toEqual({status: 'gesloten', reden: 'gesloten'});
     expect(await testDb.db.select().from(orders)).toHaveLength(0);
   });
 
@@ -134,7 +133,7 @@ describe('plaatsBestelling', () => {
     const results = [];
     for (let i = 0; i < 6; i++) {
       // eslint-disable-next-line no-await-in-loop
-      results.push((await plaatsBestelling(testActie(), iban, formulier({'aantal:inschrijving': '1'}), '10.3.0.1', now)).status);
+      results.push((await plaatsBestelling(testActie(), formulier({'aantal:inschrijving': '1'}), '10.3.0.1', now)).status);
     }
 
     expect(results).toEqual(['besteld', 'besteld', 'besteld', 'besteld', 'besteld', 'beperkt']);

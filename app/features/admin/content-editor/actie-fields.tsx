@@ -3,7 +3,9 @@
 import {useId, useState} from 'react';
 import {ArrowDown, ArrowUp, Plus, Trash2} from 'lucide-react';
 import {FormField, Input, Switch} from '@components/ui';
-import {legeAfhaalRij, leesAfhaalRijen, type AfhaalRij} from '@lib/content-store/actie-form';
+import {
+  legeAfhaalRij, leesAfhaalRijen, standaardBegunstigde, type AfhaalRij,
+} from '@lib/content-store/actie-form';
 import {ProductenField} from './producten-field';
 import {secondaryButton} from './styles';
 
@@ -128,6 +130,8 @@ export function ActieFields({values, errors}: Readonly<Properties>) {
   const [overschrijving, setOverschrijving] = useState(isNew || values.wijzeOverschrijving === 'on');
   const [cash, setCash] = useState(values.wijzeCash === 'on');
   const [kind, setKind] = useState(values.vraagKind === 'on');
+  const [iban, setIban] = useState(values.rekeningIban ?? '');
+  const [begunstigde, setBegunstigde] = useState(values.rekeningBegunstigde ?? (isNew ? standaardBegunstigde : ''));
 
   return (
     <div className='space-y-6'>
@@ -202,6 +206,42 @@ export function ActieFields({values, errors}: Readonly<Properties>) {
         </label>
         {errors.betaalwijzen && <p id={`${id}-wijzen-error`} className='text-sm text-red-600'>{errors.betaalwijzen}</p>}
       </fieldset>
+
+      <div className='grid gap-4 sm:grid-cols-2'>
+        <FormField
+          label='Rekeningnummer (IBAN)'
+          htmlFor={`${id}-iban`}
+          required
+          error={errors.rekeningIban}
+          hint='Hierop schrijven ouders over. Kijk het goed na: elke ouder krijgt het in de mail.'
+        >
+          <Input
+            id={`${id}-iban`}
+            name='rekeningIban'
+            autoComplete='off'
+            spellCheck={false}
+            placeholder='BE00 0000 0000 0000'
+            value={iban}
+            error={Boolean(errors.rekeningIban)}
+            aria-invalid={errors.rekeningIban ? true : undefined}
+            onChange={event => {
+              setIban(event.target.value);
+            }}
+          />
+        </FormField>
+        <FormField label='Op naam van' htmlFor={`${id}-begunstigde`} required error={errors.rekeningBegunstigde}>
+          <Input
+            id={`${id}-begunstigde`}
+            name='rekeningBegunstigde'
+            value={begunstigde}
+            error={Boolean(errors.rekeningBegunstigde)}
+            aria-invalid={errors.rekeningBegunstigde ? true : undefined}
+            onChange={event => {
+              setBegunstigde(event.target.value);
+            }}
+          />
+        </FormField>
+      </div>
 
       <Switch
         id={`${id}-kind`}

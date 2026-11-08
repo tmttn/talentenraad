@@ -20,7 +20,10 @@ export type ProductRij = {
 export type AfhaalRij = {id: string; datum: string; uur: string; plaats: string};
 
 /** Form fields of an actie besides titel, samenvatting, afbeelding, inhoud and concept. */
-export const actieVelden = ['bestellenVan', 'bestellenTot', 'binnenDagen', 'betaalwijzen', 'vraagKind', 'afhalen', 'producten'] as const;
+export const actieVelden = ['bestellenVan', 'bestellenTot', 'binnenDagen', 'betaalwijzen', 'rekeningIban', 'rekeningBegunstigde', 'vraagKind', 'afhalen', 'producten'] as const;
+
+/** Who the account of a new sale is in the name of, until the editor changes it. */
+export const standaardBegunstigde = 'Talentenraad Het Talentenhuis';
 
 type Raw = Record<string, unknown>;
 
@@ -76,12 +79,15 @@ export function actieFormWaarden(data: Raw): Record<string, string> {
   const bestellen = record(data.bestellen);
   const betalen = record(data.betalen);
   const wijzen = list(betalen.wijzen);
+  const rekening = record(betalen.rekening);
   return {
     bestellenVan: text(bestellen.van),
     bestellenTot: text(bestellen.tot),
     binnenDagen: betalen.binnenDagen === undefined ? '5' : text(betalen.binnenDagen),
     wijzeOverschrijving: wijzen.includes('overschrijving') ? 'on' : '',
     wijzeCash: wijzen.includes('cash') ? 'on' : '',
+    rekeningIban: text(rekening.iban),
+    rekeningBegunstigde: text(rekening.begunstigde),
     vraagKind: record(data.vraag).kind === true ? 'on' : '',
     afhalen: JSON.stringify(list(data.afhalen).map(afhaalRij)),
     producten: JSON.stringify(list(data.producten).map(productRij)),
@@ -168,6 +174,10 @@ export function actieFoutVeld(path: ReadonlyArray<PropertyKey>, message: string)
   }
 
   if (first === 'betalen') {
+    if (second === 'rekening') {
+      return [third === 'begunstigde' ? 'rekeningBegunstigde' : 'rekeningIban', message];
+    }
+
     return [second === 'binnenDagen' ? 'binnenDagen' : 'betaalwijzen', message];
   }
 

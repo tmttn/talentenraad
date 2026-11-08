@@ -92,12 +92,11 @@ export function leesVeldnaam(name: string): {productId: string; sleutel: string}
 export type GeslotenReden = 'binnenkort' | 'gesloten' | 'voorbeeldrekening' | 'concept';
 
 /**
- * Whether parents can order now. In production a draft sale never opens, and no sale opens while
- * site.yaml still holds the example account number: parents would pay into the wrong account.
+ * Whether parents can order now. In production a draft sale never opens, and neither does a sale
+ * with the example account number: parents would pay into the wrong account.
  */
 export function kanBestellen(
-  actie: Periode & {concept: boolean},
-  iban: string,
+  actie: Periode & {concept: boolean; betalen: {rekening: {iban: string}}},
   today: string,
   production = process.env.NODE_ENV === 'production',
 ): {open: true} | {open: false; reden: GeslotenReden} {
@@ -110,7 +109,7 @@ export function kanBestellen(
     return {open: false, reden: 'concept'};
   }
 
-  if (production && isVoorbeeldRekening(iban)) {
+  if (production && isVoorbeeldRekening(actie.betalen.rekening.iban)) {
     return {open: false, reden: 'voorbeeldrekening'};
   }
 
