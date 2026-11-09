@@ -38,6 +38,7 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 ### Hosting
 - Hetzner Cloud-server, uitrol in `/opt/talentenraad` (Docker Compose: app + Caddy). Secrets staan alleen in `/opt/talentenraad/.env` op de server.
 - Deploy via GitHub Actions bij een push naar `main` en elke nacht (herbouw). Zie `deploy/README.md`.
+- Pull requests naar `main`: geen review en geen up-to-date-eis (sinds 9 november 2026), wel de 4 verplichte checks. Zet direct na `gh pr create` auto-merge aan (`gh pr merge --auto --merge`); GitHub merget zodra de checks groen zijn, ook als `main` intussen verder is (de editor commit daar rechtstreeks). Niet vragen of het mag.
 - Database: SQLite in `/data/talentenraad.db` (container), lokaal `./data/`.
 - Elke opslag in de editor is een deploy. Daarom: GitHub-secret `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` (via een BuildKit-secret in de `Dockerfile`) houdt de Server Action-ID's gelijk tussen builds, anders geeft een pagina van vóór de deploy 409 "Server Action was not found"; Caddy wacht tot 30 s op de herstartende app (`lb_try_duration`) i.p.v. 502; de editorformulieren vangen een mislukte request op (`guard-action.ts`) zodat de ingevulde velden blijven staan. Een `try/catch` rond een server action moet `unstable_rethrow` gebruiken: Next rejecteert de action met de redirect na het opslaan.
 
