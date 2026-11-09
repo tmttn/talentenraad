@@ -2,7 +2,9 @@
  * Reminder mails that leave by themselves: pay before the deadline, and pick up tomorrow. A task
  * every hour picks the orders that are due and sends between 9 and 20 o'clock, Belgian time.
  */
-import {and, eq, isNotNull, isNull} from 'drizzle-orm';
+import {
+  and, eq, isNotNull, isNull, ne,
+} from 'drizzle-orm';
 import {content} from '@lib/content';
 import {db, orders} from '@lib/db';
 import {todayString} from '@lib/dates';
@@ -32,7 +34,7 @@ export async function teHerinneren(now = new Date()): Promise<{betalen: string[]
   const morgen = plusDagen(today, 1);
 
   const wachtend = await db.select({id: orders.id, actie: orders.actie, aangemaaktOp: orders.aangemaaktOp}).from(orders)
-    .where(and(eq(orders.status, 'wacht'), isNull(orders.betaalHerinneringOp), isNotNull(orders.token)));
+    .where(and(eq(orders.status, 'wacht'), isNull(orders.betaalHerinneringOp), isNotNull(orders.token), ne(orders.email, '')));
   const betalen = wachtend.filter(order => {
     const actie = content.getActie(order.actie);
     if (!actie || todayString(order.aangemaaktOp) >= today) {
@@ -44,7 +46,7 @@ export async function teHerinneren(now = new Date()): Promise<{betalen: string[]
   }).map(order => order.id);
 
   const betaald = await db.select({id: orders.id, actie: orders.actie, qrVerstuurdOp: orders.qrVerstuurdOp}).from(orders)
-    .where(and(eq(orders.status, 'betaald'), isNull(orders.afhaalHerinneringOp), isNotNull(orders.token), eq(orders.afhaalDatum, morgen)));
+    .where(and(eq(orders.status, 'betaald'), isNull(orders.afhaalHerinneringOp), isNotNull(orders.token), ne(orders.email, ''), eq(orders.afhaalDatum, morgen)));
   const afhalen = betaald
     .filter(order => content.getActie(order.actie) && (!order.qrVerstuurdOp || todayString(order.qrVerstuurdOp) < today))
     .map(order => order.id);

@@ -45,7 +45,8 @@ const qrBijlage = async (token: string) => ({filename: 'afhaalcode.png', content
 /** Confirmation with payment instructions; records when it left. */
 export async function stuurBevestiging(orderId: string): Promise<void> {
   const order = await vindOpId(orderId);
-  if (!order?.token) {
+  // No token: the personal data is wiped; no e-mail: the board entered the order for a parent without one
+  if (!order?.token || !order.email) {
     return;
   }
 
@@ -64,7 +65,8 @@ export async function stuurBevestiging(orderId: string): Promise<void> {
 /** The pickup code with the QR code as an inline PNG; records when it left. */
 export async function stuurAfhaalcode(orderId: string): Promise<void> {
   const order = await vindOpId(orderId);
-  if (!order?.token) {
+  // No token: the personal data is wiped; no e-mail: the board entered the order for a parent without one
+  if (!order?.token || !order.email) {
     return;
   }
 
@@ -97,7 +99,7 @@ export async function verstuurNaBestelling(orderId: string): Promise<void> {
 export async function stuurBetaalHerinnering(orderId: string, now = new Date()): Promise<boolean> {
   const order = await vindOpId(orderId);
   const actie = order ? content.getActie(order.actie) : undefined;
-  if (!order?.token || order.status !== 'wacht' || order.betaalHerinneringOp || !actie) {
+  if (!order?.token || !order.email || order.status !== 'wacht' || order.betaalHerinneringOp || !actie) {
     return false;
   }
 
@@ -110,7 +112,7 @@ export async function stuurBetaalHerinnering(orderId: string, now = new Date()):
 export async function stuurAfhaalHerinnering(orderId: string, now = new Date()): Promise<boolean> {
   const order = await vindOpId(orderId);
   const actie = order ? content.getActie(order.actie) : undefined;
-  if (!order?.token || order.status !== 'betaald' || order.afhaalHerinneringOp || !actie) {
+  if (!order?.token || !order.email || order.status !== 'betaald' || order.afhaalHerinneringOp || !actie) {
     return false;
   }
 

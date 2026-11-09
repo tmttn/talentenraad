@@ -57,4 +57,11 @@ describe('controleerBestelling', () => {
     const fouten = controleerBestelling(metKind, leesBestelFormulier(metKind, {...basis, 'aantal:margherita': '1'}).invoer);
     expect(fouten).toEqual({kindNaam: 'Vul de naam van je kind in.', kindKlas: 'Vul de klas van je kind in.'});
   });
+
+  it('lets the board leave the e-mail empty, but not fill in a wrong one', () => {
+    const zonder = (email: string) => controleerBestelling(actie, leesBestelFormulier(actie, {...basis, email, 'aantal:margherita': '1'}).invoer, {emailVerplicht: false});
+    expect(zonder('')).toEqual({});
+    expect(zonder('oma@')).toEqual({email: 'Vul een volledig e-mailadres in, bv. naam@voorbeeld.be'});
+    expect(met({email: '', 'aantal:margherita': '1'})).toEqual({email: 'Vul je e-mailadres in, bv. naam@voorbeeld.be'});
+  });
 });

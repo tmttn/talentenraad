@@ -59,6 +59,7 @@ const meldingen: Record<string, {tekst: string; fout?: boolean}> = {
   terugbetaald: {tekst: 'Gemarkeerd als terugbetaald.'},
   notitie: {tekst: 'Notitie opgeslagen.'},
   mail: {tekst: 'Mail opnieuw verstuurd.'},
+  ingevoerd: {tekst: 'Bestelling ingevoerd.'},
 };
 
 /** The message after a form on an order page (`?melding=`). */

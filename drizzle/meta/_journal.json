@@ -43,6 +43,13 @@
       "when": 1794177425441,
       "tag": "0005_herinneringen",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1794259916621,
+      "tag": "0006_ingevoerd_door",
+      "breakpoints": true
     }
   ]
 }

@@ -51,7 +51,9 @@ export default async function BestellingDetailPage({params, searchParams}: Reado
     ['Mededeling', formatMededeling(order.mededeling)],
     ['Korte code', formatKorteCode(order.korteCode)],
     ['Besteld op', tijd(order.aangemaaktOp)],
-    ['Bevestiging verstuurd', tijd(order.bevestigingVerstuurdOp) ?? (order.totaalCent > 0 ? 'Nog niet' : undefined)],
+    ['Ingevoerd door', order.ingevoerdDoor],
+    // Only a waiting order with an address still gets one: paid at once (free, or cash the board took) goes straight to the pickup code
+    ['Bevestiging verstuurd', tijd(order.bevestigingVerstuurdOp) ?? (order.status === 'wacht' && order.email ? 'Nog niet' : undefined)],
     ['Betaalherinnering verstuurd', tijd(order.betaalHerinneringOp)],
     ['Betaald', order.betaaldOp ? `${tijd(order.betaaldOp)}${order.betaalwijze ? ` · ${order.betaalwijze}` : ''}${order.betaaldDoor ? ` · ${order.betaaldDoor}` : ''}` : undefined],
     ['Afhaalcode verstuurd', tijd(order.qrVerstuurdOp)],
@@ -144,7 +146,7 @@ export default async function BestellingDetailPage({params, searchParams}: Reado
             </form>
           )}
 
-          {order.token && (order.status === 'wacht' || order.status === 'betaald') && (
+          {order.token && order.email && (order.status === 'wacht' || order.status === 'betaald') && (
             <form action={mailActie} className='bg-white rounded-card shadow-base p-5 space-y-3'>
               <h2 className='font-semibold text-gray-800'>Mail opnieuw sturen</h2>
               <input type='hidden' name='id' value={order.id} />

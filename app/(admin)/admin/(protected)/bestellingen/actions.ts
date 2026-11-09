@@ -105,7 +105,7 @@ export async function mailActie(data: FormData): Promise<void> {
   const id = text(data, 'id');
   const order = await vindOpId(id);
   const soort = text(data, 'soort');
-  const kan = order?.token && (soort === 'afhaalcode' ? order.status === 'betaald' : order.status === 'wacht');
+  const kan = order?.token && order.email && (soort === 'afhaalcode' ? order.status === 'betaald' : order.status === 'wacht');
   if (!kan) {
     redirect(terug(data, 'niet-mogelijk'));
   }

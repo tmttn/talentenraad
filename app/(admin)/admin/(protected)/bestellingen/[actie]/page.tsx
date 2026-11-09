@@ -1,7 +1,9 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
-import {ClipboardList, Download, ListChecks} from 'lucide-react';
+import {
+  ClipboardList, Download, ListChecks, Plus,
+} from 'lucide-react';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {actieStatus, formatDag} from '@lib/bestellingen/acties';
 import {tellers, zoekBestellingen} from '@lib/bestellingen/beheer';
@@ -26,6 +28,7 @@ type PageProperties = {
 };
 
 const control = 'rounded-input border border-gray-300 bg-white px-3 py-2.5 text-base focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none';
+const primary = 'inline-flex items-center gap-2 px-3.5 py-2.5 text-[15px] font-semibold text-white bg-primary rounded-button hover:bg-primary-hover focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2';
 const secondary = 'inline-flex items-center gap-2 px-3.5 py-2.5 text-[15px] font-semibold text-gray-700 bg-white border border-gray-300 rounded-button hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary';
 
 export default async function ActieBestellingenPage({params, searchParams}: Readonly<PageProperties>) {
@@ -57,6 +60,12 @@ export default async function ActieBestellingenPage({params, searchParams}: Read
           )}
         </div>
         <div className='flex flex-wrap gap-2'>
+          {actie && (
+            <Link href={`/admin/bestellingen/${slug}/nieuw`} className={primary}>
+              <Plus className='w-4 h-4' aria-hidden='true' />
+              Bestelling invoeren
+            </Link>
+          )}
           <Link href={`/admin/bestellingen/${slug}/productielijst`} className={secondary}>
             <ListChecks className='w-4 h-4' aria-hidden='true' />
             Productielijst

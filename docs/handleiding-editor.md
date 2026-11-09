@@ -47,6 +47,7 @@ Links onder **Bestellingen** zie je per actie hoeveel bestellingen er zijn, hoev
 - **Productielijst**: hoeveel van elk product (en elke keuze) per afhaalmoment. Handig voor de bakker of de inkoop; je kunt hem afdrukken.
 - **Afhaallijst**: alle bestellingen per afhaalmoment, op naam, met een vakje om af te vinken. Druk hem af vóór het afhalen: lukt scannen niet (geen wifi, lege batterij), dan geef je mee met de lijst. Op de lijst staan geen e-mailadressen, telefoonnummers of bedragen, alleen of er betaald is. Elk afhaalmoment begint op een nieuwe pagina; kies bovenaan één moment om alleen dat af te drukken.
 - **Export CSV**: alle bestellingen als bestand voor Excel.
+- **Bestelling invoeren**: voor een ouder zonder e-mailadres, of een bestelling aan de schoolpoort. Dat kan ook na de bestelperiode, zolang er nog voorraad is. Laat je het e-mailadres leeg, dan krijgt de ouder geen enkele mail en geen QR-code: aan de afhaaltafel zoek je de bestelling op naam of nummer, en ze staat op de afhaallijst. Met een e-mailadres krijgt de ouder dezelfde mails als bij een gewone bestelling. Heb je het geld al gekregen en heb je toegang tot de bankrekening, vink dan **Cash betaald** aan. Bij de bestelling staat wie ze invoerde.
 
 Twee herinneringen gaan vanzelf, elk hoogstens één keer, tussen 9 en 20 uur: wie nog niet betaalde, krijgt de dag vóór de uiterste betaaldatum een herinnering met de betaalgegevens; wie betaalde, krijgt de dag vóór het afhalen een mail met de QR-code. Bij een bestelling zie je wanneer ze vertrokken.
 

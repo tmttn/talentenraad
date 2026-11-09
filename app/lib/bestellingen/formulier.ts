@@ -103,7 +103,8 @@ export function stuksPerProduct(regels: BestelRegel[]): Map<string, number> {
   return totals;
 }
 
-export function controleerBestelling(actie: ActieVorm, invoer: BestelInvoer): BestelFouten {
+/** `emailVerplicht: false` for an order the board enters: a parent without e-mail can order too, but a filled-in address must be valid. */
+export function controleerBestelling(actie: ActieVorm, invoer: BestelInvoer, {emailVerplicht = true}: {emailVerplicht?: boolean} = {}): BestelFouten {
   const fouten: BestelFouten = {};
 
   if (invoer.naam === '') {
@@ -115,7 +116,9 @@ export function controleerBestelling(actie: ActieVorm, invoer: BestelInvoer): Be
   }
 
   if (invoer.email === '') {
-    fouten.email = 'Vul je e-mailadres in, bv. naam@voorbeeld.be';
+    if (emailVerplicht) {
+      fouten.email = 'Vul je e-mailadres in, bv. naam@voorbeeld.be';
+    }
   } else if (!emailPattern.test(invoer.email) || invoer.email.length > 200) {
     fouten.email = 'Vul een volledig e-mailadres in, bv. naam@voorbeeld.be';
   }
