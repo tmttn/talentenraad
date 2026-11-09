@@ -1,5 +1,5 @@
 ---
-titel: Pizzaverkoop
+titel: Pizzaverkoop [TEST]
 samenvatting: >-
   Bestel je pizza's en haal ze warm op aan school. De opbrengst gaat naar
   activiteiten voor alle kinderen.
@@ -11,10 +11,9 @@ betalen:
     - overschrijving
     - cash
   binnenDagen: 5
-  # Voorbeeldnummer uit de specificatie: zolang dit er staat, opent de actie niet in productie.
   rekening:
-    iban: BE68 5390 0754 7034
-    begunstigde: Talentenraad Het Talentenhuis
+    iban: BE71 0961 2345 6769
+    begunstigde: Tom Metten
 afhalen:
   - id: vrijdag
     datum: '2027-01-22'
@@ -37,8 +36,8 @@ producten:
     naam: Vegetariana
     info: Tomaat, mozzarella, groenten van het seizoen
     prijs: 1200
-concept: true
 ---
+
 Bestel je pizza's en haal ze warm op aan school. Alle pizza's zijn vers gebakken.
 
 Allergenen: onze pizza's bevatten gluten en lactose.
