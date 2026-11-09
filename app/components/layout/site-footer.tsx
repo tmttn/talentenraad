@@ -41,7 +41,7 @@ const defaultNavigationGroups: NavigationGroup[] = [
     title: 'School',
     links: [
       {url: 'https://talentenhuis.be', text: 'Het Talentenhuis'},
-      {url: 'https://facebook.com/talentenhuis', text: 'Facebook'},
+      {url: 'https://www.facebook.com/talentenhuis.be', text: 'Facebook'},
       {url: 'https://instagram.com/talentenhuis', text: 'Instagram'},
     ],
   },
