@@ -2,7 +2,7 @@
 naam: Kimberly Jacobs
 rol: Lid
 categorie: lid
-volgorde: -8
+volgorde: 99
 ---
 
 Hey! Ik ben Kimberly & ik woon samen met mijn man Robin en dochter Lio in Vlijtingen. In het dagelijkse leven ben ik tandartsassistente in een praktijk in Hasselt.
