@@ -4,7 +4,7 @@ samenvatting: >-
   Bestel je pizza's en haal ze warm op aan school. De opbrengst gaat naar
   activiteiten voor alle kinderen.
 bestellen:
-  van: '2027-01-04'
+  van: '2026-11-03'
   tot: '2027-01-17'
 betalen:
   wijzen:
@@ -15,14 +15,10 @@ betalen:
     iban: BE71 0961 2345 6769
     begunstigde: Tom Metten
 afhalen:
-  - id: vrijdag
-    datum: '2027-01-22'
+  - id: donderdag
+    datum: '2027-02-25'
     uur: 17:00 - 19:00
-    plaats: Refter van het Talentenhuis
-  - id: zaterdag
-    datum: '2027-01-23'
-    uur: 10:00 - 12:00
-    plaats: Refter van het Talentenhuis
+    plaats: Ingang Beversheem
 producten:
   - id: margherita
     naam: Margherita
