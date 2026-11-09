@@ -59,6 +59,10 @@ Intrekken: verwijder de token op GitHub; de editor meldt dan "nog niet ingesteld
 
 Zijn ze niet ingesteld, dan bouwt de workflow alleen de image en slaat de deploy over met een melding.
 
+- `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY`: vaste sleutel (32 willekeurige bytes, base64) voor de Server Actions van Next.js. Next.js leidt de ID's van de formulier-acties uit deze sleutel af en maakt bij elke build een nieuwe als ze ontbreekt. Elke opslag in de editor start een deploy, dus zonder vaste sleutel faalt de volgende opslag in een pagina die vóór die deploy geopend werd ("Server Action was not found", 409). Aanmaken zonder de waarde te tonen: `node -e "process.stdout.write(require('crypto').randomBytes(32).toString('base64'))" | gh secret set NEXT_SERVER_ACTIONS_ENCRYPTION_KEY`. Niet ingesteld: de build werkt, met wisselende ID's. Nieuwe waarde = alle open editorpagina's moeten één keer herladen. De sleutel komt ook in de (publieke) image terecht; dat is hier zonder gevolg, want geen enkele action sluit waarden in (`.bind` of closures in servercomponenten) en elke action controleert zelf de sessie.
+
+Caddy houdt verzoeken tot 30 s vast terwijl de app-container herstart (`lb_try_duration` in `deploy/Caddyfile`), dus tijdens een deploy krijgt een bezoeker geen 502 maar een wat trager antwoord.
+
 ## Hoe een deploy werkt
 
 Triggers: push naar `main`, elke nacht om 02:00 UTC (voor verse basis-images; elke herstart voert de audit-log-opruiming uit, en de app herhaalt die elke 24 uur) en handmatig via `workflow_dispatch`.

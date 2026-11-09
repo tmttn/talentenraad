@@ -3,6 +3,7 @@
 import {useActionState, useEffect, useRef, useState} from 'react';
 import {Trash2} from 'lucide-react';
 import {deleteEntry, type FormState} from '../../../(admin)/admin/(protected)/content/actions';
+import {guardAction} from './guard-action';
 import {dangerButton, dangerOutlineButton, secondaryButton} from './styles';
 
 type Properties = {
@@ -17,7 +18,8 @@ type Properties = {
 export function DeleteEntry({
   type, slug, title, indexSha, imageSha, action = deleteEntry,
 }: Readonly<Properties>) {
-  const [state, formAction, pending] = useActionState(action, {} as FormState);
+  const guarded = async (previous: FormState, data: FormData) => guardAction(async () => action(previous, data));
+  const [state, formAction, pending] = useActionState(guarded, {} as FormState);
   const [confirming, setConfirming] = useState(false);
   const confirmation = useRef<HTMLParagraphElement>(null);
 

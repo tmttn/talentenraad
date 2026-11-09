@@ -38,6 +38,7 @@ De site wordt herbouwd met zo weinig mogelijk SaaS-afhankelijkheden, zodat Claud
 - Hetzner Cloud-server, uitrol in `/opt/talentenraad` (Docker Compose: app + Caddy). Secrets staan alleen in `/opt/talentenraad/.env` op de server.
 - Deploy via GitHub Actions bij een push naar `main` en elke nacht (herbouw). Zie `deploy/README.md`.
 - Database: SQLite in `/data/talentenraad.db` (container), lokaal `./data/`.
+- Elke opslag in de editor is een deploy. Daarom: GitHub-secret `NEXT_SERVER_ACTIONS_ENCRYPTION_KEY` (via een BuildKit-secret in de `Dockerfile`) houdt de Server Action-ID's gelijk tussen builds, anders geeft een pagina van vóór de deploy 409 "Server Action was not found"; Caddy wacht tot 30 s op de herstartende app (`lb_try_duration`) i.p.v. 502; de editorformulieren vangen een mislukte request op (`guard-action.ts`) zodat de ingevulde velden blijven staan. Een `try/catch` rond een server action moet `unstable_rethrow` gebruiken: Next rejecteert de action met de redirect na het opslaan.
 
 ### Open punten
 - Alias-uniciteit controleren in `content.test.ts`.
