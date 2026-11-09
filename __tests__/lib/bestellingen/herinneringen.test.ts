@@ -75,10 +75,12 @@ describe('teHerinneren: betalen', () => {
     expect((await teHerinneren(op('2027-01-16'))).betalen).toEqual([]);
   });
 
-  it('skips paid, cancelled, wiped and already reminded orders, orders of today and unknown sales', async () => {
+  it('skips paid, cancelled, wiped, e-mail-less and already reminded orders, orders of today and unknown sales', async () => {
     await maak({status: 'betaald'});
     await maak({status: 'geannuleerd'});
     await maak({token: null});
+    // Entered by the board for a parent without e-mail
+    await maak({email: '', ingevoerdDoor: 'Sara'});
     await maak({betaalHerinneringOp: op('2027-01-14')});
     await maak({actie: 'weg'});
     // Ordered today: never a reminder on the day of ordering
@@ -94,6 +96,7 @@ describe('teHerinneren: afhalen', () => {
     const zonderMail = await maak({status: 'betaald'});
     await maak({status: 'betaald', qrVerstuurdOp: op('2027-01-21')});
     await maak({status: 'afgehaald'});
+    await maak({status: 'betaald', email: ''});
     const zaterdag = await maak({status: 'betaald', afhaalId: 'zaterdag', afhaalDatum: '2027-01-23'});
 
     expect((await teHerinneren(op('2027-01-20'))).afhalen).toEqual([]);

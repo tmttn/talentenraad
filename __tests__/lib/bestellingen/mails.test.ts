@@ -25,7 +25,9 @@ vi.mock('@lib/db', async () => {
 });
 
 const {orders, orderLines} = await import('@lib/db/schema');
-const {verstuurNaBestelling, stuurAfhaalcode} = await import('@lib/bestellingen/mails');
+const {
+  verstuurNaBestelling, stuurAfhaalcode, stuurAfhaalHerinnering, stuurBetaalHerinnering,
+} = await import('@lib/bestellingen/mails');
 const testDb = test.current as unknown as ReturnType<typeof createTestDb>;
 
 async function maakBestelling(overrides: Partial<typeof orders.$inferInsert> = {}) {
@@ -73,6 +75,16 @@ describe('order mails', () => {
     expect(mail.attachments[0].content.subarray(1, 4).toString()).toBe('PNG');
     const [row] = await testDb.db.select().from(orders);
     expect(row.qrVerstuurdOp).toBeInstanceOf(Date);
+  });
+
+  it('sends nothing to an order the board entered without e-mail', async () => {
+    const wacht = await maakBestelling({email: '', ingevoerdDoor: 'Sara'});
+    const betaald = await maakBestelling({email: '', nummer: 15, volgnummer: 15, mededeling: '000000001515', token: 'bcdefghijklmnopqrstuvw', korteCode: 'K7P4QY', status: 'betaald'});
+    await verstuurNaBestelling(wacht.id);
+    await verstuurNaBestelling(betaald.id);
+    expect(await stuurBetaalHerinnering(wacht.id)).toBe(false);
+    expect(await stuurAfhaalHerinnering(betaald.id)).toBe(false);
+    expect(sendMail).not.toHaveBeenCalled();
   });
 
   it('sends nothing for a wiped order', async () => {

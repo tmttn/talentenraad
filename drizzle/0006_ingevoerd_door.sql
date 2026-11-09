@@ -1,0 +1,1 @@
+ALTER TABLE `orders` ADD `ingevoerd_door` text;

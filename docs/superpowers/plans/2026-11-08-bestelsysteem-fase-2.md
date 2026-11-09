@@ -14,10 +14,10 @@ Eerst wat vóór januari het meeste helpt en niets van buiten nodig heeft. Elk o
 | --- | --- | --- | --- |
 | 6 | Afhaallijst printen | niets | klaar |
 | 7 | Herinneringsmails (betalen, afhalen) | niets | klaar |
-| 8 | Handmatige bestellingen | beslissing (zie Open vragen) | later |
-| 9 | Gedeeltelijke afgifte | beslissing | later |
-| 10 | Bankafschrift inlezen | een voorbeeld-CSV van de bank | later |
-| 11 | Offline reserve in de afhaal-app | beslissing | later |
+| 8 | Handmatige bestellingen | niets | klaar |
+| 9 | ~~Gedeeltelijke afgifte~~ | | vervalt (zie Beslissingen) |
+| 10 | Bankafschrift inlezen (KBC) | een voorbeeld-CSV van KBC | wacht op de CSV |
+| 11 | ~~Offline reserve in de afhaal-app~~ | | vervalt: de afhaallijst (PR 6) is de reserve |
 
 ---
 
@@ -66,9 +66,31 @@ Twee mails die vanzelf vertrekken, elk hoogstens één keer per bestelling.
 
 ---
 
-## Open vragen (beslist de Talentenraad)
+## PR 8: Handmatige bestellingen
 
-1. **Handmatige bestelling:** krijgt een ouder zonder e-mailadres een afgedrukt briefje met de QR-code, of volstaan naam en nummer op de afhaallijst? Mag het bestuur zo'n bestelling meteen als cash betaald zetten?
-2. **Gedeeltelijke afgifte:** per product een aantal "nu meegegeven", en blijft de bestelling dan open tot alles mee is? Of alleen voor kaarten (fuif), niet voor pizza's?
-3. **Bankafschrift:** bij welke bank staat de rekening? We hebben een voorbeeldexport (CSV) nodig, met namen en bedragen vervangen door nepgegevens, om het formaat te kennen.
-4. **Offline reserve:** volstaat de afgedrukte afhaallijst (PR 6) als reserve, of moet de afhaal-app ook zonder verbinding kunnen meegeven? Offline meegeven kan dezelfde bestelling twee keer laten meegeven als twee telefoons tegelijk offline zijn.
+Voor een ouder zonder e-mailadres, of die aan de schoolpoort bestelt en cash betaalt: het bestuur voert de bestelling zelf in.
+
+**Files:**
+- Modify: `app/lib/db/schema.ts` (`ingevoerdDoor` op `orders`) + migratie, `app/lib/bestellingen/plaatsen.ts` (bewaren gedeeld met de online bestelling), `formulier.ts` (e-mail optioneel), `mails.ts` en `herinneringen.ts` (niets naar een lege e-mail), `proxy.ts` (pad), de beheerpagina van een actie (knop) en de detailpagina (ingevoerd door; geen "opnieuw mailen" zonder e-mail)
+- Create: `app/lib/bestellingen/handmatig.ts`, `app/(admin)/admin/(protected)/bestellingen/[actie]/nieuw/` (pagina en server action), `app/features/admin/bestellingen/handmatige-bestelling.tsx`
+- Test: `__tests__/lib/bestellingen/handmatig.test.ts`, `mails.test.ts`, `herinneringen.test.ts`, `formulier.test.ts`
+
+**Regels:**
+- Alleen admin en redacteur (`requireEditorSession`), op `/admin/bestellingen/<actie>/nieuw`.
+- Velden: naam (verplicht), e-mail en telefoon (optioneel), kind en klas als de actie erom vraagt, afhaalmoment, aantallen en een notitie. Het vinkje "Cash betaald" alleen met `bankToegang`, ook server-side gecontroleerd.
+- Dezelfde controles als online (voorraad in dezelfde `BEGIN IMMEDIATE`-transactie, maximum per bestelling, kind en klas), maar zonder bestelperiode, honeypot, tijdscontrole of rate limit: ook een late bestelling aan de schoolpoort kan.
+- Zonder e-mail blijft `email` leeg, zoals bij een gewiste bestelling, en vertrekt er geen enkele mail (bevestiging, afhaalcode, herinneringen). Met e-mail krijgt de ouder dezelfde mails als online.
+- Geen briefje en geen QR: aan de afhaaltafel zoekt de helper op naam of nummer in de afhaal-app, en de bestelling staat op naam op de afhaallijst.
+- `ingevoerdDoor` (naam van wie hem invoerde) op de bestelling; het beheer toont het, de audit log krijgt een `create`.
+
+- [x] Tests: zonder e-mail geen mail, met e-mail wel; cash betaald zet `betaald` met `cash`/`manueel` en wie; buiten de bestelperiode kan het; voorraad en maximum gelden; een ongeldig e-mailadres wordt geweigerd, een leeg niet; `ingevoerdDoor` gezet; herinneringen en de afhaalcode slaan een lege e-mail over.
+- [x] Implementeren; checklist; lokaal een bestelling ingevoerd en in de afhaal-app teruggevonden op naam; PR openen.
+
+---
+
+## Beslissingen (9 november 2026)
+
+1. **Handmatige bestelling:** geen briefje; naam en nummer op de afhaallijst volstaan. Wie toegang tot de bankrekening heeft, mag zo'n bestelling meteen als cash betaald zetten. → PR 8.
+2. **Gedeeltelijke afgifte:** niet nodig; alles of niets blijft. PR 9 vervalt tot een actie (bv. fuifkaarten) het echt nodig heeft.
+3. **Bankafschrift:** de rekening staat bij KBC. PR 10 wacht op een voorbeeldexport (CSV) van KBC, met namen en bedragen vervangen door nepgegevens.
+4. **Offline reserve:** de afgedrukte afhaallijst (PR 6) volstaat. PR 11 vervalt; offline meegeven zou dezelfde bestelling twee keer kunnen laten meegeven.

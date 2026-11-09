@@ -203,6 +203,8 @@ export const orders = sqliteTable('orders', {
   terugbetaaldOp: timestamp('terugbetaald_op'),
   terugbetaaldDoor: text('terugbetaald_door'),
   notitie: text('notitie'),
+  /** Who entered the order in the admin (no e-mail, or ordered at the school gate); null when the parent ordered online. */
+  ingevoerdDoor: text('ingevoerd_door'),
   bevestigingVerstuurdOp: timestamp('bevestiging_verstuurd_op'),
   qrVerstuurdOp: timestamp('qr_verstuurd_op'),
   /** The reminder the day before the payment deadline; at most once. */

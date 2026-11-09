@@ -10,7 +10,7 @@ import {formRateLimit} from '@lib/rate-limit';
 import {afhaalLabel, kanBestellen, productVarianten, type GeslotenReden} from './acties';
 import {nieuweKorteCode, nieuwToken} from './codes';
 import {
-  controleerBestelling, leesBestelFormulier, stuksPerProduct, type BestelFouten,
+  controleerBestelling, leesBestelFormulier, stuksPerProduct, type BestelFouten, type BestelInvoer,
 } from './formulier';
 import {mededelingVoor} from './mededeling';
 import {verstuurNaBestelling} from './mails';
@@ -64,52 +64,24 @@ export function verbruikteVoorraad(tx: Tx | typeof db, actie: string, productIds
   return new Map(rows.map(row => [row.productId, Number(row.aantal)]));
 }
 
+export type BewaarExtra = {
+  /** The board confirms a cash payment at once (an order entered in the admin). */
+  cashBetaaldDoor?: string;
+  /** Who entered the order in the admin. */
+  ingevoerdDoor?: string;
+  notitie?: string;
+};
+
+export type BewaarResultaat =
+  | {status: 'bewaard'; id: string; nummer: number; token: string}
+  | {status: 'uitverkocht'; fouten: BestelFouten}
+  | {status: 'mislukt'};
+
 /**
- * Handles one order: spam checks, validation, and then stock, numbers and the insert in one
- * BEGIN IMMEDIATE transaction, so two parents can never both buy the last piece. Spam gets the
- * same calm answer as a real order would, without a row. The mail goes out in the background.
+ * Stock, numbers and the insert in one BEGIN IMMEDIATE transaction, so two orders can never both
+ * get the last piece. Online and in the admin alike; `invoer` must have passed `controleerBestelling`.
  */
-export async function plaatsBestelling(
-  actie: Actie,
-  input: PlaatsInvoer,
-  clientIp: string,
-  now = new Date(),
-): Promise<PlaatsResultaat> {
-  if (typeof input.website === 'string' && input.website.trim() !== '') {
-    console.warn('spam: honeypot');
-    return {status: 'spam'};
-  }
-
-  if (!rateLimiter.check(clientIp, now.getTime())) {
-    return {status: 'beperkt'};
-  }
-
-  const open = kanBestellen(actie, todayString(now));
-  if (!open.open) {
-    return {status: 'gesloten', reden: open.reden};
-  }
-
-  const {invoer, fouten: leesFouten, gewijzigd} = leesBestelFormulier(actie, input.data);
-  if (gewijzigd) {
-    return {status: 'gewijzigd'};
-  }
-
-  const fouten = {...controleerBestelling(actie, invoer), ...leesFouten};
-  if (Object.keys(fouten).length > 0) {
-    return {status: 'ongeldig', fouten};
-  }
-
-  // After validation, so a person who sends an incomplete form quickly still sees what is missing
-  const timing = checkFormToken(bestelFormPurpose, input.formToken, now.getTime());
-  if (timing === 'too-fast' || timing === 'invalid') {
-    console.warn(`spam: form timing (${timing})`);
-    return {status: 'spam'};
-  }
-
-  if (timing === 'expired') {
-    return {status: 'verlopen'};
-  }
-
+export function bewaarBestelling(actie: Actie, invoer: BestelInvoer, now: Date, extra: BewaarExtra = {}): BewaarResultaat {
   const moment = actie.afhalen.find(item => item.id === invoer.afhaalId)!;
   const regels = invoer.regels.map((regel, volgorde) => {
     const product = actie.producten.find(item => item.id === regel.productId)!;
@@ -120,6 +92,9 @@ export async function plaatsBestelling(
   });
   const totaalCent = regels.reduce((total, regel) => total + (regel.prijsCent * regel.aantal), 0);
   const gratis = totaalCent === 0;
+  // Nothing to pay means no payment method either
+  const cash = !gratis && extra.cashBetaaldDoor !== undefined;
+  const betaald = gratis || cash;
   const token = nieuwToken();
 
   let id: string;
@@ -166,9 +141,12 @@ export async function plaatsBestelling(
         afhaalLabel: afhaalLabel(moment),
         afhaalPlaats: moment.plaats,
         totaalCent,
-        // A free order is confirmed at once and gets its QR code straight away
-        status: gratis ? 'betaald' : 'wacht',
-        betaaldOp: gratis ? now : null,
+        // A free order is confirmed at once and gets its QR code straight away; so is cash the board took
+        status: betaald ? 'betaald' : 'wacht',
+        betaaldOp: betaald ? now : null,
+        ...(cash ? {betaalwijze: 'cash', betaalbron: 'manueel', betaaldDoor: extra.cashBetaaldDoor} as const : {}),
+        notitie: extra.notitie?.trim().slice(0, 500) || null,
+        ingevoerdDoor: extra.ingevoerdDoor ?? null,
         aangemaaktOp: now,
       }).returning({id: orders.id, nummer: orders.nummer}).all();
       tx.insert(orderLines).values(regels.map(regel => ({...regel, orderId: order.id}))).run();
@@ -183,10 +161,64 @@ export async function plaatsBestelling(
     return {status: 'mislukt'};
   }
 
+  return {status: 'bewaard', id, nummer, token};
+}
+
+/**
+ * Handles one order: spam checks, validation, and then stock, numbers and the insert in one
+ * BEGIN IMMEDIATE transaction, so two parents can never both buy the last piece. Spam gets the
+ * same calm answer as a real order would, without a row. The mail goes out in the background.
+ */
+export async function plaatsBestelling(
+  actie: Actie,
+  input: PlaatsInvoer,
+  clientIp: string,
+  now = new Date(),
+): Promise<PlaatsResultaat> {
+  if (typeof input.website === 'string' && input.website.trim() !== '') {
+    console.warn('spam: honeypot');
+    return {status: 'spam'};
+  }
+
+  if (!rateLimiter.check(clientIp, now.getTime())) {
+    return {status: 'beperkt'};
+  }
+
+  const open = kanBestellen(actie, todayString(now));
+  if (!open.open) {
+    return {status: 'gesloten', reden: open.reden};
+  }
+
+  const {invoer, fouten: leesFouten, gewijzigd} = leesBestelFormulier(actie, input.data);
+  if (gewijzigd) {
+    return {status: 'gewijzigd'};
+  }
+
+  const fouten = {...controleerBestelling(actie, invoer), ...leesFouten};
+  if (Object.keys(fouten).length > 0) {
+    return {status: 'ongeldig', fouten};
+  }
+
+  // After validation, so a person who sends an incomplete form quickly still sees what is missing
+  const timing = checkFormToken(bestelFormPurpose, input.formToken, now.getTime());
+  if (timing === 'too-fast' || timing === 'invalid') {
+    console.warn(`spam: form timing (${timing})`);
+    return {status: 'spam'};
+  }
+
+  if (timing === 'expired') {
+    return {status: 'verlopen'};
+  }
+
+  const bewaard = bewaarBestelling(actie, invoer, now);
+  if (bewaard.status !== 'bewaard') {
+    return bewaard;
+  }
+
   // Mail in the background: a failing mail never loses the order; the order page shows the same
-  verstuurNaBestelling(id).catch((error: unknown) => {
+  verstuurNaBestelling(bewaard.id).catch((error: unknown) => {
     console.error('Order mail failed', error instanceof Error ? error.message : 'unknown');
   });
 
-  return {status: 'besteld', token, nummer};
+  return {status: 'besteld', token: bewaard.token, nummer: bewaard.nummer};
 }

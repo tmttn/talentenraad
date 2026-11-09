@@ -91,6 +91,7 @@ describe('proxy', () => {
     '/admin/bestellingen/pizzaverkoop-2027/14',
     '/admin/bestellingen/pizzaverkoop-2027/productielijst',
     '/admin/bestellingen/pizzaverkoop-2027/afhaallijst',
+    '/admin/bestellingen/pizzaverkoop-2027/nieuw',
     '/admin/afhalen',
     '/admin/afhalen/pizzaverkoop-2027/vrijdag',
     '/admin/afhalen/pizzaverkoop-2027/vrijdag/AbCdEfGhIjKlMnOpQrSt_-',
