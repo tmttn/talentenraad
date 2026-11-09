@@ -7,6 +7,7 @@ import {redirect} from 'next/navigation';
 import {createAuditContext, logAudit} from '@lib/audit';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {slugify} from '@lib/content/slugify';
+import {commitMessage} from '@lib/content-store/commit-message';
 import {ConflictError, ContentStoreError} from '@lib/content-store/errors';
 import {entryPaths, listEntries, summarize} from '@lib/content-store/entries';
 import {entryTypes, isEntryType, type EntryType} from '@lib/content-store/entry-types';
@@ -30,13 +31,7 @@ const text = (data: FormData, key: string) => {
   return typeof value === 'string' ? value : '';
 };
 
-const oneLine = (value: string, max = 100) => value.replaceAll(/\s+/g, ' ').replaceAll('"', '\'').trim().slice(0, max);
-
 type EditorSession = Awaited<ReturnType<typeof requireEditorSession>>;
-
-// No editor name or e-mail in the message: the repo is public. The audit log links each commit to the user.
-const commitMessage = (verb: string, subject: string, title: string) =>
-  `content: ${verb} ${subject} "${oneLine(title)}"`;
 
 async function audit(
   session: EditorSession,
