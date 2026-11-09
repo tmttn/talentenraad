@@ -9,7 +9,18 @@ ENV NEXT_TELEMETRY_DISABLED=1
 # A new date busts the cache from here on, so date-dependent static pages are rebuilt nightly.
 ARG BUILD_DATE=unknown
 ENV BUILD_DATE=$BUILD_DATE
-RUN echo "Building for $BUILD_DATE" && npm run build
+# Next.js salts the Server Action IDs with this key and makes a new random one when it
+# is missing (no .next/cache here). A fixed key keeps the IDs the same from build to
+# build, so a page opened before a deploy can still save afterwards ("Server Action
+# was not found", 409). Empty or absent secret: random key, as before.
+RUN --mount=type=secret,id=next_actions_key \
+  if [ -s /run/secrets/next_actions_key ]; then \
+    NEXT_SERVER_ACTIONS_ENCRYPTION_KEY="$(cat /run/secrets/next_actions_key)"; \
+    export NEXT_SERVER_ACTIONS_ENCRYPTION_KEY; \
+  else \
+    echo "No next_actions_key secret: Server Action IDs change with this build"; \
+  fi \
+  && echo "Building for $BUILD_DATE" && npm run build
 
 FROM node:26-bookworm-slim AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends tzdata \

@@ -6,6 +6,7 @@ import {Save} from 'lucide-react';
 import {FormField, Input, Select, Switch} from '@components/ui';
 import {announcementTypes} from '@lib/content-store/entry-types';
 import {saveAnnouncement, type FormState} from '../../../(admin)/admin/(protected)/content/actions';
+import {guardAction} from './guard-action';
 import {primaryButton, secondaryButton} from './styles';
 import {useFormFeedback} from './use-form-feedback';
 
@@ -25,8 +26,8 @@ type Properties = {
 
 export function AnnouncementForm({initial, sha, action = saveAnnouncement}: Readonly<Properties>) {
   const attempts = useRef(0);
-  const wrapped = async (previous: FormState & {attempt?: number}, data: FormData) => {
-    const result = await action(previous, data);
+  const wrapped = async (previous: FormState & {attempt?: number}, data: FormData): Promise<FormState & {attempt?: number}> => {
+    const result = await guardAction(async () => action(previous, data));
     attempts.current += 1;
     return {...result, attempt: attempts.current};
   };
