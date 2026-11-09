@@ -45,6 +45,7 @@ Links onder **Bestellingen** zie je per actie hoeveel bestellingen er zijn, hoev
 - **Betaald zetten**: vink de bestellingen aan waarvan het geld op de rekening staat, kies bij **Betaald met** overschrijving of cash en klik op **Markeer als betaald en stuur QR-code**. De ouder krijgt dan een mail met de QR-code om af te halen. Alleen wie in **Gebruikers** het vinkje **Toegang tot de bankrekening** heeft, ziet de vinkjes en deze knop (en **Markeer als terugbetaald** en, in de afhaal-app, cash ontvangen).
 - **Annuleren**: met een reden. Was de bestelling al betaald, dan komt ze op de lijst **Terug te betalen**; klik op **Markeer als terugbetaald** zodra het geld teruggestort is.
 - **Productielijst**: hoeveel van elk product (en elke keuze) per afhaalmoment. Handig voor de bakker of de inkoop; je kunt hem afdrukken.
+- **Afhaallijst**: alle bestellingen per afhaalmoment, op naam, met een vakje om af te vinken. Druk hem af vóór het afhalen: lukt scannen niet (geen wifi, lege batterij), dan geef je mee met de lijst. Op de lijst staan geen e-mailadressen, telefoonnummers of bedragen, alleen of er betaald is. Elk afhaalmoment begint op een nieuwe pagina; kies bovenaan één moment om alleen dat af te drukken.
 - **Export CSV**: alle bestellingen als bestand voor Excel.
 
 Na drie maanden na het laatste afhaalmoment worden namen, e-mailadressen en telefoonnummers van een actie automatisch gewist. Bedragen en aantallen blijven.

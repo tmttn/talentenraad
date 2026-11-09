@@ -32,8 +32,8 @@ const adminDynamicPatterns = [
   /^\/admin\/submissions\/[\w-]+$/,
   // Content editor: list, new and edit per type (slugs as in app/lib/content-store/paths.ts)
   /^\/admin\/content\/(?:activiteiten|acties|nieuws|team|faq)(?:\/[a-z\d]+(?:-[a-z\d]+)*)?$/,
-  // Orders: per sale, one order by number, and the production list
-  /^\/admin\/bestellingen\/[a-z\d]+(?:-[a-z\d]+)*(?:\/(?:\d{1,6}|productielijst))?$/,
+  // Orders: per sale, one order by number, the production list and the pickup list
+  /^\/admin\/bestellingen\/[a-z\d]+(?:-[a-z\d]+)*(?:\/(?:\d{1,6}|productielijst|afhaallijst))?$/,
   // Pickup app: scanner per sale and moment, and the hand-over screen per order token
   /^\/admin\/afhalen\/[a-z\d]+(?:-[a-z\d]+)*\/[a-z\d]+(?:-[a-z\d]+)*(?:\/[\w-]{22})?$/,
 ];

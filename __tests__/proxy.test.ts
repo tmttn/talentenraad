@@ -90,6 +90,10 @@ describe('proxy', () => {
     '/admin/bestellingen/pizzaverkoop-2027',
     '/admin/bestellingen/pizzaverkoop-2027/14',
     '/admin/bestellingen/pizzaverkoop-2027/productielijst',
+    '/admin/bestellingen/pizzaverkoop-2027/afhaallijst',
+    '/admin/afhalen',
+    '/admin/afhalen/pizzaverkoop-2027/vrijdag',
+    '/admin/afhalen/pizzaverkoop-2027/vrijdag/AbCdEfGhIjKlMnOpQrSt_-',
   ])('lets the content editor route %s through', async path => {
     const response = await proxy(request(path, await jwt()));
 
@@ -100,6 +104,9 @@ describe('proxy', () => {
     '/admin/content/foo',
     '/admin/content/nieuws/a/b',
     '/admin/content/nieuws/Hoofdletters',
+    '/admin/bestellingen/pizzaverkoop-2027/lijst',
+    '/admin/afhalen/pizzaverkoop-2027',
+    '/admin/afhalen/pizzaverkoop-2027/vrijdag/te-kort',
   ])('rewrites the unknown content route %s to the admin 404 page', async path => {
     const response = await proxy(request(path, await jwt()));
 

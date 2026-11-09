@@ -19,7 +19,10 @@ const parseText = (text: string) => matter(text, {engines: {yaml: {parse: source
 describe('actie form round-trip', () => {
   it('turns the example into form values and back into the same sale', () => {
     const {data, body} = readMarkdownFile(voorbeeld);
-    const values = {titel: String(data.titel), samenvatting: String(data.samenvatting), inhoud: body, concept: 'on', ...actieFormWaarden(data)};
+    // The example is real content that editors change: take its draft flag as it is, never assume it
+    const values = {
+      titel: String(data.titel), samenvatting: String(data.samenvatting), inhoud: body, concept: data.concept === true ? 'on' : '', ...actieFormWaarden(data),
+    };
     expect(values.producten).toContain('"prijs":"10,00"');
 
     const parsed = parseEntryForm('acties', values);

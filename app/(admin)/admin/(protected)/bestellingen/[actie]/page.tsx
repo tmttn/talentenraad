@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
-import {Download, ListChecks} from 'lucide-react';
+import {ClipboardList, Download, ListChecks} from 'lucide-react';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {actieStatus, formatDag} from '@lib/bestellingen/acties';
 import {tellers, zoekBestellingen} from '@lib/bestellingen/beheer';
@@ -60,6 +60,10 @@ export default async function ActieBestellingenPage({params, searchParams}: Read
           <Link href={`/admin/bestellingen/${slug}/productielijst`} className={secondary}>
             <ListChecks className='w-4 h-4' aria-hidden='true' />
             Productielijst
+          </Link>
+          <Link href={`/admin/bestellingen/${slug}/afhaallijst`} className={secondary}>
+            <ClipboardList className='w-4 h-4' aria-hidden='true' />
+            Afhaallijst
           </Link>
           <a href={`/api/admin/bestellingen/${slug}/export`} className={secondary}>
             <Download className='w-4 h-4' aria-hidden='true' />
