@@ -7,7 +7,7 @@ samenvatting: >-
   volgt snel!
 ---
 
-Rond Valentijn heeft de Talentenraad iets leuks in petto. Op vrijdag 12 februari 2027 vindt onze Valentijnactie plaats.
+Rond Valentijn heeft de Talentenraad iets leuks in petto. Op vrijdag 5 februari 2027 vindt onze Valentijnactie plaats.
 
 Hoe het precies werkt en hoe je kan bestellen of meedoen, lees je binnenkort hier en in de schoolcommunicatie.
 
