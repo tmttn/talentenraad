@@ -51,6 +51,15 @@ describe('Over ons page', () => {
     expect(lid.children).toHaveLength(1);
   });
 
+  it('colors the cards in turn, with a speech tail only above an introduction', () => {
+    render(<OverOnsPage />);
+    const header = (naam: string) => screen.getByRole('heading', {name: naam}).closest('li')!.firstElementChild!;
+    expect(header('Gewoon Lid')).toHaveClass('bg-primary');
+    expect(header('Stil Lid')).toHaveClass('bg-logo-green');
+    expect(header('Gewoon Lid').querySelector('svg')).not.toBeNull();
+    expect(header('Stil Lid').querySelector('svg')).toBeNull();
+  });
+
   it('adds FAQ structured data', () => {
     const {container} = render(<OverOnsPage />);
     const script = container.querySelector('script[type="application/ld+json"]');
