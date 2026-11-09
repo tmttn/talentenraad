@@ -16,7 +16,8 @@ describe('Over ons page', () => {
     vi.mocked(content.getPagina).mockReturnValue(paginas.overOns as never);
     vi.mocked(content.getTeam).mockReturnValue([
       makeTeamlid({naam: 'Bestuurslid Een', rol: 'Voorzitter', categorie: 'bestuur', html: '<p>Ik coördineer.</p>'}),
-      makeTeamlid({naam: 'Gewoon Lid', categorie: 'lid', slug: 'gewoon-lid'}),
+      makeTeamlid({naam: 'Gewoon Lid', rol: 'Lid', categorie: 'lid', slug: 'gewoon-lid', html: '<p>Ik help graag.</p><p>Tot op school!</p>'}),
+      makeTeamlid({naam: 'Stil Lid', rol: 'Lid', categorie: 'lid', slug: 'stil-lid', html: '\n'}),
     ]);
     vi.mocked(content.getFaq).mockReturnValue([makeFaq({vraag: 'Hoe word ik lid?', html: '<p>Spreek ons aan.</p>'})]);
   });
@@ -26,17 +27,28 @@ describe('Over ons page', () => {
     expectInOrder(container, [
       'Hero titel over', 'Hero ondertitel over', 'Citaat over ons',
       'Bestuur titel', 'Bestuur tekst', 'Bestuurslid Een', 'Voorzitter', 'Ik coördineer.',
-      'Leden titel', 'Leden tekst', 'Gewoon Lid',
+      'Leden titel', 'Leden tekst', 'Gewoon Lid', 'Ik help graag.', 'Tot op school!', 'Stil Lid',
       'Veelgestelde fictie', 'Hoe word ik lid?', 'Spreek ons aan.',
       'Fictieve oproeptekst', 'Enige knop',
     ]);
   });
 
-  it('shows board members as cards and members by name only', () => {
+  it('shows board members and members as cards with their introduction', () => {
     render(<OverOnsPage />);
-    const card = screen.getByRole('heading', {name: 'Bestuurslid Een'}).closest('li')!;
-    expect(within(card).getByText('BE')).toBeInTheDocument();
-    expect(screen.queryByRole('heading', {name: 'Gewoon Lid'})).not.toBeInTheDocument();
+    const bestuurslid = screen.getByRole('heading', {name: 'Bestuurslid Een'}).closest('li')!;
+    expect(within(bestuurslid).getByText('BE')).toBeInTheDocument();
+    expect(within(bestuurslid).getByText('Voorzitter')).toBeInTheDocument();
+
+    const lid = screen.getByRole('heading', {name: 'Gewoon Lid'}).closest('li')!;
+    expect(within(lid).getByText('GL')).toBeInTheDocument();
+    expect(within(lid).getByText('Lid')).toBeInTheDocument();
+    expect(within(lid).getByText('Tot op school!')).toBeInTheDocument();
+  });
+
+  it('leaves out the introduction of a member without one', () => {
+    render(<OverOnsPage />);
+    const lid = screen.getByRole('heading', {name: 'Stil Lid'}).closest('li')!;
+    expect(lid.children).toHaveLength(1);
   });
 
   it('adds FAQ structured data', () => {
