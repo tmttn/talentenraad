@@ -31,12 +31,12 @@ footer:
         - tekst: Het Talentenhuis
           link: https://talentenhuis.be
         - tekst: Facebook
-          link: https://facebook.com/talentenhuis
+          link: https://www.facebook.com/talentenhuis.be
         - tekst: Instagram
           link: https://instagram.com/talentenhuis
   sociaal:
     - platform: facebook
-      link: https://facebook.com/talentenhuis
+      link: https://www.facebook.com/talentenhuis.be
     - platform: instagram
       link: https://instagram.com/talentenhuis
   copyright: Talentenraad Het Talentenhuis. Alle rechten voorbehouden.
