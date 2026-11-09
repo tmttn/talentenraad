@@ -1,4 +1,6 @@
-import {afhaalcodeMail, bevestigingMail, cashTekst} from '@lib/email/bestellingen';
+import {
+  afhaalcodeMail, afhaalHerinneringMail, betaalHerinneringMail, bevestigingMail, cashTekst,
+} from '@lib/email/bestellingen';
 import {escapeHtml} from '@lib/email/escape';
 
 const data = {
@@ -43,5 +45,28 @@ describe('order mails', () => {
     expect(mail.html).toContain('K7P-4QX');
     expect(mail.text).toContain('K7P-4QX');
     expect(afhaalcodeMail(data, 'K7P-4QX', true).subject).toBe('Je bestelling voor de pizzaverkoop is bevestigd');
+  });
+
+  it('reminds to pay with the same payment details', () => {
+    const mail = betaalHerinneringMail(data, betalen);
+    expect(mail.subject).toBe('Herinnering: betaal je bestelling voor de pizzaverkoop (nr. 14) uiterlijk vrijdag 15 januari');
+    for (const part of ['Nog niet betaald?', '€ 32,00', 'BE68 5390 0754 7034', '+++000/0000/01414+++', 'Betaal uiterlijk vrijdag 15 januari', 'https://talentenraad.be/b/abc', 'Net betaald?']) {
+      expect(mail.html).toContain(part);
+      expect(mail.text).toContain(part);
+    }
+
+    expect(mail.text).toContain(cashTekst);
+  });
+
+  it('reminds to pick up tomorrow with the QR code and escapes product names', () => {
+    const mail = afhaalHerinneringMail(data, 'K7P-4QX');
+    expect(mail.subject).toBe('Morgen afhalen: je bestelling voor de pizzaverkoop');
+    expect(mail.html).toContain('src="cid:afhaalcode"');
+    expect(mail.html).toContain('K7P-4QX');
+    expect(mail.html).toContain('Vrijdag 22 januari, 17:00 - 19:00');
+    expect(mail.html).toContain('&lt;b&gt;Vegetariana&lt;/b&gt;');
+    expect(mail.html).not.toContain('<b>Vegetariana</b>');
+    expect(mail.text).toContain('2 × Margherita');
+    expect(mail.text).toContain('K7P-4QX');
   });
 });

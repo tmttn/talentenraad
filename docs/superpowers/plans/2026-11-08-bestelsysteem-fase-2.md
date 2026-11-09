@@ -13,7 +13,7 @@ Eerst wat vóór januari het meeste helpt en niets van buiten nodig heeft. Elk o
 | PR | Onderdeel | Nodig van buiten | Status |
 | --- | --- | --- | --- |
 | 6 | Afhaallijst printen | niets | klaar |
-| 7 | Herinneringsmails (betalen, afhalen) | niets | dit plan |
+| 7 | Herinneringsmails (betalen, afhalen) | niets | klaar |
 | 8 | Handmatige bestellingen | beslissing (zie Open vragen) | later |
 | 9 | Gedeeltelijke afgifte | beslissing | later |
 | 10 | Bankafschrift inlezen | een voorbeeld-CSV van de bank | later |
@@ -61,8 +61,8 @@ Twee mails die vanzelf vertrekken, elk hoogstens één keer per bestelling.
 - Een taak elk uur (zoals `startBewaartermijn`), die alleen tussen 9 en 20 uur Belgische tijd verstuurt: geen mail om middernacht.
 - Een kolom per soort, gezet met een voorwaardelijke update (`WHERE ... IS NULL`), zodat een herstart of twee rondes nooit twee mails geven.
 
-- [ ] Tests: dag ervoor en dag zelf wel, twee dagen ervoor en de dag erna niet; niet buiten 9–20 uur; betaald krijgt geen betaalherinnering; tweede ronde stuurt niets; mislukte mail zet de kolom niet; geannuleerd en gewist krijgen niets; HTML-escaping van de naam in beide mails.
-- [ ] Implementeren; checklist; mails lokaal in de console bekijken; PR openen.
+- [x] Tests: dag ervoor en dag zelf wel, twee dagen ervoor en de dag erna niet; niet buiten 9–20 uur (ook in zomertijd); betaald krijgt geen betaalherinnering; tweede ronde stuurt niets; mislukte mail zet de kolom niet en volgt de volgende ronde; geannuleerd en gewist krijgen niets; HTML-escaping van productnamen. Draaien in vier tijdzones.
+- [x] Implementeren; checklist; beide mails gerenderd en bekeken; het beheer toont wanneer ze vertrokken; PR openen.
 
 ---
 

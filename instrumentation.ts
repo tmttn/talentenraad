@@ -21,5 +21,9 @@ export async function register() {
     // Personal data of orders goes three months after the last pickup moment of a sale
     const {startBewaartermijn} = await import('@lib/bestellingen/bewaartermijn');
     startBewaartermijn();
+
+    // Reminder mails (pay before the deadline, pick up tomorrow): every hour, sent between 9 and 20 o'clock
+    const {startHerinneringen} = await import('@lib/bestellingen/herinneringen');
+    startHerinneringen();
   }
 }

@@ -48,6 +48,8 @@ Links onder **Bestellingen** zie je per actie hoeveel bestellingen er zijn, hoev
 - **Afhaallijst**: alle bestellingen per afhaalmoment, op naam, met een vakje om af te vinken. Druk hem af vóór het afhalen: lukt scannen niet (geen wifi, lege batterij), dan geef je mee met de lijst. Op de lijst staan geen e-mailadressen, telefoonnummers of bedragen, alleen of er betaald is. Elk afhaalmoment begint op een nieuwe pagina; kies bovenaan één moment om alleen dat af te drukken.
 - **Export CSV**: alle bestellingen als bestand voor Excel.
 
+Twee herinneringen gaan vanzelf, elk hoogstens één keer, tussen 9 en 20 uur: wie nog niet betaalde, krijgt de dag vóór de uiterste betaaldatum een herinnering met de betaalgegevens; wie betaalde, krijgt de dag vóór het afhalen een mail met de QR-code. Bij een bestelling zie je wanneer ze vertrokken.
+
 Na drie maanden na het laatste afhaalmoment worden namen, e-mailadressen en telefoonnummers van een actie automatisch gewist. Bedragen en aantallen blijven.
 
 ## Afhalen met de telefoon
