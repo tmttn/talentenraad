@@ -147,6 +147,11 @@
 	--color-logo-green: #8ec63f;
 	--color-logo-orange: #fcb040;
 
+	/* Faded logo colors: opaque fills behind body text, such as a team card */
+	--color-logo-pink-tint: color-mix(in oklab, var(--color-logo-pink) 8%, white);
+	--color-logo-green-tint: color-mix(in oklab, var(--color-logo-green) 14%, white);
+	--color-logo-orange-tint: color-mix(in oklab, var(--color-logo-orange) 14%, white);
+
 	/* ----------------------------------------
 	   SEMANTIC TOKENS - Purpose-based mapping
 	   ---------------------------------------- */
