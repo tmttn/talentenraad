@@ -205,6 +205,10 @@ export const orders = sqliteTable('orders', {
   notitie: text('notitie'),
   bevestigingVerstuurdOp: timestamp('bevestiging_verstuurd_op'),
   qrVerstuurdOp: timestamp('qr_verstuurd_op'),
+  /** The reminder the day before the payment deadline; at most once. */
+  betaalHerinneringOp: timestamp('betaal_herinnering_op'),
+  /** The reminder the day before the pickup moment; at most once. */
+  afhaalHerinneringOp: timestamp('afhaal_herinnering_op'),
   gewistOp: timestamp('gewist_op'),
   aangemaaktOp: createdAt(),
 }, table => [

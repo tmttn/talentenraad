@@ -1,8 +1,10 @@
-import {eq} from 'drizzle-orm';
+import {and, eq, isNull} from 'drizzle-orm';
 import {content, type Actie} from '@lib/content';
 import {db, orders} from '@lib/db';
 import {formatIban} from '@lib/content/iban';
-import {afhaalcodeMail, bevestigingMail, type BestelMailData} from '@lib/email/bestellingen';
+import {
+  afhaalcodeMail, afhaalHerinneringMail, betaalHerinneringMail, bevestigingMail, type BestelMailData, type Betaalgegevens,
+} from '@lib/email/bestellingen';
 import {getSiteUrl, sendMail} from '@lib/email/mailer';
 import {formatDag} from './acties';
 import {uitersteBetaaldatum, vindOpId, type OrderMetRegels} from './bestellingen';
@@ -26,6 +28,20 @@ function mailData(order: OrderMetRegels, actie: Actie | undefined): BestelMailDa
   };
 }
 
+/** How to pay: the account of the sale, the amount, the reference and the deadline. */
+function betaalgegevens(order: OrderMetRegels, actie: Actie): Betaalgegevens {
+  return {
+    bedrag: formatEuro(order.totaalCent),
+    iban: formatIban(actie.betalen.rekening.iban),
+    begunstigde: actie.betalen.rekening.begunstigde,
+    mededeling: formatMededeling(order.mededeling),
+    uiterlijk: formatDag(uitersteBetaaldatum(order, actie)),
+    cash: actie.betalen.wijzen.includes('cash'),
+  };
+}
+
+const qrBijlage = async (token: string) => ({filename: 'afhaalcode.png', content: await qrPng(bestelUrl(token)), contentType: 'image/png', cid: 'afhaalcode'});
+
 /** Confirmation with payment instructions; records when it left. */
 export async function stuurBevestiging(orderId: string): Promise<void> {
   const order = await vindOpId(orderId);
@@ -33,24 +49,15 @@ export async function stuurBevestiging(orderId: string): Promise<void> {
     return;
   }
 
-  const actie = content.getActie(order.actie);
-  const site = content.getSite();
   // The sale is gone from content/ (removed after ordering): without its account there is nothing to pay into
-  const rekening = actie?.betalen.rekening;
-  if (!rekening) {
+  const actie = content.getActie(order.actie);
+  if (!actie) {
     console.error('Order mail skipped: sale not found');
     return;
   }
 
-  const mail = bevestigingMail(mailData(order, actie), {
-    bedrag: formatEuro(order.totaalCent),
-    iban: formatIban(rekening.iban),
-    begunstigde: rekening.begunstigde,
-    mededeling: formatMededeling(order.mededeling),
-    uiterlijk: formatDag(uitersteBetaaldatum(order, actie)),
-    cash: actie.betalen.wijzen.includes('cash'),
-  });
-  await sendMail({to: order.email, replyTo: site.footer.email, ...mail});
+  const mail = bevestigingMail(mailData(order, actie), betaalgegevens(order, actie));
+  await sendMail({to: order.email, replyTo: content.getSite().footer.email, ...mail});
   await db.update(orders).set({bevestigingVerstuurdOp: new Date()}).where(eq(orders.id, order.id));
 }
 
@@ -68,7 +75,7 @@ export async function stuurAfhaalcode(orderId: string): Promise<void> {
     to: order.email,
     replyTo: site.footer.email,
     ...mail,
-    attachments: [{filename: 'afhaalcode.png', content: await qrPng(bestelUrl(order.token)), contentType: 'image/png', cid: 'afhaalcode'}],
+    attachments: [await qrBijlage(order.token)],
   });
   await db.update(orders).set({qrVerstuurdOp: new Date()}).where(eq(orders.id, order.id));
 }
@@ -81,4 +88,38 @@ export async function verstuurNaBestelling(orderId: string): Promise<void> {
   }
 
   await (order.status === 'betaald' ? stuurAfhaalcode(orderId) : stuurBevestiging(orderId));
+}
+
+/**
+ * The payment reminder, at most once: only while the order still waits for payment, and the column
+ * is set only after the mail left, so a failed mail is tried again in the next round. True when sent.
+ */
+export async function stuurBetaalHerinnering(orderId: string, now = new Date()): Promise<boolean> {
+  const order = await vindOpId(orderId);
+  const actie = order ? content.getActie(order.actie) : undefined;
+  if (!order?.token || order.status !== 'wacht' || order.betaalHerinneringOp || !actie) {
+    return false;
+  }
+
+  await sendMail({to: order.email, replyTo: content.getSite().footer.email, ...betaalHerinneringMail(mailData(order, actie), betaalgegevens(order, actie))});
+  await db.update(orders).set({betaalHerinneringOp: now}).where(and(eq(orders.id, order.id), isNull(orders.betaalHerinneringOp)));
+  return true;
+}
+
+/** The pickup reminder with the QR code, at most once, only for a paid order. True when sent. */
+export async function stuurAfhaalHerinnering(orderId: string, now = new Date()): Promise<boolean> {
+  const order = await vindOpId(orderId);
+  const actie = order ? content.getActie(order.actie) : undefined;
+  if (!order?.token || order.status !== 'betaald' || order.afhaalHerinneringOp || !actie) {
+    return false;
+  }
+
+  await sendMail({
+    to: order.email,
+    replyTo: content.getSite().footer.email,
+    ...afhaalHerinneringMail(mailData(order, actie), formatKorteCode(order.korteCode)),
+    attachments: [await qrBijlage(order.token)],
+  });
+  await db.update(orders).set({afhaalHerinneringOp: now}).where(and(eq(orders.id, order.id), isNull(orders.afhaalHerinneringOp)));
+  return true;
 }
