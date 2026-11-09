@@ -1,3 +1,4 @@
+// One list for both type-enum and header-pattern, so the two rules cannot drift apart.
 const types = [
   'feat', // New features
   'fix', // Bug fixes
@@ -9,10 +10,9 @@ const types = [
   'chore', // Build/tooling
   'deploy', // Deployment
   'enhance', // Enhancements
-  'content', // Content saved by the admin editor (app/lib/content-store/commit-message.ts)
+  'content', // Commits from the admin editor (/admin/content), straight to main
 ];
 
-// Any emoji at the start is allowed
 const headerPattern = new RegExp(String.raw`^([\p{Emoji}][‍️]* )?(${types.join('|')})(\(.+\))?: .+$`, 'u');
 
 module.exports = {
@@ -26,7 +26,8 @@ module.exports = {
     'subject-max-length': [2, 'always', 100],
     'subject-case': [0],
     'header-max-length': [2, 'always', 120],
-    'header-pattern': [2, 'always', headerPattern],
+    // Custom rule to allow any emoji at the start
+    'header-pattern': [2, 'always'],
   },
   plugins: [
     {

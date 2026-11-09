@@ -1,36 +1,61 @@
 // @vitest-environment node
+import path from 'node:path';
 import lint from '@commitlint/lint';
 import load from '@commitlint/load';
-import {commitMessage, commitTitelMax} from '@lib/content-store/commit-message';
+import {describe, expect, it} from 'vitest';
+import {commitMessage, maxTitleLength} from '@lib/content-store/commit-message';
+import {entryTypes, type EntryType} from '@lib/content-store/entry-types';
 
-// CI runs commitlint on every push to main, editor saves included
-const lintMessage = async (message: string) => {
-  const config = await load({}, {cwd: process.cwd()});
+// Lint the way the CLI in CI does (`npx commitlint --from HEAD~1 --to HEAD`): the repo's own config, plugins and parser.
+async function lintMessage(message: string) {
+  const config = await load({}, {cwd: path.resolve(import.meta.dirname, '../../..')});
   const result = await lint(message, config.rules, {
     plugins: config.plugins,
-    ...(config.parserPreset?.parserOpts ? {parserOpts: config.parserPreset.parserOpts as Record<string, unknown>} : {}),
+    parserOpts: config.parserPreset?.parserOpts as Record<string, unknown> | undefined,
   });
-  return result.errors.map(error => error.name);
-};
+  return {valid: result.valid, errors: result.errors.map(error => error.name)};
+}
+
+const longTitle = 'Een heel lange titel voor een activiteit die maar blijft doorgaan, met nog meer woorden erachter';
 
 describe('commitMessage', () => {
-  it('writes verb, kind and title on one line', () => {
-    expect(commitMessage('bijwerken', 'activiteiten', 'Valentijnactie 2027')).toBe('content: bijwerken activiteiten "Valentijnactie 2027"');
-    expect(commitMessage('bijwerken', 'aankondiging', 'Geen  training\nvandaag "dus"')).toBe('content: bijwerken aankondiging "Geen training vandaag \'dus\'"');
+  it('builds the editor message', () => {
+    expect(commitMessage('bijwerken', 'team', 'Bart Wijnen')).toBe('content: bijwerken team "Bart Wijnen"');
   });
 
-  it('cuts long titles', () => {
-    const message = commitMessage('verwijderen', 'aankondiging', `${'woord '.repeat(40)}`);
-    expect(message.length).toBeLessThanOrEqual('content: verwijderen aankondiging ""'.length + commitTitelMax);
-    expect(message).toMatch(/[^ ]"$/);
+  it('flattens whitespace and swaps double quotes', () => {
+    expect(commitMessage('toevoegen', 'nieuws', '  De "grote"\n  quiz ')).toBe('content: toevoegen nieuws "De \'grote\' quiz"');
   });
 
-  it('passes commitlint, also with the longest verb, kind and title', async () => {
-    expect(await lintMessage(commitMessage('toevoegen', 'nieuws', 'Nieuwe brief'))).toEqual([]);
-    expect(await lintMessage(commitMessage('verwijderen', 'aankondiging', 'x'.repeat(300)))).toEqual([]);
+  it('shortens long titles with an ellipsis', () => {
+    const message = commitMessage('verwijderen', 'activiteiten', longTitle);
+    const title = /"(.*)"$/.exec(message)?.[1] ?? '';
+    expect(title).toHaveLength(maxTitleLength);
+    expect(title.endsWith('…')).toBe(true);
+  });
+});
+
+describe('commitMessage against commitlint.config.js', () => {
+  it('accepts the message that broke CI on main', async () => {
+    expect(await lintMessage('content: bijwerken team "Bart Wijnen"')).toEqual({valid: true, errors: []});
   });
 
-  it('still rejects unknown types', async () => {
-    expect(await lintMessage('inhoud: bijwerken nieuws "Brief"')).toContain('type-enum');
+  const subjects = [...Object.keys(entryTypes) as EntryType[], 'aankondiging' as const];
+  const verbs = ['toevoegen', 'bijwerken', 'verwijderen'] as const;
+
+  it.each(subjects.flatMap(subject => verbs.map(verb => [verb, subject] as const)))(
+    'accepts %s %s, also with the longest title',
+    async (verb, subject) => {
+      for (const title of ['Pizzaverkoop [TEST]', 'Update: 50% korting (zaterdag) #2 😀', longTitle, '']) {
+        const message = commitMessage(verb, subject, title);
+        expect({message, ...await lintMessage(message)}).toEqual({message, valid: true, errors: []});
+      }
+    },
+  );
+
+  it('still rejects an unknown type', async () => {
+    const result = await lintMessage('inhoud: bijwerken team "Bart Wijnen"');
+    expect(result.valid).toBe(false);
+    expect(result.errors).toEqual(expect.arrayContaining(['type-enum', 'header-pattern']));
   });
 });

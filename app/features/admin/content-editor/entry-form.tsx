@@ -8,6 +8,7 @@ import {actieVelden} from '@lib/content-store/actie-form';
 import {entryTypes, type EntryType} from '@lib/content-store/entry-types';
 import {saveEntry, type FormState} from '../../../(admin)/admin/(protected)/content/actions';
 import {ActieFields} from './actie-fields';
+import {guardAction} from './guard-action';
 import {ImageField} from './image-field';
 import {MarkdownField} from './markdown-field';
 import {ProgrammaField} from './programma-field';
@@ -45,7 +46,7 @@ export function EntryForm({
   const wrapped = async (previous: State, data: FormData): Promise<State> => {
     const hadPhoto = pickedPhoto.current;
     pickedPhoto.current = false; // the field remounts (and forgets the file) after every submit
-    const result = await action(previous, data);
+    const result = await guardAction(async () => action(previous, data));
     attempts.current += 1;
     return {...result, attempt: attempts.current, lostPhoto: hadPhoto};
   };

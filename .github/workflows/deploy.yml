@@ -62,6 +62,9 @@ jobs:
             ${{ env.IMAGE }}:${{ steps.meta.outputs.tag }}
           build-args: |
             BUILD_DATE=${{ steps.meta.outputs.build_date }}
+          # Fixed Server Action IDs across builds, see the Dockerfile. Passed only when
+          # set: an empty secret value is not accepted here.
+          secrets: ${{ secrets.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY != '' && format('next_actions_key={0}', secrets.NEXT_SERVER_ACTIONS_ENCRYPTION_KEY) || '' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

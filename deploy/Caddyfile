@@ -1,6 +1,13 @@
 talentenraad.be {
 	encode zstd gzip
-	reverse_proxy app:3000
+	# Each deploy recreates the app container. Hold requests for up to 30 s until
+	# it accepts connections again instead of answering 502 at once. Only failed
+	# connections are retried for POST (the request never reached the app), so a
+	# save is not sent twice.
+	reverse_proxy app:3000 {
+		lb_try_duration 30s
+		lb_try_interval 250ms
+	}
 }
 
 www.talentenraad.be {
