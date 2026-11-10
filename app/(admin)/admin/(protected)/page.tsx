@@ -7,9 +7,13 @@ import {
   Inbox,
   Mail,
   ArrowRight,
+  ExternalLink,
   FileText,
+  Globe,
+  ShoppingBag,
   Users,
   Zap,
+  type LucideIcon,
 } from 'lucide-react';
 import {db, submissions} from '@lib/db';
 import {DashboardSkeleton} from '@components/skeletons';
@@ -106,54 +110,68 @@ function DashboardHeader() {
   );
 }
 
-function QuickLinks() {
+type QuickLink = {
+  href: string;
+  label: string;
+  hint: string;
+  icon: LucideIcon;
+  tint: string;
+  external?: boolean;
+};
+
+const contentLink: QuickLink = {href: '/admin/content', label: 'Content', hint: 'Activiteiten, nieuws, team en meer', icon: FileText, tint: 'bg-primary/10 text-primary'};
+const bestellingenLink: QuickLink = {href: '/admin/bestellingen', label: 'Bestellingen', hint: 'Acties en betalingen', icon: ShoppingBag, tint: 'bg-amber-100 text-amber-700'};
+const websiteLink: QuickLink = {href: '/', label: 'Website', hint: 'Bekijk de site zoals ouders ze zien', icon: Globe, tint: 'bg-green-100 text-green-700', external: true};
+
+const adminLinks: QuickLink[] = [
+  contentLink,
+  bestellingenLink,
+  {href: '/admin/submissions', label: 'Berichten', hint: 'Inbox beheren', icon: Mail, tint: 'bg-pink-100 text-primary-text'},
+  {href: '/admin/gebruikers', label: 'Gebruikers', hint: 'Beheerders en helpers', icon: Users, tint: 'bg-blue-100 text-blue-600'},
+  websiteLink,
+];
+
+const redacteurLinks: QuickLink[] = [contentLink, bestellingenLink, websiteLink];
+
+function QuickLinkItem({link}: Readonly<{link: QuickLink}>) {
+  const Icon = link.icon;
+  const className = 'flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary';
+  const inner = (
+    <>
+      <span className={`w-10 h-10 shrink-0 rounded-button flex items-center justify-center ${link.tint}`}>
+        <Icon className='w-5 h-5' aria-hidden='true' />
+      </span>
+      <span className='min-w-0'>
+        <span className='flex items-center gap-1 font-medium text-gray-800 text-sm'>
+          {link.label}
+          {link.external && <ExternalLink className='w-3.5 h-3.5 text-gray-400' aria-hidden='true' />}
+        </span>
+        <span className='block text-xs text-gray-500'>{link.hint}</span>
+      </span>
+    </>
+  );
+
+  return link.external
+    ? (
+      <a href={link.href} target='_blank' rel='noopener noreferrer' className={className}>
+        {inner}
+        <span className='sr-only'>(opent in een nieuw tabblad)</span>
+      </a>
+    )
+    : <Link href={link.href} className={className}>{inner}</Link>;
+}
+
+function QuickLinks({links}: Readonly<{links: QuickLink[]}>) {
   return (
     <div className='bg-white rounded-card shadow-base overflow-hidden'>
       <div className='p-4 sm:p-5 border-b border-gray-100'>
         <h2 className='font-semibold text-gray-800 flex items-center gap-2'>
-          <Zap className='w-4 h-4 text-purple-500' />
+          <Zap className='w-4 h-4 text-purple-500' aria-hidden='true' />
           Snelle links
         </h2>
       </div>
-      <div className='p-3 sm:p-4 grid grid-cols-2 gap-2'>
-        <Link
-          href='/admin/submissions'
-          className='flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors'
-        >
-          <div className='w-10 h-10 bg-primary/10 rounded-button flex items-center justify-center'>
-            <FileText className='w-5 h-5 text-primary' />
-          </div>
-          <div>
-            <p className='font-medium text-gray-800 text-sm'>Berichten</p>
-            <p className='text-xs text-gray-500'>Inbox beheren</p>
-          </div>
-        </Link>
-        <Link
-          href='/admin/gebruikers'
-          className='flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors'
-        >
-          <div className='w-10 h-10 bg-blue-100 rounded-button flex items-center justify-center'>
-            <Users className='w-5 h-5 text-blue-600' />
-          </div>
-          <div>
-            <p className='font-medium text-gray-800 text-sm'>Gebruikers</p>
-            <p className='text-xs text-gray-500'>Beheerders</p>
-          </div>
-        </Link>
-        <Link
-          href='/'
-          target='_blank'
-          rel='noopener noreferrer'
-          className='flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors'
-        >
-          <div className='w-10 h-10 bg-green-100 rounded-button flex items-center justify-center'>
-            <ArrowRight className='w-5 h-5 text-green-600' />
-          </div>
-          <div>
-            <p className='font-medium text-gray-800 text-sm'>Website</p>
-            <p className='text-xs text-gray-500'>Bekijk live site</p>
-          </div>
-        </Link>
+      <div className='p-3 sm:p-4 grid grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] gap-2'>
+        {links.map(link => <QuickLinkItem key={link.href} link={link} />)}
       </div>
     </div>
   );
@@ -239,7 +257,7 @@ async function DashboardContent() {
         </div>
 
         {/* Quick Links */}
-        <QuickLinks />
+        <QuickLinks links={adminLinks} />
       </div>
     </>
   );
@@ -253,21 +271,8 @@ export default async function AdminDashboardPage() {
     return (
       <div className='space-y-6 sm:space-y-8'>
         <DashboardHeader />
-        <div className='bg-white rounded-card shadow-base p-4 sm:p-5 text-gray-600'>
-          <p>Je bent ingelogd als redacteur. Hier bewerk je de inhoud van de website.</p>
-          <Link
-            href='/admin/content'
-            className='mt-4 inline-flex items-center gap-3 p-3 rounded-button hover:bg-gray-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary'
-          >
-            <span className='w-10 h-10 bg-primary/10 rounded-button flex items-center justify-center'>
-              <FileText className='w-5 h-5 text-primary' aria-hidden='true' />
-            </span>
-            <span>
-              <span className='block font-medium text-gray-800 text-sm'>Content</span>
-              <span className='block text-xs text-gray-500'>Activiteiten, nieuws, team en meer</span>
-            </span>
-          </Link>
-        </div>
+        <p className='text-gray-600'>Je bent ingelogd als redacteur. Hier bewerk je de inhoud van de website.</p>
+        <QuickLinks links={redacteurLinks} />
       </div>
     );
   }

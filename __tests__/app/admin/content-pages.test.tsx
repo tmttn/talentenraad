@@ -83,7 +83,7 @@ describe('content pages when configured', () => {
     }
   });
 
-  it('list shows items with Bewerken and sorted by date, newest first', async () => {
+  it('list shows clickable items sorted by date, newest first', async () => {
     listDir.mockResolvedValue([
       {name: 'oud', path: 'content/nieuws/oud', type: 'dir', sha: 's'},
       {name: 'nieuw-item', path: 'content/nieuws/nieuw-item', type: 'dir', sha: 's'},
@@ -99,7 +99,10 @@ describe('content pages when configured', () => {
 
     const titles = screen.getAllByText(/bericht$/).map(node => node.textContent);
     expect(titles).toEqual(['Nieuw bericht', 'Oud bericht']);
-    expect(screen.getAllByRole('link', {name: 'Bewerken'})).toHaveLength(2);
+    // The title is the row's link (stretched over the whole row)
+    expect(screen.getByRole('link', {name: 'Nieuw bericht'})).toHaveAttribute('href', '/admin/content/nieuws/nieuw-item');
+    expect(screen.getByRole('link', {name: 'Oud bericht'})).toHaveAttribute('href', '/admin/content/nieuws/oud');
+    expect(screen.getByRole('link', {name: 'Terug naar Content'})).toHaveAttribute('href', '/admin/content');
     expect(screen.getByRole('link', {name: /Nieuwsbericht toevoegen/})).toHaveAttribute('href', '/admin/content/nieuws/nieuw');
     expect(screen.getByText('Opgeslagen. Je wijziging staat over ongeveer 3 minuten online.')).toBeInTheDocument();
     expect(screen.getByText('1 mei 2026')).toBeInTheDocument();
@@ -116,6 +119,25 @@ describe('content pages when configured', () => {
     expect(screen.getByLabelText(/Vraag/)).toHaveValue('Waar?');
     expect(screen.getByDisplayValue('Hier.')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Verwijderen'})).toBeInTheDocument();
+  });
+
+  it('edit page links to the item on the website, unless it is a concept or has no page', async () => {
+    readFile.mockResolvedValue({sha: 'idx', text: '---\ntitel: Kerstmarkt\ndatum: 2026-12-12\nsamenvatting: x\n---\n'});
+    const {unmount} = render(await edit({params: Promise.resolve({type: 'nieuws', slug: 'kerstmarkt'})}));
+    const site = screen.getByRole('link', {name: /Bekijk op de website/});
+    expect(site).toHaveAttribute('href', '/nieuws/kerstmarkt');
+    expect(site).toHaveAttribute('target', '_blank');
+    expect(screen.getByRole('link', {name: 'Terug naar Nieuws'})).toHaveAttribute('href', '/admin/content/nieuws');
+    unmount();
+
+    readFile.mockResolvedValue({sha: 'idx', text: '---\ntitel: Kerstmarkt\ndatum: 2026-12-12\nsamenvatting: x\nconcept: true\n---\n'});
+    const concept = render(await edit({params: Promise.resolve({type: 'nieuws', slug: 'kerstmarkt'})}));
+    expect(screen.queryByRole('link', {name: /Bekijk op de website/})).not.toBeInTheDocument();
+    concept.unmount();
+
+    readFile.mockResolvedValue({sha: 'idx', text: '---\nvraag: Waar?\nvolgorde: 1\n---\n\nHier.\n'});
+    render(await edit({params: Promise.resolve({type: 'faq', slug: 'waar'})}));
+    expect(screen.queryByRole('link', {name: /Bekijk op de website/})).not.toBeInTheDocument();
   });
 
   it('edit page is a 404 for a missing item or a bad slug', async () => {

@@ -6,6 +6,23 @@ import {useRouter, usePathname} from 'next/navigation';
 const SESSION_CHECK_INTERVAL = 60_000; // Check every minute
 const SESSION_CHECK_ON_FOCUS = true;
 
+/**
+ * fetch gets a string, a URL (Next.js router requests) or a Request. Reading `.url` of a URL object
+ * gave undefined and threw, which made every client navigation in the admin a full page load.
+ */
+export function isAdminApi(input: RequestInfo | URL): boolean {
+  let url: string;
+  if (typeof input === 'string') {
+    url = input;
+  } else if (input instanceof URL) {
+    url = input.href;
+  } else {
+    url = input.url;
+  }
+
+  return new URL(url, globalThis.location.origin).pathname.startsWith('/api/admin');
+}
+
 export function SessionValidator() {
   const router = useRouter();
   const pathname = usePathname();
@@ -81,8 +98,7 @@ export function SessionValidator() {
       const response = await originalFetch(...args);
 
       // Check if it's an admin API request that returned 401
-      const url = typeof args[0] === 'string' ? args[0] : (args[0] as Request).url;
-      if (url.startsWith('/api/admin') && response.status === 401) {
+      if (response.status === 401 && isAdminApi(args[0])) {
         // Session expired, redirect to login
         window.location.href = `/admin/login?returnTo=${encodeURIComponent(pathname)}`;
       }

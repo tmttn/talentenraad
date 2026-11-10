@@ -14,6 +14,7 @@ import {MarkdownField} from './markdown-field';
 import {ProgrammaField} from './programma-field';
 import {primaryButton, secondaryButton} from './styles';
 import {useFormFeedback} from './use-form-feedback';
+import {useUnsavedWarning} from './use-unsaved-warning';
 
 export type EntryFormInitial = {
   values: Record<string, string>;
@@ -52,6 +53,7 @@ export function EntryForm({
   };
 
   const [state, formAction, pending] = useActionState(wrapped, emptyState);
+  const {formHandlers} = useUnsavedWarning();
   const [removeImage, setRemoveImage] = useState(false);
   const [values, setValues] = useState<Record<string, string>>(initial?.values ?? {});
   const [body, setBody] = useState(initial?.body ?? '');
@@ -71,7 +73,7 @@ export function EntryForm({
   };
 
   return (
-    <form ref={formRef} action={formAction} className='space-y-6 bg-white rounded-card shadow-base p-4 sm:p-6' noValidate>
+    <form ref={formRef} action={formAction} {...formHandlers} className='space-y-6 bg-white rounded-card shadow-base p-4 sm:p-6' noValidate>
       {message && (
         <p ref={messageRef} tabIndex={-1} role='alert' className='rounded-button border border-red-200 bg-red-50 p-3 text-sm text-red-600'>
           {message}

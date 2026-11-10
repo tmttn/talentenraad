@@ -29,7 +29,7 @@ export default async function UsersAdminPage() {
 
   return (
     <div>
-      <h1 className='text-3xl font-bold text-gray-800 mb-8'>Gebruikers</h1>
+      <h1 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-6'>Gebruikers</h1>
       <Suspense fallback={<TableSkeleton rows={6} />}>
         <UsersLoader />
       </Suspense>

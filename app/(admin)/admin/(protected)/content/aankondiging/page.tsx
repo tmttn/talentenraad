@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
-import Link from 'next/link';
 import {CORE_SCHEMA, load} from 'js-yaml';
+import {BackLink} from '@features/admin/navigation';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {ContentStoreError} from '@lib/content-store/errors';
 import {isEditingConfigured, readFile} from '@lib/content-store/github';
@@ -17,7 +17,7 @@ export default async function AnnouncementPage() {
 
   const header = (
     <div>
-      <p className='text-sm'><Link href='/admin/content' className='text-primary-text hover:underline'>Content</Link></p>
+      <BackLink href='/admin/content' label='Content' />
       <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>Aankondiging</h1>
     </div>
   );

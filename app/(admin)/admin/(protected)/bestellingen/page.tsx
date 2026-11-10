@@ -56,7 +56,7 @@ export default async function BestellingenPage() {
         })}
         {losse.map(slug => (
           <li key={slug}>
-            <Link href={`/admin/bestellingen/${slug}`} className='block bg-white p-5 rounded-card shadow-base hover:shadow-elevated transition-shadow'>
+            <Link href={`/admin/bestellingen/${slug}`} className='block bg-white p-5 rounded-card shadow-base hover:shadow-elevated transition-shadow focus:outline-none focus-visible:ring-2 focus-visible:ring-primary'>
               <h2 className='font-semibold text-gray-800'>{slug}</h2>
               <p className='text-sm text-gray-500 mt-1'>Niet meer in de inhoud</p>
               <p className='text-3xl font-bold text-gray-800 mt-2'>{aantallen.get(slug)}</p>

@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
-import Link from 'next/link';
 import {notFound} from 'next/navigation';
+import {BackLink} from '@features/admin/navigation';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {alleBestellingen} from '@lib/bestellingen/beheer';
 import {productielijst, type ProductTotaal} from '@lib/bestellingen/overzicht';
@@ -44,7 +44,7 @@ export default async function ProductielijstPage({params}: Readonly<{params: Pro
     <div className='space-y-6 max-w-3xl'>
       <div className='flex flex-wrap justify-between items-end gap-3'>
         <div>
-          <p className='text-sm print:hidden'><Link href={`/admin/bestellingen/${slug}`} className='text-primary-text hover:underline'>{actie?.titel ?? slug}</Link></p>
+          <BackLink href={`/admin/bestellingen/${slug}`} label={actie?.titel ?? slug} />
           <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>Productielijst {actie?.titel ?? slug}</h1>
           <p className='text-sm text-gray-600'>Alle bestellingen die niet geannuleerd zijn, betaald of niet. Stand van {new Date().toLocaleString('nl-BE', {dateStyle: 'medium', timeStyle: 'short'})}.</p>
         </div>

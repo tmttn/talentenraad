@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
-import Link from 'next/link';
 import {notFound} from 'next/navigation';
+import {BackLink} from '@features/admin/navigation';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {afhaalLabel, productVarianten, veldnaam} from '@lib/bestellingen/acties';
 import {verbruikteVoorraad} from '@lib/bestellingen/plaatsen';
@@ -29,11 +29,7 @@ export default async function NieuweBestellingPage({params}: Readonly<PageProper
   return (
     <div className='space-y-6 max-w-2xl'>
       <div>
-        <p className='text-sm'>
-          <Link href='/admin/bestellingen' className='text-primary-text hover:underline'>Bestellingen</Link>
-          {' / '}
-          <Link href={`/admin/bestellingen/${actie.slug}`} className='text-primary-text hover:underline'>{actie.titel}</Link>
-        </p>
+        <BackLink href={`/admin/bestellingen/${actie.slug}`} label={actie.titel} />
         <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>Bestelling invoeren</h1>
         <p className='text-gray-600 mt-1'>
           Voor een ouder zonder e-mailadres, of een bestelling aan de schoolpoort. Dat kan ook na de bestelperiode.

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {CheckCircle2} from 'lucide-react';
 import type {OrderStatus} from '@lib/db/schema';
 import {formatEuro} from '@lib/bestellingen/geld';
+import {aboveRowLink, clickableRow, rowLink} from '../navigation';
 import {StatusBadge} from './parts';
 
 export type TabelRij = {
@@ -110,26 +111,29 @@ export function BestellingenTabel({actie, rijen, kanBetalen, action}: Readonly<P
           </thead>
           <tbody>
             {rijen.map(rij => (
-              <tr key={rij.id} className={gekozen.has(rij.id) ? 'bg-brand-primary-50' : 'bg-white'}>
+              <tr key={rij.id} className={`${clickableRow} ${gekozen.has(rij.id) ? 'bg-brand-primary-50' : 'bg-white'}`}>
                 {kanBetalen && (
-                  <td className={cell}>
+                  <td className={`w-10 border-b border-gray-100 align-top ${rij.status === 'wacht' ? aboveRowLink : ''}`}>
                     {rij.status === 'wacht' && (
-                      <input
-                        type='checkbox'
-                        name='id'
-                        value={rij.id}
-                        aria-label={`Selecteer nr. ${rij.nummer}`}
-                        checked={gekozen.has(rij.id)}
-                        onChange={() => {
-                          toggle(rij.id);
-                        }}
-                        className='w-4 h-4 accent-primary'
-                      />
+                      // The whole cell toggles the checkbox, not only the small box
+                      <label className='absolute inset-0 flex px-3 py-3 cursor-pointer'>
+                        <input
+                          type='checkbox'
+                          name='id'
+                          value={rij.id}
+                          aria-label={`Selecteer nr. ${rij.nummer}`}
+                          checked={gekozen.has(rij.id)}
+                          onChange={() => {
+                            toggle(rij.id);
+                          }}
+                          className='w-4 h-4 accent-primary'
+                        />
+                      </label>
                     )}
                   </td>
                 )}
                 <td className={`${cell} font-semibold`}>
-                  <Link href={`/admin/bestellingen/${actie}/${rij.nummer}`} className='text-primary-text hover:underline'>{rij.nummer}</Link>
+                  <Link href={`/admin/bestellingen/${actie}/${rij.nummer}`} className={`text-primary-text ${rowLink}`}>{rij.nummer}</Link>
                 </td>
                 <td className={cell}>{rij.naam}</td>
                 <td className={`${cell} text-gray-700`}>{rij.inhoud}</td>
