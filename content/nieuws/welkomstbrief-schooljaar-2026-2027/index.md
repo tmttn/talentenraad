@@ -4,8 +4,8 @@ datum: '2026-09-01'
 samenvatting: >-
   Voorzitter Jo Vanheel stelt de Talentenraad voor en verklapt alvast de
   activiteiten van dit schooljaar: van Griezel kinderfuif tot Talentenfuif.
-aliassen: []
 ---
+
 Beste Ouders,
 
 Mijn naam is Jo Vanheel. Sinds schooljaar 2022-2023 ben ik voorzitter van de Talentenraad (ouderraad), samen met een prachtig en sterk team van 9 dames en 2 heren! Vanessa Dolce is onze secretaris en Sara Delsupehe is onze penningmeester.
@@ -26,7 +26,7 @@ Verschillende activiteiten zitten in de ontwikkelingsfase, maar we verklappen al
 
 -   **Griezel kinderfuif met oudercafé:** za 24 oktober 2026
 -   **Kerstinstuif:** vr 18 december 2026
--   **Valentijnactie:** vr 12 februari 2027
+-   **Valentijnactie:** vr 5 februari 2027
 -   **Talentenfuif:** za 5 juni 2027
 
 ## Contact
