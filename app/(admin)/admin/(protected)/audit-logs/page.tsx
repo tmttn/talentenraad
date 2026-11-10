@@ -24,7 +24,7 @@ export default async function AuditLogsPage() {
 
   return (
     <div>
-      <h1 className='text-3xl font-bold text-gray-800 mb-8'>Audit Logs</h1>
+      <h1 className='text-2xl sm:text-3xl font-bold text-gray-800 mb-6'>Audit Logs</h1>
       <Suspense fallback={<TableSkeleton rows={10} />}>
         <AuditLogsLoader />
       </Suspense>

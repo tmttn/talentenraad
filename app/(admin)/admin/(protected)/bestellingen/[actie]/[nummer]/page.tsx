@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
-import Link from 'next/link';
 import {notFound} from 'next/navigation';
+import {BackLink} from '@features/admin/navigation';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {vindOpNummer} from '@lib/bestellingen/beheer';
 import {formatKorteCode} from '@lib/bestellingen/codes';
@@ -67,11 +67,7 @@ export default async function BestellingDetailPage({params, searchParams}: Reado
   return (
     <div className='space-y-6 max-w-4xl'>
       <div>
-        <p className='text-sm'>
-          <Link href='/admin/bestellingen' className='text-primary-text hover:underline'>Bestellingen</Link>
-          {' › '}
-          <Link href={`/admin/bestellingen/${slug}`} className='text-primary-text hover:underline'>{actie?.titel ?? slug}</Link>
-        </p>
+        <BackLink href={`/admin/bestellingen/${slug}`} label={actie?.titel ?? slug} />
         <h1 className='text-2xl sm:text-3xl font-bold text-gray-800 flex flex-wrap items-center gap-3'>
           Bestelling nr. {order.nummer}
           <StatusBadge status={order.status} />

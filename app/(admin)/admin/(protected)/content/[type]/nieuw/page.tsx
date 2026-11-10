@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
-import Link from 'next/link';
 import {notFound} from 'next/navigation';
+import {BackLink} from '@features/admin/navigation';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {entryTypes, isEntryType} from '@lib/content-store/entry-types';
 import {isEditingConfigured} from '@lib/content-store/github';
@@ -22,7 +22,7 @@ export default async function NewEntryPage({params}: Readonly<{params: Promise<{
   return (
     <div className='space-y-6 max-w-5xl'>
       <div>
-        <p className='text-sm'><Link href={`/admin/content/${type}`} className='text-primary-text hover:underline'>{config.label}</Link></p>
+        <BackLink href={`/admin/content/${type}`} label={config.label} />
         <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>{config.addLabel}</h1>
       </div>
       {isEditingConfigured() ? <EntryForm type={type} mode='create' /> : <NotConfigured />}

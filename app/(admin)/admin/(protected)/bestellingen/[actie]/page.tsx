@@ -4,6 +4,7 @@ import {notFound} from 'next/navigation';
 import {
   ClipboardList, Download, ListChecks, Plus,
 } from 'lucide-react';
+import {BackLink} from '@features/admin/navigation';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {actieStatus, formatDag} from '@lib/bestellingen/acties';
 import {tellers, zoekBestellingen} from '@lib/bestellingen/beheer';
@@ -51,7 +52,7 @@ export default async function ActieBestellingenPage({params, searchParams}: Read
     <div className='space-y-6'>
       <div className='flex flex-wrap justify-between items-end gap-4'>
         <div>
-          <p className='text-sm'><Link href='/admin/bestellingen' className='text-primary-text hover:underline'>Bestellingen</Link></p>
+          <BackLink href='/admin/bestellingen' label='Bestellingen' />
           <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>{actie?.titel ?? slug}</h1>
           {actie && (
             <p className='text-sm text-gray-600'>

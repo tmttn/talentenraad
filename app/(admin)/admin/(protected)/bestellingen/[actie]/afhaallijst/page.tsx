@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
 import {Check} from 'lucide-react';
+import {BackLink} from '@features/admin/navigation';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {alleBestellingen} from '@lib/bestellingen/beheer';
 import {afhaallijst, type AfhaalRij} from '@lib/bestellingen/overzicht';
@@ -49,7 +50,7 @@ export default async function AfhaallijstPage({params, searchParams}: Readonly<P
     <div className='space-y-6 max-w-4xl'>
       <div className='flex flex-wrap justify-between items-end gap-3 print:hidden'>
         <div>
-          <p className='text-sm'><Link href={`/admin/bestellingen/${slug}`} className='text-primary-text hover:underline'>{titel}</Link></p>
+          <BackLink href={`/admin/bestellingen/${slug}`} label={titel} />
           <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>Afhaallijst {titel}</h1>
           <p className='text-sm text-gray-600'>De reserve als scannen niet lukt. Zonder e-mail, telefoon of bedragen: hij ligt op de afhaaltafel. Elk afhaalmoment begint op een nieuwe pagina.</p>
         </div>

@@ -1,12 +1,13 @@
 import type {Metadata} from 'next';
 import Link from 'next/link';
 import {notFound} from 'next/navigation';
-import {Plus} from 'lucide-react';
+import {ChevronRight, Plus} from 'lucide-react';
 import {requireEditorSession} from '@lib/auth/require-admin';
 import {listEntries} from '@lib/content-store/entries';
 import {entryTypes, isEntryType, savedMessage} from '@lib/content-store/entry-types';
 import {isEditingConfigured, latestDeployStatus} from '@lib/content-store/github';
 import {ContentStoreError} from '@lib/content-store/errors';
+import {BackLink, clickableRow, rowLink} from '@features/admin/navigation';
 import {DeployStatus} from '@features/admin/content-editor/deploy-status';
 import {NotConfigured} from '@features/admin/content-editor/not-configured';
 import {primaryButton} from '@features/admin/content-editor/styles';
@@ -49,7 +50,7 @@ export default async function ContentListPage({params, searchParams}: Readonly<{
     <div className='space-y-6'>
       <div className='flex flex-wrap items-center justify-between gap-3'>
         <div>
-          <p className='text-sm'><Link href='/admin/content' className='text-primary-text hover:underline'>Content</Link></p>
+          <BackLink href='/admin/content' label='Content' />
           <h1 className='text-2xl sm:text-3xl font-bold text-gray-800'>{config.label}</h1>
         </div>
         {configured && (
@@ -75,22 +76,20 @@ export default async function ContentListPage({params, searchParams}: Readonly<{
       {items.length > 0 && (
         <ul className='divide-y divide-gray-100 bg-white rounded-card shadow-base'>
           {items.map(item => (
-            <li key={item.slug} className='flex items-center justify-between gap-3 p-4'>
+            <li key={item.slug} className={`${clickableRow} flex items-center justify-between gap-3 p-4 first:rounded-t-card last:rounded-b-card`}>
               <div className='min-w-0'>
                 <p className='font-medium text-gray-800 truncate'>
-                  {item.title}
+                  <Link href={`/admin/content/${type}/${item.slug}`} className={rowLink}>{item.title}</Link>
                   {item.concept && <span className='ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600'>Concept</span>}
                 </p>
                 {item.subtitle && (
                   <p className='text-sm text-gray-500'>{item.datum ? formatDate(item.subtitle) : item.subtitle}</p>
                 )}
               </div>
-              <Link
-                href={`/admin/content/${type}/${item.slug}`}
-                className='shrink-0 text-primary-text font-medium hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-button px-1'
-              >
+              <span aria-hidden='true' className='shrink-0 inline-flex items-center gap-1 text-primary-text font-medium'>
                 Bewerken
-              </Link>
+                <ChevronRight className='w-4 h-4' />
+              </span>
             </li>
           ))}
         </ul>

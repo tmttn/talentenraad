@@ -17,6 +17,7 @@ import {
   Layers,
 } from 'lucide-react';
 import type {AuditLog} from '@lib/db/schema';
+import {clickableRow, rowLink} from '@features/admin/navigation';
 import {TableFilters} from '@features/admin/table-filters';
 import {TablePagination} from '@features/admin/table-pagination';
 
@@ -348,7 +349,7 @@ export function AuditLogsManager({initialLogs}: AuditLogsManagerProps) {
               </thead>
               <tbody className='divide-y divide-gray-200'>
                 {paginatedLogs.map(log => (
-                  <tr key={log.id} className='hover:bg-gray-50'>
+                  <tr key={log.id} className={hasDetails(log) ? clickableRow : 'hover:bg-gray-50'}>
                     <td className='px-3 sm:px-4 py-3'>
                       <span
                         className={`inline-flex items-center gap-1 sm:gap-1.5 px-1.5 sm:px-2 py-1 text-xs font-medium rounded ${getActionColor(log.actionType)}`}
@@ -396,7 +397,7 @@ export function AuditLogsManager({initialLogs}: AuditLogsManagerProps) {
                           <button
                             type='button'
                             onClick={() => setSelectedLog(log)}
-                            className='inline-flex items-center gap-1 p-1.5 sm:px-2 sm:py-1 text-sm text-primary hover:bg-primary/10 rounded-button transition-colors'
+                            className={`inline-flex items-center gap-1 p-1.5 sm:px-2 sm:py-1 text-sm text-primary hover:bg-primary/10 rounded-button transition-colors ${rowLink}`}
                             title='Bekijk details'
                           >
                             <Eye className='w-4 h-4' />

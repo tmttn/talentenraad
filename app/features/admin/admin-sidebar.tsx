@@ -19,6 +19,8 @@ import {
   LogOut,
   ShoppingBag,
   ScanLine,
+  Globe,
+  ExternalLink,
   type LucideIcon,
 } from 'lucide-react';
 import type {Role} from '@lib/db/schema';
@@ -205,6 +207,18 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
         </button>
       </div>
       <div className={`${isCollapsed ? 'lg:p-2' : 'p-4'} border-t border-gray-200`}>
+        <a
+          href='/'
+          target='_blank'
+          rel='noopener noreferrer'
+          title={isCollapsed ? 'Naar de website' : undefined}
+          className={`flex items-center gap-3 ${isCollapsed ? 'lg:justify-center lg:px-2' : 'px-4'} py-3 mb-2 rounded-button text-gray-600 hover:bg-gray-100 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary`}
+        >
+          <Globe className='w-5 h-5 flex-shrink-0' strokeWidth={1.5} aria-hidden='true' />
+          <span className={`flex-1 ${isCollapsed ? 'lg:sr-only' : ''}`}>Naar de website</span>
+          <ExternalLink className={`w-4 h-4 text-gray-400 ${isCollapsed ? 'lg:hidden' : ''}`} aria-hidden='true' />
+          <span className='sr-only'>(opent in een nieuw tabblad)</span>
+        </a>
         <div className={`flex flex-col items-center ${isCollapsed ? '' : 'mb-4'}`}>
           <div
             className='w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0'
@@ -257,7 +271,16 @@ export function AdminSidebar({user, unreadCounts}: Readonly<AdminSidebarProperti
             className='h-8 w-auto'
           />
         </Link>
-        <div className='w-10' /> {/* Spacer for centering */}
+        <a
+          href='/'
+          target='_blank'
+          rel='noopener noreferrer'
+          className='p-2 -mr-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-button transition-colors'
+          aria-label='Naar de website (opent in een nieuw tabblad)'
+          title='Naar de website'
+        >
+          <Globe className='w-6 h-6' />
+        </a>
       </div>
 
       {/* Mobile overlay */}

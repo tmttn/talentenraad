@@ -9,6 +9,7 @@ import {saveAnnouncement, type FormState} from '../../../(admin)/admin/(protecte
 import {guardAction} from './guard-action';
 import {primaryButton, secondaryButton} from './styles';
 import {useFormFeedback} from './use-form-feedback';
+import {useUnsavedWarning} from './use-unsaved-warning';
 
 export type AnnouncementInitial = {
   actief: boolean;
@@ -33,6 +34,7 @@ export function AnnouncementForm({initial, sha, action = saveAnnouncement}: Read
   };
 
   const [state, formAction, pending] = useActionState(wrapped, {} as FormState & {attempt?: number});
+  const {formHandlers} = useUnsavedWarning();
   const [values, setValues] = useState(initial);
   const errors = state.errors ?? {};
   const {formRef, messageRef, message} = useFormFeedback(state, ['tekst', 'type', 'link', 'linkTekst']);
@@ -41,7 +43,7 @@ export function AnnouncementForm({initial, sha, action = saveAnnouncement}: Read
   };
 
   return (
-    <form ref={formRef} action={formAction} className='space-y-6 bg-white rounded-card shadow-base p-4 sm:p-6' noValidate>
+    <form ref={formRef} action={formAction} {...formHandlers} className='space-y-6 bg-white rounded-card shadow-base p-4 sm:p-6' noValidate>
       {message && (
         <p ref={messageRef} tabIndex={-1} role='alert' className='rounded-button border border-red-200 bg-red-50 p-3 text-sm text-red-600'>{message}</p>
       )}

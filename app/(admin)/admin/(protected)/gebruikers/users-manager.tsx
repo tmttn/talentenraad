@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import type {Role, User} from '@lib/db/schema';
 import {DeleteDialog} from '@features/admin/delete-dialog';
+import {aboveRowLink, clickableRow, rowLink} from '@features/admin/navigation';
 import {TableFilters} from '@features/admin/table-filters';
 import {TablePagination} from '@features/admin/table-pagination';
 import {SortableHeader, useSorting} from '@features/admin/sortable-header';
@@ -516,14 +517,14 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                     )
                     : (
                       paginatedUsers.map(user => (
-                        <tr key={user.id} className='hover:bg-gray-50'>
+                        <tr key={user.id} className={clickableRow}>
                           <td className='px-4 sm:px-6 py-4'>
                             <button
                               type='button'
                               onClick={() => {
                                 handleEdit(user);
                               }}
-                              className='text-left group'
+                              className={`text-left group ${rowLink}`}
                             >
                               <p className='font-medium text-gray-900 group-hover:text-primary transition-colors'>{user.name ?? '-'}</p>
                               <p className='text-sm text-gray-500 break-all'>{user.email}</p>
@@ -554,7 +555,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                             {formatDate(user.createdAt)}
                           </td>
                           <td className='px-4 sm:px-6 py-4 text-right'>
-                            <div className='flex justify-end items-center gap-1 sm:gap-2'>
+                            <div className={`inline-flex justify-end items-center gap-1 sm:gap-2 ${aboveRowLink}`}>
                               {isProtectedEmail(user.email) && (
                                 <span
                                   title='Beschermd admin e-mail'
@@ -656,14 +657,14 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
               : (
                 <div className='grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4'>
                   {paginatedUsers.map(user => (
-                    <div key={user.id} className='bg-white rounded-card shadow-base p-4'>
+                    <div key={user.id} className='relative bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow p-4'>
                       <div className='flex items-start justify-between gap-2 mb-3'>
                         <button
                           type='button'
                           onClick={() => {
                             handleEdit(user);
                           }}
-                          className='text-left group min-w-0'
+                          className={`text-left group min-w-0 ${rowLink}`}
                         >
                           <p className='font-medium text-gray-900 group-hover:text-primary transition-colors truncate'>{user.name ?? '-'}</p>
                           <p className='text-sm text-gray-500 break-all'>{user.email}</p>
@@ -696,7 +697,7 @@ export function UsersManager({initialUsers, protectedEmails}: UsersManagerProps)
                           </span>
                         )}
                       </div>
-                      <div className='flex flex-wrap gap-1 border-t border-gray-100 pt-3'>
+                      <div className={`flex flex-wrap gap-1 border-t border-gray-100 pt-3 ${aboveRowLink}`}>
                         {user.invitedAt && !user.acceptedAt && (
                           <button
                             type='button'

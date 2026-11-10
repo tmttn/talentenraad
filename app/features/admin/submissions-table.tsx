@@ -8,6 +8,7 @@ import {
   Eye, CheckCircle, Circle, Archive, ArchiveRestore, Trash2,
 } from 'lucide-react';
 import type {Submission} from '@lib/db/index.js';
+import {aboveRowLink, clickableRow, rowLink} from './navigation';
 import {TableFilters} from './table-filters';
 import {TablePagination} from './table-pagination';
 import {SortableHeader, useSorting, type SortDirection} from './sortable-header';
@@ -350,17 +351,21 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
                   {paginatedSubmissions.map(submission => (
                     <tr
                       key={submission.id}
-                      className={`hover:bg-gray-50 ${submission.readAt ? '' : 'bg-primary/5'}`}
+                      className={`${clickableRow} ${submission.readAt ? '' : 'bg-primary/5'}`}
                     >
-                      <td className='px-4 sm:px-6 py-4'>
-                        <input
-                          type='checkbox'
-                          checked={selectedIds.has(submission.id)}
-                          onChange={event => {
-                            handleSelect(submission.id, event.target.checked);
-                          }}
-                          className='rounded border-gray-300 text-primary focus:ring-primary w-4 h-4'
-                        />
+                      <td className={`w-12 ${aboveRowLink}`}>
+                        {/* The whole cell toggles the checkbox, not only the small box */}
+                        <label className='absolute inset-0 flex px-4 sm:px-6 py-4 cursor-pointer'>
+                          <input
+                            type='checkbox'
+                            aria-label={`Selecteer bericht van ${submission.name}`}
+                            checked={selectedIds.has(submission.id)}
+                            onChange={event => {
+                              handleSelect(submission.id, event.target.checked);
+                            }}
+                            className='rounded border-gray-300 text-primary focus:ring-primary w-4 h-4'
+                          />
+                        </label>
                       </td>
                       <td className='px-4 sm:px-6 py-4'>
                         {submission.readAt
@@ -370,7 +375,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
                       <td className='px-4 sm:px-6 py-4'>
                         <Link
                           href={`/admin/submissions/${submission.id}`}
-                          className='block group'
+                          className={`block group ${rowLink}`}
                         >
                           <p className='font-medium text-gray-800 group-hover:text-primary transition-colors'>{submission.name}</p>
                           <p className='text-sm text-gray-500'>{submission.email}</p>
@@ -385,6 +390,8 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
                       <td className='px-4 sm:px-6 py-4 text-right'>
                         <Link
                           href={`/admin/submissions/${submission.id}`}
+                          tabIndex={-1}
+                          aria-hidden='true'
                           className='inline-flex items-center gap-1.5 px-3 py-1.5 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-button transition-colors'
                         >
                           <Eye className='w-4 h-4' />
@@ -430,7 +437,7 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
                   {paginatedSubmissions.map(submission => (
                     <div
                       key={submission.id}
-                      className={`bg-white rounded-card shadow-base p-4 ${submission.readAt ? '' : 'ring-2 ring-primary/20'}`}
+                      className={`relative bg-white rounded-card shadow-base hover:shadow-elevated transition-shadow p-4 ${submission.readAt ? '' : 'ring-2 ring-primary/20'}`}
                     >
                       <div className='flex items-start gap-3 mb-3'>
                         <input
@@ -439,12 +446,13 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
                           onChange={event => {
                             handleSelect(submission.id, event.target.checked);
                           }}
-                          className='rounded border-gray-300 text-primary focus:ring-primary w-4 h-4 mt-1'
+                          aria-label={`Selecteer bericht van ${submission.name}`}
+                          className={`rounded border-gray-300 text-primary focus:ring-primary w-4 h-4 mt-1 ${aboveRowLink}`}
                         />
                         <div className='flex-1 min-w-0'>
                           <Link
                             href={`/admin/submissions/${submission.id}`}
-                            className='block group'
+                            className={`block group ${rowLink}`}
                           >
                             <p className='font-medium text-gray-800 group-hover:text-primary transition-colors truncate'>{submission.name}</p>
                             <p className='text-sm text-gray-500 truncate'>{submission.email}</p>
@@ -467,6 +475,8 @@ export function SubmissionsTable({submissions, isArchiveView = false}: Readonly<
                       <div className='border-t border-gray-100 pt-3'>
                         <Link
                           href={`/admin/submissions/${submission.id}`}
+                          tabIndex={-1}
+                          aria-hidden='true'
                           className='inline-flex items-center gap-1.5 px-2 py-1.5 text-sm text-primary hover:text-primary-hover hover:bg-primary/10 rounded-button transition-colors'
                         >
                           <Eye className='w-4 h-4' />
