@@ -21,6 +21,12 @@ Geen mail gekregen? Kijk in je spam, of vraag de beheerder om je uitnodiging opn
 
 Bij **Volgorde** komen lagere nummers eerst; leeg betekent helemaal achteraan.
 
+## Rondkijken in het beheer
+
+- Bovenaan elke pagina staat **Terug naar …**: daarmee ga je één stap terug, bijvoorbeeld van een bestelling naar de lijst van die actie.
+- In een lijst klik je gewoon ergens op de rij om het item te openen; je hoeft niet op het nummer of op **Bewerken** te mikken. Een vinkje zet je aan door ergens in zijn vakje te klikken.
+- **Naar de website** (links onderaan in het menu, op de gsm de wereldbol rechtsboven) opent de site in een nieuw tabblad. Bij een activiteit, nieuwsbericht of actie staat naast **Bewerken** ook **Bekijk op de website**.
+
 ## Een actie opzetten
 
 Een actie heeft, naast titel, samenvatting, beschrijving en afbeelding:
@@ -78,7 +84,7 @@ Wie alleen komt helpen bij het afhalen, krijgt in **Gebruikers** de rol **Helper
 
 ## Iets toevoegen of aanpassen
 
-1. Kies het soort inhoud en klik op de knop om iets toe te voegen, of op **Bewerken** bij een bestaand item.
+1. Kies het soort inhoud en klik op de knop om iets toe te voegen, of op een bestaand item.
 2. Vul de velden in. Velden die verplicht zijn, krijgen een melding als ze leeg zijn.
 3. Schrijf de tekst in het grote tekstvak. Je kunt opmaak gebruiken:
    - `**vet**` wordt **vet**
@@ -89,7 +95,7 @@ Wie alleen komt helpen bij het afhalen, krijgt in **Gebruikers** de rol **Helper
    Onder **Voorbeeld** zie je meteen hoe het eruitziet.
 4. Een afbeelding of foto kies je van je computer of gsm (jpg, png of webp, tot 10 MB). De site verkleint ze automatisch en haalt locatiegegevens uit de foto.
 5. Vink **Concept** aan als het nog niet op de site mag staan.
-6. Klik op **Opslaan**.
+6. Klik op **Opslaan**. Ga je weg zonder op te slaan (via **Terug**, **Annuleren**, het menu of door het tabblad te sluiten), dan vraagt de site eerst of dat de bedoeling is.
 
 ## Wat er na opslaan gebeurt
 
