@@ -37,6 +37,17 @@ describe('collection schemas', () => {
     expect(tekstSchema.parse({titel: 'T', beschrijving: 'B'}).concept).toBe(false);
   });
 
+  it('accepts up to 12 distinct gallery photos on nieuws', () => {
+    const basis = {titel: 'X', datum: '2025-01-01', samenvatting: 'Y'};
+    expect(nieuwsSchema.parse(basis).fotos).toEqual([]);
+    expect(nieuwsSchema.parse({...basis, fotos: ['./foto-3.jpg', './foto-1.jpg']}).fotos).toEqual(['./foto-3.jpg', './foto-1.jpg']);
+    const twaalf = Array.from({length: 12}, (_, index) => `./foto-${index + 1}.jpg`);
+    expect(nieuwsSchema.parse({...basis, fotos: twaalf}).fotos).toHaveLength(12);
+    for (const fout of [['./foto-13.jpg'], ['foto-1.jpg'], ['./afbeelding.jpg'], ['./foto-1.jpg', './foto-1.jpg'], ['../foto-1.jpg']]) {
+      expect(nieuwsSchema.safeParse({...basis, fotos: fout}).success).toBe(false);
+    }
+  });
+
   it('validates teamlid', () => {
     expect(() => teamlidSchema.parse({naam: 'A', rol: 'Lid', categorie: 'helper'})).toThrow();
     expect(teamlidSchema.parse({naam: 'A', rol: 'Lid', categorie: 'lid'}).volgorde).toBe(99);

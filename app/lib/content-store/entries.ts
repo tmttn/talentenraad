@@ -83,7 +83,11 @@ export type LoadedEntry = {
   aliases: string[];
   indexSha: string;
   imageSha: string;
+  /** Gallery photos in frontmatter order, each with the blob SHA of its file. */
+  fotos: GalleryPhoto[];
 };
+
+export type GalleryPhoto = {file: string; sha: string};
 
 /** Reads one item for the edit form, with the blob SHAs used for conflict detection. */
 export async function loadEntry(type: EntryType, slug: string): Promise<LoadedEntry | undefined> {
@@ -111,9 +115,18 @@ export async function loadEntry(type: EntryType, slug: string): Promise<LoadedEn
   }
 
   let imageSha = '';
-  if (paths.image) {
+  const fotos: GalleryPhoto[] = [];
+  if (paths.image || config.galleryField) {
     const entries = await listDir(paths.dir);
     imageSha = entries.find(entry => entry.path === paths.image)?.sha ?? '';
+    const refs = config.galleryField ? data[config.galleryField] : undefined;
+    for (const ref of Array.isArray(refs) ? refs : []) {
+      const file = typeof ref === 'string' && ref.startsWith('./') ? ref.slice(2) : '';
+      const sha = entries.find(entry => entry.path === `${paths.dir}/${file}`)?.sha;
+      if (file !== '' && sha) {
+        fotos.push({file, sha});
+      }
+    }
   }
 
   return {
@@ -123,5 +136,6 @@ export async function loadEntry(type: EntryType, slug: string): Promise<LoadedEn
     aliases: Array.isArray(data.aliassen) ? data.aliassen.filter((item): item is string => typeof item === 'string') : [],
     indexSha: file.sha,
     imageSha,
+    fotos,
   };
 }

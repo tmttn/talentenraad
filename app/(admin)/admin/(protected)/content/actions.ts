@@ -17,6 +17,7 @@ import {
   parseAnnouncementForm, parseEntryForm, serializeEntry, updateAnnouncement,
 } from '@lib/content-store/serialize';
 import {commitChanges, pathsUnder, type Change} from '@lib/content-store/store';
+import {fotoBestand, maxFotos} from '@lib/content/schemas';
 
 export type FormState = {message?: string; errors?: Record<string, string>};
 
@@ -32,6 +33,43 @@ const text = (data: FormData, key: string) => {
 };
 
 type EditorSession = Awaited<ReturnType<typeof requireEditorSession>>;
+
+type GalleryFile = {file: string; sha: string};
+
+/** The gallery photos the edit form was loaded with (`_fotos`), ignoring anything that is not a gallery file. */
+function knownGallery(data: FormData): GalleryFile[] {
+  try {
+    const parsed: unknown = JSON.parse(text(data, '_fotos') || '[]');
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+
+    return parsed.filter((item): item is GalleryFile => typeof item?.file === 'string' && typeof item?.sha === 'string' && fotoBestand.test(item.file));
+  } catch {
+    return [];
+  }
+}
+
+type GalleryPlan = {kept: string[]; added: Array<{file: string; upload: File; expectedSha: string | null}>; removed: GalleryFile[]};
+
+/**
+ * Which gallery photos stay, which new ones get which file name and which files go.
+ * New photos take names nobody uses first; a removed name is reused (overwritten) only when needed,
+ * so one commit never deletes and creates the same path.
+ */
+function planGallery(existing: GalleryFile[], keepList: string[], uploads: File[]): GalleryPlan {
+  const kept = keepList.filter((file, index) => existing.some(item => item.file === file) && keepList.indexOf(file) === index);
+  const removed = existing.filter(item => !kept.includes(item.file));
+  const all = Array.from({length: maxFotos}, (_, index) => `foto-${index + 1}.jpg`);
+  const unused = all.filter(file => !existing.some(item => item.file === file));
+  const reusable = removed.map(item => item.file);
+  const candidates = [...unused, ...reusable.sort((a, b) => all.indexOf(a) - all.indexOf(b))];
+  const added = uploads.map((upload, index) => {
+    const file = candidates[index];
+    return {file, upload, expectedSha: removed.find(item => item.file === file)?.sha ?? null};
+  });
+  return {kept, added, removed: removed.filter(item => !added.some(add => add.file === item.file))};
+}
 
 async function audit(
   session: EditorSession,
@@ -94,6 +132,25 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
     values[imageField] = upload !== undefined || keepImage ? `./${config.imageFile}` : undefined;
   }
 
+  let gallery: GalleryPlan | undefined;
+  const galleryField = config.galleryField;
+  if (galleryField) {
+    const uploads = data.getAll(`${galleryField}Nieuw`).filter((item): item is File => item instanceof File && item.size > 0);
+    if (uploads.some(item => item.size > maxImageBytes)) {
+      return {errors: {[galleryField]: 'Een van de foto\'s is groter dan 10 MB.'}};
+    }
+
+    const existing = mode === 'edit' ? knownGallery(data) : [];
+    const keepList = text(data, `${galleryField}Behouden`).split('\n').map(item => item.trim()).filter(Boolean);
+    const kept = keepList.filter(file => existing.some(item => item.file === file));
+    if (kept.length + uploads.length > maxFotos) {
+      return {errors: {[galleryField]: `Hoogstens ${maxFotos} foto's. Verwijder er eerst een paar.`}};
+    }
+
+    gallery = planGallery(existing, keepList, uploads);
+    values[galleryField] = [...gallery.kept, ...gallery.added.map(item => item.file)].map(file => `./${file}`).join('\n');
+  }
+
   // Aliases are not part of the form: keep the ones of the current file, none for a new item.
   delete values.aliassen;
   if (mode === 'edit') {
@@ -127,6 +184,21 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
       }
     }
 
+    const galleryImages: Array<{file: string; data: Buffer; expectedSha: string | null}> = [];
+    if (gallery && config.galleryField) {
+      for (const item of gallery.added) {
+        try {
+          galleryImages.push({file: item.file, data: (await processImage(Buffer.from(await item.upload.arrayBuffer()))).data, expectedSha: item.expectedSha});
+        } catch (error) {
+          if (error instanceof ImageError) {
+            return {errors: {[config.galleryField]: `${item.upload.name}: ${error.message}`}};
+          }
+
+          throw error;
+        }
+      }
+    }
+
     const titleKey = config.fields[0].name;
     let slug: string;
     if (mode === 'create') {
@@ -152,6 +224,16 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
         changes.push({path: paths.image, content: image, expectedSha: isCreate ? null : (imageSha === '' ? null : imageSha)});
       } else if (!isCreate && imageSha !== '' && values[config.imageField as string] === undefined) {
         changes.push({path: paths.image, delete: true, expectedSha: imageSha});
+      }
+    }
+
+    for (const item of galleryImages) {
+      changes.push({path: `${paths.dir}/${item.file}`, content: item.data, expectedSha: isCreate ? null : item.expectedSha});
+    }
+
+    if (!isCreate) {
+      for (const item of gallery?.removed ?? []) {
+        changes.push({path: `${paths.dir}/${item.file}`, delete: true, expectedSha: item.sha});
       }
     }
 
@@ -195,6 +277,10 @@ export async function deleteEntry(_previous: FormState, data: FormData): Promise
     const known: Record<string, string> = {[paths.index]: text(data, '_indexSha')};
     if (paths.image && text(data, '_imageSha') !== '') {
       known[paths.image] = text(data, '_imageSha');
+    }
+
+    for (const item of knownGallery(data)) {
+      known[`${paths.dir}/${item.file}`] = item.sha;
     }
 
     const changes: Change[] = files.map(path => ({

@@ -22,7 +22,7 @@ type FormValues = FormData | Record<string, string | File | undefined>;
 const fieldOrder: Record<EntryType, string[]> = {
   activiteiten: ['titel', 'datum', 'tijd', 'locatie', 'categorie', 'samenvatting', 'programma', 'afbeelding', 'aliassen', 'concept'],
   acties: ['titel', 'samenvatting', 'afbeelding', 'bestellen', 'betalen', 'vraag', 'afhalen', 'producten', 'aliassen', 'concept'],
-  nieuws: ['titel', 'datum', 'samenvatting', 'afbeelding', 'aliassen', 'concept'],
+  nieuws: ['titel', 'datum', 'samenvatting', 'afbeelding', 'fotos', 'aliassen', 'concept'],
   team: ['naam', 'rol', 'categorie', 'volgorde', 'foto', 'concept'],
   faq: ['vraag', 'volgorde', 'concept'],
 };
@@ -298,6 +298,8 @@ export function parseEntryForm(type: EntryType, values: FormValues): ParsedEntry
       input[key] = value.split(/[\n,]/).map(item => item.trim()).filter(Boolean);
     } else if (key === 'programma') {
       input[key] = parseProgramma(value);
+    } else if (key === 'fotos') {
+      input[key] = value.split('\n').map(item => item.trim()).filter(Boolean);
     } else {
       input[key] = value;
     }
