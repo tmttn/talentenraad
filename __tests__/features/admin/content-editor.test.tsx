@@ -195,6 +195,63 @@ describe('EntryForm feedback and photo', () => {
   });
 });
 
+describe('EntryForm gallery', () => {
+  beforeEach(() => {
+    vi.stubGlobal('URL', Object.assign(URL, {createObjectURL: vi.fn(() => `blob:${Math.random()}`), revokeObjectURL: vi.fn()}));
+  });
+
+  const initial = {
+    values: {}, body: '', concept: false, aliases: [], indexSha: 'i', imageSha: '',
+    fotos: [{file: 'foto-1.jpg', sha: 's1'}, {file: 'foto-4.jpg', sha: 's4'}],
+  };
+
+  it('shows the current photos and posts which ones to keep', async () => {
+    const user = userEvent.setup();
+    const action = vi.fn(async (_state: State, _data: FormData): Promise<State> => ({message: 'stop'}));
+    render(<EntryForm type='nieuws' mode='edit' slug='soep' initial={initial} action={action} />);
+
+    expect(screen.getByAltText('Foto 1')).toHaveAttribute('src', '/api/admin/content/image?type=nieuws&slug=soep&file=foto-1.jpg&v=s1');
+    await user.click(screen.getAllByRole('checkbox', {name: 'Verwijderen'})[0]);
+    await user.click(screen.getByRole('button', {name: 'Opslaan'}));
+
+    await waitFor(() => {
+      expect(action).toHaveBeenCalled();
+    });
+    const data = action.mock.calls[0][1];
+    expect(data.get('fotosBehouden')).toBe('foto-4.jpg');
+    expect(JSON.parse(String(data.get('_fotos')))).toEqual(initial.fotos);
+  });
+
+  it('previews several new photos at once and asks for them again after a failed save', async () => {
+    const user = userEvent.setup();
+    render(<EntryForm type='nieuws' mode='create' action={async () => ({errors: {titel: 'Vul een titel in.'}})} />);
+    const files = ['a.jpg', 'b.jpg'].map(name => new File(['x'], name, {type: 'image/jpeg'}));
+
+    await user.upload(screen.getByLabelText(/Foto's/, {selector: 'input'}), files);
+
+    expect(await screen.findByAltText('Nieuwe foto 2')).toBeInTheDocument();
+    await user.click(screen.getByRole('button', {name: 'Opslaan'}));
+    expect(await screen.findByText("Kies de nieuwe foto's opnieuw.")).toBeInTheDocument();
+  });
+
+  it('refuses more photos than there is room for', async () => {
+    const user = userEvent.setup();
+    const vol = {...initial, fotos: Array.from({length: 11}, (_, index) => ({file: `foto-${index + 1}.jpg`, sha: `s${index}`}))};
+    render(<EntryForm type='nieuws' mode='edit' slug='soep' initial={vol} />);
+    const files = ['a.jpg', 'b.jpg'].map(name => new File(['x'], name, {type: 'image/jpeg'}));
+
+    await user.upload(screen.getByLabelText(/Foto's/, {selector: 'input'}), files);
+
+    expect(await screen.findByText("Er kunnen nog 1 foto's bij (hoogstens 12).")).toBeInTheDocument();
+    expect(screen.getAllByAltText(/Nieuwe foto/)).toHaveLength(1);
+  });
+
+  it('has no gallery for activities', () => {
+    render(<EntryForm type='activiteiten' mode='create' />);
+    expect(screen.queryByLabelText(/Foto's/, {selector: 'input'})).not.toBeInTheDocument();
+  });
+});
+
 describe('DeleteEntry', () => {
   it('asks for confirmation before it can submit and can be cancelled', async () => {
     const user = userEvent.setup();

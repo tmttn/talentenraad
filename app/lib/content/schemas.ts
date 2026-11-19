@@ -44,11 +44,24 @@ export const activiteitSchema = z.strictObject({
   concept,
 });
 
+/** Most photos a news item can show below its text (foto-1.jpg … foto-12.jpg). */
+export const maxFotos = 12;
+export const fotoBestand = /^foto-(?:[1-9]|1[0-2])\.jpg$/;
+
+const fotoLijst = z.array(z.string().refine(value => value.startsWith('./') && fotoBestand.test(value.slice(2)), {
+  error: 'Gebruik ./foto-1.jpg tot en met ./foto-12.jpg.',
+}))
+  .max(maxFotos, `Hoogstens ${maxFotos} foto's.`)
+  .refine(lijst => new Set(lijst).size === lijst.length, {error: 'Elke foto mag maar één keer voorkomen.'})
+  .default([]);
+
 export const nieuwsSchema = z.strictObject({
   titel: verplicht('Vul een titel in.'),
   datum: datumSchema,
   samenvatting: verplicht('Vul een samenvatting in.'),
   afbeelding: afbeeldingPad('afbeelding.jpg').optional(),
+  /** Extra photos shown as a gallery below the text, in this order. */
+  fotos: fotoLijst,
   aliassen,
   concept,
 });

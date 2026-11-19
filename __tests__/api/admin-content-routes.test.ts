@@ -121,6 +121,19 @@ describe('image route', () => {
     expect(Buffer.from(await response.arrayBuffer()).toString()).toBe('jpegdata');
   });
 
+  it('serves a gallery photo by file name, and only gallery names on gallery types', async () => {
+    listDir.mockResolvedValue([{name: 'foto-2.jpg', path: 'content/nieuws/a/foto-2.jpg', type: 'file', sha: 'f2'}]);
+    api.mockResolvedValue({status: 200, data: {content: Buffer.from('galerij').toString('base64'), encoding: 'base64'}});
+
+    const response = await image.GET(get('type=nieuws&slug=a&file=foto-2.jpg'));
+
+    expect(Buffer.from(await response.arrayBuffer()).toString()).toBe('galerij');
+    expect(api).toHaveBeenCalledWith('GET', '/git/blobs/f2');
+    for (const query of ['type=nieuws&slug=a&file=index.md', 'type=nieuws&slug=a&file=..%2Fx.jpg', 'type=activiteiten&slug=a&file=foto-1.jpg']) {
+      expect((await image.GET(get(query))).status).toBe(400);
+    }
+  });
+
   it('returns 404 without an image', async () => {
     listDir.mockResolvedValue([]);
 

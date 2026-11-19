@@ -224,6 +224,97 @@ describe('saveEntry (edit)', () => {
   });
 });
 
+describe('saveEntry (gallery)', () => {
+  type Call = {changes: Array<{path: string; content?: Buffer | string; delete?: true; expectedSha?: string | null}>};
+  const multi = (values: Record<string, string>, files: File[]) => {
+    const data = newsForm(values);
+    for (const file of files) {
+      data.append('fotosNieuw', file);
+    }
+
+    return data;
+  };
+
+  const lastCall = () => commitChanges.mock.calls[0][0] as Call;
+
+  it('stores new photos as foto-1.jpg, foto-2.jpg … and lists them in the frontmatter', async () => {
+    await expect(saveEntry(empty, multi({}, [await photo(), await photo()]))).rejects.toThrow('NEXT_REDIRECT');
+
+    const {changes} = lastCall();
+    expect(changes.map(change => change.path)).toEqual([
+      'content/nieuws/nieuwe-brief/index.md',
+      'content/nieuws/nieuwe-brief/foto-1.jpg',
+      'content/nieuws/nieuwe-brief/foto-2.jpg',
+    ]);
+    expect(changes.slice(1).every(change => change.expectedSha === null && Buffer.isBuffer(change.content))).toBe(true);
+    expect(String(changes[0].content)).toContain('fotos:\n  - ./foto-1.jpg\n  - ./foto-2.jpg');
+  });
+
+  it('keeps, removes and adds photos in one commit without deleting and creating the same path', async () => {
+    readFile.mockResolvedValue({text: '---\ntitel: Oud\ndatum: 2025-01-01\nsamenvatting: x\n---\n', sha: 'sha-index'});
+    const data = multi({
+      _mode: 'edit',
+      _slug: 'oud',
+      _indexSha: 'sha-index',
+      _fotos: JSON.stringify([{file: 'foto-1.jpg', sha: 's1'}, {file: 'foto-2.jpg', sha: 's2'}]),
+      fotosBehouden: 'foto-2.jpg',
+    }, [await photo()]);
+
+    await expect(saveEntry(empty, data)).rejects.toThrow('NEXT_REDIRECT');
+
+    const {changes} = lastCall();
+    expect(String(changes[0].content)).toContain('fotos:\n  - ./foto-2.jpg\n  - ./foto-3.jpg');
+    expect(changes.slice(1).map(({path, delete: gone, expectedSha}) => ({path, gone: gone ?? false, expectedSha}))).toEqual([
+      {path: 'content/nieuws/oud/foto-3.jpg', gone: false, expectedSha: null},
+      {path: 'content/nieuws/oud/foto-1.jpg', gone: true, expectedSha: 's1'},
+    ]);
+  });
+
+  it('overwrites a removed photo name when all twelve names are taken', async () => {
+    readFile.mockResolvedValue({text: '---\ntitel: Oud\ndatum: 2025-01-01\nsamenvatting: x\n---\n', sha: 'sha-index'});
+    const bestaand = Array.from({length: 12}, (_, index) => ({file: `foto-${index + 1}.jpg`, sha: `s${index + 1}`}));
+    const data = multi({
+      _mode: 'edit',
+      _slug: 'oud',
+      _indexSha: 'sha-index',
+      _fotos: JSON.stringify(bestaand),
+      fotosBehouden: bestaand.filter(item => item.file !== 'foto-5.jpg').map(item => item.file).join('\n'),
+    }, [await photo()]);
+
+    await expect(saveEntry(empty, data)).rejects.toThrow('NEXT_REDIRECT');
+
+    const {changes} = lastCall();
+    expect(changes.slice(1)).toEqual([expect.objectContaining({path: 'content/nieuws/oud/foto-5.jpg', expectedSha: 's5'})]);
+    expect(changes[1].delete).toBeUndefined();
+  });
+
+  it('refuses more than twelve photos', async () => {
+    const files = await Promise.all(Array.from({length: 13}, photo));
+
+    const state = await saveEntry(empty, multi({}, files));
+
+    expect(state.errors?.fotos).toMatch(/12/);
+    expect(commitChanges).not.toHaveBeenCalled();
+  });
+
+  it('ignores kept names that were not part of the item', async () => {
+    readFile.mockResolvedValue({text: '---\ntitel: Oud\ndatum: 2025-01-01\nsamenvatting: x\n---\n', sha: 'sha-index'});
+
+    await expect(saveEntry(empty, newsForm({
+      _mode: 'edit', _slug: 'oud', _indexSha: 'sha-index', _fotos: 'geen json', fotosBehouden: 'foto-1.jpg\n../index.md',
+    }))).rejects.toThrow('NEXT_REDIRECT');
+
+    expect(String(lastCall().changes[0].content)).not.toContain('fotos');
+  });
+
+  it('turns a broken gallery photo into an error on the gallery field', async () => {
+    const state = await saveEntry(empty, multi({}, [new File(['tekst'], 'kapot.jpg', {type: 'image/jpeg'})]));
+
+    expect(state.errors?.fotos).toContain('kapot.jpg');
+    expect(commitChanges).not.toHaveBeenCalled();
+  });
+});
+
 describe('deleteEntry', () => {
   it('deletes every file under the item dir with the known shas', async () => {
     pathsUnder.mockResolvedValue(['content/nieuws/oud/index.md', 'content/nieuws/oud/afbeelding.jpg']);
@@ -240,6 +331,19 @@ describe('deleteEntry', () => {
       {path: 'content/nieuws/oud/afbeelding.jpg', delete: true, expectedSha: 'sm'},
     ]);
     expect(logAudit).toHaveBeenCalledWith(expect.objectContaining({actionType: 'delete', resourceId: 'oud'}));
+  });
+
+  it('checks the shas of gallery photos when deleting', async () => {
+    pathsUnder.mockResolvedValue(['content/nieuws/oud/index.md', 'content/nieuws/oud/foto-1.jpg']);
+
+    await expect(deleteEntry(empty, form({
+      _type: 'nieuws', _slug: 'oud', _title: 'Oud', _indexSha: 'si', _fotos: JSON.stringify([{file: 'foto-1.jpg', sha: 'sf1'}]),
+    }))).rejects.toThrow('NEXT_REDIRECT');
+
+    expect((commitChanges.mock.calls[0][0] as {changes: unknown[]}).changes).toEqual([
+      {path: 'content/nieuws/oud/index.md', delete: true, expectedSha: 'si'},
+      {path: 'content/nieuws/oud/foto-1.jpg', delete: true, expectedSha: 'sf1'},
+    ]);
   });
 
   it('deletes only the file of a faq item', async () => {

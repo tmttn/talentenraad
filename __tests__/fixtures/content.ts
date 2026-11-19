@@ -21,6 +21,7 @@ export const makeNieuws = (overrides: Partial<NieuwsItem> = {}): NieuwsItem => (
   datum: '2025-05-10',
   samenvatting: 'Een fictieve samenvatting van het bericht.',
   afbeelding: undefined,
+  fotos: [],
   aliassen: [],
   concept: false,
   slug: 'voorbeeldbericht',

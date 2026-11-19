@@ -6,8 +6,10 @@ import {Save} from 'lucide-react';
 import {FormField, Input, Select, Switch} from '@components/ui';
 import {actieVelden} from '@lib/content-store/actie-form';
 import {entryTypes, type EntryType} from '@lib/content-store/entry-types';
+import {maxFotos} from '@lib/content/schemas';
 import {saveEntry, type FormState} from '../../../(admin)/admin/(protected)/content/actions';
 import {ActieFields} from './actie-fields';
+import {GalleryField} from './gallery-field';
 import {guardAction} from './guard-action';
 import {ImageField} from './image-field';
 import {MarkdownField} from './markdown-field';
@@ -23,6 +25,7 @@ export type EntryFormInitial = {
   aliases: string[];
   indexSha: string;
   imageSha: string;
+  fotos?: Array<{file: string; sha: string}>;
 };
 
 type Properties = {
@@ -44,9 +47,11 @@ export function EntryForm({
   const config = entryTypes[type];
   const attempts = useRef(0);
   const pickedPhoto = useRef(false);
+  const pickedGallery = useRef(false);
   const wrapped = async (previous: State, data: FormData): Promise<State> => {
-    const hadPhoto = pickedPhoto.current;
-    pickedPhoto.current = false; // the field remounts (and forgets the file) after every submit
+    const hadPhoto = pickedPhoto.current || pickedGallery.current;
+    pickedPhoto.current = false; // the fields remount (and forget the files) after every submit
+    pickedGallery.current = false;
     const result = await guardAction(async () => action(previous, data));
     attempts.current += 1;
     return {...result, attempt: attempts.current, lostPhoto: hadPhoto};
@@ -63,6 +68,7 @@ export function EntryForm({
     ...config.fields.map(field => field.name),
     config.bodyField,
     ...(config.imageField ? [config.imageField] : []),
+    ...(config.galleryField ? [config.galleryField] : []),
     ...(config.listField ? [config.listField] : []),
     ...(config.actie ? actieVelden : []),
   ];
@@ -87,6 +93,7 @@ export function EntryForm({
           <input type='hidden' name='_indexSha' value={initial?.indexSha ?? ''} />
           <input type='hidden' name='_imageSha' value={initial?.imageSha ?? ''} />
           <input type='hidden' name='_hasImage' value={imageUrl ? '1' : ''} />
+          <input type='hidden' name='_fotos' value={JSON.stringify(initial?.fotos ?? [])} />
         </>
       )}
 
@@ -166,6 +173,24 @@ export function EntryForm({
           label={config.imageField === 'foto' ? 'Foto' : 'Afbeelding'}
           currentUrl={imageUrl}
           error={errors[config.imageField]}
+        />
+      )}
+
+      {config.galleryField && (
+        <GalleryField
+          // Own key prefix: siblings sharing a key (the photo field uses the bare attempt) get duplicated
+          key={`galerij-${state.attempt ?? 0}`}
+          name={config.galleryField}
+          max={maxFotos}
+          current={(initial?.fotos ?? []).map(photo => ({
+            file: photo.file,
+            url: `/api/admin/content/image?type=${type}&slug=${slug ?? ''}&file=${photo.file}&v=${photo.sha}`,
+          }))}
+          lostPhotos={state.lostPhoto && Boolean(state.errors ?? state.message)}
+          onPickedChange={picked => {
+            pickedGallery.current = picked;
+          }}
+          error={errors[config.galleryField]}
         />
       )}
 

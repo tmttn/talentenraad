@@ -71,7 +71,7 @@ export default async function EditEntryPage({params}: Readonly<{params: Promise<
     <div className='space-y-6 max-w-5xl'>
       {header(siteHref)}
       <EntryForm type={type} mode='edit' slug={slug} initial={entry} imageUrl={imageUrl} />
-      <DeleteEntry type={type} slug={slug} title={title} indexSha={entry.indexSha} imageSha={entry.imageSha} />
+      <DeleteEntry type={type} slug={slug} title={title} indexSha={entry.indexSha} imageSha={entry.imageSha} fotos={entry.fotos} />
     </div>
   );
 }

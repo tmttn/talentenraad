@@ -24,7 +24,10 @@ type Entry<T> = T & {slug: string; html: string};
 export type Activiteit = Entry<WithImage<z.infer<typeof activiteitSchema>, 'afbeelding'>>;
 export type Actie = Entry<WithImage<z.infer<typeof actieSchema>, 'afbeelding'>>;
 /** News also carries its body as segments, so the article page can turn quotes into speech bubbles. */
-export type NieuwsItem = Entry<WithImage<z.infer<typeof nieuwsSchema>, 'afbeelding'>> & {segmenten: MarkdownSegment[]};
+export type NieuwsItem = Omit<Entry<WithImage<z.infer<typeof nieuwsSchema>, 'afbeelding'>>, 'fotos'> & {
+  segmenten: MarkdownSegment[];
+  fotos: ContentImage[];
+};
 export type Teamlid = Entry<WithImage<z.infer<typeof teamlidSchema>, 'foto'>>;
 export type FaqItem = Entry<z.infer<typeof faqSchema>>;
 export type Tekst = Entry<z.infer<typeof tekstSchema>>;
@@ -149,7 +152,11 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
   const acties = () => loadCollection('acties', actieSchema,
     (data, entry) => withImage(data, 'afbeelding', entry.entryDir));
   const nieuws = () => loadCollection('nieuws', nieuwsSchema,
-    (data, entry, body) => ({...withImage(data, 'afbeelding', entry.entryDir), segmenten: renderMarkdownSegments(body)}));
+    (data, entry, body) => ({
+      ...withImage(data, 'afbeelding', entry.entryDir),
+      fotos: data.fotos.map(ref => resolveImage(rootDir, entry.entryDir, ref)),
+      segmenten: renderMarkdownSegments(body),
+    }));
   const team = () => loadCollection('team', teamlidSchema,
     (data, entry) => withImage(data, 'foto', entry.entryDir));
   const faq = () => loadCollection('faq', faqSchema, data => data);

@@ -3,6 +3,7 @@ import {guardEditorApi} from '@lib/auth/api-guard';
 import {entryPaths} from '@lib/content-store/entries';
 import {entryTypes, isEntryType} from '@lib/content-store/entry-types';
 import {api, listDir} from '@lib/content-store/github';
+import {fotoBestand} from '@lib/content/schemas';
 
 export const dynamic = 'force-dynamic';
 
@@ -17,13 +18,17 @@ export async function GET(request: NextRequest) {
 
   const type = request.nextUrl.searchParams.get('type') ?? '';
   const slug = request.nextUrl.searchParams.get('slug') ?? '';
-  if (!isEntryType(type) || entryTypes[type].singleFile || !slugPattern.test(slug)) {
+  // Without `file` the cover image; with it one gallery photo (foto-1.jpg …)
+  const file = request.nextUrl.searchParams.get('file');
+  if (!isEntryType(type) || entryTypes[type].singleFile || !slugPattern.test(slug)
+    || (file !== null && (!entryTypes[type].galleryField || !fotoBestand.test(file)))) {
     return NextResponse.json({error: 'Ongeldige invoer'}, {status: 400});
   }
 
   try {
     const paths = entryPaths(type, slug);
-    const entry = (await listDir(paths.dir)).find(item => item.path === paths.image);
+    const wanted = file === null ? paths.image : `${paths.dir}/${file}`;
+    const entry = (await listDir(paths.dir)).find(item => item.path === wanted);
     if (!entry) {
       return NextResponse.json({error: 'Niet gevonden'}, {status: 404});
     }

@@ -1,3 +1,4 @@
+import { fotoBestand } from '../content/schemas';
 import { slugify } from '../content/slugify';
 import { ContentStoreError } from './errors';
 
@@ -11,6 +12,9 @@ const ITEM_FILES: Record<string, readonly string[]> = {
   nieuws: ['index.md', 'afbeelding.jpg'],
   team: ['index.md', 'foto.jpg'],
 };
+
+/** Collections whose items also hold gallery photos (foto-1.jpg … foto-12.jpg). */
+const GALLERY_COLLECTIONS = new Set(['nieuws']);
 
 function isSlug(value: string): boolean {
   return SLUG.test(value) && slugify(value) === value;
@@ -42,7 +46,8 @@ export function assertAllowedPath(path: string): void {
   }
 
   const files = ITEM_FILES[collection];
-  if (files && rest.length === 2 && isSlug(rest[0]) && files.includes(rest[1])) {
+  if (files && rest.length === 2 && isSlug(rest[0])
+    && (files.includes(rest[1]) || (GALLERY_COLLECTIONS.has(collection) && fotoBestand.test(rest[1])))) {
     return;
   }
 

@@ -14,7 +14,7 @@ Geen mail gekregen? Kijk in je spam, of vraag de beheerder om je uitnodiging opn
 
 - **Activiteiten**: titel, datum, tijd, locatie, categorie, samenvatting, tekst en een afbeelding.
 - **Acties**: een verkoop waarvoor ouders online bestellen (pizza's, ontbijtmanden, fuifkaarten). Zie hieronder.
-- **Nieuws**: titel, datum, samenvatting, tekst en een afbeelding.
+- **Nieuws**: titel, datum, samenvatting, tekst, een afbeelding (bovenaan) en tot 12 extra foto's (onder de tekst).
 - **Team**: naam, rol, categorie (bestuur of lid), volgorde, een korte tekst en een foto.
 - **Veelgestelde vragen**: vraag, antwoord en volgorde.
 - **Aankondiging**: de balk bovenaan de site, met een soort (info, waarschuwing of belangrijk), een korte tekst en eventueel een link.
@@ -94,6 +94,7 @@ Wie alleen komt helpen bij het afhalen, krijgt in **Gebruikers** de rol **Helper
 
    Onder **Voorbeeld** zie je meteen hoe het eruitziet.
 4. Een afbeelding of foto kies je van je computer of gsm (jpg, png of webp, tot 10 MB). De site verkleint ze automatisch en haalt locatiegegevens uit de foto.
+   Bij nieuws kun je onder **Foto's** meerdere foto's tegelijk kiezen (tot 12). Ze verschijnen onder de tekst; een bezoeker klikt erop om de foto groot te zien. Een foto weghalen doe je met het vinkje **Verwijderen** eronder.
 5. Vink **Concept** aan als het nog niet op de site mag staan.
 6. Klik op **Opslaan**. Ga je weg zonder op te slaan (via **Terug**, **Annuleren**, het menu of door het tabblad te sluiten), dan vraagt de site eerst of dat de bedoeling is.
 
@@ -115,7 +116,7 @@ Open het item, klik op **Verwijderen** en bevestig met **Ja, verwijderen**. Ook 
 
 - **Iemand anders heeft dit net aangepast. Herlaad de pagina.** Twee mensen bewerkten hetzelfde tegelijk. Herlaad, controleer de tekst en sla opnieuw op.
 - **Er bestaat al een item met deze titel.** Kies een andere titel.
-- **Kies de foto opnieuw.** Na een foutmelding moet je de foto opnieuw kiezen.
+- **Kies de foto opnieuw.** Na een foutmelding moet je de foto opnieuw kiezen. Dat geldt ook voor nieuwe foto's onder **Foto's**.
 - **Bewerken is nog niet ingesteld.** De koppeling ontbreekt; meld het aan de beheerder.
 
 ## Privacy

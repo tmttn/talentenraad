@@ -20,6 +20,8 @@ export type EntryTypeConfig = {
   /** Name of the frontmatter field that points to the image (`./afbeelding.jpg`), if the type has one. */
   imageField?: 'afbeelding' | 'foto';
   imageFile?: 'afbeelding.jpg' | 'foto.jpg';
+  /** Extra photos as a gallery (`fotos: [./foto-1.jpg, …]`), next to the cover image. */
+  galleryField?: 'fotos';
   /** faq items are a single file; the others are a folder with index.md. */
   singleFile: boolean;
   /** A frontmatter list edited as repeatable rows (the activity programme), sent as JSON. */
@@ -86,6 +88,7 @@ export const entryTypes: Record<EntryType, EntryTypeConfig> = {
     bodyLabel: 'Inhoud',
     imageField: 'afbeelding',
     imageFile: 'afbeelding.jpg',
+    galleryField: 'fotos',
     singleFile: false,
   },
   team: {

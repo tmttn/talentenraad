@@ -5,6 +5,8 @@ samenvatting: >-
   Buiten koud en grijs, binnen een warme kom soep: de Talentenraad trakteerde
   de kinderen van Talentenhuis.
 afbeelding: ./afbeelding.jpg
+fotos:
+  - ./foto-1.jpg
 ---
 
 Op een gure herfstdag kan soep echt smaken. Dat ondervonden de kinderen van Talentenhuis deze week, toen de Talentenraad hen trakteerde op een warme kom soep.

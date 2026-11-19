@@ -64,6 +64,28 @@ describe('NewsDetailPage', () => {
     expect(second.container.querySelector('img')).toBeNull();
   });
 
+  it('shows the gallery photos below the text, each linking to the full photo', async () => {
+    vi.mocked(content.getNieuws).mockReturnValue([]);
+    getNieuwsItem.mockReturnValue(makeNieuws({
+      titel: 'Soep',
+      fotos: [
+        {src: '/content/nieuws/x/foto-1.jpg', width: 960, height: 720},
+        {src: '/content/nieuws/x/foto-2.jpg', width: 720, height: 960},
+      ],
+    }));
+    await renderPage('voorbeeldbericht');
+    expect(screen.getByRole('heading', {name: "Foto's"})).toBeInTheDocument();
+    expect(screen.getByRole('img', {name: 'Foto 2 bij Soep'})).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: 'Foto 1 bij Soep'})).toHaveAttribute('href', '/content/nieuws/x/foto-1.jpg');
+  });
+
+  it('shows no gallery heading without photos', async () => {
+    vi.mocked(content.getNieuws).mockReturnValue([]);
+    getNieuwsItem.mockReturnValue(makeNieuws());
+    await renderPage('voorbeeldbericht');
+    expect(screen.queryByRole('heading', {name: "Foto's"})).not.toBeInTheDocument();
+  });
+
   it('lists other news under "Meer nieuws"', async () => {
     getNieuwsItem.mockReturnValue(makeNieuws({slug: 'voorbeeldbericht'}));
     vi.mocked(content.getNieuws).mockReturnValue([

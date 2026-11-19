@@ -6,6 +6,7 @@ import {Card} from '@components/ui';
 import {PageWithAnnouncements} from '@components/layout/page-with-announcements';
 import {formatLongDate} from '@features/activities/activity-card';
 import {ArticleBody} from '@features/news/article-body';
+import {FotoGalerij} from '@features/news/foto-galerij';
 import {
   generateMetadata as generateSeoMetadata,
   generateArticleSchema,
@@ -111,6 +112,8 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
           )}
 
           {item.segmenten.length > 0 && <ArticleBody segmenten={item.segmenten} />}
+
+          <FotoGalerij fotos={item.fotos} titel={item.titel} />
         </div>
       </article>
 
