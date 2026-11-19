@@ -13,7 +13,7 @@ import {entryPaths, listEntries, summarize} from '@lib/content-store/entries';
 import {entryTypes, isEntryType, type EntryType} from '@lib/content-store/entry-types';
 import {readFile} from '@lib/content-store/github';
 import {ImageError, processImage} from '@lib/content-store/images';
-import {maxVideoBytes, processVideo, VideoError} from '@lib/content-store/videos';
+import {readVideoUpload, removeVideoUpload} from '@lib/content-store/video-uploads';
 import {
   parseAnnouncementForm, parseEntryForm, serializeEntry, updateAnnouncement,
 } from '@lib/content-store/serialize';
@@ -152,20 +152,20 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
     values[galleryField] = [...gallery.kept, ...gallery.added.map(item => item.file)].map(file => `./${file}`).join('\n');
   }
 
-  let videoUpload: File | undefined;
+  // The video itself was uploaded (and checked) before, through /api/admin/content/video
+  const videoUploadId = text(data, 'videoUpload');
+  let video: Buffer | undefined;
   const videoField = config.videoField;
   if (videoField) {
-    const candidate = data.get(videoField);
-    if (candidate instanceof File && candidate.size > 0) {
-      if (candidate.size > maxVideoBytes) {
-        return {errors: {[videoField]: 'Het filmpje is groter dan 25 MB.'}};
+    if (videoUploadId !== '') {
+      video = await readVideoUpload(session.user.id, videoUploadId);
+      if (!video) {
+        return {errors: {[videoField]: 'Het filmpje is niet meer beschikbaar. Kies het opnieuw.'}};
       }
-
-      videoUpload = candidate;
     }
 
     const keepVideo = mode === 'edit' && text(data, '_videoSha') !== '' && text(data, 'verwijderVideo') === '';
-    values[videoField] = videoUpload !== undefined || keepVideo ? './video.mp4' : undefined;
+    values[videoField] = video !== undefined || keepVideo ? './video.mp4' : undefined;
   }
 
   // Aliases are not part of the form: keep the ones of the current file, none for a new item.
@@ -213,19 +213,6 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
 
           throw error;
         }
-      }
-    }
-
-    let video: Buffer | undefined;
-    if (videoUpload && config.videoField) {
-      try {
-        video = processVideo(Buffer.from(await videoUpload.arrayBuffer()));
-      } catch (error) {
-        if (error instanceof VideoError) {
-          return {errors: {[config.videoField]: error.message}};
-        }
-
-        throw error;
       }
     }
 
@@ -285,6 +272,9 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
     });
     await audit(session, isCreate ? 'create' : 'update', `content:${type}`, slug, {commitSha, title});
     sha = commitSha;
+    if (video) {
+      await removeVideoUpload(session.user.id, videoUploadId);
+    }
   } catch (error) {
     return toState(error);
   }

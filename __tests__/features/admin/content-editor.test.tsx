@@ -263,6 +263,37 @@ describe('EntryForm gallery', () => {
     expect(screen.queryByLabelText('Huidig filmpje')).not.toBeInTheDocument();
   });
 
+  it('uploads a picked video on its own and posts only its id', async () => {
+    const user = userEvent.setup();
+    const fetchMock = vi.fn().mockResolvedValue({ok: true, json: async () => ({id: 'b'.repeat(32)})});
+    vi.stubGlobal('fetch', fetchMock);
+    const action = vi.fn(async (_state: State, _data: FormData): Promise<State> => ({message: 'stop'}));
+    render(<EntryForm type='nieuws' mode='create' action={action} />);
+
+    await user.upload(screen.getByLabelText(/Filmpje/, {selector: 'input[type="file"]'}), new File(['film'], 'film.mp4', {type: 'video/mp4'}));
+    expect(await screen.findByLabelText('Huidig filmpje')).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith('/api/admin/content/video', expect.objectContaining({method: 'POST'}));
+
+    await user.click(screen.getByRole('button', {name: 'Opslaan'}));
+    await waitFor(() => {
+      expect(action).toHaveBeenCalled();
+    });
+    const data = action.mock.calls[0][1];
+    expect(data.get('videoUpload')).toBe('b'.repeat(32));
+    expect(data.has('video')).toBe(false);
+  });
+
+  it('shows the upload error and keeps no id', async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ok: false, json: async () => ({error: 'Dit bestand is geen mp4-filmpje.'})}));
+    render(<EntryForm type='nieuws' mode='create' />);
+
+    await user.upload(screen.getByLabelText(/Filmpje/, {selector: 'input[type="file"]'}), new File(['x'], 'x.mp4', {type: 'video/mp4'}));
+
+    expect(await screen.findByText('Dit bestand is geen mp4-filmpje.')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Huidig filmpje')).not.toBeInTheDocument();
+  });
+
   it('has no gallery for activities', () => {
     render(<EntryForm type='activiteiten' mode='create' />);
     expect(screen.queryByLabelText(/Foto's/, {selector: 'input'})).not.toBeInTheDocument();

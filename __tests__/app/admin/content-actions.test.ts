@@ -11,6 +11,8 @@ const pathsUnder = vi.fn();
 const listDir = vi.fn();
 const readFile = vi.fn();
 const logAudit = vi.fn();
+const readVideoUpload = vi.fn();
+const removeVideoUpload = vi.fn();
 const revalidatePath = vi.fn();
 const redirect = vi.fn((url: string) => {
   throw new Error(`NEXT_REDIRECT ${url}`);
@@ -19,6 +21,7 @@ const redirect = vi.fn((url: string) => {
 vi.mock('@lib/auth/require-admin', () => ({requireEditorSession}));
 vi.mock('@lib/content-store/store', () => ({commitChanges, pathsUnder}));
 vi.mock('@lib/content-store/github', () => ({listDir, readFile, isEditingConfigured: () => true}));
+vi.mock('@lib/content-store/video-uploads', () => ({readVideoUpload, removeVideoUpload}));
 vi.mock('@lib/audit', () => ({logAudit, createAuditContext: (request: unknown, session: unknown) => ({request, session})}));
 vi.mock('next/cache', () => ({revalidatePath}));
 vi.mock('next/navigation', () => ({redirect}));
@@ -55,7 +58,7 @@ const newsForm = (extra: Record<string, string | File> = {}) => form({
 });
 
 beforeEach(() => {
-  for (const mock of [requireEditorSession, commitChanges, pathsUnder, listDir, readFile, logAudit, revalidatePath, redirect]) {
+  for (const mock of [requireEditorSession, commitChanges, pathsUnder, listDir, readFile, logAudit, revalidatePath, redirect, readVideoUpload, removeVideoUpload]) {
     mock.mockClear();
   }
 
@@ -317,32 +320,28 @@ describe('saveEntry (gallery)', () => {
 
 describe('saveEntry (video)', () => {
   type Call = {changes: Array<{path: string; content?: Buffer | string; delete?: true; expectedSha?: string | null}>};
-  const mp4 = () => {
-    const box = (type: string, body: Buffer) => {
-      const header = Buffer.alloc(8);
-      header.writeUInt32BE(8 + body.length, 0);
-      header.write(type, 4, 'latin1');
-      return Buffer.concat([header, body]);
-    };
-
-    const bytes = Buffer.concat([
-      box('ftyp', Buffer.from('isom\0\0\0\0isom', 'latin1')),
-      box('moov', box('udta', Buffer.from('+50.9500+005.4500/', 'latin1'))),
-      box('mdat', Buffer.from('beeld', 'latin1')),
-    ]);
-    return new File([new Uint8Array(bytes)], 'film.mp4', {type: 'video/mp4'});
-  };
-
   const lastCall = () => commitChanges.mock.calls[0][0] as Call;
   const oud = {text: '---\ntitel: Oud\ndatum: 2025-01-01\nsamenvatting: x\nvideo: ./video.mp4\n---\n', sha: 'sha-index'};
+  const id = 'a'.repeat(32);
 
-  it('stores the video without its location and lists it in the frontmatter', async () => {
-    await expect(saveEntry(empty, newsForm({video: mp4()}))).rejects.toThrow('NEXT_REDIRECT');
+  it('commits the uploaded video of this user and removes the upload afterwards', async () => {
+    readVideoUpload.mockResolvedValue(Buffer.from('film'));
 
-    const {changes} = lastCall();
-    expect(changes[1]).toMatchObject({path: 'content/nieuws/nieuwe-brief/video.mp4', expectedSha: null});
-    expect(Buffer.isBuffer(changes[1].content) && changes[1].content.toString('latin1')).not.toContain('+50.9500');
-    expect(String(changes[0].content)).toContain('video: ./video.mp4');
+    await expect(saveEntry(empty, newsForm({videoUpload: id}))).rejects.toThrow('NEXT_REDIRECT');
+
+    expect(readVideoUpload).toHaveBeenCalledWith('u1', id);
+    expect(lastCall().changes[1]).toMatchObject({path: 'content/nieuws/nieuwe-brief/video.mp4', expectedSha: null, content: Buffer.from('film')});
+    expect(String(lastCall().changes[0].content)).toContain('video: ./video.mp4');
+    expect(removeVideoUpload).toHaveBeenCalledWith('u1', id);
+  });
+
+  it('asks to choose again when the upload is gone, and commits nothing', async () => {
+    readVideoUpload.mockResolvedValue(undefined);
+
+    const state = await saveEntry(empty, newsForm({videoUpload: id}));
+
+    expect(state.errors?.video).toMatch(/opnieuw/);
+    expect(commitChanges).not.toHaveBeenCalled();
   });
 
   it('keeps the current video, or deletes it when asked', async () => {
@@ -361,18 +360,16 @@ describe('saveEntry (video)', () => {
 
   it('replaces a video with the known sha', async () => {
     readFile.mockResolvedValue(oud);
-    await expect(saveEntry(empty, newsForm({_mode: 'edit', _slug: 'oud', _indexSha: 'sha-index', _videoSha: 'sv', video: mp4()}))).rejects.toThrow('NEXT_REDIRECT');
+    readVideoUpload.mockResolvedValue(Buffer.from('nieuw'));
+    await expect(saveEntry(empty, newsForm({_mode: 'edit', _slug: 'oud', _indexSha: 'sha-index', _videoSha: 'sv', videoUpload: id}))).rejects.toThrow('NEXT_REDIRECT');
 
     expect(lastCall().changes[1]).toMatchObject({path: 'content/nieuws/oud/video.mp4', expectedSha: 'sv'});
   });
 
-  it('refuses something that is not an mp4, and files over 25 MB', async () => {
-    expect((await saveEntry(empty, newsForm({video: new File(['geen film'], 'x.mp4', {type: 'video/mp4'})}))).errors?.video).toMatch(/mp4/);
+  it('ignores a video file posted straight to the action', async () => {
+    await expect(saveEntry(empty, newsForm({video: new File(['film'], 'x.mp4', {type: 'video/mp4'})}))).rejects.toThrow('NEXT_REDIRECT');
 
-    const big = new File(['x'], 'groot.mp4');
-    Object.defineProperty(big, 'size', {value: 26 * 1024 * 1024});
-    expect((await saveEntry(empty, newsForm({video: big}))).errors?.video).toMatch(/25 MB/);
-    expect(commitChanges).not.toHaveBeenCalled();
+    expect(lastCall().changes.map(change => change.path)).toEqual(['content/nieuws/nieuwe-brief/index.md']);
   });
 });
 
