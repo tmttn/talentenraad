@@ -94,7 +94,7 @@ Wie alleen komt helpen bij het afhalen, krijgt in **Gebruikers** de rol **Helper
 
    Onder **Voorbeeld** zie je meteen hoe het eruitziet.
 4. Een afbeelding of foto kies je van je computer of gsm (jpg, png of webp, tot 10 MB). De site verkleint ze automatisch en haalt locatiegegevens uit de foto.
-   Bij nieuws kun je onder **Foto's** meerdere foto's tegelijk kiezen (tot 12). Ze verschijnen onder de tekst; een bezoeker klikt erop om de foto groot te zien. Een foto weghalen doe je met het vinkje **Verwijderen** eronder.
+   Bij nieuws kun je onder **Foto's** meerdere foto's tegelijk kiezen (tot 12). Ze verschijnen onder de tekst; een bezoeker klikt erop om de foto groot te zien en bladert dan met de pijltjes of door te vegen. Een foto weghalen doe je met het vinkje **Verwijderen** eronder.
    Onder **Filmpje** kies je één mp4-filmpje tot 25 MB. Hou het kort (een halve minuut) en zet er geen herkenbare kinderen in. De site haalt locatie en toestelgegevens uit het filmpje; de afbeelding van het bericht verschijnt als beeld vóór je op afspelen drukt. Op een iPhone kies je bij delen "Meest compatibel" zodat je een mp4 krijgt.
 5. Vink **Concept** aan als het nog niet op de site mag staan.
 6. Klik op **Opslaan**. Ga je weg zonder op te slaan (via **Terug**, **Annuleren**, het menu of door het tabblad te sluiten), dan vraagt de site eerst of dat de bedoeling is.
