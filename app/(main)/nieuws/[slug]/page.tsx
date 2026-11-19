@@ -7,6 +7,7 @@ import {PageWithAnnouncements} from '@components/layout/page-with-announcements'
 import {formatLongDate} from '@features/activities/activity-card';
 import {ArticleBody} from '@features/news/article-body';
 import {FotoGalerij} from '@features/news/foto-galerij';
+import {NieuwsVideo} from '@features/news/nieuws-video';
 import {
   generateMetadata as generateSeoMetadata,
   generateArticleSchema,
@@ -112,6 +113,8 @@ export default async function NewsDetailPage({params}: Readonly<PageProperties>)
           )}
 
           {item.segmenten.length > 0 && <ArticleBody segmenten={item.segmenten} />}
+
+          {item.video && <NieuwsVideo video={item.video} poster={item.afbeelding?.src} titel={item.titel} />}
 
           <FotoGalerij fotos={item.fotos} titel={item.titel} />
         </div>

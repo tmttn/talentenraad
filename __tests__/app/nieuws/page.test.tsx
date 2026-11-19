@@ -79,11 +79,27 @@ describe('NewsDetailPage', () => {
     expect(screen.getByRole('link', {name: 'Foto 1 bij Soep'})).toHaveAttribute('href', '/content/nieuws/x/foto-1.jpg');
   });
 
+  it('plays our own video with the cover image as poster', async () => {
+    vi.mocked(content.getNieuws).mockReturnValue([]);
+    getNieuwsItem.mockReturnValue(makeNieuws({
+      titel: 'Fietsparcours',
+      afbeelding: {src: '/content/nieuws/x/afbeelding.jpg', width: 800, height: 600},
+      video: {src: '/content/nieuws/x/video.mp4'},
+    }));
+    const {container} = await renderPage('voorbeeldbericht');
+    const video = container.querySelector('video')!;
+    expect(video).toHaveAttribute('poster', '/content/nieuws/x/afbeelding.jpg');
+    expect(video).toHaveAttribute('preload', 'metadata');
+    expect(video).toHaveAttribute('aria-label', 'Filmpje bij Fietsparcours');
+    expect(container.querySelector('source')).toHaveAttribute('src', '/content/nieuws/x/video.mp4');
+  });
+
   it('shows no gallery heading without photos', async () => {
     vi.mocked(content.getNieuws).mockReturnValue([]);
     getNieuwsItem.mockReturnValue(makeNieuws());
     await renderPage('voorbeeldbericht');
     expect(screen.queryByRole('heading', {name: "Foto's"})).not.toBeInTheDocument();
+    expect(screen.queryByRole('heading', {name: 'Filmpje'})).not.toBeInTheDocument();
   });
 
   it('lists other news under "Meer nieuws"', async () => {

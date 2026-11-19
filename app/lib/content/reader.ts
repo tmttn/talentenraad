@@ -1,7 +1,7 @@
 import {existsSync, readdirSync, statSync} from 'node:fs';
 import path from 'node:path';
 import type {z} from 'zod';
-import {type ContentImage, readMarkdownFile, readYamlFile, resolveImage} from './files';
+import {type ContentImage, readMarkdownFile, readYamlFile, resolveImage, resolveVideo} from './files';
 import {type MarkdownSegment, renderMarkdown, renderMarkdownSegments} from './markdown';
 import {slugify} from './slugify';
 import {
@@ -24,9 +24,11 @@ type Entry<T> = T & {slug: string; html: string};
 export type Activiteit = Entry<WithImage<z.infer<typeof activiteitSchema>, 'afbeelding'>>;
 export type Actie = Entry<WithImage<z.infer<typeof actieSchema>, 'afbeelding'>>;
 /** News also carries its body as segments, so the article page can turn quotes into speech bubbles. */
-export type NieuwsItem = Omit<Entry<WithImage<z.infer<typeof nieuwsSchema>, 'afbeelding'>>, 'fotos'> & {
+export type ContentVideo = {src: string};
+export type NieuwsItem = Omit<Entry<WithImage<z.infer<typeof nieuwsSchema>, 'afbeelding'>>, 'fotos' | 'video'> & {
   segmenten: MarkdownSegment[];
   fotos: ContentImage[];
+  video: ContentVideo | undefined;
 };
 export type Teamlid = Entry<WithImage<z.infer<typeof teamlidSchema>, 'foto'>>;
 export type FaqItem = Entry<z.infer<typeof faqSchema>>;
@@ -155,6 +157,7 @@ export function createContentReader(rootDir: string, options: ContentReaderOptio
     (data, entry, body) => ({
       ...withImage(data, 'afbeelding', entry.entryDir),
       fotos: data.fotos.map(ref => resolveImage(rootDir, entry.entryDir, ref)),
+      video: data.video === undefined ? undefined : resolveVideo(rootDir, entry.entryDir, data.video),
       segmenten: renderMarkdownSegments(body),
     }));
   const team = () => loadCollection('team', teamlidSchema,

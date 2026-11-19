@@ -14,11 +14,12 @@ type Properties = {
   imageSha: string;
   /** Gallery photos with their SHAs, so deleting checks them like the other files. */
   fotos?: Array<{file: string; sha: string}>;
+  videoSha?: string;
   action?: (state: FormState, data: FormData) => Promise<FormState>;
 };
 
 export function DeleteEntry({
-  type, slug, title, indexSha, imageSha, fotos = [], action = deleteEntry,
+  type, slug, title, indexSha, imageSha, fotos = [], videoSha = '', action = deleteEntry,
 }: Readonly<Properties>) {
   const guarded = async (previous: FormState, data: FormData) => guardAction(async () => action(previous, data));
   const [state, formAction, pending] = useActionState(guarded, {} as FormState);
@@ -39,6 +40,7 @@ export function DeleteEntry({
       <input type='hidden' name='_indexSha' value={indexSha} />
       <input type='hidden' name='_imageSha' value={imageSha} />
       <input type='hidden' name='_fotos' value={JSON.stringify(fotos)} />
+      <input type='hidden' name='_videoSha' value={videoSha} />
       <h2 className='font-semibold text-gray-800'>Verwijderen</h2>
       {state.message && (
         <p role='alert' className='rounded-button border border-red-200 bg-red-50 p-3 text-sm text-red-600'>{state.message}</p>

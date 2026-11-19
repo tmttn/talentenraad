@@ -4,7 +4,7 @@ import {pathToFileURL} from 'node:url';
 
 const textExtensions = new Set(['.md', '.yaml', '.yml']);
 // Allowlist: anything else (.html, .svg, ...) would be served from the site's origin.
-const imageExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif']);
+const mediaExtensions = new Set(['.jpg', '.jpeg', '.png', '.webp', '.gif', '.avif', '.mp4']);
 
 /**
  * Copies every image file from `contentDir` to `publicDir/content/`,
@@ -29,8 +29,8 @@ export async function copyContentAssets(contentDir, publicDir) {
 
     const source = path.join(entry.parentPath, entry.name);
     const relative = path.relative(contentDir, source);
-    if (!imageExtensions.has(path.extname(entry.name).toLowerCase())) {
-      throw new Error(`${relative.split(path.sep).join('/')}: bestandstype niet toegestaan in content/ (toegestaan: ${[...imageExtensions].join(' ')})`);
+    if (!mediaExtensions.has(path.extname(entry.name).toLowerCase())) {
+      throw new Error(`${relative.split(path.sep).join('/')}: bestandstype niet toegestaan in content/ (toegestaan: ${[...mediaExtensions].join(' ')})`);
     }
 
     // eslint-disable-next-line no-await-in-loop

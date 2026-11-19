@@ -113,5 +113,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   // Everything except Next.js build files: the encoding check covers every address
-  matcher: ['/((?!_next/static|_next/image).*)'],
+  // The video upload stays out of the proxy: the proxy buffers bodies (proxyClientMaxBodySize) and the
+  // route checks the session before it reads its own, larger body.
+  matcher: ['/((?!_next/static|_next/image|api/admin/content/video$).*)'],
 };

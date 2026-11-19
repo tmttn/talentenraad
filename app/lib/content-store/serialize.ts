@@ -22,7 +22,7 @@ type FormValues = FormData | Record<string, string | File | undefined>;
 const fieldOrder: Record<EntryType, string[]> = {
   activiteiten: ['titel', 'datum', 'tijd', 'locatie', 'categorie', 'samenvatting', 'programma', 'afbeelding', 'aliassen', 'concept'],
   acties: ['titel', 'samenvatting', 'afbeelding', 'bestellen', 'betalen', 'vraag', 'afhalen', 'producten', 'aliassen', 'concept'],
-  nieuws: ['titel', 'datum', 'samenvatting', 'afbeelding', 'fotos', 'aliassen', 'concept'],
+  nieuws: ['titel', 'datum', 'samenvatting', 'afbeelding', 'fotos', 'video', 'aliassen', 'concept'],
   team: ['naam', 'rol', 'categorie', 'volgorde', 'foto', 'concept'],
   faq: ['vraag', 'volgorde', 'concept'],
 };

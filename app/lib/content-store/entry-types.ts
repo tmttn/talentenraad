@@ -22,6 +22,8 @@ export type EntryTypeConfig = {
   imageFile?: 'afbeelding.jpg' | 'foto.jpg';
   /** Extra photos as a gallery (`fotos: [./foto-1.jpg, …]`), next to the cover image. */
   galleryField?: 'fotos';
+  /** One short mp4 (`video: ./video.mp4`). */
+  videoField?: 'video';
   /** faq items are a single file; the others are a folder with index.md. */
   singleFile: boolean;
   /** A frontmatter list edited as repeatable rows (the activity programme), sent as JSON. */
@@ -89,6 +91,7 @@ export const entryTypes: Record<EntryType, EntryTypeConfig> = {
     imageField: 'afbeelding',
     imageFile: 'afbeelding.jpg',
     galleryField: 'fotos',
+    videoField: 'video',
     singleFile: false,
   },
   team: {

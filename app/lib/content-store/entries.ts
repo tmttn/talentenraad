@@ -85,6 +85,8 @@ export type LoadedEntry = {
   imageSha: string;
   /** Gallery photos in frontmatter order, each with the blob SHA of its file. */
   fotos: GalleryPhoto[];
+  /** Blob SHA of video.mp4, '' without a video. */
+  videoSha: string;
 };
 
 export type GalleryPhoto = {file: string; sha: string};
@@ -116,8 +118,10 @@ export async function loadEntry(type: EntryType, slug: string): Promise<LoadedEn
 
   let imageSha = '';
   const fotos: GalleryPhoto[] = [];
-  if (paths.image || config.galleryField) {
+  let videoSha = '';
+  if (paths.image || config.galleryField || config.videoField) {
     const entries = await listDir(paths.dir);
+    videoSha = config.videoField ? entries.find(entry => entry.path === `${paths.dir}/video.mp4`)?.sha ?? '' : '';
     imageSha = entries.find(entry => entry.path === paths.image)?.sha ?? '';
     const refs = config.galleryField ? data[config.galleryField] : undefined;
     for (const ref of Array.isArray(refs) ? refs : []) {
@@ -137,5 +141,6 @@ export async function loadEntry(type: EntryType, slug: string): Promise<LoadedEn
     indexSha: file.sha,
     imageSha,
     fotos,
+    videoSha,
   };
 }

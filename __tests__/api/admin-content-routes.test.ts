@@ -134,6 +134,16 @@ describe('image route', () => {
     }
   });
 
+  it('serves video.mp4 as video/mp4, only for types with a video', async () => {
+    listDir.mockResolvedValue([{name: 'video.mp4', path: 'content/nieuws/a/video.mp4', type: 'file', sha: 'v1'}]);
+    api.mockResolvedValue({status: 200, data: {content: Buffer.from('film').toString('base64'), encoding: 'base64'}});
+
+    const response = await image.GET(get('type=nieuws&slug=a&file=video.mp4'));
+
+    expect(response.headers.get('content-type')).toBe('video/mp4');
+    expect((await image.GET(get('type=team&slug=a&file=video.mp4'))).status).toBe(400);
+  });
+
   it('returns 404 without an image', async () => {
     listDir.mockResolvedValue([]);
 

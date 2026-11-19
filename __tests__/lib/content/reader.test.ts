@@ -37,6 +37,11 @@ describe('createContentReader', () => {
     expect(fotos[0].width).toBeGreaterThan(0);
   });
 
+  it('geeft de video van een nieuwsbericht, en geen voor berichten zonder', () => {
+    expect(reader.getNieuwsItem('met-fotos')?.video).toEqual({src: '/content/nieuws/met-fotos/video.mp4'});
+    expect(reader.getNieuwsItem('eerste')?.video).toBeUndefined();
+  });
+
   it('rendert paginas en lost sponsorlogos op', () => {
     expect(reader.getPagina('over-ons').html).toContain('<p>');
     expect(reader.getPagina('sponsors').sponsors[0].logo).toMatchObject({src: '/content/paginas/sponsors/logo.png'});

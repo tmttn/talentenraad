@@ -6,7 +6,7 @@ const nextConfig = createRequire(import.meta.url)('../next.config.js') as {
 };
 
 describe('next.config', () => {
-  it('allows 10 MB photos through server actions and the proxy', () => {
+  it('allows 10 MB photos through server actions and the proxy, not more (also public actions)', () => {
     expect(nextConfig.experimental?.serverActions?.bodySizeLimit).toBe('11mb');
     expect(nextConfig.experimental?.proxyClientMaxBodySize).toBe('11mb');
   });
