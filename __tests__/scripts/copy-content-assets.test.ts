@@ -26,7 +26,7 @@ describe('copyContentAssets', () => {
     expect(fs.existsSync(path.join(tmp, 'content/site.yaml'))).toBe(false);
   });
 
-  it.each(['pagina.html', 'logo.svg', 'script.js'])('refuses %s', async name => {
+  it.each(['pagina.html', 'logo.svg', 'script.js', 'film.mov'])('refuses %s', async name => {
     const source = path.join(tmp, 'src');
     fs.mkdirSync(source);
     fs.writeFileSync(path.join(source, name), 'x');
@@ -37,12 +37,12 @@ describe('copyContentAssets', () => {
   it('accepts image extensions case-insensitively', async () => {
     const source = path.join(tmp, 'src');
     fs.mkdirSync(source);
-    for (const name of ['a.JPG', 'b.jpeg', 'c.png', 'd.webp', 'e.gif', 'f.avif', 'g.md', 'h.yaml']) {
+    for (const name of ['a.JPG', 'b.jpeg', 'c.png', 'd.webp', 'e.gif', 'f.avif', 'g.md', 'h.yaml', 'i.mp4']) {
       fs.writeFileSync(path.join(source, name), 'x');
     }
 
     const result = await copyContentAssets(source, path.join(tmp, 'out'));
-    expect(result.sort()).toEqual(['a.JPG', 'b.jpeg', 'c.png', 'd.webp', 'e.gif', 'f.avif']);
+    expect(result.sort()).toEqual(['a.JPG', 'b.jpeg', 'c.png', 'd.webp', 'e.gif', 'f.avif', 'i.mp4']);
   });
 
   it('removes stale files from the destination first', async () => {

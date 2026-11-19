@@ -246,9 +246,27 @@ describe('EntryForm gallery', () => {
     expect(screen.getAllByAltText(/Nieuwe foto/)).toHaveLength(1);
   });
 
+  it('rejects a video over 25 MB on the client and can remove the current one', async () => {
+    const user = userEvent.setup();
+    render(<EntryForm type='nieuws' mode='edit' slug='soep' initial={{...initial, fotos: [], videoSha: 'sv'}} />);
+    const input = screen.getByLabelText(/Filmpje/, {selector: 'input[type="file"]'}) as HTMLInputElement;
+    const big = new File(['x'], 'groot.mp4', {type: 'video/mp4'});
+    Object.defineProperty(big, 'size', {value: 26 * 1024 * 1024});
+
+    expect(screen.getByLabelText('Huidig filmpje')).toHaveAttribute('src', '/api/admin/content/image?type=nieuws&slug=soep&file=video.mp4&v=sv');
+    await user.upload(input, big);
+    expect(await screen.findByText(/groter dan 25 MB/)).toBeInTheDocument();
+    expect(input.files).toHaveLength(0);
+
+    await user.click(screen.getByRole('switch', {name: 'Filmpje verwijderen'}));
+    expect(input).toBeDisabled();
+    expect(screen.queryByLabelText('Huidig filmpje')).not.toBeInTheDocument();
+  });
+
   it('has no gallery for activities', () => {
     render(<EntryForm type='activiteiten' mode='create' />);
     expect(screen.queryByLabelText(/Foto's/, {selector: 'input'})).not.toBeInTheDocument();
+    expect(screen.queryByLabelText(/Filmpje/, {selector: 'input[type="file"]'})).not.toBeInTheDocument();
   });
 });
 

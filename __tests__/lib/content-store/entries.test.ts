@@ -39,6 +39,15 @@ Tekst
     expect((await loadEntry('activiteiten', 'x'))!.fotos).toEqual([]);
   });
 
+  it('gives the sha of video.mp4 for news only', async () => {
+    vi.mocked(readFile).mockResolvedValue(file('---\ntitel: X\n---\n') as never);
+    vi.mocked(listDir).mockResolvedValue([{name: 'video.mp4', path: 'content/nieuws/x/video.mp4', type: 'file', sha: 'sv'}] as never);
+
+    expect((await loadEntry('nieuws', 'x'))!.videoSha).toBe('sv');
+    vi.mocked(listDir).mockResolvedValue([{name: 'video.mp4', path: 'content/activiteiten/x/video.mp4', type: 'file', sha: 'sv'}] as never);
+    expect((await loadEntry('activiteiten', 'x'))!.videoSha).toBe('');
+  });
+
   it('gives an empty list when an activity has no programme, and none for other types', async () => {
     vi.mocked(readFile).mockResolvedValue(file('---\ntitel: Kerst\n---\n') as never);
     expect((await loadEntry('activiteiten', 'kerst'))!.values.programma).toBe('[]');

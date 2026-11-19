@@ -13,6 +13,7 @@ import {entryPaths, listEntries, summarize} from '@lib/content-store/entries';
 import {entryTypes, isEntryType, type EntryType} from '@lib/content-store/entry-types';
 import {readFile} from '@lib/content-store/github';
 import {ImageError, processImage} from '@lib/content-store/images';
+import {maxVideoBytes, processVideo, VideoError} from '@lib/content-store/videos';
 import {
   parseAnnouncementForm, parseEntryForm, serializeEntry, updateAnnouncement,
 } from '@lib/content-store/serialize';
@@ -151,6 +152,22 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
     values[galleryField] = [...gallery.kept, ...gallery.added.map(item => item.file)].map(file => `./${file}`).join('\n');
   }
 
+  let videoUpload: File | undefined;
+  const videoField = config.videoField;
+  if (videoField) {
+    const candidate = data.get(videoField);
+    if (candidate instanceof File && candidate.size > 0) {
+      if (candidate.size > maxVideoBytes) {
+        return {errors: {[videoField]: 'Het filmpje is groter dan 25 MB.'}};
+      }
+
+      videoUpload = candidate;
+    }
+
+    const keepVideo = mode === 'edit' && text(data, '_videoSha') !== '' && text(data, 'verwijderVideo') === '';
+    values[videoField] = videoUpload !== undefined || keepVideo ? './video.mp4' : undefined;
+  }
+
   // Aliases are not part of the form: keep the ones of the current file, none for a new item.
   delete values.aliassen;
   if (mode === 'edit') {
@@ -199,6 +216,19 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
       }
     }
 
+    let video: Buffer | undefined;
+    if (videoUpload && config.videoField) {
+      try {
+        video = processVideo(Buffer.from(await videoUpload.arrayBuffer()));
+      } catch (error) {
+        if (error instanceof VideoError) {
+          return {errors: {[config.videoField]: error.message}};
+        }
+
+        throw error;
+      }
+    }
+
     const titleKey = config.fields[0].name;
     let slug: string;
     if (mode === 'create') {
@@ -224,6 +254,16 @@ export async function saveEntry(_previous: FormState, data: FormData): Promise<F
         changes.push({path: paths.image, content: image, expectedSha: isCreate ? null : (imageSha === '' ? null : imageSha)});
       } else if (!isCreate && imageSha !== '' && values[config.imageField as string] === undefined) {
         changes.push({path: paths.image, delete: true, expectedSha: imageSha});
+      }
+    }
+
+    if (config.videoField) {
+      const videoPath = `${paths.dir}/video.mp4`;
+      const videoSha = isCreate ? '' : text(data, '_videoSha');
+      if (video) {
+        changes.push({path: videoPath, content: video, expectedSha: videoSha === '' ? null : videoSha});
+      } else if (videoSha !== '' && values[config.videoField] === undefined) {
+        changes.push({path: videoPath, delete: true, expectedSha: videoSha});
       }
     }
 
@@ -281,6 +321,10 @@ export async function deleteEntry(_previous: FormState, data: FormData): Promise
 
     for (const item of knownGallery(data)) {
       known[`${paths.dir}/${item.file}`] = item.sha;
+    }
+
+    if (text(data, '_videoSha') !== '') {
+      known[`${paths.dir}/video.mp4`] = text(data, '_videoSha');
     }
 
     const changes: Change[] = files.map(path => ({

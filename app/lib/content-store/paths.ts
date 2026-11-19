@@ -9,7 +9,7 @@ const COLLECTIONS = ['activiteiten', 'acties', 'nieuws', 'team', 'faq'] as const
 const ITEM_FILES: Record<string, readonly string[]> = {
   activiteiten: ['index.md', 'afbeelding.jpg'],
   acties: ['index.md', 'afbeelding.jpg'],
-  nieuws: ['index.md', 'afbeelding.jpg'],
+  nieuws: ['index.md', 'afbeelding.jpg', 'video.mp4'],
   team: ['index.md', 'foto.jpg'],
 };
 

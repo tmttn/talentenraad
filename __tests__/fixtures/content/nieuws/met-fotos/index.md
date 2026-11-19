@@ -5,5 +5,6 @@ samenvatting: Bericht met een galerij
 fotos:
   - ./foto-2.jpg
   - ./foto-1.jpg
+video: ./video.mp4
 ---
 Kijk eens.

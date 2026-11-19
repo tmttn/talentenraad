@@ -48,6 +48,13 @@ describe('collection schemas', () => {
     }
   });
 
+  it('accepts only ./video.mp4 as video', () => {
+    const basis = {titel: 'X', datum: '2025-01-01', samenvatting: 'Y'};
+    expect(nieuwsSchema.parse({...basis, video: './video.mp4'}).video).toBe('./video.mp4');
+    expect(nieuwsSchema.safeParse({...basis, video: './film.mov'}).success).toBe(false);
+    expect(nieuwsSchema.safeParse({...basis, video: 'https://example.com/v.mp4'}).success).toBe(false);
+  });
+
   it('validates teamlid', () => {
     expect(() => teamlidSchema.parse({naam: 'A', rol: 'Lid', categorie: 'helper'})).toThrow();
     expect(teamlidSchema.parse({naam: 'A', rol: 'Lid', categorie: 'lid'}).volgorde).toBe(99);

@@ -62,6 +62,8 @@ export const nieuwsSchema = z.strictObject({
   afbeelding: afbeeldingPad('afbeelding.jpg').optional(),
   /** Extra photos shown as a gallery below the text, in this order. */
   fotos: fotoLijst,
+  /** A short mp4 of our own, shown below the text with the cover image as poster. */
+  video: z.literal('./video.mp4', {error: 'Gebruik ./video.mp4.'}).optional(),
   aliassen,
   concept,
 });

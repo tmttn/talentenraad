@@ -315,6 +315,67 @@ describe('saveEntry (gallery)', () => {
   });
 });
 
+describe('saveEntry (video)', () => {
+  type Call = {changes: Array<{path: string; content?: Buffer | string; delete?: true; expectedSha?: string | null}>};
+  const mp4 = () => {
+    const box = (type: string, body: Buffer) => {
+      const header = Buffer.alloc(8);
+      header.writeUInt32BE(8 + body.length, 0);
+      header.write(type, 4, 'latin1');
+      return Buffer.concat([header, body]);
+    };
+
+    const bytes = Buffer.concat([
+      box('ftyp', Buffer.from('isom\0\0\0\0isom', 'latin1')),
+      box('moov', box('udta', Buffer.from('+50.9500+005.4500/', 'latin1'))),
+      box('mdat', Buffer.from('beeld', 'latin1')),
+    ]);
+    return new File([new Uint8Array(bytes)], 'film.mp4', {type: 'video/mp4'});
+  };
+
+  const lastCall = () => commitChanges.mock.calls[0][0] as Call;
+  const oud = {text: '---\ntitel: Oud\ndatum: 2025-01-01\nsamenvatting: x\nvideo: ./video.mp4\n---\n', sha: 'sha-index'};
+
+  it('stores the video without its location and lists it in the frontmatter', async () => {
+    await expect(saveEntry(empty, newsForm({video: mp4()}))).rejects.toThrow('NEXT_REDIRECT');
+
+    const {changes} = lastCall();
+    expect(changes[1]).toMatchObject({path: 'content/nieuws/nieuwe-brief/video.mp4', expectedSha: null});
+    expect(Buffer.isBuffer(changes[1].content) && changes[1].content.toString('latin1')).not.toContain('+50.9500');
+    expect(String(changes[0].content)).toContain('video: ./video.mp4');
+  });
+
+  it('keeps the current video, or deletes it when asked', async () => {
+    readFile.mockResolvedValue(oud);
+    const edit = (extra: Record<string, string> = {}) => newsForm({_mode: 'edit', _slug: 'oud', _indexSha: 'sha-index', _videoSha: 'sv', ...extra});
+
+    await expect(saveEntry(empty, edit())).rejects.toThrow('NEXT_REDIRECT');
+    expect(String(lastCall().changes[0].content)).toContain('video: ./video.mp4');
+    expect(lastCall().changes).toHaveLength(1);
+
+    commitChanges.mockClear();
+    await expect(saveEntry(empty, edit({verwijderVideo: 'on'}))).rejects.toThrow('NEXT_REDIRECT');
+    expect(String(lastCall().changes[0].content)).not.toContain('video');
+    expect(lastCall().changes[1]).toEqual({path: 'content/nieuws/oud/video.mp4', delete: true, expectedSha: 'sv'});
+  });
+
+  it('replaces a video with the known sha', async () => {
+    readFile.mockResolvedValue(oud);
+    await expect(saveEntry(empty, newsForm({_mode: 'edit', _slug: 'oud', _indexSha: 'sha-index', _videoSha: 'sv', video: mp4()}))).rejects.toThrow('NEXT_REDIRECT');
+
+    expect(lastCall().changes[1]).toMatchObject({path: 'content/nieuws/oud/video.mp4', expectedSha: 'sv'});
+  });
+
+  it('refuses something that is not an mp4, and files over 25 MB', async () => {
+    expect((await saveEntry(empty, newsForm({video: new File(['geen film'], 'x.mp4', {type: 'video/mp4'})}))).errors?.video).toMatch(/mp4/);
+
+    const big = new File(['x'], 'groot.mp4');
+    Object.defineProperty(big, 'size', {value: 26 * 1024 * 1024});
+    expect((await saveEntry(empty, newsForm({video: big}))).errors?.video).toMatch(/25 MB/);
+    expect(commitChanges).not.toHaveBeenCalled();
+  });
+});
+
 describe('deleteEntry', () => {
   it('deletes every file under the item dir with the known shas', async () => {
     pathsUnder.mockResolvedValue(['content/nieuws/oud/index.md', 'content/nieuws/oud/afbeelding.jpg']);
@@ -344,6 +405,14 @@ describe('deleteEntry', () => {
       {path: 'content/nieuws/oud/index.md', delete: true, expectedSha: 'si'},
       {path: 'content/nieuws/oud/foto-1.jpg', delete: true, expectedSha: 'sf1'},
     ]);
+  });
+
+  it('checks the sha of the video when deleting', async () => {
+    pathsUnder.mockResolvedValue(['content/nieuws/oud/index.md', 'content/nieuws/oud/video.mp4']);
+
+    await expect(deleteEntry(empty, form({_type: 'nieuws', _slug: 'oud', _title: 'Oud', _indexSha: 'si', _videoSha: 'sv'}))).rejects.toThrow('NEXT_REDIRECT');
+
+    expect((commitChanges.mock.calls[0][0] as {changes: unknown[]}).changes).toContainEqual({path: 'content/nieuws/oud/video.mp4', delete: true, expectedSha: 'sv'});
   });
 
   it('deletes only the file of a faq item', async () => {

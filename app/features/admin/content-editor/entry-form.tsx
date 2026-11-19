@@ -14,6 +14,7 @@ import {guardAction} from './guard-action';
 import {ImageField} from './image-field';
 import {MarkdownField} from './markdown-field';
 import {ProgrammaField} from './programma-field';
+import {VideoField} from './video-field';
 import {primaryButton, secondaryButton} from './styles';
 import {useFormFeedback} from './use-form-feedback';
 import {useUnsavedWarning} from './use-unsaved-warning';
@@ -26,6 +27,7 @@ export type EntryFormInitial = {
   indexSha: string;
   imageSha: string;
   fotos?: Array<{file: string; sha: string}>;
+  videoSha?: string;
 };
 
 type Properties = {
@@ -37,7 +39,7 @@ type Properties = {
   action?: (state: FormState, data: FormData) => Promise<FormState>;
 };
 
-type State = FormState & {attempt?: number; lostPhoto?: boolean};
+type State = FormState & {attempt?: number; lostPhoto?: boolean; lostVideo?: boolean};
 
 const emptyState: State = {};
 
@@ -48,13 +50,16 @@ export function EntryForm({
   const attempts = useRef(0);
   const pickedPhoto = useRef(false);
   const pickedGallery = useRef(false);
+  const pickedVideo = useRef(false);
   const wrapped = async (previous: State, data: FormData): Promise<State> => {
     const hadPhoto = pickedPhoto.current || pickedGallery.current;
+    const hadVideo = pickedVideo.current;
+    pickedVideo.current = false;
     pickedPhoto.current = false; // the fields remount (and forget the files) after every submit
     pickedGallery.current = false;
     const result = await guardAction(async () => action(previous, data));
     attempts.current += 1;
-    return {...result, attempt: attempts.current, lostPhoto: hadPhoto};
+    return {...result, attempt: attempts.current, lostPhoto: hadPhoto, lostVideo: hadVideo};
   };
 
   const [state, formAction, pending] = useActionState(wrapped, emptyState);
@@ -69,6 +74,7 @@ export function EntryForm({
     config.bodyField,
     ...(config.imageField ? [config.imageField] : []),
     ...(config.galleryField ? [config.galleryField] : []),
+    ...(config.videoField ? [config.videoField] : []),
     ...(config.listField ? [config.listField] : []),
     ...(config.actie ? actieVelden : []),
   ];
@@ -94,6 +100,7 @@ export function EntryForm({
           <input type='hidden' name='_imageSha' value={initial?.imageSha ?? ''} />
           <input type='hidden' name='_hasImage' value={imageUrl ? '1' : ''} />
           <input type='hidden' name='_fotos' value={JSON.stringify(initial?.fotos ?? [])} />
+          <input type='hidden' name='_videoSha' value={initial?.videoSha ?? ''} />
         </>
       )}
 
@@ -191,6 +198,19 @@ export function EntryForm({
             pickedGallery.current = picked;
           }}
           error={errors[config.galleryField]}
+        />
+      )}
+
+      {config.videoField && (
+        <VideoField
+          key={`video-${state.attempt ?? 0}`}
+          name={config.videoField}
+          currentUrl={initial?.videoSha ? `/api/admin/content/image?type=${type}&slug=${slug ?? ''}&file=video.mp4&v=${initial.videoSha}` : undefined}
+          lostVideo={state.lostVideo && Boolean(state.errors ?? state.message)}
+          onPickedChange={picked => {
+            pickedVideo.current = picked;
+          }}
+          error={errors[config.videoField]}
         />
       )}
 

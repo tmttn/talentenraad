@@ -20,8 +20,9 @@ export async function GET(request: NextRequest) {
   const slug = request.nextUrl.searchParams.get('slug') ?? '';
   // Without `file` the cover image; with it one gallery photo (foto-1.jpg …)
   const file = request.nextUrl.searchParams.get('file');
+  const isVideo = file === 'video.mp4';
   if (!isEntryType(type) || entryTypes[type].singleFile || !slugPattern.test(slug)
-    || (file !== null && (!entryTypes[type].galleryField || !fotoBestand.test(file)))) {
+    || (file !== null && !(isVideo ? entryTypes[type].videoField : entryTypes[type].galleryField && fotoBestand.test(file)))) {
     return NextResponse.json({error: 'Ongeldige invoer'}, {status: 400});
   }
 
@@ -41,7 +42,7 @@ export async function GET(request: NextRequest) {
 
     return new NextResponse(Buffer.from(content, 'base64'), {
       headers: {
-        'Content-Type': 'image/jpeg',
+        'Content-Type': isVideo ? 'video/mp4' : 'image/jpeg',
         'Cache-Control': 'private, max-age=60',
         'X-Content-Type-Options': 'nosniff',
       },

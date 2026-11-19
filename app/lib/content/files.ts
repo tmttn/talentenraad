@@ -1,4 +1,4 @@
-import {readFileSync} from 'node:fs';
+import {existsSync, readFileSync} from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import {imageSize} from 'image-size';
@@ -31,6 +31,22 @@ export function resolveImage(rootDir: string, entryDir: string, ref: string): Co
 
   const posix = relative.split(path.sep).join('/');
   return {src: `/content/${entryDir}/${posix}`, width, height};
+}
+
+/** A video next to an entry: it must exist; browsers read its size themselves. */
+export function resolveVideo(rootDir: string, entryDir: string, ref: string): {src: string} {
+  const base = path.resolve(rootDir, entryDir);
+  const file = path.resolve(base, ref);
+  const relative = path.relative(base, file);
+  if (relative === '' || relative.startsWith('..') || path.isAbsolute(relative) || path.isAbsolute(ref)) {
+    throw new Error(`Video "${ref}" ligt buiten ${entryDir}`);
+  }
+
+  if (!existsSync(file)) {
+    throw new Error(`Video "${ref}" niet gevonden in ${entryDir}`);
+  }
+
+  return {src: `/content/${entryDir}/${relative.split(path.sep).join('/')}`};
 }
 
 // CORE_SCHEMA keeps unquoted dates as strings, so no Date objects, rollover or timezone shifts.
